@@ -31,4 +31,13 @@ public class ProjectService {
                 .build();
         return projectRepository.save(projectToAdd);
     }
+
+    public Project updateProject(ProjectRequest request, Integer projectId) {
+        Project projectToUpdate = projectRepository.getById(projectId);
+        projectToUpdate.setName(request.getName());
+        projectToUpdate.setParent(
+                request.getParentId() != null ? projectRepository.getById(request.getParentId()) : null
+        );
+        return projectRepository.save(projectToUpdate);
+    }
 }

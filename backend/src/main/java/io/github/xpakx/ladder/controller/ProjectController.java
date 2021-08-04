@@ -27,4 +27,9 @@ public class ProjectController {
     public ResponseEntity<Project> addProject(@RequestBody ProjectRequest request) {
         return  new ResponseEntity<>(projectService.addProject(request), HttpStatus.CREATED);
     }
+
+    @PutMapping("/{projectId}")
+    public ResponseEntity<Project> updateProject(@RequestBody ProjectRequest request, @PathVariable Integer projectId) {
+        return  new ResponseEntity<>(projectService.updateProject(request, projectId), HttpStatus.OK);
+    }
 }
