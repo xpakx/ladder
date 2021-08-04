@@ -15,6 +15,6 @@ public class ProjectService {
     }
 
     public Project getProjectById(Integer projectId) {
-        return projectRepository.getById(projectId);
+        return projectRepository.findById(projectId).orElseThrow();
     }
 }
