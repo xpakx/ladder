@@ -1,11 +1,9 @@
 package io.github.xpakx.ladder.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -20,4 +18,8 @@ public class Project {
 
     private String name;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project parent;
 }
