@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}")
-    public ResponseEntity<Project> getProject(@PathVariable Integer projectId) {
+    public ResponseEntity<ProjectDetails> getProject(@PathVariable Integer projectId) {
         return new ResponseEntity<>(projectService.getProjectById(projectId), HttpStatus.OK);
     }
 

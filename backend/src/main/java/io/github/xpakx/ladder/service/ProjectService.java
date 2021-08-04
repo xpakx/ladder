@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public Project getProjectById(Integer projectId) {
-        return projectRepository.findById(projectId)
+    public ProjectDetails getProjectById(Integer projectId) {
+        return projectRepository.findProjectedById(projectId, ProjectDetails.class)
                 .orElseThrow();
     }
 
