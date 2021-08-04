@@ -1,6 +1,6 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.UserAccountRepository;
+import io.github.xpakx.ladder.repository.UserAccountRepository;
 import io.github.xpakx.ladder.entity.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;

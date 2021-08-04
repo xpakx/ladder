@@ -1,8 +1,6 @@
-package io.github.xpakx.ladder;
+package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.UserAccount;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

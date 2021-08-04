@@ -1,6 +1,6 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.UserAccountRepository;
+import io.github.xpakx.ladder.repository.UserAccountRepository;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.UserRole;
 import io.github.xpakx.ladder.entity.dto.AuthenticationRequest;
