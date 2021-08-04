@@ -32,4 +32,10 @@ public class ProjectController {
     public ResponseEntity<Project> updateProject(@RequestBody ProjectRequest request, @PathVariable Integer projectId) {
         return  new ResponseEntity<>(projectService.updateProject(request, projectId), HttpStatus.OK);
     }
+
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<?> deleteProject(@PathVariable Integer projectId) {
+        projectService.deleteProject(projectId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

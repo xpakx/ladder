@@ -40,4 +40,8 @@ public class ProjectService {
         );
         return projectRepository.save(projectToUpdate);
     }
+
+    public void deleteProject(Integer projectId) {
+        projectRepository.deleteById(projectId);
+    }
 }
