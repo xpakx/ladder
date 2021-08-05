@@ -3,6 +3,7 @@ package io.github.xpakx.ladder.service;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
+import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class ProjectService {
 
     public ProjectDetails getProjectById(Integer projectId) {
         return projectRepository.findProjectedById(projectId, ProjectDetails.class)
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("No such project!"));
     }
 
     public Project addProject(ProjectRequest request) {

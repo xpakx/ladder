@@ -3,6 +3,7 @@ package io.github.xpakx.ladder.service;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import io.github.xpakx.ladder.entity.dto.TaskDetails;
+import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,6 @@ public class TaskService {
 
     public TaskDetails getTaskById(Integer taskId) {
         return taskRepository.findProjectedById(taskId, TaskDetails.class)
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("No such task!"));
     }
 }
