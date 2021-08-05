@@ -19,9 +19,13 @@ public class Task {
     private Integer id;
 
     private String title;
+    private String description;
 
     private LocalDateTime due;
     private LocalDateTime completedAt;
+    private LocalDateTime createdAt;
+    private Integer order;
+    private Integer dailyViewOrder;
 
     @JsonIgnore
     @ManyToOne

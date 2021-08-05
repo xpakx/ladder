@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,5 +53,10 @@ public class ProjectController {
     public ResponseEntity<?> deleteProject(@PathVariable Integer projectId) {
         projectService.deleteProject(projectId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{projectId}/tasks")
+    public ResponseEntity<Task> addTaskToProject(@RequestBody TaskRequest request, @PathVariable Integer projectId) {
+        return  new ResponseEntity<>(projectService.addTask(request, projectId), HttpStatus.CREATED);
     }
 }

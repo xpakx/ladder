@@ -1,18 +1,24 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.repository.ProjectRepository;
+import io.github.xpakx.ladder.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final TaskRepository taskRepository;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository, TaskRepository taskRepository) {
         this.projectRepository = projectRepository;
+        this.taskRepository = taskRepository;
     }
 
     public ProjectDetails getProjectById(Integer projectId) {
@@ -66,5 +72,17 @@ public class ProjectService {
         Project projectToUpdate = projectRepository.getById(projectId);
         projectToUpdate.setFavorite(request.isFlag());
         return projectRepository.save(projectToUpdate);
+    }
+
+    public Task addTask(TaskRequest request, Integer projectId) {
+        Project parent = projectRepository.getById(projectId);
+        Task taskToAdd = Task.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .order(request.getOrder())
+                .project(parent)
+                .createdAt(LocalDateTime.now())
+                .build();
+        return taskRepository.save(taskToAdd);
     }
 }
