@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.dto.NameRequest;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
@@ -44,5 +45,11 @@ public class ProjectService {
 
     public void deleteProject(Integer projectId) {
         projectRepository.deleteById(projectId);
+    }
+
+    public Project updateProjectName(NameRequest request, Integer projectId) {
+        Project projectToUpdate = projectRepository.getById(projectId);
+        projectToUpdate.setName(request.getName());
+        return projectRepository.save(projectToUpdate);
     }
 }

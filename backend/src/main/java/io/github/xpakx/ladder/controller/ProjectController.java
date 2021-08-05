@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
+import io.github.xpakx.ladder.entity.dto.NameRequest;
 import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,11 @@ public class ProjectController {
     @PutMapping("/{projectId}")
     public ResponseEntity<Project> updateProject(@RequestBody ProjectRequest request, @PathVariable Integer projectId) {
         return  new ResponseEntity<>(projectService.updateProject(request, projectId), HttpStatus.OK);
+    }
+
+    @PutMapping("/{projectId}/name")
+    public ResponseEntity<Project> updateProjectName(@RequestBody NameRequest request, @PathVariable Integer projectId) {
+        return  new ResponseEntity<>(projectService.updateProjectName(request, projectId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectId}")
