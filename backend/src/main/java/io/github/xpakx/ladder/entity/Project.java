@@ -18,6 +18,7 @@ public class Project {
 
     private String name;
     private boolean favorite;
+    private String color;
 
     @JsonIgnore
     @ManyToOne
