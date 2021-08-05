@@ -1,10 +1,7 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Project;
-import io.github.xpakx.ladder.entity.dto.IdRequest;
-import io.github.xpakx.ladder.entity.dto.NameRequest;
-import io.github.xpakx.ladder.entity.dto.ProjectDetails;
-import io.github.xpakx.ladder.entity.dto.ProjectRequest;
+import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +28,7 @@ public class ProjectService {
         Project projectToAdd = Project.builder()
                 .name(request.getName())
                 .parent(parent)
+                .favorite(false)
                 .build();
         return projectRepository.save(projectToAdd);
     }
@@ -59,6 +57,12 @@ public class ProjectService {
         projectToUpdate.setParent(
                 request.getId() != null ? projectRepository.getById(request.getId()) : null
         );
+        return projectRepository.save(projectToUpdate);
+    }
+
+    public Project updateProjectFav(BooleanRequest request, Integer projectId) {
+        Project projectToUpdate = projectRepository.getById(projectId);
+        projectToUpdate.setFavorite(request.isFlag());
         return projectRepository.save(projectToUpdate);
     }
 }

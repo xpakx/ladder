@@ -17,6 +17,7 @@ public class Project {
     private Integer id;
 
     private String name;
+    private boolean favorite;
 
     @JsonIgnore
     @ManyToOne

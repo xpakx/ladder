@@ -1,10 +1,7 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Project;
-import io.github.xpakx.ladder.entity.dto.ProjectDetails;
-import io.github.xpakx.ladder.entity.dto.NameRequest;
-import io.github.xpakx.ladder.entity.dto.IdRequest;
-import io.github.xpakx.ladder.entity.dto.ProjectRequest;
+import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,6 +41,11 @@ public class ProjectController {
     @PutMapping("/{projectId}/name")
     public ResponseEntity<Project> updateProjectParent(@RequestBody IdRequest request, @PathVariable Integer projectId) {
         return  new ResponseEntity<>(projectService.updateProjectParent(request, projectId), HttpStatus.OK);
+    }
+
+    @PutMapping("/{projectId}/favorite")
+    public ResponseEntity<Project> updateProjectFav(@RequestBody BooleanRequest request, @PathVariable Integer projectId) {
+        return  new ResponseEntity<>(projectService.updateProjectFav(request, projectId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectId}")
