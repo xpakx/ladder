@@ -29,6 +29,7 @@ public class ProjectService {
                 .name(request.getName())
                 .parent(parent)
                 .favorite(false)
+                .color(request.getColor())
                 .build();
         return projectRepository.save(projectToAdd);
     }
@@ -36,6 +37,7 @@ public class ProjectService {
     public Project updateProject(ProjectRequest request, Integer projectId) {
         Project projectToUpdate = projectRepository.getById(projectId);
         projectToUpdate.setName(request.getName());
+        projectToUpdate.setColor(request.getColor());
         projectToUpdate.setParent(
                 request.getParentId() != null ? projectRepository.getById(request.getParentId()) : null
         );
