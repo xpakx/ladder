@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Task;
+import io.github.xpakx.ladder.entity.dto.DateRequest;
 import io.github.xpakx.ladder.entity.dto.TaskDetails;
 import io.github.xpakx.ladder.entity.dto.TaskRequest;
 import io.github.xpakx.ladder.entity.dto.UpdateTaskRequest;
@@ -34,5 +35,10 @@ public class TaskController {
     @PutMapping("/{taskId}")
     public ResponseEntity<Task> updateTask(@RequestBody UpdateTaskRequest request, @PathVariable Integer taskId) {
         return  new ResponseEntity<>(taskService.updateTask(request, taskId), HttpStatus.OK);
+    }
+
+    @PutMapping("/{taskId}/due")
+    public ResponseEntity<Task> updateTaskDueDate(@RequestBody DateRequest request, @PathVariable Integer taskId) {
+        return  new ResponseEntity<>(taskService.updateTaskDueDate(request, taskId), HttpStatus.OK);
     }
 }
