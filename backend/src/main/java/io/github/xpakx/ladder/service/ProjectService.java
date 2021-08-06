@@ -75,7 +75,7 @@ public class ProjectService {
         return projectRepository.save(projectToUpdate);
     }
 
-    public Task addTask(TaskRequest request, Integer projectId) {
+    public Task addTask(UpdateTaskRequest request, Integer projectId) {
         Project project = projectRepository.getById(projectId);
         Task parent = taskRepository.getById(request.getParentId());
         Task taskToAdd = Task.builder()

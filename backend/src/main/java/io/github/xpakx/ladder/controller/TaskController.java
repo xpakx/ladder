@@ -1,7 +1,9 @@
 package io.github.xpakx.ladder.controller;
 
-import io.github.xpakx.ladder.entity.dto.ProjectDetails;
+import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.TaskDetails;
+import io.github.xpakx.ladder.entity.dto.TaskRequest;
+import io.github.xpakx.ladder.entity.dto.UpdateTaskRequest;
 import io.github.xpakx.ladder.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +27,12 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<TaskDetails> getProject(@PathVariable Integer taskId) {
+    public ResponseEntity<TaskDetails> getTask(@PathVariable Integer taskId) {
         return new ResponseEntity<>(taskService.getTaskById(taskId), HttpStatus.OK);
+    }
+
+    @PutMapping("/{taskId}")
+    public ResponseEntity<Task> updateTask(@RequestBody UpdateTaskRequest request, @PathVariable Integer taskId) {
+        return  new ResponseEntity<>(taskService.updateTask(request, taskId), HttpStatus.OK);
     }
 }
