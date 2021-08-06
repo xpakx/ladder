@@ -40,6 +40,7 @@ public class TaskService {
         taskToUpdate.setDue(request.getDue());
         taskToUpdate.setParent(parent);
         taskToUpdate.setProject(project);
+        taskToUpdate.setCompletedAt(request.getCompletedAt());
         return taskRepository.save(taskToUpdate);
     }
 }

@@ -12,6 +12,7 @@ public class UpdateTaskRequest {
     private String description;
     private Integer order;
     private LocalDateTime due;
+    private LocalDateTime completedAt;
     private Integer parentId;
     private Integer projectId;
 }
