@@ -24,8 +24,10 @@ public class Task {
     private LocalDateTime due;
     private LocalDateTime completedAt;
     private LocalDateTime createdAt;
+
     private Integer order;
     private Integer dailyViewOrder;
+    private Integer priority;
 
     @JsonIgnore
     @ManyToOne

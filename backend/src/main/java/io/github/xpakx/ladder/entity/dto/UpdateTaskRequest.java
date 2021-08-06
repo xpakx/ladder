@@ -15,4 +15,5 @@ public class UpdateTaskRequest {
     private LocalDateTime completedAt;
     private Integer parentId;
     private Integer projectId;
+    private Integer priority;
 }

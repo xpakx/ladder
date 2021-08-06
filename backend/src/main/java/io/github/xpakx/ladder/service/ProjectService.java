@@ -86,6 +86,7 @@ public class ProjectService {
                 .createdAt(LocalDateTime.now())
                 .due(request.getDue())
                 .parent(parent)
+                .priority(0)
                 .build();
         return taskRepository.save(taskToAdd);
     }

@@ -42,6 +42,7 @@ public class TaskService {
         taskToUpdate.setParent(parent);
         taskToUpdate.setProject(project);
         taskToUpdate.setCompletedAt(request.getCompletedAt());
+        taskToUpdate.setPriority(request.getPriority());
         return taskRepository.save(taskToUpdate);
     }
 
