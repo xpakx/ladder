@@ -76,13 +76,16 @@ public class ProjectService {
     }
 
     public Task addTask(TaskRequest request, Integer projectId) {
-        Project parent = projectRepository.getById(projectId);
+        Project project = projectRepository.getById(projectId);
+        Task parent = taskRepository.getById(request.getParentId());
         Task taskToAdd = Task.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .order(request.getOrder())
-                .project(parent)
+                .project(project)
                 .createdAt(LocalDateTime.now())
+                .due(request.getDue())
+                .parent(parent)
                 .build();
         return taskRepository.save(taskToAdd);
     }
