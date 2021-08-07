@@ -3,6 +3,7 @@ package io.github.xpakx.ladder.service;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.DateRequest;
+import io.github.xpakx.ladder.entity.dto.PriorityRequest;
 import io.github.xpakx.ladder.entity.dto.TaskDetails;
 import io.github.xpakx.ladder.entity.dto.UpdateTaskRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
@@ -49,6 +50,12 @@ public class TaskService {
     public Task updateTaskDueDate(DateRequest request, Integer taskId) {
         Task taskToUpdate = taskRepository.getById(taskId);
         taskToUpdate.setDue(request.getDate());
+        return taskRepository.save(taskToUpdate);
+    }
+
+    public Task updateTaskPriority(PriorityRequest request, Integer taskId) {
+        Task taskToUpdate = taskRepository.getById(taskId);
+        taskToUpdate.setPriority(request.getPriority());
         return taskRepository.save(taskToUpdate);
     }
 }

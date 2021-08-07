@@ -1,10 +1,7 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Task;
-import io.github.xpakx.ladder.entity.dto.DateRequest;
-import io.github.xpakx.ladder.entity.dto.TaskDetails;
-import io.github.xpakx.ladder.entity.dto.TaskRequest;
-import io.github.xpakx.ladder.entity.dto.UpdateTaskRequest;
+import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,5 +37,10 @@ public class TaskController {
     @PutMapping("/{taskId}/due")
     public ResponseEntity<Task> updateTaskDueDate(@RequestBody DateRequest request, @PathVariable Integer taskId) {
         return  new ResponseEntity<>(taskService.updateTaskDueDate(request, taskId), HttpStatus.OK);
+    }
+
+    @PutMapping("/{taskId}/priority")
+    public ResponseEntity<Task> updateTaskPriority(@RequestBody PriorityRequest request, @PathVariable Integer taskId) {
+        return  new ResponseEntity<>(taskService.updateTaskPriority(request, taskId), HttpStatus.OK);
     }
 }
