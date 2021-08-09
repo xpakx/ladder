@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -71,5 +73,34 @@ public class TaskService {
         taskToUpdate.setCompleted(request.isFlag());
         taskToUpdate.setCompletedAt(request.isFlag() ? LocalDateTime.now() : null);
         return taskRepository.save(taskToUpdate);
+    }
+
+    public Task duplicate(Integer taskId) {
+        Task taskToDuplicate = taskRepository.findById(taskId)
+                .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
+
+        Task duplicatedTask = duplicateShallow(taskToDuplicate);
+        return taskRepository.save(duplicatedTask);
+    }
+
+    private Task duplicateShallow(Task originalTask) {
+        Task task = Task.builder()
+                .title(originalTask.getTitle())
+                .description(originalTask.getDescription())
+                .order(originalTask.getOrder())
+                .project(originalTask.getProject())
+                .createdAt(LocalDateTime.now())
+                .due(originalTask.getDue())
+                .priority(originalTask.getPriority())
+                .completed(false)
+                .build();
+        List<Task> children = originalTask.getChildren().stream()
+                .map(this::duplicateShallow)
+                .collect(Collectors.toList());
+        task.setChildren(children);
+        for(Task child : children) {
+            child.setParent(task);
+        }
+        return task;
     }
 }
