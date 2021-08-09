@@ -5,4 +5,5 @@ public interface TaskDetails {
     String getTitle();
     String getDetails();
     ProjectWithNameAndId getProject();
+    ParentWithId getParent();
 }
