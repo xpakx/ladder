@@ -44,7 +44,7 @@ public class TaskController {
         return  new ResponseEntity<>(taskService.updateTaskPriority(request, taskId), HttpStatus.OK);
     }
 
-    @PutMapping("/{taskId}/priority")
+    @PutMapping("/{taskId}/project")
     public ResponseEntity<Task> updateTaskProject(@RequestBody IdRequest request, @PathVariable Integer taskId) {
         return  new ResponseEntity<>(taskService.updateTaskProject(request, taskId), HttpStatus.OK);
     }
