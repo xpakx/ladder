@@ -69,12 +69,7 @@ public class TaskService {
         Task taskToUpdate = taskRepository.findById(taskId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
         taskToUpdate.setCompleted(request.isFlag());
-        if(request.isFlag()) {
-            taskToUpdate.setCompletedAt(LocalDateTime.now());
-        }
-        else {
-            taskToUpdate.setCompletedAt(null);
-        }
+        taskToUpdate.setCompletedAt(request.isFlag() ? LocalDateTime.now() : null);
         return taskRepository.save(taskToUpdate);
     }
 }
