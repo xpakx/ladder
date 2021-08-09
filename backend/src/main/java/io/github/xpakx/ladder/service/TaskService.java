@@ -9,6 +9,8 @@ import io.github.xpakx.ladder.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;
@@ -60,6 +62,19 @@ public class TaskService {
         Task taskToUpdate = taskRepository.getById(taskId);
         Project parent = projectRepository.getById(request.getId());
         taskToUpdate.setProject(parent);
+        return taskRepository.save(taskToUpdate);
+    }
+
+    public Task completeTask(BooleanRequest request, Integer taskId) {
+        Task taskToUpdate = taskRepository.findById(taskId)
+                .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
+        taskToUpdate.setCompleted(request.isFlag());
+        if(request.isFlag()) {
+            taskToUpdate.setCompletedAt(LocalDateTime.now());
+        }
+        else {
+            taskToUpdate.setCompletedAt(null);
+        }
         return taskRepository.save(taskToUpdate);
     }
 }

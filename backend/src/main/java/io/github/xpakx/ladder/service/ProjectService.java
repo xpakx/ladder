@@ -87,6 +87,7 @@ public class ProjectService {
                 .due(request.getDue())
                 .parent(parent)
                 .priority(0)
+                .completed(false)
                 .build();
         return taskRepository.save(taskToAdd);
     }

@@ -23,6 +23,7 @@ public class Task {
 
     private LocalDateTime due;
     private LocalDateTime completedAt;
+    private boolean completed;
     private LocalDateTime createdAt;
 
     private Integer order;
