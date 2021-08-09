@@ -24,6 +24,11 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.getProjectById(projectId), HttpStatus.OK);
     }
 
+    @GetMapping("/{projectId}/full")
+    public ResponseEntity<FullProjectTree> getFullProject(@PathVariable Integer projectId) {
+        return new ResponseEntity<>(projectService.getFullProject(projectId), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Project> addProject(@RequestBody ProjectRequest request) {
         return  new ResponseEntity<>(projectService.addProject(request), HttpStatus.CREATED);

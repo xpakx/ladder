@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ProjectService {
@@ -90,5 +91,12 @@ public class ProjectService {
                 .completed(false)
                 .build();
         return taskRepository.save(taskToAdd);
+    }
+
+    public FullProjectTree getFullProject(Integer projectId) {
+        ProjectDetails project = projectRepository.findProjectedById(projectId, ProjectDetails.class)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        List<TaskWithChildren> tasks = taskRepository.findByProjectIdAndParentIsNull(projectId);
+        return new FullProjectTree(project, tasks);
     }
 }

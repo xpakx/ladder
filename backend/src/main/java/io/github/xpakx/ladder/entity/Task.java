@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -34,6 +35,10 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "task_id")
     private Task parent;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "parent")
+    private List<Task> children;
 
     @JsonIgnore
     @ManyToOne
