@@ -25,4 +25,9 @@ public class Label {
             joinColumns={@JoinColumn(name="task_id")},
             inverseJoinColumns={@JoinColumn(name="label_id")})
     private Set<Task> tasks;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_account_id")
+    private UserAccount owner;
 }

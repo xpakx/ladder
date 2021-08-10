@@ -24,4 +24,9 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project parent;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_account_id")
+    private UserAccount owner;
 }

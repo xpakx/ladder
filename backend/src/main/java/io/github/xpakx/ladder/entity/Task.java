@@ -48,4 +48,9 @@ public class Task {
     @JsonIgnore
     @ManyToMany(mappedBy = "tasks")
     private Set<Label> labels;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_account_id")
+    private UserAccount owner;
 }
