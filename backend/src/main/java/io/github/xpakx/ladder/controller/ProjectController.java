@@ -33,7 +33,7 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<Project> addProject(@RequestBody ProjectRequest request, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.addProject(request), HttpStatus.CREATED);
+        return  new ResponseEntity<>(projectService.addProject(request, userId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{projectId}")

@@ -6,6 +6,7 @@ import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
+import io.github.xpakx.ladder.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,13 @@ import java.util.List;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
+    private final UserAccountRepository userRepository;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, TaskRepository taskRepository) {
+    public ProjectService(ProjectRepository projectRepository, TaskRepository taskRepository, UserAccountRepository userRepository) {
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
     public ProjectDetails getProjectById(Integer projectId, Integer userId) {
@@ -28,7 +31,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("No such project!"));
     }
 
-    public Project addProject(ProjectRequest request) {
+    public Project addProject(ProjectRequest request, Integer userId) {
         Project parent = null;
         if(request.getParentId() != null) {
             parent = projectRepository.getById(request.getParentId());
@@ -38,6 +41,7 @@ public class ProjectService {
                 .parent(parent)
                 .favorite(false)
                 .color(request.getColor())
+                .owner(userRepository.getById(userId))
                 .build();
         return projectRepository.save(projectToAdd);
     }
