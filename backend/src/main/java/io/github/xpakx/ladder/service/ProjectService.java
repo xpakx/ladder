@@ -23,8 +23,8 @@ public class ProjectService {
         this.taskRepository = taskRepository;
     }
 
-    public ProjectDetails getProjectById(Integer projectId) {
-        return projectRepository.findProjectedById(projectId, ProjectDetails.class)
+    public ProjectDetails getProjectById(Integer projectId, Integer userId) {
+        return projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
     }
 
@@ -93,8 +93,8 @@ public class ProjectService {
         return taskRepository.save(taskToAdd);
     }
 
-    public FullProjectTree getFullProject(Integer projectId) {
-        ProjectDetails project = projectRepository.findProjectedById(projectId, ProjectDetails.class)
+    public FullProjectTree getFullProject(Integer projectId, Integer userId) {
+        ProjectDetails project = projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         List<TaskWithChildren> tasks = taskRepository.findByProjectIdAndParentIsNull(projectId);
         return new FullProjectTree(project, tasks);

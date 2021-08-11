@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
-    <T> Optional<T> findProjectedById(Integer id, Class<T> type);
+    <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);
 }

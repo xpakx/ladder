@@ -23,12 +23,12 @@ public class ProjectController {
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/{projectId}")
     public ResponseEntity<ProjectDetails> getProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(projectService.getProjectById(projectId), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.getProjectById(projectId, userId), HttpStatus.OK);
     }
 
     @GetMapping("/{projectId}/full")
     public ResponseEntity<FullProjectTree> getFullProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(projectService.getFullProject(projectId), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.getFullProject(projectId, userId), HttpStatus.OK);
     }
 
     @PostMapping
