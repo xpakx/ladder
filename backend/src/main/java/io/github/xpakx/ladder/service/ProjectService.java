@@ -50,9 +50,7 @@ public class ProjectService {
         Project projectToUpdate = projectRepository.getById(projectId);
         projectToUpdate.setName(request.getName());
         projectToUpdate.setColor(request.getColor());
-        projectToUpdate.setParent(
-                request.getParentId() != null ? projectRepository.getById(request.getParentId()) : null
-        );
+        projectToUpdate.setParent(getParentFromProjectRequest(request)        );
         return projectRepository.save(projectToUpdate);
     }
 
