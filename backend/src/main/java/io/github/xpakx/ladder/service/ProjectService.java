@@ -32,18 +32,18 @@ public class ProjectService {
     }
 
     public Project addProject(ProjectRequest request, Integer userId) {
-        Project parent = null;
-        if(request.getParentId() != null) {
-            parent = projectRepository.getById(request.getParentId());
-        }
         Project projectToAdd = Project.builder()
                 .name(request.getName())
-                .parent(parent)
+                .parent(getParentFromProjectRequest(request))
                 .favorite(false)
                 .color(request.getColor())
                 .owner(userRepository.getById(userId))
                 .build();
         return projectRepository.save(projectToAdd);
+    }
+
+    private Project getParentFromProjectRequest(ProjectRequest request) {
+        return request.getParentId() != null ? projectRepository.getById(request.getParentId()) : null;
     }
 
     public Project updateProject(ProjectRequest request, Integer projectId) {
