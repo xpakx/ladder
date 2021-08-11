@@ -26,42 +26,50 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.getProjectById(projectId, userId), HttpStatus.OK);
     }
 
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/{projectId}/full")
     public ResponseEntity<FullProjectTree> getFullProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
         return new ResponseEntity<>(projectService.getFullProject(projectId, userId), HttpStatus.OK);
     }
 
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping
     public ResponseEntity<Project> addProject(@RequestBody ProjectRequest request, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.addProject(request, userId), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}")
     public ResponseEntity<Project> updateProject(@RequestBody ProjectRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.updateProject(request, projectId, userId), HttpStatus.OK);
     }
 
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/name")
     public ResponseEntity<Project> updateProjectName(@RequestBody NameRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.updateProjectName(request, projectId, userId), HttpStatus.OK);
     }
 
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/name")
     public ResponseEntity<Project> updateProjectParent(@RequestBody IdRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.updateProjectParent(request, projectId, userId), HttpStatus.OK);
     }
 
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/favorite")
     public ResponseEntity<Project> updateProjectFav(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.updateProjectFav(request, projectId, userId), HttpStatus.OK);
     }
 
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @DeleteMapping("/{projectId}")
     public ResponseEntity<?> deleteProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
         projectService.deleteProject(projectId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{projectId}/tasks")
     public ResponseEntity<Task> addTaskToProject(@RequestBody UpdateTaskRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.addTask(request, projectId, userId), HttpStatus.CREATED);
