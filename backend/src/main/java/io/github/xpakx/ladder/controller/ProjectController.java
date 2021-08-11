@@ -64,6 +64,6 @@ public class ProjectController {
 
     @PostMapping("/{projectId}/tasks")
     public ResponseEntity<Task> addTaskToProject(@RequestBody UpdateTaskRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.addTask(request, projectId), HttpStatus.CREATED);
+        return  new ResponseEntity<>(projectService.addTask(request, projectId, userId), HttpStatus.CREATED);
     }
 }
