@@ -46,11 +46,12 @@ public class ProjectService {
         return request.getParentId() != null ? projectRepository.getById(request.getParentId()) : null;
     }
 
-    public Project updateProject(ProjectRequest request, Integer projectId) {
-        Project projectToUpdate = projectRepository.getById(projectId);
+    public Project updateProject(ProjectRequest request, Integer projectId, Integer userId) {
+        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setName(request.getName());
         projectToUpdate.setColor(request.getColor());
-        projectToUpdate.setParent(getParentFromProjectRequest(request)        );
+        projectToUpdate.setParent(getParentFromProjectRequest(request));
         return projectRepository.save(projectToUpdate);
     }
 
