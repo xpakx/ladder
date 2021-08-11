@@ -33,6 +33,12 @@ public class ProjectController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping("/all")
+    public ResponseEntity<FullTree> getFullTree(@PathVariable Integer userId) {
+        return new ResponseEntity<>(projectService.getFullTree(userId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping
     public ResponseEntity<Project> addProject(@RequestBody ProjectRequest request, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.addProject(request, userId), HttpStatus.CREATED);
