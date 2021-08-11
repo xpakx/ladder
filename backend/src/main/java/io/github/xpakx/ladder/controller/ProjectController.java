@@ -43,17 +43,17 @@ public class ProjectController {
 
     @PutMapping("/{projectId}/name")
     public ResponseEntity<Project> updateProjectName(@RequestBody NameRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.updateProjectName(request, projectId), HttpStatus.OK);
+        return  new ResponseEntity<>(projectService.updateProjectName(request, projectId, userId), HttpStatus.OK);
     }
 
     @PutMapping("/{projectId}/name")
     public ResponseEntity<Project> updateProjectParent(@RequestBody IdRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.updateProjectParent(request, projectId), HttpStatus.OK);
+        return  new ResponseEntity<>(projectService.updateProjectParent(request, projectId, userId), HttpStatus.OK);
     }
 
     @PutMapping("/{projectId}/favorite")
     public ResponseEntity<Project> updateProjectFav(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.updateProjectFav(request, projectId), HttpStatus.OK);
+        return  new ResponseEntity<>(projectService.updateProjectFav(request, projectId, userId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{projectId}")

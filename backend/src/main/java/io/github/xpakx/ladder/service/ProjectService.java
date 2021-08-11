@@ -59,22 +59,25 @@ public class ProjectService {
         projectRepository.deleteByIdAndOwnerId(projectId, userId);
     }
 
-    public Project updateProjectName(NameRequest request, Integer projectId) {
-        Project projectToUpdate = projectRepository.getById(projectId);
+    public Project updateProjectName(NameRequest request, Integer projectId, Integer userId) {
+        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setName(request.getName());
         return projectRepository.save(projectToUpdate);
     }
 
-    public Project updateProjectParent(IdRequest request, Integer projectId) {
-        Project projectToUpdate = projectRepository.getById(projectId);
+    public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
+        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setParent(
                 request.getId() != null ? projectRepository.getById(request.getId()) : null
         );
         return projectRepository.save(projectToUpdate);
     }
 
-    public Project updateProjectFav(BooleanRequest request, Integer projectId) {
-        Project projectToUpdate = projectRepository.getById(projectId);
+    public Project updateProjectFav(BooleanRequest request, Integer projectId, Integer userId) {
+        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setFavorite(request.isFlag());
         return projectRepository.save(projectToUpdate);
     }
