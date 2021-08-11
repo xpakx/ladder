@@ -10,6 +10,10 @@ import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer> {
-    <T> Optional<T> findProjectedById(Integer id, Class<T> type);
+    <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);
     List<TaskWithChildren> findByProjectIdAndParentIsNull(Integer projectId);
+
+    void deleteByIdAndOwnerId(Integer taskId, Integer ownerId);
+
+    Optional<Task> findByIdAndOwnerId(Integer taskId, Integer ownerId);
 }
