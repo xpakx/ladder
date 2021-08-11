@@ -58,7 +58,7 @@ public class ProjectController {
 
     @DeleteMapping("/{projectId}")
     public ResponseEntity<?> deleteProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
-        projectService.deleteProject(projectId);
+        projectService.deleteProject(projectId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

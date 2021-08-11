@@ -55,8 +55,8 @@ public class ProjectService {
         return projectRepository.save(projectToUpdate);
     }
 
-    public void deleteProject(Integer projectId) {
-        projectRepository.deleteById(projectId);
+    public void deleteProject(Integer projectId, Integer userId) {
+        projectRepository.deleteByIdAndOwnerId(projectId, userId);
     }
 
     public Project updateProjectName(NameRequest request, Integer projectId) {

@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
     <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);
 
-    Optional<Project> findByIdAndOwnerId(Integer projectId, Integer ownerId);
+    Optional<Project> findByIdAndOwnerId(Integer Id, Integer ownerId);
+    void deleteByIdAndOwnerId(Integer Id, Integer ownerId);
 }
