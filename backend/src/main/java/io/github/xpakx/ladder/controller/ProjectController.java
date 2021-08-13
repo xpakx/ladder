@@ -82,4 +82,10 @@ public class ProjectController {
     public ResponseEntity<Task> addTaskToProject(@RequestBody UpdateTaskRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.addTask(request, projectId, userId), HttpStatus.CREATED);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/{projectId}/duplicate")
+    public ResponseEntity<Project> duplicateProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(projectService.duplicate(projectId, userId), HttpStatus.CREATED);
+    }
 }
