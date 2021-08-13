@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("{/{userId}/projects")
 public class ProjectController {
@@ -34,7 +36,7 @@ public class ProjectController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/all")
-    public ResponseEntity<FullTree> getFullTree(@PathVariable Integer userId) {
+    public ResponseEntity<List<FullProjectTree>> getFullTree(@PathVariable Integer userId) {
         return new ResponseEntity<>(projectService.getFullTree(userId), HttpStatus.OK);
     }
 

@@ -104,20 +104,11 @@ public class ProjectService {
     }
 
     public FullProjectTree getFullProject(Integer projectId, Integer userId) {
-        ProjectDetails project = projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
+        return projectRepository.findProjectedByIdAndOwnerId(projectId, userId, FullProjectTree.class)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        List<TaskWithChildren> tasks = taskRepository.findByProjectIdAndOwnerIdAndParentIsNull(projectId, userId);
-        return new FullProjectTree(project, tasks);
     }
 
-    public FullTree getFullTree(Integer userId) {
-        Map<Integer, List<TaskWithChildren>> tasks = taskRepository.findByOwnerIdAndParentIsNull(userId).stream()
-                .collect(Collectors.groupingBy((p) -> p.getProject().getId()));
-
-        List<FullProjectTree> projects = projectRepository.findByOwnerIdAndParentIsNull(userId).stream()
-                .map((p) -> new FullProjectTree(p, tasks.get(p.getId())))
-                .collect(Collectors.toList());
-        
-        return new FullTree(projects);
+    public List<FullProjectTree> getFullTree(Integer userId) {
+        return projectRepository.findByOwnerIdAndParentIsNull(userId);
     }
 }

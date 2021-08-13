@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +25,10 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project parent;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "parent")
+    private List<Project> children;
 
     @JsonIgnore
     @ManyToOne
