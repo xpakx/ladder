@@ -109,6 +109,6 @@ public class ProjectService {
     }
 
     public List<FullProjectTree> getFullTree(Integer userId) {
-        return projectRepository.findByOwnerIdAndParentIsNull(userId);
+        return projectRepository.findByOwnerIdAndParentIsNull(userId, FullProjectTree.class);
     }
 }
