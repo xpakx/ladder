@@ -89,11 +89,11 @@ public class TaskService {
         Task taskToDuplicate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
 
-        Task duplicatedTask = duplicateShallow(taskToDuplicate);
+        Task duplicatedTask = duplicate(taskToDuplicate);
         return taskRepository.save(duplicatedTask);
     }
 
-    private Task duplicateShallow(Task originalTask) {
+    private Task duplicate(Task originalTask) {
         Task task = Task.builder()
                 .title(originalTask.getTitle())
                 .description(originalTask.getDescription())
@@ -106,7 +106,7 @@ public class TaskService {
                 .completed(false)
                 .build();
         List<Task> children = originalTask.getChildren().stream()
-                .map(this::duplicateShallow)
+                .map(this::duplicate)
                 .collect(Collectors.toList());
         task.setChildren(children);
         for(Task child : children) {
