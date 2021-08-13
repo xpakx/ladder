@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface LabelRepository extends JpaRepository<Label, Integer> {
     Optional<Label> findByIdAndOwnerId(Integer labelId, Integer ownerId);
+
+    void deleteByIdAndOwnerId(Integer labelId, Integer ownerId);
 }

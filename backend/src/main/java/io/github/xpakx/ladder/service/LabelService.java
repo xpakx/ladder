@@ -35,4 +35,8 @@ public class LabelService {
         labelToUpdate.setName(request.getName());
         return labelRepository.save(labelToUpdate);
     }
+
+    public void deleteLabel(Integer labelId, Integer userId) {
+        labelRepository.deleteByIdAndOwnerId(labelId, userId);
+    }
 }

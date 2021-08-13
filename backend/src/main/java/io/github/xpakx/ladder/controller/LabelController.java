@@ -32,4 +32,11 @@ public class LabelController {
     public ResponseEntity<Label> updateLabel(@RequestBody LabelRequest request, @PathVariable Integer userId, @PathVariable Integer labelId) {
         return  new ResponseEntity<>(labelService.updateLabel(request, userId, labelId), HttpStatus.CREATED);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @DeleteMapping("/{labelId}")
+    public ResponseEntity<?> deleteProject(@PathVariable Integer labelId, @PathVariable Integer userId) {
+        labelService.deleteLabel(labelId, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
