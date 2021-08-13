@@ -26,4 +26,10 @@ public class LabelController {
     public ResponseEntity<Label> addLabel(@RequestBody LabelRequest request, @PathVariable Integer userId) {
         return  new ResponseEntity<>(labelService.addLabel(request, userId), HttpStatus.CREATED);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/{labelId}")
+    public ResponseEntity<Label> updateLabel(@RequestBody LabelRequest request, @PathVariable Integer userId, @PathVariable Integer labelId) {
+        return  new ResponseEntity<>(labelService.updateLabel(request, userId, labelId), HttpStatus.CREATED);
+    }
 }

@@ -1,7 +1,10 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Label;
+import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.LabelRequest;
+import io.github.xpakx.ladder.entity.dto.ProjectRequest;
+import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +27,12 @@ public class LabelService {
                 .owner(userRepository.getById(userId))
                 .build();
         return labelRepository.save(labelToAdd);
+    }
+
+    public Label updateLabel(LabelRequest request, Integer labelId, Integer userId) {
+        Label labelToUpdate = labelRepository.findByIdAndOwnerId(labelId, userId)
+                .orElseThrow(() -> new NotFoundException("No such label!"));
+        labelToUpdate.setName(request.getName());
+        return labelRepository.save(labelToUpdate);
     }
 }
