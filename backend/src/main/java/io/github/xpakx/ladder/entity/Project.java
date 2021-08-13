@@ -31,6 +31,10 @@ public class Project {
     private List<Project> children;
 
     @JsonIgnore
+    @OneToMany(mappedBy = "project")
+    private List<Task> tasks;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_account_id")
     private UserAccount owner;
