@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class LabelControllerTest {
+class ProjectControllerTest {
 
     @LocalServerPort
     private int port;
