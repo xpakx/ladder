@@ -114,7 +114,8 @@ class ProjectControllerTest {
                 .build();
         project.setChildren(List.of(subProject1, subProject2));
 
-        projectRepository.save(project);
+        taskRepository.saveAll(List.of(task1, task2));
+        projectRepository.saveAll(List.of(project, subProject1, subProject2));
         return project.getId();
     }
 
@@ -176,5 +177,36 @@ class ProjectControllerTest {
                 .get(baseUrl + "/{userId}/projects/{projectId}", userId, 1)
         .then()
                 .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldRespondWith401ToGetFullProjectIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}/full", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWithFullProject() {
+        Integer projectId = addProjectWith2ChildrenAnd2TasksAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}/full", userId, projectId)
+        .then()
+                .log()
+                .body()
+                .statusCode(OK.value())
+                .body("id", equalTo(projectId))
+                .body("name", equalTo("Test Project"))
+                .body("children", hasSize(2))
+                .body("tasks", hasSize(2));
     }
 }

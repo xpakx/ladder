@@ -3,7 +3,7 @@ package io.github.xpakx.ladder.entity.dto;
 public interface TaskDetails {
     Integer getId();
     String getTitle();
-    String getDetails();
+    String getDescription();
     ProjectWithNameAndId getProject();
     ParentWithId getParent();
 }

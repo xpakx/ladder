@@ -5,7 +5,7 @@ import java.util.List;
 public interface TaskWithChildren {
     Integer getId();
     String getTitle();
-    String getDetails();
+    String getDescription();
     ProjectWithNameAndId getProject();
     List<TaskWithChildren> getChildren();
 }

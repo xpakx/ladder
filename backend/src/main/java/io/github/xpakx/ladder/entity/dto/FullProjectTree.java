@@ -6,4 +6,5 @@ public interface FullProjectTree {
     Integer getId();
     String getName();
     List<TaskWithChildren> getTasks();
+    List<FullProjectTree> getChildren();
 }

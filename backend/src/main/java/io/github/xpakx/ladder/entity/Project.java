@@ -27,11 +27,11 @@ public class Project {
     private Project parent;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
     private List<Project> children;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private List<Task> tasks;
 
     @JsonIgnore
