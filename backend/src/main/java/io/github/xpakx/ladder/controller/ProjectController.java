@@ -59,7 +59,7 @@ public class ProjectController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/name")
+    @PutMapping("/{projectId}/parent")
     public ResponseEntity<Project> updateProjectParent(@RequestBody IdRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.updateProjectParent(request, projectId, userId), HttpStatus.OK);
     }
