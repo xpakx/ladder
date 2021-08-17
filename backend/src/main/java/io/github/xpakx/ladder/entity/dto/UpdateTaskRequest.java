@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class UpdateTaskRequest {
     private String title;
     private String description;
-    private Integer order;
+    private Integer projectOrder;
     private LocalDateTime due;
     private LocalDateTime completedAt;
     private Integer parentId;

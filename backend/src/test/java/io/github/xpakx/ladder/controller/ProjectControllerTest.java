@@ -164,4 +164,17 @@ class ProjectControllerTest {
                 .body("$", not(hasKey("children")))
                 .body("$", not(hasKey("tasks")));
     }
+
+    @Test
+    void shouldRespondWith404IfProjectNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
 }
