@@ -44,7 +44,7 @@ public class TaskService {
         Task taskToUpdate = taskRepository.getById(taskId);
         taskToUpdate.setTitle(request.getTitle());
         taskToUpdate.setDescription(request.getDescription());
-        taskToUpdate.setOrder(request.getOrder());
+        taskToUpdate.setGeneral_order(request.getOrder());
         taskToUpdate.setDue(request.getDue());
         taskToUpdate.setParent(parent);
         taskToUpdate.setProject(project);
@@ -97,7 +97,7 @@ public class TaskService {
         Task task = Task.builder()
                 .title(originalTask.getTitle())
                 .description(originalTask.getDescription())
-                .order(originalTask.getOrder())
+                .general_order(originalTask.getGeneral_order())
                 .project(originalTask.getProject())
                 .createdAt(LocalDateTime.now())
                 .due(originalTask.getDue())

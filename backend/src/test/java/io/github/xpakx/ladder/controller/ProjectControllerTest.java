@@ -1,8 +1,10 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.repository.ProjectRepository;
+import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import io.github.xpakx.ladder.security.JwtTokenUtil;
 import io.github.xpakx.ladder.service.UserService;
@@ -15,10 +17,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -39,6 +41,8 @@ class ProjectControllerTest {
     UserAccountRepository userRepository;
     @Autowired
     ProjectRepository projectRepository;
+    @Autowired
+    TaskRepository taskRepository;
 
     @BeforeEach
     void setUp() {
@@ -54,6 +58,7 @@ class ProjectControllerTest {
 
     @AfterEach
     void tearDown() {
+        taskRepository.deleteAll();
         projectRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -75,6 +80,42 @@ class ProjectControllerTest {
                 .build();
         parent.setChildren(Collections.singletonList(project));
         return projectRepository.save(project).getId();
+    }
+
+    private Integer addProjectWith2ChildrenAnd2TasksAndReturnId() {
+        Project project = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Test Project")
+                .build();
+        project = projectRepository.save(project);
+        Task task1 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Task")
+                .completed(false)
+                .project(project)
+                .build();
+        Task task2 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Task")
+                .completed(false)
+                .project(project)
+                .build();
+        project.setTasks(List.of(task1, task2));
+
+        Project subProject1 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Sub Project 1")
+                .parent(project)
+                .build();
+        Project subProject2 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Sub Project 1")
+                .parent(project)
+                .build();
+        project.setChildren(List.of(subProject1, subProject2));
+
+        projectRepository.save(project);
+        return project.getId();
     }
 
 
@@ -104,5 +145,23 @@ class ProjectControllerTest {
                 .body("id", equalTo(projectId))
                 .body("name", equalTo("Test Project"))
                 .body("parent.name", equalTo("Test Parent Project"));
+    }
+
+    @Test
+    void shouldNotProduceTasksAndSubProjectsWhenGettingProjectDetails() {
+        Integer projectId = addProjectWith2ChildrenAnd2TasksAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+        .then()
+                .statusCode(OK.value())
+                .body("id", equalTo(projectId))
+                .body("name", equalTo("Test Project"))
+                .body("$", not(hasKey("children")))
+                .body("$", not(hasKey("tasks")));
     }
 }

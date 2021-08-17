@@ -27,7 +27,7 @@ public class Task {
     private boolean completed;
     private LocalDateTime createdAt;
 
-    private Integer order;
+    private Integer general_order;
     private Integer dailyViewOrder;
     private Integer priority;
 

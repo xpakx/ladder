@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,7 +90,7 @@ public class ProjectService {
         Task taskToAdd = Task.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .order(request.getOrder())
+                .general_order(request.getOrder())
                 .project(project)
                 .createdAt(LocalDateTime.now())
                 .due(request.getDue())
@@ -149,7 +148,7 @@ public class ProjectService {
         Task task = Task.builder()
                 .title(originalTask.getTitle())
                 .description(originalTask.getDescription())
-                .order(originalTask.getOrder())
+                .general_order(originalTask.getGeneral_order())
                 .project(originalTask.getProject())
                 .createdAt(LocalDateTime.now())
                 .due(originalTask.getDue())
