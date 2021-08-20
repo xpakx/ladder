@@ -3,17 +3,20 @@ package io.github.xpakx.ladder.controller;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import io.github.xpakx.ladder.security.JwtTokenUtil;
 import io.github.xpakx.ladder.service.UserService;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -23,6 +26,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.withArgs;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProjectControllerTest {
@@ -317,6 +321,88 @@ class ProjectControllerTest {
                     .body("name", equalTo("Test Project"))
                     .body("children", hasSize(2))
                     .body("tasks", hasSize(2));
+    }
+
+    @Test
+    void shouldRespondWith401ToAddProjectIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/projects", 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddProject() {
+        ProjectRequest request = getValidAddProjectRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects", userId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("name", equalTo(request.getName()))
+                .body("color", equalTo(request.getColor()))
+                .body("favorite", equalTo(false));
+    }
+
+    @Test
+    void shouldAddProjectToParen() {
+        ProjectRequest request = getAddProjectWithParentRequest(
+                addProjectWith1TaskWith2SubtasksAndReturnId()
+        );
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects", userId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("name", equalTo(request.getName()))
+                .body("color", equalTo(request.getColor()))
+                .body("favorite", equalTo(false));
+    }
+
+    @Test
+    void shouldNotAddProjectWithNonexistentParent() {
+        ProjectRequest request = getAddProjectWithParentRequest(150);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects", userId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private ProjectRequest getValidAddProjectRequest() {
+        ProjectRequest request = new ProjectRequest();
+        request.setName("Added Project");
+        request.setColor("#ffffff");
+        return request;
+    }
+
+    private ProjectRequest getAddProjectWithParentRequest(Integer parentId) {
+        ProjectRequest request = new ProjectRequest();
+        request.setName("Added Project");
+        request.setColor("#ffffff");
+        request.setParentId(parentId);
+        return request;
     }
 }
 
