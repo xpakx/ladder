@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.withArgs;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -277,4 +278,45 @@ class ProjectControllerTest {
         .then()
                 .statusCode(NOT_FOUND.value());
     }
+
+    @Test
+    void shouldRespondWith401ToGetFullTreeIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .get(baseUrl + "/{userId}/projects/all", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWithFullProjectTree() {
+        Integer project1Id = addProjectWith1TaskWith2SubtasksAndReturnId();
+        Integer project2Id = addProjectWith2ChildrenAnd2TasksAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/all", userId)
+        .then()
+                .log()
+                .body()
+                .statusCode(OK.value())
+                .body("$", hasSize(2))
+                .body("$", hasItem(hasEntry("id", project1Id)))
+                .body("$", hasItem(hasEntry("id", project2Id)))
+                .rootPath("find{it.id == %s}", withArgs(project1Id))
+                    .body("name", equalTo("Test Project"))
+                    .body("children", hasSize(0))
+                    .body("tasks", hasSize(1))
+                    .body("tasks[0].children", hasSize(2))
+                .rootPath("find{it.id == %s}", withArgs(project2Id))
+                    .body("name", equalTo("Test Project"))
+                    .body("children", hasSize(2))
+                    .body("tasks", hasSize(2));
+    }
 }
+
