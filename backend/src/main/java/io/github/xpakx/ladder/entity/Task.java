@@ -33,7 +33,7 @@ public class Task {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "task_id")
+    @JoinColumn(name = "parent_id")
     private Task parent;
 
     @JsonIgnore
