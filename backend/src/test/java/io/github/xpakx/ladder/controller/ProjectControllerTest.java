@@ -119,6 +119,40 @@ class ProjectControllerTest {
         return project.getId();
     }
 
+    private Integer addProjectWith1TaskWith2SubtasksAndReturnId() {
+        Project project = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Test Project")
+                .build();
+        project = projectRepository.save(project);
+        Task task1 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Task")
+                .completed(false)
+                .project(project)
+                .build();
+        Task subtask1 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Subtask")
+                .completed(false)
+                .parent(task1)
+                .project(project)
+                .build();
+        Task subtask2 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("Second Subtask")
+                .completed(false)
+                .parent(task1)
+                .project(project)
+                .build();
+        task1.setChildren(List.of(subtask1, subtask2));
+        project.setTasks(List.of(task1));
+
+        taskRepository.saveAll(List.of(task1, subtask1, subtask2));
+        projectRepository.save(project);
+        return project.getId();
+    }
+
 
     @Test
     void shouldRespondWith401ToGetProjectIfUserUnauthorized() {
@@ -208,5 +242,39 @@ class ProjectControllerTest {
                 .body("name", equalTo("Test Project"))
                 .body("children", hasSize(2))
                 .body("tasks", hasSize(2));
+    }
+
+    @Test
+    void shouldRespondWithFullProjectWithSubtasks() {
+        Integer projectId = addProjectWith1TaskWith2SubtasksAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}/full", userId, projectId)
+        .then()
+                .log()
+                .body()
+                .statusCode(OK.value())
+                .body("id", equalTo(projectId))
+                .body("name", equalTo("Test Project"))
+                .body("children", hasSize(0))
+                .body("tasks", hasSize(1))
+                .body("tasks[0].children", hasSize(2));
+    }
+
+    @Test
+    void shouldRespondWith404IfFullProjectNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}/full", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
     }
 }
