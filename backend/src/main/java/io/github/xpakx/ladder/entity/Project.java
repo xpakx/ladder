@@ -28,11 +28,11 @@ public class Project {
     private Project parent;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Project> children;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @Where(clause = "parent_id is NULL")
     private List<Task> tasks;
 

@@ -3,6 +3,8 @@ package io.github.xpakx.ladder.controller;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.BooleanRequest;
+import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.entity.dto.NameRequest;
 import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
@@ -17,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -121,6 +122,42 @@ class ProjectControllerTest {
 
         taskRepository.saveAll(List.of(task1, task2));
         projectRepository.saveAll(List.of(project, subProject1, subProject2));
+        return project.getId();
+    }
+
+    private Integer addProjectWith2TasksAndReturnId() {
+        Project project = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Test Project")
+                .build();
+        project = projectRepository.save(project);
+        Task task1 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Task")
+                .completed(false)
+                .project(project)
+                .build();
+        Task task2 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Task")
+                .completed(false)
+                .project(project)
+                .build();
+        project.setTasks(List.of(task1, task2));
+
+
+        taskRepository.saveAll(List.of(task1, task2));
+        projectRepository.save(project);
+        return project.getId();
+    }
+
+    private Integer addNonFavoriteProject() {
+        Project project = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Test Project")
+                .favorite(false)
+                .build();
+        project = projectRepository.save(project);
         return project.getId();
     }
 
@@ -485,17 +522,17 @@ class ProjectControllerTest {
         .then()
                 .statusCode(OK.value());
 
-        checkIfParentIsEdited(projectId, request);
+        checkIfParentIsEdited(projectId, request.getParentId());
     }
 
-    private void checkIfParentIsEdited(Integer projectId, ProjectRequest request) {
+    private void checkIfParentIsEdited(Integer projectId, Integer parentId) {
         given()
                 .auth()
                 .oauth2(tokenFor("user1"))
         .when()
                 .get(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
         .then()
-                .body("parent.id", equalTo(request.getParentId()));
+                .body("parent.id", equalTo(parentId));
     }
 
     @Test
@@ -548,5 +585,185 @@ class ProjectControllerTest {
                 .statusCode(OK.value())
                 .body("name", equalTo(request.getName()));
     }
-}
 
+    @Test
+    void shouldRespondWith401ToUpdateProjectParentIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/parent", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateProjectParentIfProjectNotFound() {
+        IdRequest request = getValidIdRequest(
+                addProjectWith1TaskWith2SubtasksAndReturnId()
+        );
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/parent", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private IdRequest getValidIdRequest(Integer id) {
+        IdRequest request = new IdRequest();
+        request.setId(id);
+        return request;
+    }
+
+    @Test
+    void shouldUpdateProjectParent() {
+        Integer projectId = addProjectWithParentAndReturnId();
+        IdRequest request = getValidIdRequest(
+                addProjectWith1TaskWith2SubtasksAndReturnId()
+        );
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/parent", userId, projectId)
+        .then()
+                .statusCode(OK.value());
+
+        checkIfParentIsEdited(projectId, request.getId());
+    }
+    @Test
+    void shouldNotUpdateProjectParentIfParentDoesNotExist() {
+        Integer projectId = addProjectWithParentAndReturnId();
+        IdRequest request = getValidIdRequest(150);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/parent", userId, projectId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateProjectFavoriteStatusIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/favorite", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateProjectFavoriteStatusIfProjectNotFound() {
+        BooleanRequest request = getTrueBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/favorite", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private BooleanRequest getTrueBooleanRequest() {
+        BooleanRequest request = new BooleanRequest();
+        request.setFlag(true);
+        return request;
+    }
+
+    @Test
+    void shouldUpdateProjectFavoriteStatus() {
+        Integer projectId = addNonFavoriteProject();
+        BooleanRequest request = getTrueBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/favorite", userId, projectId)
+        .then()
+                .statusCode(OK.value())
+                .body("favorite", equalTo(true));
+    }
+
+    @Test
+    void shouldRespondWith401ToDeleteProjectIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .delete(baseUrl + "/{userId}/projects/{projectId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldDeleteProject() {
+        Integer projectId = addProjectWithParentAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .delete(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+        .then()
+                .statusCode(OK.value());
+    }
+
+    @Test
+    void shouldDeleteProjectWithTasks() {
+        Integer projectId = addProjectWith2TasksAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .delete(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+        .then()
+                .statusCode(OK.value());
+
+        assertEquals(0, taskRepository.findAll().size());
+    }
+
+    @Test
+    void shouldDeleteProjectWithTasksAndSubprojects() {
+        Integer projectId = addProjectWith2ChildrenAnd2TasksAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .delete(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+        .then()
+                .statusCode(OK.value());
+
+        assertEquals(0, taskRepository.findAll().size());
+        assertEquals(0, projectRepository.findAll().size());
+    }
+}
