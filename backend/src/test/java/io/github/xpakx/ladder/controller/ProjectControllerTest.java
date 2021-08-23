@@ -442,7 +442,7 @@ class ProjectControllerTest {
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
-                .put(baseUrl + "/{userId}/projects/{projectId}", 1, 1)
+                .put(baseUrl + "/{userId}/projects/{projectId}", userId, 1)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
@@ -520,7 +520,7 @@ class ProjectControllerTest {
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
-                .put(baseUrl + "/{userId}/projects/{projectId}/name", 1, 1)
+                .put(baseUrl + "/{userId}/projects/{projectId}/name", userId, 1)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
