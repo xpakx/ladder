@@ -3,6 +3,7 @@ package io.github.xpakx.ladder.controller;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.NameRequest;
 import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -495,6 +496,57 @@ class ProjectControllerTest {
                 .get(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
         .then()
                 .body("parent.id", equalTo(request.getParentId()));
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateProjectNameIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/name", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateProjectNameIfProjectNotFound() {
+        NameRequest request = getValidUpdateProjectNameRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/name", 1, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private NameRequest getValidUpdateProjectNameRequest() {
+        NameRequest request = new NameRequest();
+        request.setName("Project with updated name");
+        return request;
+    }
+
+    @Test
+    void shouldUpdateProjectName() {
+        Integer projectId = addProjectWithParentAndReturnId();
+        NameRequest request = getValidUpdateProjectNameRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/name", userId, projectId)
+        .then()
+                .statusCode(OK.value())
+                .body("name", equalTo(request.getName()));
     }
 }
 
