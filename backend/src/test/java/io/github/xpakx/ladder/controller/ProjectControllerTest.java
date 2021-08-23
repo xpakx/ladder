@@ -22,8 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.withArgs;
+import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -354,7 +353,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    void shouldAddProjectToParen() {
+    void shouldAddProjectToParent() {
         ProjectRequest request = getAddProjectWithParentRequest(
                 addProjectWith1TaskWith2SubtasksAndReturnId()
         );
@@ -397,12 +396,105 @@ class ProjectControllerTest {
         return request;
     }
 
+    private ProjectRequest getValidUpdateProjectRequest() {
+        ProjectRequest request = new ProjectRequest();
+        request.setName("Updated Project");
+        request.setColor("#ffffff");
+        return request;
+    }
+
     private ProjectRequest getAddProjectWithParentRequest(Integer parentId) {
         ProjectRequest request = new ProjectRequest();
         request.setName("Added Project");
         request.setColor("#ffffff");
         request.setParentId(parentId);
         return request;
+    }
+
+    private ProjectRequest getUpdateProjectWithParentRequest(Integer parentId) {
+        ProjectRequest request = new ProjectRequest();
+        request.setName("Updated Project");
+        request.setColor("#ffffff");
+        request.setParentId(parentId);
+        return request;
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateProjectIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateProjectIfProjectNotFound() {
+        ProjectRequest request = getValidUpdateProjectRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}", 1, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldUpdateProject() {
+        ProjectRequest request = getValidUpdateProjectRequest();
+        Integer projectId = addProjectWith2ChildrenAnd2TasksAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+        .then()
+                .statusCode(OK.value())
+                .body("name", equalTo(request.getName()))
+                .body("color", equalTo(request.getColor()))
+                .body("favorite", equalTo(false));
+    }
+
+    @Test
+    void shouldChangeProjectParentWhileUpdating() {
+        Integer projectId = addProjectWithParentAndReturnId();
+        ProjectRequest request = getUpdateProjectWithParentRequest(
+                addProjectWith1TaskWith2SubtasksAndReturnId()
+        );
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+        .then()
+                .statusCode(OK.value());
+
+        checkIfParentIsEdited(projectId, request);
+    }
+
+    private void checkIfParentIsEdited(Integer projectId, ProjectRequest request) {
+        given()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+        .then()
+                .body("parent.id", equalTo(request.getParentId()));
     }
 }
 
