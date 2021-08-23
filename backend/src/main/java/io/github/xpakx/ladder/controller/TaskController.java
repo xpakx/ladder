@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/{userId}//tasks")
+@RequestMapping("/{userId}/tasks")
 public class TaskController {
     private final TaskService taskService;
 

@@ -9,6 +9,7 @@ import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +28,7 @@ public class TaskService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public void deleteTask(Integer taskId, Integer userId) {
         this.taskRepository.deleteByIdAndOwnerId(taskId, userId);
     }
