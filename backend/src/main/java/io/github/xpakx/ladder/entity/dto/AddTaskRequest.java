@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class UpdateTaskRequest {
+public class AddTaskRequest {
     private String title;
     private String description;
     private Integer projectOrder;

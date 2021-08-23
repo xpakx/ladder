@@ -34,7 +34,7 @@ public class TaskController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{taskId}")
-    public ResponseEntity<Task> updateTask(@RequestBody UpdateTaskRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+    public ResponseEntity<Task> updateTask(@RequestBody AddTaskRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(taskService.updateTask(request, taskId, userId), HttpStatus.OK);
     }
 

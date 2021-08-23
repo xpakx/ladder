@@ -36,7 +36,7 @@ public class TaskService {
                 .orElseThrow(() -> new NotFoundException("No such task!"));
     }
 
-    public Task updateTask(UpdateTaskRequest request, Integer taskId, Integer userId) {
+    public Task updateTask(AddTaskRequest request, Integer taskId, Integer userId) {
         Project project = projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         Task parent = taskRepository.findByIdAndOwnerId(taskId, userId)

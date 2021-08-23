@@ -85,10 +85,10 @@ public class ProjectService {
         return projectRepository.save(projectToUpdate);
     }
 
-    public Task addTask(UpdateTaskRequest request, Integer projectId, Integer userId) {
+    public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
         Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        Task parent = taskRepository.getById(request.getParentId());
+        Task parent = request.getParentId() == null ? null : taskRepository.getById(request.getParentId());
         Task taskToAdd = Task.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())

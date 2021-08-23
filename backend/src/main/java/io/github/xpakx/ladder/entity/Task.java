@@ -37,7 +37,7 @@ public class Task {
     private Task parent;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
     private List<Task> children;
 
     @JsonIgnore

@@ -3,10 +3,7 @@ package io.github.xpakx.ladder.controller;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
-import io.github.xpakx.ladder.entity.dto.BooleanRequest;
-import io.github.xpakx.ladder.entity.dto.IdRequest;
-import io.github.xpakx.ladder.entity.dto.NameRequest;
-import io.github.xpakx.ladder.entity.dto.ProjectRequest;
+import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -20,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -78,14 +76,13 @@ class ProjectControllerTest {
                 .owner(userRepository.getById(userId))
                 .name("Test Parent Project")
                 .build();
-        parent = projectRepository.save(parent);
         Project project = Project.builder()
                 .owner(userRepository.getById(userId))
                 .name("Test Project")
                 .parent(parent)
                 .build();
         parent.setChildren(Collections.singletonList(project));
-        return projectRepository.save(project).getId();
+        return projectRepository.save(parent).getChildren().get(0).getId();
     }
 
     private Integer addProjectWith2ChildrenAnd2TasksAndReturnId() {
@@ -93,7 +90,6 @@ class ProjectControllerTest {
                 .owner(userRepository.getById(userId))
                 .name("Test Project")
                 .build();
-        project = projectRepository.save(project);
         Task task1 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .title("First Task")
@@ -102,7 +98,7 @@ class ProjectControllerTest {
                 .build();
         Task task2 = Task.builder()
                 .owner(userRepository.getById(userId))
-                .title("First Task")
+                .title("Second Task")
                 .completed(false)
                 .project(project)
                 .build();
@@ -120,8 +116,7 @@ class ProjectControllerTest {
                 .build();
         project.setChildren(List.of(subProject1, subProject2));
 
-        taskRepository.saveAll(List.of(task1, task2));
-        projectRepository.saveAll(List.of(project, subProject1, subProject2));
+        projectRepository.save(project);
         return project.getId();
     }
 
@@ -145,8 +140,6 @@ class ProjectControllerTest {
                 .build();
         project.setTasks(List.of(task1, task2));
 
-
-        taskRepository.saveAll(List.of(task1, task2));
         projectRepository.save(project);
         return project.getId();
     }
@@ -166,7 +159,6 @@ class ProjectControllerTest {
                 .owner(userRepository.getById(userId))
                 .name("Test Project")
                 .build();
-        project = projectRepository.save(project);
         Task task1 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .title("First Task")
@@ -190,7 +182,6 @@ class ProjectControllerTest {
         task1.setChildren(List.of(subtask1, subtask2));
         project.setTasks(List.of(task1));
 
-        taskRepository.saveAll(List.of(task1, subtask1, subtask2));
         projectRepository.save(project);
         return project.getId();
     }
@@ -765,5 +756,120 @@ class ProjectControllerTest {
 
         assertEquals(0, taskRepository.findAll().size());
         assertEquals(0, projectRepository.findAll().size());
+    }
+
+    @Test
+    void shouldRespondWith401ToAddTaskIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/tasks", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToAddTaskIfProjectNotFound() {
+        AddTaskRequest request = getValidAddTaskRequest(150);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/tasks", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private AddTaskRequest getValidAddTaskRequest(Integer projectId) {
+        AddTaskRequest request = new AddTaskRequest();
+        request.setTitle("Added Task");
+        request.setDescription("Newly added task.");
+        request.setProjectOrder(0);
+        request.setProjectId(projectId);
+        request.setPriority(0);
+        return request;
+    }
+
+    @Test
+    void shouldAddTaskToProject() {
+        Integer projectId = addProjectWithParentAndReturnId();
+        AddTaskRequest request = getValidAddTaskRequest(projectId);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/tasks", userId, projectId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()));
+    }
+
+    @Test
+    void shouldRespondWith401ToDuplicateProjectRequestIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/duplicate", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToDuplicateProjectRequestIfProjectNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/duplicate", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldDuplicateWholeProjectTree() {
+        Integer projectId = addProjectWith2ChildrenAnd2TasksAndReturnId();
+        Integer projects = projectRepository.findAll().size();
+        Integer tasks = taskRepository.findAll().size();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/duplicate", userId, projectId)
+        .then()
+                .statusCode(CREATED.value());
+        assertEquals(2*projects, projectRepository.findAll().size());
+        assertEquals(2*tasks, taskRepository.findAll().size());
+    }
+
+    @Test
+    void shouldDuplicateWholeProjectWithSubtasksTree() {
+        Integer projectId = addProjectWith1TaskWith2SubtasksAndReturnId();
+        Integer projects = projectRepository.findAll().size();
+        Integer tasks = taskRepository.findAll().size();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/duplicate", userId, projectId)
+                .then()
+                .statusCode(CREATED.value());
+        assertEquals(2*projects, projectRepository.findAll().size());
+        assertEquals(2*tasks, taskRepository.findAll().size());
     }
 }
