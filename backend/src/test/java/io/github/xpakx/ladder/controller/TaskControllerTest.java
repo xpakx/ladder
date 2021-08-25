@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -135,5 +136,62 @@ class TaskControllerTest {
         .then()
                 .statusCode(OK.value());
         assertEquals(0, taskRepository.findAll().size());
+    }
+
+    @Test
+    void shouldRespondWith401ToGetTaskDetailsIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .get(baseUrl + "/{userId}/tasks/{taskId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToGetTaskDetailsIfTaskNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/tasks/{taskId}", userId, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWithTaskDetails() {
+        Integer taskId = addTaskReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{taskId}", userId, taskId)
+        .then()
+                .statusCode(OK.value())
+                .body("id", equalTo(taskId))
+                .body("title", equalTo("Test Task"));
+    }
+
+    @Test
+    void shouldNotProduceSubtasksWhenGettingTaskDetails() {
+        Integer projectId = addTaskWith2SubtasksAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+        .then()
+                .statusCode(OK.value())
+                .body("id", equalTo(projectId))
+                .body("title", equalTo("Test Project"))
+                .body("$", not(hasKey("children")));
     }
 }
