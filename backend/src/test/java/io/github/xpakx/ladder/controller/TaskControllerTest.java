@@ -3,7 +3,7 @@ package io.github.xpakx.ladder.controller;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
-import io.github.xpakx.ladder.entity.dto.AddTaskRequest;
+import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
@@ -273,5 +274,252 @@ class TaskControllerTest {
                 .get(baseUrl + "/{userId}/tasks/{taskId}", userId, taskId)
         .then()
                 .body("project.id", equalTo(parentId));
+    }
+
+    private DateRequest getValidDateRequest() {
+        DateRequest request = new DateRequest();
+        request.setDate(LocalDateTime.of(2020, 12, 12, 12, 12, 12));
+        return request;
+    }
+
+    private PriorityRequest getValidPriorityRequest() {
+        PriorityRequest request = new PriorityRequest();
+        request.setPriority(3);
+        return request;
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskDueDateIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/due", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskDueDateIfTaskNotFound() {
+        DateRequest request = getValidDateRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/due", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldUpdateTaskDueDate() {
+        Integer taskId = addTaskAndReturnId();
+        DateRequest request = getValidDateRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/due", userId, taskId)
+        .then()
+                .statusCode(OK.value())
+                .body("due", equalTo(request.getDate().toString()));
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskPriorityIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/priority", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskPriorityIfTaskNotFound() {
+        PriorityRequest request = getValidPriorityRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/priority", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldUpdateTaskPriority() {
+        Integer taskId = addTaskAndReturnId();
+        PriorityRequest request = getValidPriorityRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/priority", userId, taskId)
+        .then()
+                .statusCode(OK.value())
+                .body("priority", equalTo(request.getPriority()));
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskProjectUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/project", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskProjectIfTaskNotFound() {
+        IdRequest request = getValidIdRequest(5);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/project", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private IdRequest getValidIdRequest(Integer id) {
+        IdRequest request = new IdRequest();
+        request.setId(id);
+        return request;
+    }
+
+    @Test
+    void shouldUpdateTaskProject() {
+        Integer taskId = addTaskAndReturnId();
+        IdRequest request = getValidIdRequest(
+                addProjectAndReturnId()
+        );
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/project", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+
+        checkIfProjectIsEdited(taskId, request.getId());
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskCompletionIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/completed", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskCompletionIfTaskNotFound() {
+        BooleanRequest request = getValidBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/completed", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private BooleanRequest getValidBooleanRequest() {
+        BooleanRequest request = new BooleanRequest();
+        request.setFlag(true);
+        return request;
+    }
+
+    @Test
+    void shouldUpdateTaskCompletion() {
+        Integer taskId = addTaskAndReturnId();
+        BooleanRequest request = getValidBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/completed", userId, taskId)
+        .then()
+                .statusCode(OK.value())
+                .body("completed", equalTo(true));
+    }
+
+    @Test
+    void shouldRespondWith401ToDuplicateTaskIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/duplicate", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToDuplicateTaskIfTaskNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/duplicate", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldDuplicateTask() {
+        Integer taskId = addTaskWith2SubtasksAndReturnId();
+        Integer tasks = taskRepository.findAll().size();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .post(baseUrl + "/{userId}/tasks/{taskId}/duplicate", userId, taskId)
+        .then()
+                .statusCode(CREATED.value());
+        assertEquals(2*tasks, taskRepository.findAll().size());
     }
 }
