@@ -159,7 +159,7 @@ class TaskControllerTest {
         .when()
                 .get(baseUrl + "/{userId}/tasks/{taskId}", userId, 1)
         .then()
-                .statusCode(UNAUTHORIZED.value());
+                .statusCode(NOT_FOUND.value());
     }
 
     @Test
@@ -171,7 +171,7 @@ class TaskControllerTest {
                 .auth()
                 .oauth2(tokenFor("user1"))
         .when()
-                .get(baseUrl + "/{userId}/projects/{taskId}", userId, taskId)
+                .get(baseUrl + "/{userId}/tasks/{taskId}", userId, taskId)
         .then()
                 .statusCode(OK.value())
                 .body("id", equalTo(taskId))
@@ -180,18 +180,18 @@ class TaskControllerTest {
 
     @Test
     void shouldNotProduceSubtasksWhenGettingTaskDetails() {
-        Integer projectId = addTaskWith2SubtasksAndReturnId();
+        Integer taskId = addTaskWith2SubtasksAndReturnId();
         given()
                 .log()
                 .uri()
                 .auth()
                 .oauth2(tokenFor("user1"))
         .when()
-                .get(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+                .get(baseUrl + "/{userId}/tasks/{taskId}", userId, taskId)
         .then()
                 .statusCode(OK.value())
-                .body("id", equalTo(projectId))
-                .body("title", equalTo("Test Project"))
+                .body("id", equalTo(taskId))
+                .body("title", equalTo("First Task"))
                 .body("$", not(hasKey("children")));
     }
 }
