@@ -489,7 +489,7 @@ class TaskControllerTest {
                 .log()
                 .uri()
         .when()
-                .put(baseUrl + "/{userId}/tasks/{taskId}/duplicate", 1, 1)
+                .post(baseUrl + "/{userId}/tasks/{taskId}/duplicate", 1, 1)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -502,7 +502,7 @@ class TaskControllerTest {
                 .auth()
                 .oauth2(tokenFor("user1"))
         .when()
-                .put(baseUrl + "/{userId}/tasks/{taskId}/duplicate", userId, 1)
+                .post(baseUrl + "/{userId}/tasks/{taskId}/duplicate", userId, 1)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
