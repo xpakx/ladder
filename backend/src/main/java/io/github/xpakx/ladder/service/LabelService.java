@@ -9,6 +9,7 @@ import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LabelService {
@@ -36,6 +37,7 @@ public class LabelService {
         return labelRepository.save(labelToUpdate);
     }
 
+    @Transactional
     public void deleteLabel(Integer labelId, Integer userId) {
         labelRepository.deleteByIdAndOwnerId(labelId, userId);
     }
