@@ -631,6 +631,7 @@ class ProjectControllerTest {
 
         checkIfParentIsEdited(projectId, request.getId());
     }
+
     @Test
     void shouldNotUpdateProjectParentIfParentDoesNotExist() {
         Integer projectId = addProjectWithParentAndReturnId();

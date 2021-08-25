@@ -3,11 +3,13 @@ package io.github.xpakx.ladder.controller;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.AddTaskRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import io.github.xpakx.ladder.security.JwtTokenUtil;
 import io.github.xpakx.ladder.service.UserService;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -67,12 +68,20 @@ class TaskControllerTest {
         return jwtTokenUtil.generateToken(userService.loadUserToLogin(username));
     }
 
-    private Integer addTaskReturnId() {
+    private Integer addTaskAndReturnId() {
         Task task = Task.builder()
                 .owner(userRepository.getById(userId))
                 .title("Test Task")
                 .build();
         return taskRepository.save(task).getId();
+    }
+
+    private Integer addProjectAndReturnId() {
+        Project project = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Test Project")
+                .build();
+        return projectRepository.save(project).getId();
     }
 
     private Integer addTaskWith2SubtasksAndReturnId() {
@@ -111,7 +120,7 @@ class TaskControllerTest {
 
     @Test
     void shouldDeleteTask() {
-        Integer taskId = addTaskReturnId();
+        Integer taskId = addTaskAndReturnId();
         given()
                 .log()
                 .uri()
@@ -164,7 +173,7 @@ class TaskControllerTest {
 
     @Test
     void shouldRespondWithTaskDetails() {
-        Integer taskId = addTaskReturnId();
+        Integer taskId = addTaskAndReturnId();
         given()
                 .log()
                 .uri()
@@ -193,5 +202,76 @@ class TaskControllerTest {
                 .body("id", equalTo(taskId))
                 .body("title", equalTo("First Task"))
                 .body("$", not(hasKey("children")));
+    }
+
+    private AddTaskRequest getValidAddTaskRequest(Integer projectId) {
+        AddTaskRequest request = new AddTaskRequest();
+        request.setTitle("Added Task");
+        request.setDescription("Newly added task.");
+        request.setProjectOrder(0);
+        request.setProjectId(projectId);
+        request.setPriority(0);
+        return request;
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskIfTaskNotFound() {
+        AddTaskRequest request = getValidAddTaskRequest(150);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldUpdateTask() {
+        Integer taskId = addTaskAndReturnId();
+        AddTaskRequest request = getValidAddTaskRequest(
+                addProjectAndReturnId()
+        );
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}", userId, taskId)
+        .then()
+                .statusCode(OK.value())
+                .body("title", equalTo(request.getTitle()))
+                .body("projectOrder", equalTo(request.getProjectOrder()))
+                .body("priority", equalTo(request.getPriority()));
+
+        checkIfProjectIsEdited(taskId, request.getProjectId());
+    }
+
+    private void checkIfProjectIsEdited(Integer taskId, Integer parentId) {
+        given()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/tasks/{taskId}", userId, taskId)
+        .then()
+                .body("project.id", equalTo(parentId));
     }
 }
