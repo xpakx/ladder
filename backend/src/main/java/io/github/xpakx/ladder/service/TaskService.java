@@ -82,9 +82,19 @@ public class TaskService {
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
-        taskToUpdate.setCompleted(request.isFlag());
-        taskToUpdate.setCompletedAt(request.isFlag() ? LocalDateTime.now() : null);
+        if(request.isFlag()) {
+            completeTask(taskToUpdate);
+        } else {
+            taskToUpdate.setCompleted(false);
+            taskToUpdate.setCompletedAt(null);
+        }
         return taskRepository.save(taskToUpdate);
+    }
+
+    private void completeTask(Task task) {
+        task.setCompleted(true);
+        task.setCompletedAt(LocalDateTime.now());
+        task.getChildren().forEach(this::completeTask);
     }
 
     public Task duplicate(Integer taskId, Integer userId) {

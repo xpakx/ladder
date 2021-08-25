@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
@@ -481,6 +482,26 @@ class TaskControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("completed", equalTo(true));
+    }
+
+    @Test
+    void shouldUpdateSubtaskOnUpdatingTaskCompletion() {
+        Integer taskId = addTaskWith2SubtasksAndReturnId();
+        BooleanRequest request = getValidBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/completed", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+
+        Task task = taskRepository.findById(taskId).get();
+        assertThat(task.getChildren(), everyItem(hasProperty("completed", equalTo(true))));
     }
 
     @Test
