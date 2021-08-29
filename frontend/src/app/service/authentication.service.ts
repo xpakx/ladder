@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuthenticationRequest } from '../entity/authentication-request';
+import { RegistrationRequest } from '../entity/registration-request';
+import { TokenResponse } from '../entity/token-response';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +13,11 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) { }
 
-  public authenticate(request: object):  Observable<any> {
-    return this.http.post<any>(`${this.apiServerUrl}/authenticate`, request);
+  public authenticate(request: AuthenticationRequest):  Observable<TokenResponse> {
+    return this.http.post<TokenResponse>(`${this.apiServerUrl}/authenticate`, request);
+  }
+
+  public register(request: RegistrationRequest):  Observable<TokenResponse> {
+    return this.http.post<TokenResponse>(`${this.apiServerUrl}/register`, request);
   }
 }
