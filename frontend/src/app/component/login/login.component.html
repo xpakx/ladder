@@ -12,7 +12,9 @@
         <input class="password" formControlName="password" type="password" />
     </form>
     <button class="btn" (click)="logIn()">Login</button>
-    <div id="warning" *ngIf="invalid">Error: {{message}}</div>
+    <div id="warning" *ngIf="invalid">
+        Error: {{message}}
+    </div>
 
     <div class="separator">
     </div>

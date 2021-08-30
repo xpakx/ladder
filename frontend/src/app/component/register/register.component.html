@@ -1,27 +1,29 @@
 <div class="container">
     <h2>Register</h2>
-    <form id="form">
+    <form id="form" [formGroup]="form">
         <div>
-            <label for="email">Username</label>
+            <label for="username">Username</label>
         </div>
-        <input class="email" type="email" name="username" type="email" />
+        <input class="username" formControlName="username" />
 
         <div class="password">
-            Password
+            <label for="password">Password</label>
         </div>
-        <input class="email" type="password" name="password" type="password" />
+        <input class="password" formControlName="password" type="password" />
 
         <div class="password">
-            Repeat password
+            <label for="passwordRe">Repeat password</label>
         </div>
-        <input class="email" type="password" name="passwordRe" type="password" />
+        <input class="passwordRe" formControlName="passwordRe" type="password" />
     </form>
-    <button class="btn" id="loginbtn">Register</button>
-    <div id="warning"></div>
+    <button class="btn" (click)="signUp()">Register</button>
+    <div id="warning" *ngIf="invalid">
+        Error: {{message}}
+    </div>
 
     <div class="seprator">
     </div>
     <div class="login">
-        Already signed up? <a class="link" href="#">Go to login</a>
+        Already signed up? <a class="link" (click)="toLogin()">Go to login</a>
     </div>
 </div>
