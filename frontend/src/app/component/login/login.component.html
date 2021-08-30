@@ -1,22 +1,22 @@
 <div class="container">
     <h2>Login</h2>
-    <form id="form">
+    <form id="form" [formGroup]="form">
         <div>
-            <label for="email">Login</label>
+            <label for="username">Login</label>
         </div>
-        <input class="email" type="email" name="email" type="email" />
+        <input class="username" formControlName="username"/>
 
         <div class="password">
-            Password
+            <label for="password">Password</label>
         </div>
-        <input class="email" type="password" name="password" type="password" />
+        <input class="password" formControlName="password" type="password" />
     </form>
-    <button class="btn" id="loginbtn">Login</button>
-    <div id="warning"></div>
+    <button class="btn" (click)="logIn()">Login</button>
+    <div id="warning" *ngIf="invalid">Error: {{message}}</div>
 
-    <div class="seprator">
+    <div class="separator">
     </div>
     <div class="login">
-        Don't have an account? <a class="link" href="#">Signup</a>
+        Don't have an account? <a class="link" (click)="toRegister()">Sign up</a>
     </div>
 </div>

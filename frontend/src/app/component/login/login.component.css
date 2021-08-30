@@ -6,6 +6,7 @@
     padding: 15px;
     background-color: white;
     border: 1px solid whitesmoke;
+    text-align: center;
 }
 
 .btn{
@@ -17,7 +18,7 @@
     font-weight: bold;
     border: 1px solid transparent;
 }
-.seprator{
+.separator{
     margin-top: 40px;
     margin-bottom: 20px;
     height: 0;
@@ -43,4 +44,10 @@
 .login{
     text-align: center;
     color: #666;
+}
+
+a:hover {
+    cursor:pointer;
+    text-decoration: underline;
+    text-decoration-style: dotted;
 }
