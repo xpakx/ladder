@@ -38,7 +38,9 @@ export class LoginComponent implements OnInit {
         password: this.form.controls.password.value
       }).subscribe(
         (response: TokenResponse) => {
-          
+          localStorage.setItem("token", response.token);
+          localStorage.setItem("user_id", response.id);
+          this.router.navigate([""]);
         },
         (error: HttpErrorResponse) => {
           if(error.status === 401) {

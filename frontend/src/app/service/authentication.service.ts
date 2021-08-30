@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { AuthenticationRequest } from '../entity/authentication-request';
 import { RegistrationRequest } from '../entity/registration-request';
 import { TokenResponse } from '../entity/token-response';
@@ -9,7 +10,7 @@ import { TokenResponse } from '../entity/token-response';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private apiServerUrl = "";
+  private apiServerUrl = environment.apiServerUrl;
 
   constructor(private http: HttpClient) { }
 

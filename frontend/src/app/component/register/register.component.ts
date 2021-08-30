@@ -40,7 +40,9 @@ export class RegisterComponent implements OnInit {
         passwordRe: this.form.controls.passwordRe.value,
       }).subscribe(
         (response: TokenResponse) => {
-          
+          localStorage.setItem("token", response.token);
+          localStorage.setItem("user_id", response.id);
+          this.router.navigate([""]);
         },
         (error: HttpErrorResponse) => {
           this.message = error.error.message;
