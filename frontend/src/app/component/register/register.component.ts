@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TokenResponse } from 'src/app/entity/token-response';
 import { AuthenticationService } from 'src/app/service/authentication.service';
+import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
   selector: 'app-register',
@@ -16,7 +17,7 @@ export class RegisterComponent implements OnInit {
   public message: string = '';
 
   constructor(private fb: FormBuilder, private service: AuthenticationService, 
-    private router: Router) { 
+    private router: Router, private tree: TreeService) { 
       this.form = this.fb.group({
         username: ['', Validators.required],
         password: ['', Validators.required],
@@ -42,6 +43,7 @@ export class RegisterComponent implements OnInit {
         (response: TokenResponse) => {
           localStorage.setItem("token", response.token);
           localStorage.setItem("user_id", response.id);
+          
           this.router.navigate([""]);
         },
         (error: HttpErrorResponse) => {

@@ -30,7 +30,7 @@ export class ProjectService {
     return this.http.get<FullProjectTree>(`${this.apiServerUrl}/${userId}/projects/${projectId}/full`);
   }
 
-  public getFullTreeById():  Observable<FullProjectTree[]> {
+  public getFullTree():  Observable<FullProjectTree[]> {
     let userId  = this.getUserId();
     return this.http.get<FullProjectTree[]>(`${this.apiServerUrl}/${userId}/projects/all`);
   }
