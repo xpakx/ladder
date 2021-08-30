@@ -1,0 +1,46 @@
+.container{
+    width: 100%;
+    height: 100%;
+    margin-top: 30px;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid whitesmoke;
+}
+
+.btn{
+    margin:20px 0px 20px 0px;
+    background-color: #db4c3f;
+    border-radius: 3px;
+    padding: 10px 200px 10px 208px;
+    color: white;
+    font-weight: bold;
+    border: 1px solid transparent;
+}
+.seprator{
+    margin-top: 40px;
+    margin-bottom: 20px;
+    height: 0;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #fff;
+    position: relative;
+}
+
+#warning{
+    margin-bottom: 7px;
+    color: #db4c3f;
+    font-size: 15px;
+    text-align: center;
+}
+.link{
+    text-decoration: none;
+    color: #dd4b39;
+}
+.password{
+    margin-top: 14px;
+}
+
+.login{
+    text-align: center;
+    color: #666;
+}
