@@ -34,8 +34,8 @@ export class LoginComponent implements OnInit {
     if(this.form.valid) {
       this.invalid = false;
       this.service.authenticate({
-        username: '',
-        password: ''
+        username: this.form.controls.username.value,
+        password: this.form.controls.password.value
       }).subscribe(
         (response: TokenResponse) => {
           
