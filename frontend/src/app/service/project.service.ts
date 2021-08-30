@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { AddTaskRequest } from '../entity/add-task-request';
 import { BooleanRequest } from '../entity/boolean-request';
 import { FullProjectTree } from '../entity/full-project-tree';
 import { IdRequest } from '../entity/id-request';
@@ -9,6 +10,7 @@ import { NameRequest } from '../entity/name-request';
 import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectRequest } from '../entity/project-request';
+import { Task } from '../entity/task';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +68,11 @@ export class ProjectService {
   public duplicateProject(projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
     return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/duplicate`, null);
+  }
+
+  public addTask(request: AddTaskRequest, projectId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks`, request);
   }
 
   private getUserId() {
