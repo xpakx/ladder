@@ -13,9 +13,15 @@ export class TreeService {
 
   load(tree: FullProjectTree[]) {
     this.projects = tree;
+    this.tasks = this.traverseProjects(tree);
+  }
+
+  traverseProjects(tree: FullProjectTree[]): TaskWithChildren[] {
+    let tasks: TaskWithChildren[] = [];
     for(let project of this.projects) {
-      this.tasks = this.tasks.concat(project.tasks);
+      tasks = tasks.concat(project.tasks).concat(this.traverseProjects(project.children));
     }
+    return tasks;
   }
   
   getByDate(date: Date): TaskWithChildren[] {
