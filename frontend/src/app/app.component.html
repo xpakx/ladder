@@ -1,68 +1,66 @@
  <!-- Nav bar -->
- <div class=" fixed-top ">
-  <nav class="navbar navbar-expand-lg navbar-light bg-danger">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01">
-          <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-          <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-              <li class="nav-item nav-item-font py-2">
-                  <a class="nav-link text-white ml-1" href="#"><i class="fa fa-bars"></i></a>
-              </li>
-              <li class="nav-item nav-item-font py-2">
-                  <a class="nav-link text-white ml-1" href="#"><i class="fa fa-home"></i></a>
-              </li>
-              <li class="nav-item nav-item-font py-2">
-                  <form class="form-inline">
-                      <input class="form-control mr-sm-2" type="search" placeholder="Find" aria-label="Search">
+<div class="fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item nav-item-font py-2">
+                    <a class="nav-link text-white ml-1" href="#"><i class="fa fa-bars"></i></a>
+                </li>
+                <li class="nav-item nav-item-font py-2">
+                    <a class="nav-link text-white ml-1" href="#"><i class="fa fa-home"></i></a>
+                </li>
+                <li class="nav-item nav-item-font py-2">
+                    <form class="form-inline">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Find" aria-label="Search">
                     </form>
-              </li>
-          </ul>
-          <ul class="navbar-nav mt-2 mt-lg-0 ">
-              <li class="nav-item nav-item-font py-2 ">
-                  <a class="nav-link top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-plus"></i> </a>
-              </li>
-              <li class="nav-item nav-item-font py-2 ">
-                  <a class="nav-link top-right-part text-white mr-2" href="#">
-                  <i class="fa top-right-part fa-line-chart" id="status"></i></a>
-              </li>
-              <li class="nav-item nav-item-font py-2 ">
-                  <a class="nav-link top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-bell"></i> </a>
-              </li>
-              <li class="nav-item nav-item-font py-2 ">
-                  <a class="nav-link top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-cog"></i></a>
-              </li>
-          </ul>
-      </div>
-  </nav>
+                </li>
+            </ul>
+            
+        </div>
+        <ul class="navbar-nav mt-2 mt-lg-0">
+            <li class="nav-item nav-item-font py-2">
+                <a class="nav-link top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-plus"></i> </a>
+            </li>
+            <li class="nav-item nav-item-font py-2 ">
+                <a class="nav-link top-right-part text-white mr-2" href="#">
+                <i class="fa top-right-part fa-line-chart" id="status"></i></a>
+            </li>
+            <li class="nav-item nav-item-font py-2 ">
+                <a class="nav-link top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-bell"></i> </a>
+            </li>
+            <li class="nav-item nav-item-font py-2 ">
+                <a class="nav-link top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-cog"></i></a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <!-- Left navigation -->
 <div class="container-fluid mt-5 pt-4 border">
-  <div class="row">
-      <div class="left-nav-container bg-light col-3">
-          <div class="left-nav position-fixed">
-  
-              <div class="nav flex-column " role="tablist">
-                  <a class="nav-link text-dark  active" href="#" role="tab"><p class="mt-2"><i class="fa text-primary mr-2 fa-inbox"></i> Inbox</p></a>
-                  <a class="nav-link text-dark " href="#" role="tab"><p><i class="fa mr-2 text-success fa-calendar-minus-o"></i>Today</p></a>
-                  <a class="nav-link text-dark " href="#" role="tab"><p><i class="fa text-warning mr-2 fa-calendar"></i>Upcoming</p></a>
-              </div>
-
-              <div class="nav flex-column">
-                <div><i class="fa mx-2 text-muted fa-chevron-right"></i> Projects <a><i class="fa text-muted fa-plus"></i></a></div>
-                <div><i class="fa mx-2 text-muted fa-chevron-right"></i> Labels</div>
-                <div><i class="fa mx-2 text-muted fa-chevron-right"></i> Filters</div>
-              </div>
-              
-          </div>
-      </div>
-      <div class="border col-9 display">
-          <div class="tab-content" id="tabContent">
-              <router-outlet></router-outlet>
+    <div class="row">
+        <div class="left-nav-container bg-light col-3">
+            <div class="left-nav position-fixed">
+    
+                <div class="nav flex-column " role="tablist">
+                    <a class="nav-link text-dark  active" href="#" role="tab"><p class="mt-2"><i class="fa text-primary mr-2 fa-inbox"></i> Inbox</p></a>
+                    <a class="nav-link text-dark " href="#" role="tab"><p><i class="fa mr-2 text-success fa-calendar-minus-o"></i>Today</p></a>
+                    <a class="nav-link text-dark " href="#" role="tab"><p><i class="fa text-warning mr-2 fa-calendar"></i>Upcoming</p></a>
+                
+                    <div><i class="fa mx-2 text-muted fa-chevron-right"></i> Projects <a><i class="fa text-muted fa-plus"></i></a></div>
+                    <div><i class="fa mx-2 text-muted fa-chevron-right"></i> Labels</div>
+                    <div><i class="fa mx-2 text-muted fa-chevron-right"></i> Filters</div>
+                </div>
+                
             </div>
-
-      </div>
-  </div>
+        </div>
+        <div class="border col-9 display">
+            <div class="tab-content">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
 
 </div>

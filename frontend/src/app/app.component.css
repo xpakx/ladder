@@ -1,0 +1,14 @@
+.fixed-top {
+    background-color: #db4c3f;
+}
+
+.form-inline input {
+    background-color: #e27065;
+    border: none;
+    color: #fff;
+}
+
+.form-inline input::placeholder {
+    color: #fff;
+    opacity: .75;
+}
