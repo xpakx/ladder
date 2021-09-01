@@ -13,6 +13,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraph(name = "project-with-children",
+        attributeNodes = {@NamedAttributeNode("children"),
+                @NamedAttributeNode(value = "tasks", subgraph = "task-with-children")},
+        subgraphs = {
+        @NamedSubgraph(name = "task-with-children", attributeNodes = @NamedAttributeNode("children"))
+        }
+)
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,11 +35,11 @@ public class Project {
     private Project parent;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
     private List<Project> children;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
     @Where(clause = "parent_id is NULL")
     private List<Task> tasks;
 

@@ -80,7 +80,7 @@ public class TaskService {
     }
 
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
-        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
+        Task taskToUpdate = taskRepository.getByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
         if(request.isFlag()) {
             completeTask(taskToUpdate);

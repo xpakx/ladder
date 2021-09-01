@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface LabelRepository extends JpaRepository<Label, Integer> {
-    Optional<Label> findByIdAndOwnerId(Integer labelId, Integer ownerId);
+    Optional<Label> findByIdAndOwnerId(Integer id, Integer ownerId);
 
     void deleteByIdAndOwnerId(Integer labelId, Integer ownerId);
 

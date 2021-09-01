@@ -500,7 +500,7 @@ class TaskControllerTest {
         .then()
                 .statusCode(OK.value());
 
-        Task task = taskRepository.findById(taskId).get();
+        Task task = taskRepository.getByIdAndOwnerId(taskId, userId).get();
         assertThat(task.getChildren(), everyItem(hasProperty("completed", equalTo(true))));
     }
 
