@@ -8,6 +8,8 @@ import { LoginComponent } from './component/login/login.component';
 import { RegisterComponent } from './component/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { DailyViewComponent } from './component/daily-view/daily-view.component';
+import { LoadProjectComponent } from './component/load-project/load-project.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -17,7 +19,9 @@ export function tokenGetter() {
   declarations: [
     AppComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    DailyViewComponent,
+    LoadProjectComponent
   ],
   imports: [
     BrowserModule,

@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
   public message: string = '';
 
   constructor(private fb: FormBuilder, private service: AuthenticationService, 
-    private router: Router, private tree: TreeService) { 
+    private router: Router) { 
     this.form = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
         (response: TokenResponse) => {
           localStorage.setItem("token", response.token);
           localStorage.setItem("user_id", response.id);
-          this.router.navigate([""]);
+          this.router.navigate(["load"]);
         },
         (error: HttpErrorResponse) => {
           if(error.status === 401) {
