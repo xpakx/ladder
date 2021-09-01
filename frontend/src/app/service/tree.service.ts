@@ -25,6 +25,8 @@ export class TreeService {
   }
   
   getByDate(date: Date): TaskWithChildren[] {
-    return this.tasks.filter((a) => {a.due === date});
+    return this.tasks.filter((a) => {
+      a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
+    });
   }
 }
