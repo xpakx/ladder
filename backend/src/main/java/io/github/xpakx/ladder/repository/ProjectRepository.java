@@ -10,10 +10,10 @@ import java.util.Optional;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
     <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);
-    <T> List<T> findByOwnerIdAndParentIsNull(Integer ownerId, Class<T> type);
-
     Optional<Project> findByIdAndOwnerId(Integer Id, Integer ownerId);
-    void deleteByIdAndOwnerId(Integer Id, Integer ownerId);
 
+    <T> List<T> findByOwnerIdAndParentIsNull(Integer ownerId, Class<T> type);
     <T> List<T> findByOwnerId(Integer ownerId, Class<T> type);
+
+    void deleteByIdAndOwnerId(Integer Id, Integer ownerId);
 }
