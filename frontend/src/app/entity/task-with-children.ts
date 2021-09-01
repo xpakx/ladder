@@ -6,4 +6,5 @@ export interface TaskWithChildren {
     description: string;
     project: ProjectWithNameAndId;
     children: TaskWithChildren[];
+    due: Date;
 }
