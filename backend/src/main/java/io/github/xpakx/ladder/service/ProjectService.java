@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -116,56 +118,89 @@ public class ProjectService {
     public Project duplicate(Integer projectId, Integer userId) {
         Project projectToDuplicate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No project with id " + projectId));
-        Project duplicatedProject = duplicate(projectToDuplicate);
+
+        List<Project> projects = projectRepository.getByOwnerId(userId);
+        List<Task> tasks = taskRepository.getByOwnerIdAndProjectIsNotNull(userId);
+        Map<Integer, List<Task>> tasksByParent = tasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+        Map<Integer, List<Project>> projectByParent = projects.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+
+        Project duplicatedProject = duplicate(projectToDuplicate, projectToDuplicate.getParent());
+
+        List<Project> toDuplicate = List.of(duplicatedProject);
+        while(toDuplicate.size() > 0) {
+            List<Project> newToDuplicate = new ArrayList<>();
+            for (Project parent : toDuplicate) {
+                List<Project> children = projectByParent.getOrDefault(parent.getId(), new ArrayList<>());
+                parent.setId(null);
+                parent.setTasks(duplicateTasks(parent, tasksByParent));
+                children = children.stream()
+                        .map((a) -> duplicate(a, parent))
+                        .collect(Collectors.toList());
+                parent.setChildren(children);
+                newToDuplicate.addAll(children);
+            }
+            toDuplicate = newToDuplicate;
+        }
+
+
         return projectRepository.save(duplicatedProject);
     }
 
-    private Project duplicate(Project originalProject) {
-        Project project = Project.builder()
+    private List<Task> duplicateTasks(Project project, Map<Integer, List<Task>> tasksByParent) {
+        List<Task> toDuplicate = project.getTasks().stream()
+                .map((a) -> duplicate(a, null, project))
+                .collect(Collectors.toList());
+        List<Task> result = new ArrayList<>();
+        while(toDuplicate.size() > 0) {
+            List<Task> newToDuplicate = new ArrayList<>();
+            for (Task parent : toDuplicate) {
+                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
+                parent.setId(null);
+
+                children = children.stream()
+                        .map((a) -> duplicate(a, parent, project))
+                        .collect(Collectors.toList());
+                parent.setChildren(children);
+                result.add(parent);
+                newToDuplicate.addAll(children);
+            }
+            toDuplicate = newToDuplicate;
+        }
+
+        return result;
+    }
+
+    private Project duplicate(Project originalProject, Project parent) {
+        return Project.builder()
                 .name(originalProject.getName())
                 .favorite(false)
                 .color(originalProject.getColor())
                 .parent(originalProject.getParent())
                 .owner(originalProject.getOwner())
+                .id(originalProject.getId())
+                .parent(parent)
+                .tasks(originalProject.getTasks())
                 .build();
-        List<Project> children = originalProject.getChildren().stream()
-                .map(this::duplicate)
-                .collect(Collectors.toList());
-        project.setChildren(children);
-        for(Project child : children) {
-            child.setParent(project);
-        }
-
-        List<Task> tasks = originalProject.getTasks().stream()
-                .map(this::duplicate)
-                .collect(Collectors.toList());
-        project.setTasks(tasks);
-        for(Task child : tasks) {
-            child.setProject(project);
-        }
-        return project;
     }
 
-    private Task duplicate(Task originalTask) {
-        Task task = Task.builder()
+    private Task duplicate(Task originalTask, Task parent, Project project) {
+        return Task.builder()
                 .title(originalTask.getTitle())
                 .description(originalTask.getDescription())
                 .projectOrder(originalTask.getProjectOrder())
-                .project(originalTask.getProject())
+                .project(project)
+                .parent(parent)
                 .createdAt(LocalDateTime.now())
                 .due(originalTask.getDue())
                 .priority(originalTask.getPriority())
                 .owner(originalTask.getOwner())
                 .completed(false)
+                .id(originalTask.getId())
                 .build();
-        List<Task> children = originalTask.getChildren().stream()
-                .map(this::duplicate)
-                .collect(Collectors.toList());
-        task.setChildren(children);
-        for(Task child : children) {
-            child.setParent(task);
-        }
-        return task;
     }
 
 }

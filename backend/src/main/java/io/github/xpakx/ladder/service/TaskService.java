@@ -143,6 +143,7 @@ public class TaskService {
                 .priority(originalTask.getPriority())
                 .owner(originalTask.getOwner())
                 .completed(false)
+                .parent(parent)
                 .build();
     }
 }

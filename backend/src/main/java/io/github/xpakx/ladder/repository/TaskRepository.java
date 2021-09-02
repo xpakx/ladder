@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.repository;
 
+import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,9 +16,12 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     Optional<Task> getByIdAndOwnerId(Integer taskId, Integer ownerId);
     Optional<Task> findByIdAndOwnerId(Integer taskId, Integer ownerId);
     <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);
+    List<Task> getByOwnerIdAndProjectIsNotNull(Integer userId);
 
     <T> List<T> findByOwnerId(Integer userId, Class<T> type);
     List<Task> findByOwnerIdAndProjectId(Integer userId, Integer projectId);
 
     void deleteByIdAndOwnerId(Integer taskId, Integer ownerId);
+
+
 }
