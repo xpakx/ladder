@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -12,6 +13,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraph(name = "user-with-everything",
+        attributeNodes = {
+            @NamedAttributeNode("projects"),
+            @NamedAttributeNode("tasks"),
+            @NamedAttributeNode("labels")
+        }
+)
 public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +38,16 @@ public class UserAccount {
                     @JoinColumn(name = "user_role_id", referencedColumnName = "id",
                             nullable = false, updatable = false)})
     private Set<UserRole> roles;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    private List<Project> projects;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    private List<Task> tasks;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    private List<Label> labels;
 }

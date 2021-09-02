@@ -1,34 +1,22 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.entity.Label;
-import io.github.xpakx.ladder.entity.dto.LabelDetails;
-import io.github.xpakx.ladder.entity.dto.ListOfProjectsTasksAndLabels;
-import io.github.xpakx.ladder.entity.dto.ProjectDetails;
-import io.github.xpakx.ladder.entity.dto.TaskDetails;
-import io.github.xpakx.ladder.repository.LabelRepository;
-import io.github.xpakx.ladder.repository.ProjectRepository;
-import io.github.xpakx.ladder.repository.TaskRepository;
+import io.github.xpakx.ladder.entity.dto.*;
+import io.github.xpakx.ladder.error.NotFoundException;
+import io.github.xpakx.ladder.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MainService {
-    private final ProjectRepository projectRepository;
-    private final TaskRepository taskRepository;
-    private final LabelRepository labelRepository;
+    private final UserAccountRepository userAccountRepository;
 
     @Autowired
-    public MainService(ProjectRepository projectRepository, TaskRepository taskRepository, LabelRepository labelRepository) {
-        this.projectRepository = projectRepository;
-        this.taskRepository = taskRepository;
-        this.labelRepository = labelRepository;
+    public MainService(UserAccountRepository userAccountRepository) {
+        this.userAccountRepository = userAccountRepository;
     }
 
-    public ListOfProjectsTasksAndLabels getAll(Integer userId) {
-        ListOfProjectsTasksAndLabels result = new ListOfProjectsTasksAndLabels();
-        result.setProjects(projectRepository.findByOwnerId(userId, ProjectDetails.class));
-        result.setTasks(taskRepository.findByOwnerId(userId, TaskDetails.class));
-        result.setLabels(labelRepository.findByOwnerId(userId, LabelDetails.class));
-        return null;
+    public UserWithData getAll(Integer userId) {
+        return userAccountRepository.findProjectedById(userId)
+                .orElseThrow(() -> new NotFoundException("No user with id " + userId));
     }
 }

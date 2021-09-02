@@ -1,7 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
-import io.github.xpakx.ladder.entity.dto.FullProjectTree;
-import io.github.xpakx.ladder.entity.dto.ListOfProjectsTasksAndLabels;
+import io.github.xpakx.ladder.entity.dto.UserWithData;
 import io.github.xpakx.ladder.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,7 @@ public class MainController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/all")
-    public ResponseEntity<ListOfProjectsTasksAndLabels> getListOfProjectsTasksAndLabels(@PathVariable Integer userId) {
+    public ResponseEntity<UserWithData> getListOfProjectsTasksAndLabels(@PathVariable Integer userId) {
         return new ResponseEntity<>(service.getAll(userId), HttpStatus.OK);
     }
 }
