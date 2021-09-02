@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -101,12 +103,37 @@ public class TaskService {
         Task taskToDuplicate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
 
-        Task duplicatedTask = duplicate(taskToDuplicate);
+        List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
+                taskToDuplicate.getProject() != null ? taskToDuplicate.getProject().getId() : null);
+
+        Map<Integer, List<Task>> tasksByParent = tasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+
+        Task duplicatedTask = duplicate(taskToDuplicate, taskToDuplicate.getParent());
+
+        List<Task> toDuplicate = List.of(duplicatedTask);
+        while(toDuplicate.size() > 0) {
+            List<Task> newToDuplicate = new ArrayList<>();
+            for (Task parent : toDuplicate) {
+                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
+                parent.setId(null);
+
+                children = children.stream()
+                        .map((a) -> duplicate(a, parent))
+                        .collect(Collectors.toList());
+                parent.setChildren(children);
+                newToDuplicate.addAll(children);
+            }
+            toDuplicate = newToDuplicate;
+        }
+
         return taskRepository.save(duplicatedTask);
     }
 
-    private Task duplicate(Task originalTask) {
-        Task task = Task.builder()
+    private Task duplicate(Task originalTask, Task parent) {
+        return Task.builder()
+                .id(originalTask.getId())
                 .title(originalTask.getTitle())
                 .description(originalTask.getDescription())
                 .projectOrder(originalTask.getProjectOrder())
@@ -117,13 +144,5 @@ public class TaskService {
                 .owner(originalTask.getOwner())
                 .completed(false)
                 .build();
-        List<Task> children = originalTask.getChildren().stream()
-                .map(this::duplicate)
-                .collect(Collectors.toList());
-        task.setChildren(children);
-        for(Task child : children) {
-            child.setParent(task);
-        }
-        return task;
     }
 }

@@ -17,6 +17,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);
 
     <T> List<T> findByOwnerId(Integer userId, Class<T> type);
+    List<Task> findByOwnerIdAndProjectId(Integer userId, Integer projectId);
 
     void deleteByIdAndOwnerId(Integer taskId, Integer ownerId);
 }
