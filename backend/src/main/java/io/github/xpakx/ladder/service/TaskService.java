@@ -105,7 +105,6 @@ public class TaskService {
 
         List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
                 taskToDuplicate.getProject() != null ? taskToDuplicate.getProject().getId() : null);
-
         Map<Integer, List<Task>> tasksByParent = tasks.stream()
                 .filter((a) -> a.getParent() != null)
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));

@@ -124,6 +124,10 @@ public class ProjectService {
         Map<Integer, List<Task>> tasksByParent = tasks.stream()
                 .filter((a) -> a.getParent() != null)
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+        Map<Integer, List<Task>> tasksByProject = tasks.stream()
+                .filter((a) -> a.getParent() == null)
+                .filter((a) -> a.getProject() != null)
+                .collect(Collectors.groupingBy((a) -> a.getProject().getId()));
         Map<Integer, List<Project>> projectByParent = projects.stream()
                 .filter((a) -> a.getParent() != null)
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
@@ -135,8 +139,8 @@ public class ProjectService {
             List<Project> newToDuplicate = new ArrayList<>();
             for (Project parent : toDuplicate) {
                 List<Project> children = projectByParent.getOrDefault(parent.getId(), new ArrayList<>());
+                parent.setTasks(duplicateTasks(parent, tasksByParent, tasksByProject));
                 parent.setId(null);
-                parent.setTasks(duplicateTasks(parent, tasksByParent));
                 children = children.stream()
                         .map((a) -> duplicate(a, parent))
                         .collect(Collectors.toList());
@@ -146,12 +150,12 @@ public class ProjectService {
             toDuplicate = newToDuplicate;
         }
 
-
         return projectRepository.save(duplicatedProject);
     }
 
-    private List<Task> duplicateTasks(Project project, Map<Integer, List<Task>> tasksByParent) {
-        List<Task> toDuplicate = project.getTasks().stream()
+    private List<Task> duplicateTasks(Project project, Map<Integer, List<Task>> tasksByParent,
+                                      Map<Integer, List<Task>> tasksByProject) {
+        List<Task> toDuplicate = tasksByProject.getOrDefault(project.getId(), new ArrayList<>()).stream()
                 .map((a) -> duplicate(a, null, project))
                 .collect(Collectors.toList());
         List<Task> result = new ArrayList<>();

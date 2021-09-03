@@ -15,10 +15,7 @@ import java.util.List;
 @Builder
 @NamedEntityGraph(name = "project-with-children",
         attributeNodes = {@NamedAttributeNode("children"),
-                @NamedAttributeNode(value = "tasks", subgraph = "task-with-children")},
-        subgraphs = {
-        @NamedSubgraph(name = "task-with-children", attributeNodes = @NamedAttributeNode("children"))
-        }
+                @NamedAttributeNode(value = "tasks")}
 )
 public class Project {
     @Id
