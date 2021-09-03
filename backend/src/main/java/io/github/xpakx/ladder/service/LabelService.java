@@ -30,7 +30,7 @@ public class LabelService {
         return labelRepository.save(labelToAdd);
     }
 
-    public Label updateLabel(LabelRequest request, Integer labelId, Integer userId) {
+    public Label updateLabel(LabelRequest request, Integer userId, Integer labelId) {
         Label labelToUpdate = labelRepository.findByIdAndOwnerId(labelId, userId)
                 .orElseThrow(() -> new NotFoundException("No such label!"));
         labelToUpdate.setName(request.getName());
