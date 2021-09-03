@@ -107,8 +107,59 @@ public class ProjectService {
     }
 
     public FullProjectTree getFullProject(Integer projectId, Integer userId) {
-        return projectRepository.findProjectedByIdAndOwnerId(projectId, userId, FullProjectTree.class)
+        ProjectMin project = projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectMin.class)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
+        List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
+        List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
+        Map<Integer, List<ProjectDetails>> projectByParent = projects.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+        Map<Integer, List<TaskDetails>> tasksByParent = tasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+        Map<Integer, List<TaskDetails>> tasksByProject = tasks.stream()
+                .filter((a) -> a.getParent() == null)
+                .filter((a) -> a.getProject() != null)
+                .collect(Collectors.groupingBy((a) -> a.getProject().getId()));
+
+
+        FullProjectTree result = new FullProjectTree(project);
+        List<FullProjectTree> toDuplicate = List.of(result);
+        while(toDuplicate.size() > 0) {
+            List<FullProjectTree> newToDuplicate = new ArrayList<>();
+            for (FullProjectTree parent : toDuplicate) {
+                List<FullProjectTree> children = projectByParent
+                        .getOrDefault(parent.getId(), new ArrayList<>()).stream()
+                                .map(FullProjectTree::new)
+                                        .collect(Collectors.toList());
+                parent.setTasks(addTasksToTree(parent, tasksByParent, tasksByProject));
+                parent.setChildren(children);
+                newToDuplicate.addAll(children);
+            }
+            toDuplicate = newToDuplicate;
+        }
+
+        return result;
+    }
+
+    private List<TaskForTree> addTasksToTree(FullProjectTree project, Map<Integer, List<TaskDetails>> tasksByParent,
+                                      Map<Integer, List<TaskDetails>> tasksByProject) {
+        List<TaskForTree> toDuplicate = tasksByProject.getOrDefault(project.getId(), new ArrayList<>()).stream()
+                .map(TaskForTree::new)
+                .collect(Collectors.toList());
+        List<TaskForTree> result = toDuplicate;
+        while(toDuplicate.size() > 0) {
+            List<TaskForTree> newToDuplicate = new ArrayList<>();
+            for (TaskForTree parent : toDuplicate) {
+                List<TaskForTree> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>()).stream()
+                                .map(TaskForTree::new)
+                                .collect(Collectors.toList());
+                parent.setChildren(children);
+                newToDuplicate.addAll(children);
+            }
+            toDuplicate = newToDuplicate;
+        }
+        return result;
     }
 
     public List<FullProjectTree> getFullTree(Integer userId) {
