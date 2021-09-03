@@ -30,7 +30,7 @@ public class LabelController {
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{labelId}")
     public ResponseEntity<Label> updateLabel(@RequestBody LabelRequest request, @PathVariable Integer userId, @PathVariable Integer labelId) {
-        return  new ResponseEntity<>(labelService.updateLabel(request, userId, labelId), HttpStatus.CREATED);
+        return  new ResponseEntity<>(labelService.updateLabel(request, userId, labelId), HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")

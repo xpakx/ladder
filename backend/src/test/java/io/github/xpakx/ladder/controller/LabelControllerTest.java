@@ -150,7 +150,7 @@ class LabelControllerTest {
         .when()
                 .put(baseUrl + "/{userId}/labels/{labelId}", userId, labelId)
         .then()
-                .statusCode(CREATED.value())
+                .statusCode(OK.value())
                 .body("name", equalTo(request.getName()));
     }
 
