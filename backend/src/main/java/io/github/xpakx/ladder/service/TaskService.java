@@ -85,7 +85,10 @@ public class TaskService {
         Task taskToUpdate = taskRepository.getByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
         if(request.isFlag()) {
-            completeTask(taskToUpdate);
+            return taskRepository.saveAll(completeTask(userId, taskToUpdate)).stream()
+                    .filter((a) -> a.getId() == taskId)
+                    .findAny()
+                    .orElse(null);
         } else {
             taskToUpdate.setCompleted(false);
             taskToUpdate.setCompletedAt(null);
@@ -93,10 +96,27 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
-    private void completeTask(Task task) {
-        task.setCompleted(true);
-        task.setCompletedAt(LocalDateTime.now());
-        task.getChildren().forEach(this::completeTask);
+    private List<Task> completeTask(Integer userId, Task task) {
+        List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
+                task.getProject() != null ? task.getProject().getId() : null);
+        Map<Integer, List<Task>> tasksByParent = tasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+
+        List<Task> toComplete = List.of(task);
+        List<Task> toReturn = new ArrayList<>();
+        while(toComplete.size() > 0) {
+            List<Task> newToComplete = new ArrayList<>();
+            for (Task parent : toComplete) {
+                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
+                parent.setCompleted(true);
+                parent.setCompletedAt(LocalDateTime.now());
+                toReturn.add(parent);
+                newToComplete.addAll(children);
+            }
+            toComplete = newToComplete;
+        }
+        return toReturn;
     }
 
     public Task duplicate(Integer taskId, Integer userId) {
