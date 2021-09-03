@@ -1,9 +1,7 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Label;
-import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.LabelRequest;
-import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.service.LabelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

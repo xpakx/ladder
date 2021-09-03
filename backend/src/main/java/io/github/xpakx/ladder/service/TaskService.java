@@ -86,7 +86,7 @@ public class TaskService {
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
         if(request.isFlag()) {
             return taskRepository.saveAll(completeTask(userId, taskToUpdate)).stream()
-                    .filter((a) -> a.getId() == taskId)
+                    .filter((a) -> a.getId().equals(taskId))
                     .findAny()
                     .orElse(null);
         } else {

@@ -2,7 +2,6 @@ package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.UserAccount;
-import io.github.xpakx.ladder.entity.dto.AddTaskRequest;
 import io.github.xpakx.ladder.entity.dto.LabelRequest;
 import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
