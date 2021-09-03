@@ -124,40 +124,44 @@ public class ProjectService {
 
 
         FullProjectTree result = new FullProjectTree(project);
-        List<FullProjectTree> toDuplicate = List.of(result);
-        while(toDuplicate.size() > 0) {
-            List<FullProjectTree> newToDuplicate = new ArrayList<>();
-            for (FullProjectTree parent : toDuplicate) {
+        List<FullProjectTree> toAdd = List.of(result);
+        addProjectsToTree(projectByParent, tasksByParent, tasksByProject, toAdd);
+
+        return result;
+    }
+
+    private void addProjectsToTree(Map<Integer, List<ProjectDetails>> projectByParent, Map<Integer, List<TaskDetails>> tasksByParent, Map<Integer, List<TaskDetails>> tasksByProject, List<FullProjectTree> toAdd) {
+        while(toAdd.size() > 0) {
+            List<FullProjectTree> newToAdd = new ArrayList<>();
+            for (FullProjectTree parent : toAdd) {
                 List<FullProjectTree> children = projectByParent
                         .getOrDefault(parent.getId(), new ArrayList<>()).stream()
                                 .map(FullProjectTree::new)
                                         .collect(Collectors.toList());
                 parent.setTasks(addTasksToTree(parent, tasksByParent, tasksByProject));
                 parent.setChildren(children);
-                newToDuplicate.addAll(children);
+                newToAdd.addAll(children);
             }
-            toDuplicate = newToDuplicate;
+            toAdd = newToAdd;
         }
-
-        return result;
     }
 
     private List<TaskForTree> addTasksToTree(FullProjectTree project, Map<Integer, List<TaskDetails>> tasksByParent,
                                       Map<Integer, List<TaskDetails>> tasksByProject) {
-        List<TaskForTree> toDuplicate = tasksByProject.getOrDefault(project.getId(), new ArrayList<>()).stream()
+        List<TaskForTree> toAdd = tasksByProject.getOrDefault(project.getId(), new ArrayList<>()).stream()
                 .map(TaskForTree::new)
                 .collect(Collectors.toList());
-        List<TaskForTree> result = toDuplicate;
-        while(toDuplicate.size() > 0) {
-            List<TaskForTree> newToDuplicate = new ArrayList<>();
-            for (TaskForTree parent : toDuplicate) {
+        List<TaskForTree> result = toAdd;
+        while(toAdd.size() > 0) {
+            List<TaskForTree> newToAdd = new ArrayList<>();
+            for (TaskForTree parent : toAdd) {
                 List<TaskForTree> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>()).stream()
                                 .map(TaskForTree::new)
                                 .collect(Collectors.toList());
                 parent.setChildren(children);
-                newToDuplicate.addAll(children);
+                newToAdd.addAll(children);
             }
-            toDuplicate = newToDuplicate;
+            toAdd = newToAdd;
         }
         return result;
     }
