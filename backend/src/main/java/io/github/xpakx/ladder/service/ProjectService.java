@@ -130,7 +130,9 @@ public class ProjectService {
         return result;
     }
 
-    private void addProjectsToTree(Map<Integer, List<ProjectDetails>> projectByParent, Map<Integer, List<TaskDetails>> tasksByParent, Map<Integer, List<TaskDetails>> tasksByProject, List<FullProjectTree> toAdd) {
+    private void addProjectsToTree(Map<Integer, List<ProjectDetails>> projectByParent, Map<Integer,
+            List<TaskDetails>> tasksByParent, Map<Integer, List<TaskDetails>> tasksByProject,
+                                   List<FullProjectTree> toAdd) {
         while(toAdd.size() > 0) {
             List<FullProjectTree> newToAdd = new ArrayList<>();
             for (FullProjectTree parent : toAdd) {
@@ -167,7 +169,27 @@ public class ProjectService {
     }
 
     public List<FullProjectTree> getFullTree(Integer userId) {
-        return projectRepository.findByOwnerIdAndParentIsNull(userId, FullProjectTree.class);
+        List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
+        List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
+        Map<Integer, List<ProjectDetails>> projectByParent = projects.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+        Map<Integer, List<TaskDetails>> tasksByParent = tasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+        Map<Integer, List<TaskDetails>> tasksByProject = tasks.stream()
+                .filter((a) -> a.getParent() == null)
+                .filter((a) -> a.getProject() != null)
+                .collect(Collectors.groupingBy((a) -> a.getProject().getId()));
+
+
+        List<FullProjectTree> toAdd = projects.stream()
+                .filter((a) -> a.getParent() == null)
+                .map(FullProjectTree::new)
+                .collect(Collectors.toList());
+        addProjectsToTree(projectByParent, tasksByParent, tasksByProject, toAdd);
+
+        return toAdd;
     }
 
     public Project duplicate(Integer projectId, Integer userId) {
