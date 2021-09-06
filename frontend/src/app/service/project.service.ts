@@ -36,7 +36,7 @@ export class ProjectService {
     return this.http.get<FullProjectTree[]>(`${this.apiServerUrl}/${userId}/projects/all`);
   }
 
-  public getFullnfo():  Observable<UserWithData> {
+  public getFullInfo():  Observable<UserWithData> {
     let userId  = this.getUserId();
     return this.http.get<UserWithData>(`${this.apiServerUrl}/${userId}/all`);
   }

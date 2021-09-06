@@ -1,30 +1,28 @@
 import { Injectable } from '@angular/core';
 import { FullProjectTree } from '../entity/full-project-tree';
+import { LabelDetails } from '../entity/label-details';
+import { ProjectDetails } from '../entity/project-details';
+import { TaskDetails } from '../entity/task-details';
 import { TaskWithChildren } from '../entity/task-with-children';
+import { UserWithData } from '../entity/user-with-data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TreeService {
-  public projects: FullProjectTree[] = [];
-  public tasks: TaskWithChildren[] = [];
+  public projects: ProjectDetails[] = [];
+  public tasks: TaskDetails[] = [];
+  public labels: LabelDetails[] = [];
 
   constructor() { }
 
-  load(tree: FullProjectTree[]) {
-    this.projects = tree;
-    this.tasks = this.traverseProjects(tree);
-  }
-
-  traverseProjects(tree: FullProjectTree[]): TaskWithChildren[] {
-    let tasks: TaskWithChildren[] = [];
-    for(let project of this.projects) {
-      tasks = tasks.concat(project.tasks).concat(this.traverseProjects(project.children));
-    }
-    return tasks;
+  load(tree: UserWithData) {
+    this.projects = tree.projects;
+    this.tasks = tree.tasks;
+    this.labels = tree.labels;
   }
   
-  getByDate(date: Date): TaskWithChildren[] {
+  getByDate(date: Date): TaskDetails[] {
     return this.tasks.filter((a) => {
       a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
     });
