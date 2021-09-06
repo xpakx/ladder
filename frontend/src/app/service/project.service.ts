@@ -11,6 +11,7 @@ import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectRequest } from '../entity/project-request';
 import { Task } from '../entity/task';
+import { UserWithData } from '../entity/user-with-data';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,11 @@ export class ProjectService {
   public getFullTree():  Observable<FullProjectTree[]> {
     let userId  = this.getUserId();
     return this.http.get<FullProjectTree[]>(`${this.apiServerUrl}/${userId}/projects/all`);
+  }
+
+  public getFullnfo():  Observable<UserWithData> {
+    let userId  = this.getUserId();
+    return this.http.get<UserWithData>(`${this.apiServerUrl}/${userId}/all`);
   }
 
   public addProject(request: ProjectRequest):  Observable<Project> {
