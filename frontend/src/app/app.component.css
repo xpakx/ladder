@@ -21,12 +21,16 @@
     height: calc(100vh - 44px);
     padding-top: 30px;
     padding-left: 35px;
-    position: fixed;
     left: 0;
     transition: left .25s cubic-bezier(.4,0,.2,1);
     overflow-x: hidden;
     overflow-y: hidden;
     background-color: #fafafa;
+}
+
+.top_filters {
+    margin: 0;
+    padding: 0;
 }
 
 .top_filters li {
@@ -52,7 +56,10 @@
 }
 
 .top_filters .item_icon {
-    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 38px;
 }
 
 button {
@@ -65,7 +72,7 @@ button {
 .expansion_panel {
     align-items: center;
     position: relative;
-    width: 38px;
+    width: 100%;
     margin: 0;
     transition: margin .3s cubic-bezier(.4,0,.2,1) 0ms;
     border-bottom: 1px solid #f1f1f1;
@@ -113,6 +120,15 @@ button {
     height: 24px;
     color: grey;
     cursor: pointer;
+    border-radius: 25%;
+}
+
+.expansion_panel .adder_icon:hover {
+    background-color: grey;
+}
+
+.expansion_panel .adder_icon:hover i {
+    color: #fff;
 }
 
 .expansion_panel .counter_count {
@@ -121,6 +137,11 @@ button {
     font-size: 12px;
     margin-left: 5px;
     line-height: 22px;
+}
+
+.projects_list {
+    margin: 0;
+    padding: 0;
 }
 
 .project_list_item {
@@ -170,6 +191,7 @@ button {
     padding: 0 0 8px;
     font-size: 14px;
     white-space: nowrap;
+    color: grey;
 }
 
 .icon_add {
@@ -193,4 +215,38 @@ button {
 
 .plus_add_button:hover {
     color: #dd4b39;
+}
+
+.nav-search {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-left: 6px;
+}
+
+.nav-search .search_icon {
+    position: absolute;
+    cursor: text;
+    left: 5px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    height: 21px;
+}
+
+.nav-search input {
+    margin: 0;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: 0;
+    color: #fff;
+    padding: 5px 0 5px 34px;
+    background: hsla(0,0%,100%,.2);
+    transition: width .2s ease-in, background-color .15s cubic-bezier(.4,0,.2,1);
+}
+
+.indent_2 {
+    padding-left: 22px;
 }
