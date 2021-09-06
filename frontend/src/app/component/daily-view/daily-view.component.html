@@ -21,7 +21,7 @@
     <div class="tasks_content">
         <ul class="task_list_items">
 
-            <li class="task_list_item">
+            <li class="task_list_item" *ngFor="let task of tasks" [id] = "'task-' + task.id">
                 <div role="button" tabindex="0" class="task_list_item_body">
                     <div class="task_list_item__overflow_actions">
                         <div class="task_list_item__drag_container">
@@ -38,15 +38,15 @@
                         </div>
                     </button>
                     <div class="task_list_item_content">
-                        <div id="task-4871286971-content" class="task_list_item__content_wrapper">
+                        <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
                             <div class="markdown_content task_content">
-                                Test Task
+                                {{task.title}}
                             </div>
                         </div>
                         <div class="task_list_item__info_tags" data-layout="list">
                             <span class="task_list_item__project">
-                                <a href="/app/project/2261867834#task-4871286971">
-                                    <span class="task_list_item__project__label">Syllabi</span>
+                                <a [href]="'/project/' + task.project.id + '#task-' + task.id">
+                                    <span class="task_list_item__project__label">{{task.project.name}}</span>
                                     <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" style="color: rgb(219, 64, 53);"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
                                 </a>
                             </span>
