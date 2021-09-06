@@ -39,24 +39,119 @@
 </div>
 
 <!-- Left navigation -->
-<div class="container-fluid mt-5 pt-4 border">
+<div class="container-fluid mt-5 pt-4">
     <div class="row">
-        <div class="left-nav-container bg-light col-3">
+        <div class="left-nav-container col-3">
             <div class="left-nav position-fixed">
     
                 <div class="nav flex-column " role="tablist">
-                    <a class="nav-link text-dark  active" href="#" role="tab"><p class="mt-2"><i class="fa text-primary mr-2 fa-inbox"></i> Inbox</p></a>
-                    <a class="nav-link text-dark " href="#" role="tab"><p><i class="fa mr-2 text-success fa-calendar-minus-o"></i>Today</p></a>
-                    <a class="nav-link text-dark " href="#" role="tab"><p><i class="fa text-warning mr-2 fa-calendar"></i>Upcoming</p></a>
-                
-                    <div><i class="fa mx-2 text-muted fa-chevron-right"></i> Projects <a><i class="fa text-muted fa-plus"></i></a></div>
-                    <div><i class="fa mx-2 text-muted fa-chevron-right"></i> Labels</div>
-                    <div><i class="fa mx-2 text-muted fa-chevron-right"></i> Filters</div>
+                    <ul class="top_filters">
+                        <li class="filter" id="filter_inbox">
+                            <span class="item_icon">
+                                <i class="fa text-primary mr-2 fa-inbox"></i>
+                            </span>
+                            <span class="item_content">
+                                Inbox
+                                <small class="item_counter">0</small>
+                            </span>
+                        </li>
+                        <li class="filter" id="filter_today">
+                            <span class="item_icon">
+                                <i class="fa mr-2 text-success fa-calendar-minus-o"></i>
+                            </span>
+                            <span class="item_content">
+                                Today
+                                <small class="item_counter">0</small>
+                            </span>
+                        </li>
+                        <li class="filter" id="filter_today">
+                            <span class="item_icon">
+                                <i class="fa text-warning mr-2 fa-calendar"></i>
+                            </span>
+                            <span class="item_content">
+                                Upcoming
+                            </span>
+                        </li>
+                    </ul>
+
+
+                    <div class="expansion_panel">
+                        <div class="expansion_panel__header" style="top: 372px;">
+                            <button type="button" class="expansion_panel__toggle">
+                                <div class="expansion_panel__toggle_icon">
+                                    <i class="fa mx-2 text-muted fa-chevron-down"></i>
+                                </div>
+                                Projects
+                            </button>
+                            <div class="expansion_panel__actions">
+                                <button type="button" class="adder_icon">
+                                    <i class="fa text-muted fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="projects" style="min-height: 0px;">
+                            <ul id="projects_list" class="items generic_left_list">
+                                <li class="indent_1 project_list_item">
+                                    <button type="button" class="arrow">
+                                        <i class="fa mx-2 fa-chevron-right"></i>
+                                    </button>
+                                    <span class="text">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" style="color: rgb(219, 64, 53);"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                        Work
+                                    </span>
+                                    <div class="counter_count" id="project_count_2259007366">0</div>
+                                    <button type="button" class="icon_more">
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                            <button type="button" class="plus_add_button">
+                                <span class="icon_add">
+                                    <i class="fa fa-plus"></i>
+                                </span>
+                                Add project
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="expansion_panel">
+                        <div class="expansion_panel__header" style="top: 372px;">
+                            <button type="button" class="expansion_panel__toggle">
+                                <div class="expansion_panel__toggle_icon">
+                                    <i class="fa mx-2 text-muted fa-chevron-right"></i>
+                                </div>
+                                Filters
+                            </button>
+                            <div class="expansion_panel__actions">
+                                <button type="button" class="adder_icon">
+                                    <i class="fa text-muted fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expansion_panel">
+                        <div class="expansion_panel__header" style="top: 372px;">
+                            <button type="button" class="expansion_panel__toggle">
+                                <div class="expansion_panel__toggle_icon">
+                                    <i class="fa mx-2 text-muted fa-chevron-right"></i>
+                                </div>
+                                Labels
+                            </button>
+                            <div class="expansion_panel__actions">
+                                <button type="button" class="adder_icon">
+                                    <i class="fa text-muted fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
                 
             </div>
         </div>
-        <div class="border col-9 display">
+        <div class="col-9 display">
             <div class="tab-content">
                 <router-outlet></router-outlet>
             </div>

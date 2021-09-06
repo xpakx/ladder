@@ -23,8 +23,17 @@ export class TreeService {
   }
   
   getByDate(date: Date): TaskDetails[] {
-    return this.tasks.filter((a) => {
-      a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
+    this.tasks.push({
+      id: 1,
+      title: "Test task",
+      description: "Test task description",
+      due: new Date(),
+      project: {id: 5, name: "Project"},
+      parent: {id: 5}
     });
+    return this.tasks;
+    //return this.tasks.filter((a) => {
+    //  a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
+    //});
   }
 }
