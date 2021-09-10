@@ -153,9 +153,6 @@ button {
     display: flex;
     border-radius: 3px;
     align-items: center;
-}
-
-.project_list_item {
     display: flex;
 }
 
@@ -172,6 +169,12 @@ button {
 
 .project_list_item .arrow {
     color: rgb(184, 179, 179);
+    width: 30px;
+    margin-left: -30px;
+}
+
+.indent {
+    width: 20px;
 }
 
 .project_list_item .text {
@@ -245,8 +248,4 @@ button {
     padding: 5px 0 5px 34px;
     background: hsla(0,0%,100%,.2);
     transition: width .2s ease-in, background-color .15s cubic-bezier(.4,0,.2,1);
-}
-
-.indent_2 {
-    padding-left: 22px;
 }

@@ -92,15 +92,16 @@
                         </div>
                         <div class="projects" style="min-height: 0px;">
                             <ul id="projects_list" class="items generic_left_list">
-                                <li class="indent_1 project_list_item">
-                                    <button type="button" class="arrow">
+                                <li class="project_list_item" *ngFor="let project of tree.projects">
+                                    <span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
+                                    <button type="button" class="arrow" *ngIf="project.hasChildren">
                                         <i class="fa mx-2 fa-chevron-right"></i>
                                     </button>
                                     <span class="text">
-                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" style="color: rgb(219, 64, 53);"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
-                                        Work
+                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color +';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                        {{project.name}}
                                     </span>
-                                    <div class="counter_count" id="project_count_2259007366">0</div>
+                                    <div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
                                     <button type="button" class="icon_more">
                                         <i class="fa fa-ellipsis-h"></i>
                                     </button>
