@@ -1,4 +1,3 @@
-import { transformAll } from '@angular/compiler/src/render3/r3_ast';
 import { Injectable } from '@angular/core';
 import { LabelDetails } from '../entity/label-details';
 import { ProjectDetails } from '../entity/project-details';
@@ -39,9 +38,35 @@ export class TreeService {
         color: "#DB9335",
         order: 0,
         realOrder: undefined
+      },
+      {
+        id: 3,
+        name: "Project 4", 
+        parent: {id: 0, name: "Project 1"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 4,
+        name: "Project 5", 
+        parent: {id: 2, name: "Project 3"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 5,
+        name: "Project 6", 
+        parent: {id: 0, name: "Project 1"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
       }
     ];
     this.projects = this.transformAll(testProjects);
+    this.projects.sort((a, b) => a.order - b.order);
+    this.calculateRealOrder();
     this.projects.sort((a, b) => a.realOrder - b.realOrder);
 
     this.tasks.push(
@@ -64,7 +89,6 @@ export class TreeService {
 
   transformAll(projects: ProjectDetails[]):  ProjectTreeElem[] {
     return projects.map((a) => this.transform(a, projects));
-
   }
 
   transform(project: ProjectDetails, projects: ProjectDetails[]): ProjectTreeElem {
@@ -75,10 +99,36 @@ export class TreeService {
       parent: project.parent,
       color: project.color,
       order: project.order,
-      realOrder: this.getProjectIndent(project.id, projects) * projects.length + project.order,
+      realOrder: project.order,
       hasChildren: this.hasChildrenByProjectId(project.id, projects),
       indent: indent
     }
+  }
+
+  calculateRealOrder() {
+    let proj = this.projects.filter((a) => a.indent == 0);
+    var offset = 0;
+    for(let project of proj) {
+      offset += this.countAllChildren(project, offset) +1;
+    }
+  }
+
+  countAllChildren(project: ProjectTreeElem, offset: number): number {
+    project.realOrder = offset;
+    offset += 1;
+
+    if(!project.hasChildren) {
+      return 0;
+    }
+
+    let children = this.projects.filter((a) => a.parent?.id == project.id);
+    var num = 0;
+    for(let proj of children) {
+      let childNum = this.countAllChildren(proj, offset);
+      num += childNum+1;
+      offset += childNum+1;      
+    } 
+    return num;
   }
 
   hasChildrenByProjectId(projectId: number, projects: ProjectDetails[]): boolean {
@@ -88,7 +138,7 @@ export class TreeService {
   getProjectIndent(projectId: number, projects: ProjectDetails[]): number {
     let parentId: number | undefined = projects.find((a) => a.id == projectId)?.parent?.id;
     let counter = 0;
-    while(parentId) {
+    while(parentId != null) {
       counter +=1;
       parentId = projects.find((a) => a.id == parentId)?.parent?.id;
     }
