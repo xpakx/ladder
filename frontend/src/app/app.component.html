@@ -78,9 +78,10 @@
 
                     <div class="expansion_panel">
                         <div class="expansion_panel__header" style="top: 372px;">
-                            <button type="button" class="expansion_panel__toggle">
+                            <button type="button" class="expansion_panel__toggle" (click)="switchProjectCollapse()">
                                 <div class="expansion_panel__toggle_icon">
-                                    <i class="fa mx-2 text-muted fa-chevron-down"></i>
+                                    <i class="fa mx-2 text-muted fa-chevron-down" *ngIf="!collapseProjects"></i>
+                                    <i class="fa mx-2 text-muted fa-chevron-right" *ngIf="collapseProjects"></i>
                                 </div>
                                 Projects
                             </button>
@@ -90,7 +91,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="projects" style="min-height: 0px;">
+                        <div class="projects" style="min-height: 0px;" [class.hidden]="collapseProjects">
                             <ul class="items generic_left_list projects_list">
                                 <li class="project_list_item" *ngFor="let project of tree.projects">
                                     <span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
@@ -120,9 +121,11 @@
 
                     <div class="expansion_panel">
                         <div class="expansion_panel__header" style="top: 372px;">
-                            <button type="button" class="expansion_panel__toggle">
+                            <button type="button" class="expansion_panel__toggle" (click)="switchFilterCollapse()">
                                 <div class="expansion_panel__toggle_icon">
-                                    <i class="fa mx-2 text-muted fa-chevron-right"></i>
+                                    
+                                    <i class="fa mx-2 text-muted fa-chevron-down" *ngIf="!collapseFilters"></i>
+                                    <i class="fa mx-2 text-muted fa-chevron-right" *ngIf="collapseFilters"></i>
                                 </div>
                                 Filters
                             </button>
@@ -136,9 +139,11 @@
 
                     <div class="expansion_panel">
                         <div class="expansion_panel__header" style="top: 372px;">
-                            <button type="button" class="expansion_panel__toggle">
+                            <button type="button" class="expansion_panel__toggle" (click)="switchLabelCollapse()">
                                 <div class="expansion_panel__toggle_icon">
-                                    <i class="fa mx-2 text-muted fa-chevron-right"></i>
+                                    
+                                    <i class="fa mx-2 text-muted fa-chevron-down" *ngIf="!collapseLabels"></i>
+                                    <i class="fa mx-2 text-muted fa-chevron-right" *ngIf="collapseLabels"></i>
                                 </div>
                                 Labels
                             </button>

@@ -16,6 +16,9 @@ export class AppComponent {
   displayAddProject: string = "none";
   projectFav: boolean = false;
   addProjForm: FormGroup;
+  collapseProjects: boolean = true;
+  collapseLabels: boolean = true;
+  collapseFilters: boolean = true;
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private fb: FormBuilder) {
@@ -43,7 +46,7 @@ export class AppComponent {
       parentId: null,
       favorite: this.projectFav
     };
-    
+
     this.closeProjectModal();
     this.projectService.addProject(request).subscribe(
       (response: Project) => {
@@ -57,5 +60,17 @@ export class AppComponent {
 
   switchProjectFav() {
     this.projectFav = !this.projectFav;
+  }
+
+  switchProjectCollapse() {
+    this.collapseProjects = !this.collapseProjects;
+  }
+
+  switchLabelCollapse() {
+    this.collapseLabels = !this.collapseLabels;
+  }
+
+  switchFilterCollapse() {
+    this.collapseFilters = !this.collapseFilters;
   }
 }
