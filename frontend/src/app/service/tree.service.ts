@@ -63,6 +63,14 @@ export class TreeService {
         color: "#DB357D",
         order: 0,
         realOrder: undefined
+      },
+      {
+        id: 6,
+        name: "Project 7", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
       }
     ];
     this.projects = this.transformAll(testProjects);
@@ -101,7 +109,8 @@ export class TreeService {
       order: project.order,
       realOrder: this.projects.length+1,
       hasChildren: false,
-      indent: indent
+      indent: indent,
+      parentList: []
     });
     this.projects.sort((a, b) => a.order - b.order);
     this.calculateRealOrder();
@@ -122,7 +131,8 @@ export class TreeService {
       order: project.order,
       realOrder: project.order,
       hasChildren: this.hasChildrenByProjectId(project.id, projects),
-      indent: indent
+      indent: indent,
+      parentList: []
     }
   }
 
@@ -134,9 +144,14 @@ export class TreeService {
     }
   }
 
-  countAllChildren(project: ProjectTreeElem, offset: number): number {
+  countAllChildren(project: ProjectTreeElem, offset: number, parent?: ProjectTreeElem): number {
     project.realOrder = offset;
     offset += 1;
+    
+    if(parent) {
+		project.parentList = [...parent.parentList];
+		project.parentList.push(parent.id);
+	}
 
     if(!project.hasChildren) {
       return 0;
@@ -145,7 +160,7 @@ export class TreeService {
     let children = this.projects.filter((a) => a.parent?.id == project.id);
     var num = 0;
     for(let proj of children) {
-      let childNum = this.countAllChildren(proj, offset);
+      let childNum = this.countAllChildren(proj, offset, project);
       num += childNum+1;
       offset += childNum+1;      
     } 

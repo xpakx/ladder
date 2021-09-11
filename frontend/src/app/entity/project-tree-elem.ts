@@ -9,4 +9,5 @@ export interface ProjectTreeElem {
     realOrder: number;
     hasChildren: boolean;
     indent: number;
+    parentList: number[];
 }

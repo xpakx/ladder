@@ -20,6 +20,7 @@ export class AppComponent {
   collapseLabels: boolean = true;
   collapseFilters: boolean = true;
   hideMenu: boolean = false;
+  collapsedProjectsIds: number[] = [];
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private fb: FormBuilder) {
@@ -78,4 +79,27 @@ export class AppComponent {
   switchHideMenu() {
     this.hideMenu = !this.hideMenu;
   }
+  
+  collapseProject(projectId: number) {
+	  const index = this.collapsedProjectsIds.indexOf(projectId);
+	  if (index > -1) {
+			this.collapsedProjectsIds.splice(index, 1);
+	  } else {
+		  this.collapsedProjectsIds.push(projectId);
+	  }
+  }
+  
+  isProjectCollapsed(projectId: number): boolean {
+	  return this.collapsedProjectsIds.indexOf(projectId) > -1;
+  }
+  
+  isParentCollapsed(projectsIds: number[]): boolean {
+	  for(let id of projectsIds) {
+		if(this.collapsedProjectsIds.indexOf(id) > -1) {
+			return true;
+		}
+	  }
+	  return false;
+  }
+  
 }

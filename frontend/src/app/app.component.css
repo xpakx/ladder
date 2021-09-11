@@ -169,6 +169,18 @@ button {
     width: 38px;
 }
 
+.expansion_panel__toggle_icon i {
+	transition: transform .15s cubic-bezier(.4,0,.2,1); 
+}
+
+.project_list_item .arrow i {
+	transition: transform .15s cubic-bezier(.4,0,.2,1); 
+}
+
+.rotated {
+	transform: rotate(90deg);
+}
+
 .expansion_panel__actions {
     display: flex;
     align-items: center;
@@ -221,6 +233,23 @@ button {
 .projects_list {
     margin: 0;
     padding: 0;
+}
+
+.projects_list li {
+    height: 35px;
+    display: flex;
+    justify-content: center;
+}
+
+.div-color {
+	content: "";
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	background-color: currentColor;
+	border-radius: 50%;
+	margin-right: 14px;
+	margin-left: 14px;
 }
 
 .project_list_item {
@@ -486,4 +515,8 @@ button {
     opacity: 0;
     visibility: hidden;
     width: 0;
+}
+
+.hiddenProject {
+    display: none !important;
 }
