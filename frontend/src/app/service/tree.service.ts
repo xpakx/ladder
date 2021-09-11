@@ -102,7 +102,10 @@ export class TreeService {
       realOrder: this.projects.length+1,
       hasChildren: false,
       indent: indent
-    })
+    });
+    this.projects.sort((a, b) => a.order - b.order);
+    this.calculateRealOrder();
+    this.projects.sort((a, b) => a.realOrder - b.realOrder);
   }
 
   transformAll(projects: ProjectDetails[]):  ProjectTreeElem[] {

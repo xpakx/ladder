@@ -121,6 +121,11 @@ button {
     color: grey;
     cursor: pointer;
     border-radius: 25%;
+    opacity: 0;
+}
+
+.expansion_panel:hover .adder_icon {
+    opacity: 1;
 }
 
 .expansion_panel .adder_icon:hover {
@@ -153,18 +158,23 @@ button {
     display: flex;
     border-radius: 3px;
     align-items: center;
-    display: flex;
+    width: 100%;
 }
 
 .project_list_item .icon_more {
     border-radius: 3px;
-    display: flex;
     justify-content: center;
     align-items: center;
     width: 24px;
     height: 24px;
     color: grey;
     cursor: pointer;
+    opacity: 0;
+    margin: 0 12px 0 10px;
+}
+
+.project_list_item:hover .icon_more {
+    opacity: 1;
 }
 
 .project_list_item .arrow {
@@ -180,6 +190,7 @@ button {
 .project_list_item .text {
     display: flex;
     align-items: center;
+    flex: 1;
 }
 
 .tab-content {
