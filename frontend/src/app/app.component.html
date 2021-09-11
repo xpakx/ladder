@@ -85,7 +85,7 @@
                                 Projects
                             </button>
                             <div class="expansion_panel__actions">
-                                <button type="button" class="adder_icon">
+                                <button type="button" class="adder_icon" (click)="openProjectModal()">
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>
@@ -108,7 +108,7 @@
                                     
                                 </li>
                             </ul>
-                            <button type="button" class="plus_add_button">
+                            <button type="button" class="plus_add_button" (click)="openProjectModal()">
                                 <span class="icon_add">
                                     <i class="fa fa-plus"></i>
                                 </span>
@@ -158,4 +158,52 @@
         </div>
     </div>
 
+</div>
+
+
+<div class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{'display':displayAddProject}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Project</h4>
+        <i class="fa fa-question fa-circle"></i>
+      </div>
+      <div class="modal-body">
+        <form class="form">
+            <div class="form-field">
+                <label for="projectName">Name</label>
+                <input class="form-control mr-sm-2" placeholder="" id="projectName" name="name">
+            </div>
+
+            <div class="form-field">
+                <label for="projectColor">Color</label>
+                <input class="form-control mr-sm-2" placeholder="" id="projectColor" name="color">
+            </div>
+
+            <div class="form-field-inline">
+                <div class="switch" [class.switch-checked]="projectFav" (click)="switchProjectFav()">
+                    <span class="switch-handle"></span>
+                </div>
+                <label>
+                    Add to favorites
+                </label>
+            </div>
+        </form>
+  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-button" 
+                (click)="closeProjectModal()">
+          Cancel
+        </button>
+        <button type="button" class="modal-button modal-button-red" 
+                (click)="addProjectModal()">
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

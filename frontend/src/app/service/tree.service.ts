@@ -69,19 +69,23 @@ export class TreeService {
     this.calculateRealOrder();
     this.projects.sort((a, b) => a.realOrder - b.realOrder);
 
-    this.tasks.push(
-      {id: 0,
+    this.tasks = [
+      {
+        id: 0,
         title: "Task 1",
         description: "",
         project: {id: 0, name: "Project 1"},
         parent: null,
         due: new Date(),
         completed: false
-    });
+      }
+    ];
   }
 
   load(tree: UserWithData) {
     this.projects = this.transformAll(tree.projects);
+    this.projects.sort((a, b) => a.order - b.order);
+    this.calculateRealOrder();
     this.projects.sort((a, b) => a.realOrder - b.realOrder);
     this.tasks = tree.tasks;
     this.labels = tree.labels;
