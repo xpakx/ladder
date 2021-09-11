@@ -167,14 +167,14 @@ export class TreeService {
   }
   
   getByDate(date: Date): TaskDetails[] {
-    return this.tasks.filter((a) => {
+    return this.tasks.filter((a) => 
       a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
-    });
+    );
   }
 
   getNumOfUncompletedTasksByProject(projectId: number): number {
-    return this.tasks.filter((a) => {
+    return this.tasks.filter((a) => 
       a.project && a.project.id == projectId && !a.completed
-    }).length;
+    ).length;
   }
 }

@@ -144,6 +144,16 @@ button {
     line-height: 22px;
 }
 
+.projects {
+    height: auto;
+    overflow: visible;
+}
+
+.hidden {
+    height: 0;
+    overflow: hidden;
+}
+
 .projects_list {
     margin: 0;
     padding: 0;
@@ -393,9 +403,4 @@ button {
 
 .modal {
     background-color: rgba(0,0,0,.5);
-}
-
-.hidden {
-    visibility: hidden;
-    height: 0;
 }

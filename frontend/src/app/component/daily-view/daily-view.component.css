@@ -112,8 +112,8 @@ button {
 }
 
 .task_checkbox {
-    height: 16px;
-    width: 16px;
+    height: 18px;
+    width: 18px;
     border: 1px solid #dcdcdc;
     border-radius: 50%;
     transition: .15s cubic-bezier(.4,0,1,1);
@@ -227,10 +227,8 @@ button {
 }
 
 .task_list_item__overflow_actions {
-    position: absolute;
-    left: -10px;
-    width: 27px;
-    padding-right: 3px;
+    margin-left: -15px;
+    width: 15px;
     display: flex;
     flex-wrap: nowrap;
     color: rgb(168, 166, 166);
