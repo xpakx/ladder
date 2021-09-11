@@ -404,3 +404,22 @@ button {
 .modal {
     background-color: rgba(0,0,0,.5);
 }
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.left-nav-container {
+    max-width: 305px;
+}
+
+.main-container {
+    flex: 1;
+}
+
+.hiddenLeftNav {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+}

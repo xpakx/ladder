@@ -19,6 +19,7 @@ export class AppComponent {
   collapseProjects: boolean = true;
   collapseLabels: boolean = true;
   collapseFilters: boolean = true;
+  hideMenu: boolean = false;
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private fb: FormBuilder) {
@@ -72,5 +73,9 @@ export class AppComponent {
 
   switchFilterCollapse() {
     this.collapseFilters = !this.collapseFilters;
+  }
+
+  switchHideMenu() {
+    this.hideMenu = !this.hideMenu;
   }
 }
