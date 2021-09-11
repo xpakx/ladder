@@ -172,15 +172,15 @@
         <i class="fa fa-question fa-circle"></i>
       </div>
       <div class="modal-body">
-        <form class="form">
+        <form class="form" [formGroup]="addProjForm">
             <div class="form-field">
                 <label for="projectName">Name</label>
-                <input class="form-control mr-sm-2" placeholder="" id="projectName" name="name">
+                <input class="form-control mr-sm-2" placeholder="" id="name" formControlName="name">
             </div>
 
             <div class="form-field">
                 <label for="projectColor">Color</label>
-                <input class="form-control mr-sm-2" placeholder="" id="projectColor" name="color">
+                <input class="form-control mr-sm-2" placeholder="" id="color" formControlName="color">
             </div>
 
             <div class="form-field-inline">
@@ -200,7 +200,7 @@
           Cancel
         </button>
         <button type="button" class="modal-button modal-button-red" 
-                (click)="addProjectModal()">
+                (click)="addProjectModal()" [disabled]="addProjForm.invalid">
           Add
         </button>
       </div>

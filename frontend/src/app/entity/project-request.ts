@@ -1,5 +1,6 @@
 export interface ProjectRequest {
     name: string;
     color: string;
-    parentId: number;
+    parentId: number | null;
+    favorite: boolean;
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LabelDetails } from '../entity/label-details';
+import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { TaskDetails } from '../entity/task-details';
@@ -89,6 +90,19 @@ export class TreeService {
     this.projects.sort((a, b) => a.realOrder - b.realOrder);
     this.tasks = tree.tasks;
     this.labels = tree.labels;
+  }
+
+  addNewProject(project: Project, indent: number) {
+    this.projects.push({
+      id: project.id,
+      name: project.name,
+      parent: null,
+      color: project.color,
+      order: project.order,
+      realOrder: this.projects.length+1,
+      hasChildren: false,
+      indent: indent
+    })
   }
 
   transformAll(projects: ProjectDetails[]):  ProjectTreeElem[] {
