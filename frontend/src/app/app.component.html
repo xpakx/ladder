@@ -1,168 +1,174 @@
- <!-- Nav bar -->
-<div class="fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item nav-item-font py-2">
-                    <a class="nav-link text-white ml-1" (click)="switchHideMenu()"><i class="fa fa-bars"></i></a>
-                </li>
-                <li class="nav-item nav-item-font py-2">
-                    <a class="nav-link text-white ml-1" href="#"><i class="fa fa-home"></i></a>
-                </li>
-                <li class="nav-item nav-item-font py-2 nav-search">
-                    <span class="search_icon">
-                        <i class="fa text-white mr-2 fa-search"></i>
-                    </span>
-                    <form class="form-inline">
-                        <input class="form-control mr-sm-2" type="search" placeholder="Find">
-                    </form>
-                </li>
-            </ul>
-            
-        </div>
-        <ul class="navbar-nav mt-2 mt-lg-0">
-            <li class="nav-item nav-item-font py-2">
-                <a class="nav-link top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-plus"></i> </a>
-            </li>
-            <li class="nav-item nav-item-font py-2 ">
-                <a class="nav-link top-right-part text-white mr-2" href="#">
-                <i class="fa top-right-part fa-line-chart" id="status"></i></a>
-            </li>
-            <li class="nav-item nav-item-font py-2 ">
-                <a class="nav-link top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-bell"></i> </a>
-            </li>
-            <li class="nav-item nav-item-font py-2 ">
-                <a class="nav-link top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-cog"></i></a>
-            </li>
-        </ul>
-    </nav>
-</div>
+<div class="top-container">
 
-<!-- Left navigation -->
-<div class="container-fluid mt-5 pt-4">
-    <div class="row">
-        <div class="left-nav-container" [class.hiddenLeftNav]="hideMenu">
-            <div class="left-nav">
-                    <ul class="top_filters">
-                        <li class="filter" id="filter_inbox">
-                            <span class="item_icon">
-                                <i class="fa text-primary mr-2 fa-inbox"></i>
-                            </span>
-                            <span class="item_content">
-                                Inbox
-                                <small class="item_counter">0</small>
-                            </span>
-                        </li>
-                        <li class="filter" id="filter_today">
-                            <span class="item_icon">
-                                <i class="fa mr-2 text-success fa-calendar-minus-o"></i>
-                            </span>
-                            <span class="item_content">
-                                Today
-                                <small class="item_counter">0</small>
-                            </span>
-                        </li>
-                        <li class="filter" id="filter_today">
-                            <span class="item_icon">
-                                <i class="fa text-warning mr-2 fa-calendar"></i>
-                            </span>
-                            <span class="item_content">
-                                Upcoming
-                            </span>
-                        </li>
-                    </ul>
+	 <!-- Nav bar -->
+	<div class="fixed-top">
+		<nav class="navbar navbar-expand-lg navbar-light">
+			<div class=" top-navbar-left">
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse">
+					<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+						<li class="nav-item nav-item-font py-2">
+							<button class="nav-link nav-button text-white ml-1" (click)="switchHideMenu()"><i class="fa fa-bars"></i></button>
+						</li>
+						<li class="nav-item nav-item-font py-2">
+							<button class="nav-link nav-button text-white ml-1" href="#"><i class="fa fa-home"></i></button>
+						</li>
+						<li class="nav-item nav-item-font py-2 nav-search">
+							<span class="search_icon">
+								<i class="fa text-white mr-2 fa-search"></i>
+							</span>
+							<form class="form-inline">
+								<input class="form-control mr-sm-2" type="search" placeholder="Find">
+							</form>
+						</li>
+					</ul>
+					
+				</div>
+			</div>
+			<ul class="navbar-nav top-navbar-right">
+				<li class="nav-item nav-item-font py-2">
+					<button class="nav-link nav-button top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-plus"></i> </button>
+				</li>
+				<li class="nav-item nav-item-font py-2 ">
+					<button class="nav-link nav-button top-right-part text-white mr-2" href="#">
+					<i class="fa top-right-part fa-line-chart" id="status"></i></button>
+				</li>
+				<li class="nav-item nav-item-font py-2 ">
+					<button class="nav-link nav-button top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-bell"></i> </button>
+				</li>
+				<li class="nav-item nav-item-font py-2 ">
+					<button class="nav-link nav-button top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-cog"></i></button>
+				</li>
+			</ul>
+		</nav>
+	</div>
+
+	<!-- Left navigation -->
+	<div class="container-fluid">
+		<div class="row">
+			<div class="left-nav-container" [class.hiddenLeftNav]="hideMenu">
+				<div class="left-nav">
+						<ul class="top_filters">
+							<li class="filter" id="filter_inbox">
+								<span class="item_icon">
+									<i class="fa text-primary mr-2 fa-inbox"></i>
+								</span>
+								<span class="item_content">
+									Inbox
+									<small class="item_counter">0</small>
+								</span>
+							</li>
+							<li class="filter" id="filter_today">
+								<span class="item_icon">
+									<i class="fa mr-2 text-success fa-calendar-minus-o"></i>
+								</span>
+								<span class="item_content">
+									Today
+									<small class="item_counter">0</small>
+								</span>
+							</li>
+							<li class="filter" id="filter_today">
+								<span class="item_icon">
+									<i class="fa text-warning mr-2 fa-calendar"></i>
+								</span>
+								<span class="item_content">
+									Upcoming
+								</span>
+							</li>
+						</ul>
 
 
-                    <div class="expansion_panel">
-                        <div class="expansion_panel__header" style="top: 372px;">
-                            <button type="button" class="expansion_panel__toggle" (click)="switchProjectCollapse()">
-                                <div class="expansion_panel__toggle_icon">
-                                    <i class="fa mx-2 text-muted fa-chevron-down" *ngIf="!collapseProjects"></i>
-                                    <i class="fa mx-2 text-muted fa-chevron-right" *ngIf="collapseProjects"></i>
-                                </div>
-                                Projects
-                            </button>
-                            <div class="expansion_panel__actions">
-                                <button type="button" class="adder_icon" (click)="openProjectModal()">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="projects" style="min-height: 0px;" [class.hidden]="collapseProjects">
-                            <ul class="items generic_left_list projects_list">
-                                <li class="project_list_item" *ngFor="let project of tree.projects">
-                                    <span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
-                                    <button type="button" class="arrow" *ngIf="project.hasChildren">
-                                        <i class="fa mx-2 fa-chevron-right"></i>
-                                    </button>
-                                    <span class="text">
-                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color +';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
-                                        {{project.name}}
-                                        <div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
-                                    </span>
-                                    
-                                    <button type="button" class="icon_more">
-                                        <i class="fa fa-ellipsis-h"></i>
-                                    </button>
-                                    
-                                </li>
-                            </ul>
-                            <button type="button" class="plus_add_button" (click)="openProjectModal()">
-                                <span class="icon_add">
-                                    <i class="fa fa-plus"></i>
-                                </span>
-                                Add project
-                            </button>
-                        </div>
-                    </div>
+						<div class="expansion_panel">
+							<div class="expansion_panel__header" style="top: 372px;">
+								<button type="button" class="expansion_panel__toggle" (click)="switchProjectCollapse()">
+									<div class="expansion_panel__toggle_icon">
+										<i class="fa mx-2 text-muted fa-chevron-down" *ngIf="!collapseProjects"></i>
+										<i class="fa mx-2 text-muted fa-chevron-right" *ngIf="collapseProjects"></i>
+									</div>
+									Projects
+								</button>
+								<div class="expansion_panel__actions">
+									<button type="button" class="adder_icon" (click)="openProjectModal()">
+										<i class="fa fa-plus"></i>
+									</button>
+								</div>
+							</div>
+							<div class="projects" style="min-height: 0px;" [class.hidden]="collapseProjects">
+								<ul class="items generic_left_list projects_list">
+									<li class="project_list_item" *ngFor="let project of tree.projects">
+										<span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
+										<button type="button" class="arrow" *ngIf="project.hasChildren">
+											<i class="fa mx-2 fa-chevron-right"></i>
+										</button>
+										<span class="text">
+											<svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color +';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+											{{project.name}}
+											<div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
+										</span>
+										
+										<button type="button" class="icon_more">
+											<i class="fa fa-ellipsis-h"></i>
+										</button>
+										
+									</li>
+								</ul>
+								<button type="button" class="plus_add_button" (click)="openProjectModal()">
+									<span class="icon_add">
+										<i class="fa fa-plus"></i>
+									</span>
+									Add project
+								</button>
+							</div>
+						</div>
 
-                    <div class="expansion_panel">
-                        <div class="expansion_panel__header" style="top: 372px;">
-                            <button type="button" class="expansion_panel__toggle" (click)="switchFilterCollapse()">
-                                <div class="expansion_panel__toggle_icon">
-                                    
-                                    <i class="fa mx-2 text-muted fa-chevron-down" *ngIf="!collapseFilters"></i>
-                                    <i class="fa mx-2 text-muted fa-chevron-right" *ngIf="collapseFilters"></i>
-                                </div>
-                                Filters
-                            </button>
-                            <div class="expansion_panel__actions">
-                                <button type="button" class="adder_icon">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+						<div class="expansion_panel">
+							<div class="expansion_panel__header" style="top: 372px;">
+								<button type="button" class="expansion_panel__toggle" (click)="switchFilterCollapse()">
+									<div class="expansion_panel__toggle_icon">
+										
+										<i class="fa mx-2 text-muted fa-chevron-down" *ngIf="!collapseFilters"></i>
+										<i class="fa mx-2 text-muted fa-chevron-right" *ngIf="collapseFilters"></i>
+									</div>
+									Filters
+								</button>
+								<div class="expansion_panel__actions">
+									<button type="button" class="adder_icon">
+										<i class="fa fa-plus"></i>
+									</button>
+								</div>
+							</div>
+						</div>
 
-                    <div class="expansion_panel">
-                        <div class="expansion_panel__header" style="top: 372px;">
-                            <button type="button" class="expansion_panel__toggle" (click)="switchLabelCollapse()">
-                                <div class="expansion_panel__toggle_icon">
-                                    
-                                    <i class="fa mx-2 text-muted fa-chevron-down" *ngIf="!collapseLabels"></i>
-                                    <i class="fa mx-2 text-muted fa-chevron-right" *ngIf="collapseLabels"></i>
-                                </div>
-                                Labels
-                            </button>
-                            <div class="expansion_panel__actions">
-                                <button type="button" class="adder_icon">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                
-            </div>
-        </div>
-        <div class="main-container">
-            <div class="tab-content">
-                <router-outlet></router-outlet>
-            </div>
-        </div>
-    </div>
+						<div class="expansion_panel">
+							<div class="expansion_panel__header" style="top: 372px;">
+								<button type="button" class="expansion_panel__toggle" (click)="switchLabelCollapse()">
+									<div class="expansion_panel__toggle_icon">
+										
+										<i class="fa mx-2 text-muted fa-chevron-down" *ngIf="!collapseLabels"></i>
+										<i class="fa mx-2 text-muted fa-chevron-right" *ngIf="collapseLabels"></i>
+									</div>
+									Labels
+								</button>
+								<div class="expansion_panel__actions">
+									<button type="button" class="adder_icon">
+										<i class="fa fa-plus"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					
+				</div>
+			</div>
+			<div class="main-container">
+				<div class="tab-content">
+					<router-outlet></router-outlet>
+				</div>
+			</div>
+		</div>
+
+	</div>
 
 </div>
 

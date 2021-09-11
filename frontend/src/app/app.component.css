@@ -1,11 +1,62 @@
+.top-container {
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.container-fluid {
+	flex: 1;
+	margin-top: 44px;
+	padding: 0;
+}
+
 .fixed-top {
     background-color: #db4c3f;
+    box-sizing: border-box;
+	height: 44px;
+	z-index: 200;
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	border-bottom: 1px solid transparent;
+	background-color: #db4c3f;
+	transition: height .2s ease-in;
+	padding-left: 42px;
+	padding-right: 42px;
+	justify-content: center;
+	width: 100%;
+}
+
+.navbar {
+	justify-content: space-between;
+	width: 100%;
+	display: flex;
+}
+
+.navbar ul { 
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.top-navbar-left {
+	display: flex;
+	align-items: center;
+}
+
+.top-navbar-right {
+	display: flex;
 }
 
 .form-inline input {
     background-color: #e27065;
     border: none;
     color: #fff;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 5px;
 }
 
 .form-inline input::placeholder {
@@ -67,6 +118,19 @@ button {
     background-color: transparent;
     border: none;
     margin: 0;
+}
+
+
+.nav-button {
+	height: 28px;
+	border-radius: 3px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.nav-button:hover {
+	background-color: hsla(0,0%,100%,.2);
 }
 
 .expansion_panel {
@@ -253,8 +317,8 @@ button {
     cursor: text;
     left: 5px;
     top: 50%;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
+    -webkit-transform: translateY(-60%);
+    transform: translateY(-60%);
     height: 21px;
 }
 
