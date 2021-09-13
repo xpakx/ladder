@@ -1,0 +1,245 @@
+.plus_add_button {
+    text-decoration: none;
+    text-align: left;
+    width: 100%;
+    margin-left: -2px;
+    padding: 0 0 8px;
+    font-size: 14px;
+    white-space: nowrap;
+    color: grey;
+}
+
+.icon_add {
+    align-items: center;
+    border-radius: 50%;
+    color: #dd4b39;
+    display: inline-flex;
+    height: 17px;
+    justify-content: center;
+    margin-right: 11px;
+    -webkit-transform: translateY(8px);
+    transform: translateY(8px);
+    vertical-align: 7px;
+    width: 17px;
+}
+
+.plus_add_button:hover .icon_add {
+    color: #fff;
+    background-color: #dd4b39;
+}
+
+.plus_add_button:hover {
+    color: #dd4b39;
+}
+
+.sort_button {
+    color: grey;
+    font-size: 12px;
+    margin-left: 3px;
+    margin-right: 6px;
+    word-break: normal;
+}
+
+.sort_button:hover {
+    background-color: #eee;
+    color: #202020;
+}
+
+.icon_sort {
+    display: inline-flex;
+    justify-content: center;
+    margin-right: 3px;
+    -webkit-transform: translateY(8px);
+    transform: translateY(8px);
+    vertical-align: 7px;
+}
+
+button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    margin: 0;
+}
+
+.header_actions {
+    display: flex;
+    align-items: center;
+    color: #333;
+}
+
+.panel {
+    max-width: 800px;
+    margin: auto;
+}
+
+.view_header, .header_content {
+    display: flex;
+    width: 100%;
+    padding-bottom: 8px;
+    margin: 0 auto;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom-color .3s;
+    align-items: flex-start;
+    justify-content: space-between;
+    word-break: break-word;
+}
+
+.view_header h1 small {
+    color: grey;
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.header_content h1 {
+    font-size: 20px;
+}
+
+.header_content .simple_content {
+    font-variant: small-caps;
+}
+
+.task_list_items {
+    list-style-type: none;
+}
+
+.task_list_item {
+    cursor: pointer;
+}
+
+.task_list_item_body {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    padding: 0;
+    cursor: pointer;
+}
+
+.task_checkbox {
+    height: 18px;
+    width: 18px;
+    border: 1px solid #dcdcdc;
+    border-radius: 50%;
+    transition: .15s cubic-bezier(.4,0,1,1);
+    padding: 0;
+    margin-right: 5px;
+}
+
+.priority_1 {
+    border-color: grey;
+    color: grey;
+}
+
+.priority_3 {
+    background-color: rgba(235,137,9,.1);
+    border-color: #eb8909;
+    color: #eb8909;
+}
+
+.task_checkbox:hover {
+    background-color: #8c91962d;
+}
+
+.task_checkbox_circle {
+    opacity: 0;
+}
+
+.task_checkbox:hover .task_checkbox_circle {
+    opacity: 1;
+}
+
+.icon_check {
+    display: inline-flex;
+    justify-content: center;
+    vertical-align: 7px;
+}
+
+.task_list_item_content {
+    flex: 1;
+}
+
+.task_list_item_content_wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 3px;
+}
+
+.markdown_content {
+    flex-grow: 1;
+    font-size: 14px;
+    line-height: 21px;
+    word-wrap: break-word;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.task_list_item__info_tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    min-height: 16px;
+    height: 16px;
+    display: flex;
+    margin-left: auto;
+    margin-right: -30px;
+    margin-top: 10px;
+}
+
+.task_list_item__project {
+    margin-left: auto;
+    display: flex;
+}
+
+.task_list_item__project a {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: grey;
+    text-decoration: none;
+}
+
+.task_list_item__actions {
+    display: flex;
+    justify-content: flex-end;
+    height: 24px;
+    margin-top: 8px;
+    padding-left: 16px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    transition: .15s cubic-bezier(.4,0,1,1);
+}
+
+.task_list_item__actions button {
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    color: grey;
+    cursor: pointer;
+}
+
+.task_list_item:hover .task_list_item__actions {
+    opacity: 1;
+}
+
+.task_list_item__overflow_actions {
+    margin-left: -15px;
+    width: 15px;
+    display: flex;
+    flex-wrap: nowrap;
+    color: rgb(168, 166, 166);
+    opacity: 0;
+    cursor: grabbing;
+}
+
+.task_list_item:hover .task_list_item__overflow_actions {
+    opacity: 1;
+}

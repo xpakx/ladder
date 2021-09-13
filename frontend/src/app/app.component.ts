@@ -106,5 +106,9 @@ export class AppComponent {
   toHome() {
     this.router.navigate(['/']);
   }
+
+  toProject(id: number) {
+    this.router.navigate(['/project/'+id]);
+  }
   
 }

@@ -101,11 +101,11 @@
 										<button type="button" class="arrow" *ngIf="project.hasChildren" (click)="collapseProject(project.id)">
 											<i class="fa mx-2 fa-chevron-right"   [class.rotated]="!isProjectCollapsed(project.id)"></i>
 										</button>
-										<span class="text">
+										<button class="text" (click)="toProject(project.id)">
 											<div class="div-color" [style]="'color: ' + project.color +';'"></div>
 											{{project.name}}
 											<div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
-										</span>
+										</button>
 										
 										<button type="button" class="icon_more">
 											<i class="fa fa-ellipsis-h"></i>

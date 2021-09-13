@@ -192,4 +192,15 @@ export class TreeService {
       a.project && a.project.id == projectId && !a.completed
     ).length;
   }
+
+  getProjectById(projectId: number): ProjectTreeElem | undefined {
+    return this.projects.find((a) => a.id == projectId);
+  }
+
+  getTasksByProject(projectId: number): TaskDetails[] {
+    return this.tasks.filter((a) => 
+      a.project.id == projectId
+    );
+  }
+ 
 }
