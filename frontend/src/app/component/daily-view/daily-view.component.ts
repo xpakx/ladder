@@ -2,7 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TaskDetails } from 'src/app/entity/task-details';
-import { ProjectService } from 'src/app/service/project.service';
 import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
@@ -22,7 +21,7 @@ export class DailyViewComponent implements OnInit {
     if(!this.tree.isLoaded()) {
       this.router.navigate(["load"]);
     }
-    
+
     this.todayDate = new Date();
     this.tasks = this.tree.getByDate(this.todayDate);
   }
