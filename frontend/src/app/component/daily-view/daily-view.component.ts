@@ -19,6 +19,10 @@ export class DailyViewComponent implements OnInit {
   constructor(private router: Router, private tree: TreeService) { }
 
   ngOnInit(): void {
+    if(!this.tree.isLoaded()) {
+      this.router.navigate(["load"]);
+    }
+    
     this.todayDate = new Date();
     this.tasks = this.tree.getByDate(this.todayDate);
   }

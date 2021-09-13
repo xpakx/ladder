@@ -13,6 +13,7 @@ export class TreeService {
   public projects: ProjectTreeElem[] = [];
   public tasks: TaskDetails[] = [];
   public labels: LabelDetails[] = [];
+  public loaded: boolean = false;
 
   constructor() { 
     let testProjects = [
@@ -91,7 +92,12 @@ export class TreeService {
     ];
   }
 
+  isLoaded(): boolean {
+    return this.loaded;
+  }
+
   load(tree: UserWithData) {
+    this.loaded = true;
     this.projects = this.transformAll(tree.projects);
     this.projects.sort((a, b) => a.order - b.order);
     this.calculateRealOrder();

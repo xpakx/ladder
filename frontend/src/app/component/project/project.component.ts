@@ -23,6 +23,10 @@ export class ProjectComponent implements OnInit {
     private tree: TreeService) { }
 
   ngOnInit(): void {
+    if(!this.tree.isLoaded()) {
+      this.router.navigate(["load"]);
+    }
+
     this.route.params.subscribe(routeParams => {
       this.loadProject(routeParams.id);
     });    

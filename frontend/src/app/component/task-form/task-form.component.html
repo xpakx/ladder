@@ -1,8 +1,8 @@
-<div>
-    <form class="taskForm">
+<div *ngIf="taskForm">
+    <form class="taskForm" [formGroup]="taskForm">
         <div class="taskFormInputsHolder">
-            <input placeholder="Task name">
-            <textarea placeholder="Description"></textarea>
+            <input placeholder="Task name" formControlName="title">
+            <textarea placeholder="Description" formControlName="description"></textarea>
         </div> 
         <div class="taskFormExtra">
             <div class="taskFormExtraFields">
@@ -34,7 +34,7 @@
     </form>
 
     <div class="taskFormButtons">
-        <button type="button" class="taskFormButton taskFormButtonRed" >
+        <button type="button" class="taskFormButton taskFormButtonRed" [disabled]="taskForm.invalid">
             Add task
         </button>
         <button type="button" class="taskFormButton" (click)="closeForm()">
