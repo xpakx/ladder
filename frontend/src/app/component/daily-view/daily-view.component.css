@@ -67,6 +67,11 @@ button {
     color: #333;
 }
 
+.panel {
+    max-width: 800px;
+    margin: auto;
+}
+
 .view_header, .header_content {
     display: flex;
     width: 100%;

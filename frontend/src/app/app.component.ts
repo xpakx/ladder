@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Project } from './entity/project';
 import { ProjectRequest } from './entity/project-request';
 import { ProjectService } from './service/project.service';
@@ -23,7 +24,7 @@ export class AppComponent {
   collapsedProjectsIds: number[] = [];
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
-    private fb: FormBuilder) {
+    private fb: FormBuilder, private router: Router) {
       this.addProjForm = this.fb.group({
         name: ['', Validators.required],
         color: ['', Validators.required]
@@ -100,6 +101,10 @@ export class AppComponent {
 		}
 	  }
 	  return false;
+  }
+
+  toHome() {
+    this.router.navigate(['/']);
   }
   
 }

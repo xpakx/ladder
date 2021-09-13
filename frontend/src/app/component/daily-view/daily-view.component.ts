@@ -16,12 +16,14 @@ export class DailyViewComponent implements OnInit {
   public invalid: boolean = false;
   public message: string = '';
   tasks: TaskDetails[] = [];
+  todayDate: Date | undefined;
 
   constructor(private router: Router, private tree: TreeService,
     private service: ProjectService) { }
 
   ngOnInit(): void {
-    this.tasks = this.tree.getByDate(new Date());
+    this.todayDate = new Date();
+    this.tasks = this.tree.getByDate(this.todayDate);
   }
 
 }
