@@ -1,0 +1,44 @@
+<div>
+    <form class="taskForm">
+        <div class="taskFormInputsHolder">
+            <input placeholder="Task name">
+            <textarea placeholder="Description"></textarea>
+        </div> 
+        <div class="taskFormExtra">
+            <div class="taskFormExtraFields">
+                <button type="button" class="taskFormExtraButton">
+                    <div class="taskFormExtraIcon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <span class="taskFormExtraText">Schedule</span>
+                </button>
+                <button type="button" class="taskFormExtraButton">
+                    <div *ngIf="project">
+                        <div class="taskFormExtraColor" [style]="'color: ' + project.color +';'"></div>
+                        <span class="taskFormExtraText">{{project.name}}</span>
+                    </div>
+                </button>
+            </div>
+            <div class="taskFormExtraActions">
+                <button type="button" class="itemAction">
+                    <i class="fa fa-tag"></i>
+                </button>
+                <button type="button" class="itemAction">
+                    <i class="fa fa-flag"></i>
+                </button>
+                <button type="button" class="itemAction">
+                    <i class="fa fa-clock-o"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="taskFormButtons">
+        <button type="button" class="taskFormButton taskFormButtonRed" >
+            Add task
+        </button>
+        <button type="button" class="taskFormButton" (click)="closeForm()">
+            Cancel
+        </button>
+    </div> 
+</div>

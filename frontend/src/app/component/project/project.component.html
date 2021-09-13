@@ -79,50 +79,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="project.id == showEditTaskFormById">
-                    <form class="taskForm">
-                        <div class="taskFormInputsHolder">
-                            <input placeholder="Task name">
-                            <textarea placeholder="Description"></textarea>
-                        </div> 
-                        <div class="taskFormExtra">
-                            <div class="taskFormExtraFields">
-                                <button type="button" class="taskFormExtraButton">
-                                    <div class="taskFormExtraIcon">
-                                        <i class="fa fa-calendar"></i>
-                                    </div>
-                                    <span class="taskFormExtraText">Schedule</span>
-                                </button>
-                                <button type="button" class="taskFormExtraButton">
-                                    <div>
-                                        <div class="taskFormExtraColor" [style]="'color: ' + project.color +';'"></div>
-                                        <span class="taskFormExtraText">{{project.name}}</span>
-                                    </div>
-                                </button>
-                            </div>
-                            <div class="taskFormExtraActions">
-                                <button type="button" class="itemAction">
-                                    <i class="fa fa-tag"></i>
-                                </button>
-                                <button type="button" class="itemAction">
-                                    <i class="fa fa-flag"></i>
-                                </button>
-                                <button type="button" class="itemAction">
-                                    <i class="fa fa-clock-o"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
-                    <div class="taskFormButtons">
-                        <button type="button" class="taskFormButton taskFormButtonRed" >
-                            Save
-                        </button>
-                        <button type="button" class="taskFormButton" (click)="closeEditTaskForm()">
-                            Cancel
-                        </button>
-                    </div> 
-                </div>
+                <app-task-form *ngIf="project.id == showEditTaskFormById" [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()"></app-task-form>
             </li>
 
             <li>
@@ -133,50 +90,7 @@
                     Add task
                 </button>
 
-                <div *ngIf="showAddTaskForm">
-                    <form class="taskForm">
-                        <div class="taskFormInputsHolder">
-                            <input placeholder="Task name">
-                            <textarea placeholder="Description"></textarea>
-                        </div> 
-                        <div class="taskFormExtra">
-                            <div class="taskFormExtraFields">
-                                <button type="button" class="taskFormExtraButton">
-                                    <div class="taskFormExtraIcon">
-                                        <i class="fa fa-calendar"></i>
-                                    </div>
-                                    <span class="taskFormExtraText">Schedule</span>
-                                </button>
-                                <button type="button" class="taskFormExtraButton">
-                                    <div>
-                                        <div class="taskFormExtraColor" [style]="'color: ' + project.color +';'"></div>
-                                        <span class="taskFormExtraText">{{project.name}}</span>
-                                    </div>
-                                </button>
-                            </div>
-                            <div class="taskFormExtraActions">
-                                <button type="button" class="itemAction">
-                                    <i class="fa fa-tag"></i>
-                                </button>
-                                <button type="button" class="itemAction">
-                                    <i class="fa fa-flag"></i>
-                                </button>
-                                <button type="button" class="itemAction">
-                                    <i class="fa fa-clock-o"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
-                    <div class="taskFormButtons">
-                        <button type="button" class="taskFormButton taskFormButtonRed" >
-                            Add task
-                        </button>
-                        <button type="button" class="taskFormButton" (click)="closeAddTaskForm()">
-                            Cancel
-                        </button>
-                    </div> 
-                </div>
+                <app-task-form *ngIf="showAddTaskForm" [project]="project" (closeEvent)="closeAddTaskForm()"></app-task-form>
 
             </li>
 

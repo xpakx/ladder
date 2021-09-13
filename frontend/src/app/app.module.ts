@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DailyViewComponent } from './component/daily-view/daily-view.component';
 import { LoadProjectComponent } from './component/load-project/load-project.component';
 import { ProjectComponent } from './component/project/project.component';
+import { TaskFormComponent } from './component/task-form/task-form.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -23,7 +24,8 @@ export function tokenGetter() {
     RegisterComponent,
     DailyViewComponent,
     LoadProjectComponent,
-    ProjectComponent
+    ProjectComponent,
+    TaskFormComponent
   ],
   imports: [
     BrowserModule,
