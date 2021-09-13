@@ -1,4 +1,4 @@
-<div *ngIf="taskForm">
+<div *ngIf="taskForm" class="taskFormContainer">
     <form class="taskForm" [formGroup]="taskForm">
         <div class="taskFormInputsHolder">
             <input placeholder="Task name" formControlName="title">
@@ -35,8 +35,8 @@
 
     <div class="taskFormButtons">
         <button type="button" class="taskFormButton taskFormButtonRed" [disabled]="taskForm.invalid">
-            Add task
-        </button>
+            {{task ? "Save" : "Add task"}}
+        </button> 
         <button type="button" class="taskFormButton" (click)="closeForm()">
             Cancel
         </button>

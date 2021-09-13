@@ -139,3 +139,7 @@ button {
 .taskFormButtons {
     margin-top: 5px;
 }
+
+.taskFormContainer {
+    margin: 8px 0;
+}

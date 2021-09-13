@@ -5,7 +5,7 @@ export interface TaskDetails {
     id: number;
     title: string;
     description: string;
-    project: ProjectWithNameAndId;
+    project: ProjectWithNameAndId | null;
     parent: ParentWithId | null;
     due: Date;
     completed: boolean;

@@ -15,10 +15,210 @@ export class TreeService {
   public labels: LabelDetails[] = [];
   public loaded: boolean = false;
 
-  constructor() { }
+  constructor() { 
+    let testProjects = [
+      {
+        id: 0,
+        name: "Project 1", 
+        parent: null,
+        color: "#DB4035",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 1,
+        name: "Project 2", 
+        parent: null,
+        color: "#35D0DB",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 2,
+        name: "Project 3", 
+        parent: {id: 1, name: "Project 2"},
+        color: "#DB9335",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 3,
+        name: "Project 4", 
+        parent: {id: 0, name: "Project 1"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 4,
+        name: "Project 5", 
+        parent: {id: 2, name: "Project 3"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 5,
+        name: "Project 6", 
+        parent: {id: 0, name: "Project 1"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 6,
+        name: "Project 7", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 7,
+        name: "Project 8", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 8,
+        name: "Project 9", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 9,
+        name: "Project 10", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 10,
+        name: "Project 11", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 11,
+        name: "Project 12", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 12,
+        name: "Project 13", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 13,
+        name: "Project 14", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 14,
+        name: "Project 15", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 15,
+        name: "Project 16", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      },
+      {
+        id: 16,
+        name: "Project 17", 
+        parent: {id: 4, name: "Project 5"},
+        color: "#DB357D",
+        order: 0,
+        realOrder: undefined
+      }
+    ];
+    this.projects = this.transformAll(testProjects);
+    this.projects.sort((a, b) => a.order - b.order);
+    this.calculateRealOrder();
+    this.projects.sort((a, b) => a.realOrder - b.realOrder);
+
+    this.tasks = [
+      {
+        id: 0,
+        title: "Task 1",
+        description: "",
+        project: {id: 0, name: "Project 1"},
+        parent: null,
+        due: new Date(),
+        completed: false
+      }, 
+      {
+        id: 1,
+        title: "Task 2",
+        description: "Task with description",
+        project: {id: 0, name: "Project 1"},
+        parent: null,
+        due: new Date(),
+        completed: false
+      }, 
+      {
+        id: 2,
+        title: "Task 3",
+        description: "",
+        project: {id: 0, name: "Project 1"},
+        parent: null,
+        due: new Date(),
+        completed: false
+      }, 
+      {
+        id: 3,
+        title: "Task 4",
+        description: "",
+        project: {id: 0, name: "Project 1"},
+        parent: {id: 1},
+        due: new Date(),
+        completed: false
+      }, 
+      {
+        id: 4,
+        title: "Task 5",
+        description: "",
+        project: {id: 1, name: "Project 2"},
+        parent: null,
+        due: new Date(),
+        completed: false
+      }, 
+      {
+        id: 5,
+        title: "Task 6",
+        description: "",
+        project: null,
+        parent: null,
+        due: new Date(),
+        completed: false
+      }
+    ];
+  }
 
   isLoaded(): boolean {
-    return this.loaded;
+    return true; //this.loaded;
   }
 
   load(tree: UserWithData) {
@@ -124,13 +324,23 @@ export class TreeService {
     ).length;
   }
 
+  getNumOfUncompletedTasksInInbox(): number {
+    return this.tasks.filter((a) => 
+      !a.project && !a.completed
+    ).length;
+  }
+
+  getNumOfUncompletedTasksToday(): number {
+    return this.getByDate(new Date()).length;
+  }
+
   getProjectById(projectId: number): ProjectTreeElem | undefined {
     return this.projects.find((a) => a.id == projectId);
   }
 
   getTasksByProject(projectId: number): TaskDetails[] {
     return this.tasks.filter((a) => 
-      a.project.id == projectId
+      a.project && a.project.id == projectId
     );
   }
  

@@ -3,7 +3,7 @@
     <header class="view_header">
         <div class="header_content">
             <h1 class="editable">
-                <span class="simple_content">{{project.name}}</span>
+                <span class="simple_content" contenteditable="true">{{project.name}}</span>
             </h1>
             <div class="header_actions">
                 <button type="button" class="sort_button">
@@ -31,7 +31,7 @@
         <ul class="task_list_items">
 
             <li class="task_list_item" *ngFor="let task of tasks" [id] = "'task-' + task.id">
-                <div *ngIf="project.id != showEditTaskFormById">
+                <div *ngIf="task.id != showEditTaskFormById">
                     <div role="button" tabindex="0" class="task_list_item_body">
                         <div class="task_list_item__overflow_actions">
                             <div class="task_list_item__drag_container">
@@ -52,9 +52,12 @@
                                 <div class="markdown_content task_content">
                                     {{task.title}}
                                 </div>
+                                <div class="markdown_content task_description" *ngIf="task.description">
+                                    {{task.description}}
+                                </div>
                             </div>
                             <div class="task_list_item__info_tags" data-layout="list">
-                                <span class="task_list_item__project">
+                                <span class="task_list_item__project" *ngIf="task.project">
                                     <a [href]="'/project/' + task.project.id + '#task-' + task.id">
                                         <span class="task_list_item__project__label">{{task.project.name}}</span>
                                         <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" style="color: rgb(219, 64, 53);"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
@@ -63,7 +66,7 @@
                             </div>
                         </div>
                         <div class="task_list_item__actions task_list_item__actions--active">
-                            <button type="button" (click)="openEditTaskForm(project.id)">
+                            <button type="button" (click)="openEditTaskForm(task.id)">
                                 <i class="fa fa-edit"></i>
                             </button>
                             <button type="button">
@@ -79,7 +82,7 @@
                     </div>
                 </div>
 
-                <app-task-form *ngIf="project.id == showEditTaskFormById" [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()"></app-task-form>
+                <app-task-form *ngIf="task.id == showEditTaskFormById" [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()"></app-task-form>
             </li>
 
             <li>
@@ -93,11 +96,7 @@
                 <app-task-form *ngIf="showAddTaskForm" [project]="project" (closeEvent)="closeAddTaskForm()"></app-task-form>
 
             </li>
-
         </ul>
     </div>
     
-
-    
-
 </div>

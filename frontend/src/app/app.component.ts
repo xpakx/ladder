@@ -25,11 +25,11 @@ export class AppComponent {
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private fb: FormBuilder, private router: Router) {
-      this.addProjForm = this.fb.group({
-        name: ['', Validators.required],
-        color: ['', Validators.required]
-      });
-     }
+    this.addProjForm = this.fb.group({
+      name: ['', Validators.required],
+      color: ['', Validators.required]
+    });
+  }
 
 
   openProjectModal() {
@@ -96,9 +96,9 @@ export class AppComponent {
   
   isParentCollapsed(projectsIds: number[]): boolean {
 	  for(let id of projectsIds) {
-		if(this.collapsedProjectsIds.indexOf(id) > -1) {
-			return true;
-		}
+      if(this.collapsedProjectsIds.indexOf(id) > -1) {
+        return true;
+      }
 	  }
 	  return false;
   }
