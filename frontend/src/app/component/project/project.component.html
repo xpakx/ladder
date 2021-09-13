@@ -8,9 +8,20 @@
             <div class="header_actions">
                 <button type="button" class="sort_button">
                     <span class="icon_sort">
+                        <i class ="fa fa-comment-o"></i>
+                    </span>
+                    <span class="action_label">Comments</span>
+                </button>
+                <button type="button" class="sort_button">
+                    <span class="icon_sort">
                         <i class ="fa fa-sort"></i>
                     </span>
                     <span class="action_label">Sort</span>
+                </button>
+                <button type="button" class="sort_button">
+                    <span class="icon_sort">
+                        <i class ="fa fa-ellipsis-h"></i>
+                    </span>
                 </button>
             </div>
         </div>
@@ -20,62 +31,159 @@
         <ul class="task_list_items">
 
             <li class="task_list_item" *ngFor="let task of tasks" [id] = "'task-' + task.id">
-                <div role="button" tabindex="0" class="task_list_item_body">
-                    <div class="task_list_item__overflow_actions">
-                        <div class="task_list_item__drag_container">
-                            <span class="task_list_item__drag_handle item_dnd_handle" >
-                                <i class="fa fa-ellipsis-v"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <button type="button" role="checkbox" class="task_checkbox priority_1">
-                        <div class="task_checkbox_circle">
-                            <span class="icon_check">
-                                <i class="fa fa-check"></i>
-                            </span>
-                        </div>
-                    </button>
-                    <div class="task_list_item_content">
-                        <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
-                            <div class="markdown_content task_content">
-                                {{task.title}}
+                <div *ngIf="project.id != showEditTaskFormById">
+                    <div role="button" tabindex="0" class="task_list_item_body">
+                        <div class="task_list_item__overflow_actions">
+                            <div class="task_list_item__drag_container">
+                                <span class="task_list_item__drag_handle item_dnd_handle" >
+                                    <i class="fa fa-ellipsis-v"></i>
+                                </span>
                             </div>
                         </div>
-                        <div class="task_list_item__info_tags" data-layout="list">
-                            <span class="task_list_item__project">
-                                <a [href]="'/project/' + task.project.id + '#task-' + task.id">
-                                    <span class="task_list_item__project__label">{{task.project.name}}</span>
-                                    <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" style="color: rgb(219, 64, 53);"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
-                                </a>
-                            </span>
+                        <button type="button" role="checkbox" class="task_checkbox priority_1">
+                            <div class="task_checkbox_circle">
+                                <span class="icon_check">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </div>
+                        </button>
+                        <div class="task_list_item_content">
+                            <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
+                                <div class="markdown_content task_content">
+                                    {{task.title}}
+                                </div>
+                            </div>
+                            <div class="task_list_item__info_tags" data-layout="list">
+                                <span class="task_list_item__project">
+                                    <a [href]="'/project/' + task.project.id + '#task-' + task.id">
+                                        <span class="task_list_item__project__label">{{task.project.name}}</span>
+                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" style="color: rgb(219, 64, 53);"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="task_list_item__actions task_list_item__actions--active">
+                            <button type="button" (click)="openEditTaskForm(project.id)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button">
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                            <a class="task_list_item__comments_link">
+                                <i class="fa fa-comment-o"></i>
+                            </a>
+                            <button type="button">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="task_list_item__actions task_list_item__actions--active">
-                        <button type="button">
-                            <i class="fa fa-edit"></i>
-                        </button>
-                        <button type="button">
-                            <i class="fa fa-calendar"></i>
-                        </button>
-                        <a class="task_list_item__comments_link">
-                            <i class="fa fa-comment-o"></i>
-                        </a>
-                        <button type="button">
-                            <i class="fa fa-ellipsis-h"></i>
-                        </button>
-                    </div>
                 </div>
+
+                <div *ngIf="project.id == showEditTaskFormById">
+                    <form class="taskForm">
+                        <div class="taskFormInputsHolder">
+                            <input placeholder="Task name">
+                            <textarea placeholder="Description"></textarea>
+                        </div> 
+                        <div class="taskFormExtra">
+                            <div class="taskFormExtraFields">
+                                <button type="button" class="taskFormExtraButton">
+                                    <div class="taskFormExtraIcon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <span class="taskFormExtraText">Schedule</span>
+                                </button>
+                                <button type="button" class="taskFormExtraButton">
+                                    <div>
+                                        <div class="taskFormExtraColor" [style]="'color: ' + project.color +';'"></div>
+                                        <span class="taskFormExtraText">{{project.name}}</span>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="taskFormExtraActions">
+                                <button type="button" class="itemAction">
+                                    <i class="fa fa-tag"></i>
+                                </button>
+                                <button type="button" class="itemAction">
+                                    <i class="fa fa-flag"></i>
+                                </button>
+                                <button type="button" class="itemAction">
+                                    <i class="fa fa-clock-o"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="taskFormButtons">
+                        <button type="button" class="taskFormButton taskFormButtonRed" >
+                            Save
+                        </button>
+                        <button type="button" class="taskFormButton" (click)="closeEditTaskForm()">
+                            Cancel
+                        </button>
+                    </div> 
+                </div>
+            </li>
+
+            <li>
+                <button type="button" class="plus_add_button" *ngIf="!showAddTaskForm" (click)="openAddTaskForm()">
+                    <span class="icon_add">
+                        <i class="fa fa-plus"></i>
+                    </span>
+                    Add task
+                </button>
+
+                <div *ngIf="showAddTaskForm">
+                    <form class="taskForm">
+                        <div class="taskFormInputsHolder">
+                            <input placeholder="Task name">
+                            <textarea placeholder="Description"></textarea>
+                        </div> 
+                        <div class="taskFormExtra">
+                            <div class="taskFormExtraFields">
+                                <button type="button" class="taskFormExtraButton">
+                                    <div class="taskFormExtraIcon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <span class="taskFormExtraText">Schedule</span>
+                                </button>
+                                <button type="button" class="taskFormExtraButton">
+                                    <div>
+                                        <div class="taskFormExtraColor" [style]="'color: ' + project.color +';'"></div>
+                                        <span class="taskFormExtraText">{{project.name}}</span>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="taskFormExtraActions">
+                                <button type="button" class="itemAction">
+                                    <i class="fa fa-tag"></i>
+                                </button>
+                                <button type="button" class="itemAction">
+                                    <i class="fa fa-flag"></i>
+                                </button>
+                                <button type="button" class="itemAction">
+                                    <i class="fa fa-clock-o"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="taskFormButtons">
+                        <button type="button" class="taskFormButton taskFormButtonRed" >
+                            Add task
+                        </button>
+                        <button type="button" class="taskFormButton" (click)="closeAddTaskForm()">
+                            Cancel
+                        </button>
+                    </div> 
+                </div>
+
             </li>
 
         </ul>
     </div>
     
 
-    <button type="button" class="plus_add_button">
-        <span class="icon_add">
-            <i class="fa fa-plus"></i>
-        </span>
-        Add task
-    </button>
+    
 
 </div>
