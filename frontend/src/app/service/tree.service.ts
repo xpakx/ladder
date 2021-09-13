@@ -176,7 +176,7 @@ export class TreeService {
         project: {id: 0, name: "Project 1"},
         parent: null,
         due: new Date(),
-        completed: false
+        completed: true
       }, 
       {
         id: 2,

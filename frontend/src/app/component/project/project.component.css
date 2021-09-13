@@ -129,6 +129,10 @@ button {
     margin-right: 5px;
 }
 
+.task_list_item.completed  .task_checkbox {
+    background-color: grey;
+}
+
 .priority_1 {
     border-color: grey;
     color: grey;
@@ -144,12 +148,25 @@ button {
     background-color: #8c91962d;
 }
 
+.task_list_item.completed .task_checkbox:hover {
+    background-color: grey;
+}
+
+.task_list_item.completed  .task_checkbox .task_checkbox_circle {
+    opacity: 1;
+    color: #fff;
+}
+
 .task_checkbox_circle {
     opacity: 0;
 }
 
 .task_checkbox:hover .task_checkbox_circle {
     opacity: 1;
+}
+
+.task_list_item.completed .task_content {
+    color: grey;
 }
 
 .icon_check {

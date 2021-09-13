@@ -30,7 +30,7 @@
     <div class="tasks_content">
         <ul class="task_list_items">
 
-            <li class="task_list_item" *ngFor="let task of tasks" [id] = "'task-' + task.id">
+            <li class="task_list_item" *ngFor="let task of tasks" [id] = "'task-' + task.id" [class.completed]="task.completed">
                 <div *ngIf="task.id != showEditTaskFormById">
                     <div role="button" tabindex="0" class="task_list_item_body">
                         <div class="task_list_item__overflow_actions">
