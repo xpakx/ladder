@@ -1,11 +1,16 @@
 package io.github.xpakx.ladder.entity.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
-public interface UserWithData {
-    Integer getId();
-    String getUsername();
-    List<ProjectDetails> getProjects();
-    List<TaskDetails> getTasks();
-    List<LabelDetails> getLabels();
+@Setter
+@Getter
+public class UserWithData {
+    private Integer id;
+    private String username;
+    private List<ProjectDetails> projects;
+    private List<TaskDetails> tasks;
+    private List<LabelDetails> labels;
 }

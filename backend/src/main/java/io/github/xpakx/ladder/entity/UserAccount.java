@@ -13,13 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@NamedEntityGraph(name = "user-with-everything",
-        attributeNodes = {
-            @NamedAttributeNode("projects"),
-            @NamedAttributeNode("tasks"),
-            @NamedAttributeNode("labels")
-        }
-)
 public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

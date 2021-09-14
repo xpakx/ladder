@@ -12,7 +12,4 @@ import java.util.Optional;
 @Repository
 public interface UserAccountRepository extends JpaRepository<UserAccount, Integer> {
     Optional<UserAccount> findByUsername(String username);
-
-    @EntityGraph("user-with-everything")
-    Optional<UserWithData> findProjectedById(Integer id);
 }
