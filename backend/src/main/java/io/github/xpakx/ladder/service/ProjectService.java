@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,14 +37,33 @@ public class ProjectService {
     }
 
     public Project addProject(ProjectRequest request, Integer userId) {
-        Project projectToAdd = Project.builder()
+        Project projectToAdd = buildProjectToAdd(request, userId);
+        if(request.getParentId() == null) {
+            projectToAdd.setGeneralOrder(
+                    projectRepository.findByOwnerIdAndParentIsNull(userId, Project.class).stream()
+                            .max(Comparator.comparing(Project::getGeneralOrder))
+                            .map(Project::getGeneralOrder)
+                            .orElse(0)
+            );
+        } else {
+            projectToAdd.setGeneralOrder(
+                    projectRepository.findByOwnerIdAndParentId(userId, request.getParentId()).stream()
+                            .max(Comparator.comparing(Project::getGeneralOrder))
+                            .map(Project::getGeneralOrder)
+                            .orElse(0)
+            );
+        }
+        return projectRepository.save(projectToAdd);
+    }
+
+    private Project buildProjectToAdd(ProjectRequest request, Integer userId) {
+        return Project.builder()
                 .name(request.getName())
                 .parent(getParentFromProjectRequest(request))
                 .favorite(false)
                 .color(request.getColor())
                 .owner(userRepository.getById(userId))
                 .build();
-        return projectRepository.save(projectToAdd);
     }
 
     private Project getParentFromProjectRequest(ProjectRequest request) {
@@ -265,6 +285,7 @@ public class ProjectService {
                 .id(originalProject.getId())
                 .parent(parent)
                 .tasks(originalProject.getTasks())
+                .generalOrder(originalProject.getGeneralOrder())
                 .build();
     }
 
@@ -284,4 +305,41 @@ public class ProjectService {
                 .build();
     }
 
+    public Project addProjectAfter(ProjectRequest request, Integer userId, Integer projectId) {
+        Project projectToAdd = buildProjectToAdd(request, userId);
+        Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
+        List<Project> projectsAfter;
+        if(proj.getParent() == null) {
+            projectsAfter = projectRepository
+                    .findByOwnerIdAndParentIsNullAndGeneralOrderGreaterThan(userId, proj.getGeneralOrder());
+        } else {
+            projectsAfter = projectRepository
+                    .findByOwnerIdAndParentIdAndGeneralOrderGreaterThan(userId, proj.getParent().getId(), proj.getGeneralOrder());
+        }
+
+        projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
+        projectToAdd.setGeneralOrder(proj.getGeneralOrder()+1);
+        projectRepository.saveAll(projectsAfter);
+        return projectRepository.save(projectToAdd);
+    }
+
+    public Project addProjectBefore(ProjectRequest request, Integer userId, Integer projectId) {
+        Project projectToAdd = buildProjectToAdd(request, userId);
+        Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent project!"));
+        List<Project> projectsAfter;
+        if(proj.getParent() == null) {
+            projectsAfter = projectRepository
+                    .findByOwnerIdAndParentIsNullAndGeneralOrderGreaterThanEqual(userId, proj.getGeneralOrder());
+        } else {
+            projectsAfter = projectRepository
+                    .findByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(userId, proj.getParent().getId(), proj.getGeneralOrder());
+        }
+
+        projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
+        projectToAdd.setGeneralOrder(proj.getGeneralOrder());
+        projectRepository.saveAll(projectsAfter);
+        return projectRepository.save(projectToAdd);
+    }
 }

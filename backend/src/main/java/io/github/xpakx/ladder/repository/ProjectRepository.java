@@ -17,4 +17,10 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     <T> List<T> findByOwnerId(Integer ownerId, Class<T> type);
     List<Project> getByOwnerId(Integer ownerId);
     void deleteByIdAndOwnerId(Integer Id, Integer ownerId);
+
+    List<Project> findByOwnerIdAndParentIsNullAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer generalOrder);
+    List<Project> findByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer parentId, Integer generalOrder);
+    List<Project> findByOwnerIdAndParentIsNullAndGeneralOrderGreaterThan(Integer ownerId, Integer generalOrder);
+    List<Project> findByOwnerIdAndParentIdAndGeneralOrderGreaterThan(Integer ownerId, Integer parentId, Integer generalOrder);
+    List<Project> findByOwnerIdAndParentId(Integer ownerId, Integer parentId);
 }

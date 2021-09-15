@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -183,6 +184,29 @@ class ProjectControllerTest {
 
         projectRepository.save(project);
         return project.getId();
+    }
+
+    private Integer add3ProjectsInOrderAndReturnIdOfMiddleOne() {
+        Project project1 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(0)
+                .name("Project 1")
+                .build();
+        Project project2 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(1)
+                .name("Project 2")
+                .build();
+        Project project3 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(2)
+                .name("Project 2")
+                .build();
+        return projectRepository.saveAll(List.of(project1, project2, project3)).stream()
+                .map(Project::getGeneralOrder)
+                .filter(a -> a == 1)
+                .findAny()
+                .orElse(0);
     }
 
 
@@ -871,5 +895,40 @@ class ProjectControllerTest {
                 .statusCode(CREATED.value());
         assertEquals(2*projects, projectRepository.findAll().size());
         assertEquals(2*tasks, taskRepository.findAll().size());
+    }
+
+    @Test
+    void shouldRespondWith401ToAddProjectAfterIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/after", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddProjectAfter() {
+        ProjectRequest request = getValidAddProjectRequest();
+        Integer projectId = add3ProjectsInOrderAndReturnIdOfMiddleOne();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/after", userId, projectId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("name", equalTo(request.getName()))
+                .body("color", equalTo(request.getColor()))
+                .body("favorite", equalTo(false));
+
+        List<Project> projects = projectRepository.findAll();
+        assertThat(projects, hasSize(4));
+        assertThat(projects, hasItem(hasProperty("name", is("Added Project"))));
     }
 }

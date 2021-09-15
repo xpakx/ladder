@@ -73,7 +73,7 @@ class MainControllerTest {
                 .password("password")
                 .roles(new HashSet<>())
                 .build();
-        user = userRepository.save(user);
+        userRepository.save(user);
     }
 
     void add3Projects2Labels2TasksToUser1() {

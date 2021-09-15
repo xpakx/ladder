@@ -47,6 +47,20 @@ public class ProjectController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/{projectId}/after")
+    public ResponseEntity<Project> addProjectAfter(@RequestBody ProjectRequest request, @PathVariable Integer userId,
+                                                   @PathVariable Integer projectId) {
+        return  new ResponseEntity<>(projectService.addProjectAfter(request, userId, projectId), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/{projectId}/before")
+    public ResponseEntity<Project> addProjectBefore(@RequestBody ProjectRequest request, @PathVariable Integer userId,
+                                                   @PathVariable Integer projectId) {
+        return  new ResponseEntity<>(projectService.addProjectBefore(request, userId, projectId), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}")
     public ResponseEntity<Project> updateProject(@RequestBody ProjectRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.updateProject(request, projectId, userId), HttpStatus.OK);
