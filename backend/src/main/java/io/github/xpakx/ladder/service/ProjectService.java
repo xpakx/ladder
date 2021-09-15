@@ -74,10 +74,6 @@ public class ProjectService {
                 .build();
     }
 
-    private boolean not(boolean booleanValue) {
-        return !booleanValue;
-    }
-
     private Project getParentFromProjectRequest(ProjectRequest request) {
         return hasParent(request) ? projectRepository.getById(request.getParentId()) : null;
     }
