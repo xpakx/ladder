@@ -337,8 +337,8 @@ public class ProjectService {
                     .findByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(userId, proj.getParent().getId(), proj.getGeneralOrder());
         }
 
-        projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
         projectToAdd.setGeneralOrder(proj.getGeneralOrder());
+        projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
         projectRepository.saveAll(projectsAfter);
         return projectRepository.save(projectToAdd);
     }

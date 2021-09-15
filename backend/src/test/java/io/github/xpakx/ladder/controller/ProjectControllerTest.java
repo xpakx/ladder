@@ -200,13 +200,13 @@ class ProjectControllerTest {
         Project project3 = Project.builder()
                 .owner(userRepository.getById(userId))
                 .generalOrder(2)
-                .name("Project 2")
+                .name("Project 3")
                 .build();
         return projectRepository.saveAll(List.of(project1, project2, project3)).stream()
-                .map(Project::getGeneralOrder)
-                .filter(a -> a == 1)
+                .filter(a -> a.getGeneralOrder().equals(1))
+                .map(Project::getId)
                 .findAny()
-                .orElse(0);
+                .orElse(-1);
     }
 
 
@@ -929,6 +929,71 @@ class ProjectControllerTest {
 
         List<Project> projects = projectRepository.findAll();
         assertThat(projects, hasSize(4));
-        assertThat(projects, hasItem(hasProperty("name", is("Added Project"))));
+        assertThat(projects, hasItem(allOf(
+                    hasProperty("name", is("Added Project")),
+                    hasProperty("generalOrder", is(2))
+                )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 1")),
+                hasProperty("generalOrder", is(0))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 2")),
+                hasProperty("generalOrder", is(1))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 3")),
+                hasProperty("generalOrder", is(3))
+        )));
+    }
+
+    @Test
+    void shouldRespondWith401ToAddProjectBeforeIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/before", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddProjectBefore() {
+        ProjectRequest request = getValidAddProjectRequest();
+        Integer projectId = add3ProjectsInOrderAndReturnIdOfMiddleOne();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/before", userId, projectId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("name", equalTo(request.getName()))
+                .body("color", equalTo(request.getColor()))
+                .body("favorite", equalTo(false));
+
+        List<Project> projects = projectRepository.findAll();
+        assertThat(projects, hasSize(4));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Added Project")),
+                hasProperty("generalOrder", is(1))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 1")),
+                hasProperty("generalOrder", is(0))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 2")),
+                hasProperty("generalOrder", is(2))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 3")),
+                hasProperty("generalOrder", is(3))
+        )));
     }
 }
