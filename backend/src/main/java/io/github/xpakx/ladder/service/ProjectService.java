@@ -38,22 +38,30 @@ public class ProjectService {
 
     public Project addProject(ProjectRequest request, Integer userId) {
         Project projectToAdd = buildProjectToAdd(request, userId);
-        if(request.getParentId() == null) {
-            projectToAdd.setGeneralOrder(
-                    projectRepository.findByOwnerIdAndParentIsNull(userId, Project.class).stream()
-                            .max(Comparator.comparing(Project::getGeneralOrder))
-                            .map(Project::getGeneralOrder)
-                            .orElse(0)
-            );
-        } else {
-            projectToAdd.setGeneralOrder(
-                    projectRepository.findByOwnerIdAndParentId(userId, request.getParentId()).stream()
-                            .max(Comparator.comparing(Project::getGeneralOrder))
-                            .map(Project::getGeneralOrder)
-                            .orElse(0)
-            );
-        }
+        projectToAdd.setGeneralOrder(getMaxGeneralOrder(request, userId));
         return projectRepository.save(projectToAdd);
+    }
+
+    private Integer getMaxGeneralOrder(ProjectRequest request, Integer userId) {
+        return hasParent(request) ? getMaxGeneralOrderIfNoParent(userId) : getMaxGeneralOrderForParent(request, userId);
+    }
+
+    private boolean hasParent(ProjectRequest request) {
+        return request.getParentId() == null;
+    }
+
+    private Integer getMaxGeneralOrderForParent(ProjectRequest request, Integer userId) {
+        return projectRepository.findByOwnerIdAndParentId(userId, request.getParentId()).stream()
+                .max(Comparator.comparing(Project::getGeneralOrder))
+                .map(Project::getGeneralOrder)
+                .orElse(0);
+    }
+
+    private Integer getMaxGeneralOrderIfNoParent(Integer userId) {
+        return projectRepository.findByOwnerIdAndParentIsNull(userId, Project.class).stream()
+                .max(Comparator.comparing(Project::getGeneralOrder))
+                .map(Project::getGeneralOrder)
+                .orElse(0);
     }
 
     private Project buildProjectToAdd(ProjectRequest request, Integer userId) {
@@ -317,6 +325,7 @@ public class ProjectService {
             projectsAfter = projectRepository
                     .findByOwnerIdAndParentIdAndGeneralOrderGreaterThan(userId, proj.getParent().getId(), proj.getGeneralOrder());
         }
+        projectToAdd.setParent(proj);
 
         projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
         projectToAdd.setGeneralOrder(proj.getGeneralOrder()+1);
@@ -336,6 +345,7 @@ public class ProjectService {
             projectsAfter = projectRepository
                     .findByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(userId, proj.getParent().getId(), proj.getGeneralOrder());
         }
+        projectToAdd.setParent(proj);
 
         projectToAdd.setGeneralOrder(proj.getGeneralOrder());
         projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
