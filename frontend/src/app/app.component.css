@@ -241,10 +241,10 @@ button {
 }
 
 .projects {
-    overflow: hidden;
     height: auto;
     transition: max-height ease .375s;
     max-height: 1000px;
+    overflow-y: hidden;
 }
 
 .hidden {
@@ -260,7 +260,6 @@ button {
 .projects_list_container {
     padding: 0;
     margin: 0;
-
     transition: transform ease .375s;
     will-change: transform;
 }
@@ -597,4 +596,51 @@ button {
     .top-navbar-right {
         visibility: hidden;
     }
+}
+
+.ist-menu {
+    background-color: #fff;
+    color: #333;
+    border-collapse: separate;
+    border-radius: 3px;
+    box-shadow: 0 1px 8px 0 rgba(0,0,0,.08);
+    border: 1px solid #ddd;
+    width: 200px;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 999;
+}
+
+.ist-menu ul {
+    list-style: none;
+}
+
+.ist-menu ul li {
+    display: flex;
+}
+
+.ist-menu ul li button{
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.ist-menu ul li .menu_icon {
+    color: grey;
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ist-menu ul li .menu_label {
+    font-size: 13px;
+}
+
+.hidden-context-menu {
+    display: none;
 }

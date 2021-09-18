@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Project } from './entity/project';
@@ -12,7 +12,7 @@ import { TreeService } from './service/tree.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   title = 'ladder';
   displayAddProject: string = "none";
   projectFav: boolean = false;
@@ -22,15 +22,28 @@ export class AppComponent {
   collapseFilters: boolean = true;
   hideMenu: boolean = false;
   collapsedProjectsIds: number[] = [];
+  contextProjectMenu: number| undefined;
+  showContextProjectMenu: boolean = false;
+  projectContextMenuX: number = 0;
+  projectContextMenuY: number = 0;
+  @ViewChild('projectContext', {read: ElementRef}) projectContextMenuElem!: ElementRef;
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
-    private fb: FormBuilder, private router: Router) {
+    private fb: FormBuilder, private router: Router, private renderer: Renderer2) {
     this.addProjForm = this.fb.group({
       name: ['', Validators.required],
       color: ['', Validators.required]
     });
   }
 
+  ngAfterViewInit() {
+    this.renderer.listen('window', 'click',(e:Event)=>{
+      if(this.showContextProjectMenu &&
+        e.target !== this.projectContextMenuElem.nativeElement){
+          this.showContextProjectMenu = false;
+      }
+    });
+  }
 
   openProjectModal() {
     this.displayAddProject = "block";
@@ -109,6 +122,19 @@ export class AppComponent {
 
   toProject(id: number) {
     this.router.navigate(['/project/'+id]);
+  }
+
+  openContextProjectMenu(event: MouseEvent, projectId: number) {
+	  this.contextProjectMenu = projectId;
+    this.showContextProjectMenu = true;
+    this.projectContextMenuX = event.clientX;
+    this.projectContextMenuY = event.clientY;
+    event.stopPropagation();
+  }
+
+  closeContextProjectMenu() {
+    this.contextProjectMenu = undefined;
+    this.showContextProjectMenu = false;
   }
   
 }
