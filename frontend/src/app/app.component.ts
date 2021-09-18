@@ -136,5 +136,31 @@ export class AppComponent implements AfterViewInit {
     this.contextProjectMenu = undefined;
     this.showContextProjectMenu = false;
   }
+
+  openProjectModalAbove() {
+    if(this.contextProjectMenu) {
+      this.displayAddProject = "block";
+    }
+  }
+
+  openProjectModalBelow() {
+    if(this.contextProjectMenu) {
+      this.displayAddProject = "block";
+    }
+  }
+
+  deleteProject() {
+    if(this.contextProjectMenu) {
+      let deletedProjectId: number = this.contextProjectMenu;
+      this.projectService.deleteProject(this.contextProjectMenu).subscribe(
+        (response: any, projectId: number = deletedProjectId) => {
+        this.tree.deleteProject(projectId);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+  }
   
 }

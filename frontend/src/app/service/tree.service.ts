@@ -143,5 +143,9 @@ export class TreeService {
       a.project && a.project.id == projectId
     );
   }
+
+  deleteProject(projectId: number) {
+    this.projects = this.projects.filter((a) => a.id != projectId);
+  }
  
 }
