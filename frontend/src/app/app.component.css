@@ -245,6 +245,7 @@ button {
     transition: max-height ease .375s;
     max-height: 1000px;
     overflow-y: hidden;
+    overflow-x: visible;
 }
 
 .hidden {
@@ -607,8 +608,6 @@ button {
     border: 1px solid #ddd;
     width: 200px;
     position: fixed;
-    top: 10px;
-    left: 10px;
     z-index: 999;
 }
 

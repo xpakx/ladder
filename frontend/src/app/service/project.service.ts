@@ -46,6 +46,16 @@ export class ProjectService {
     return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects`, request);
   }
 
+  public addProjectAfter(request: ProjectRequest, projectId: number):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/after`, request);
+  }
+
+  public addProjectBefore(request: ProjectRequest, projectId: number):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/before`, request);
+  }
+
   public updateProject(projectId: number, request: ProjectRequest):  Observable<Project> {
     let userId  = this.getUserId();
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}`, request);

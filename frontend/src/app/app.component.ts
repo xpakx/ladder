@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Project } from './entity/project';
 import { ProjectRequest } from './entity/project-request';
+import { ProjectTreeElem } from './entity/project-tree-elem';
 import { ProjectService } from './service/project.service';
 import { TreeService } from './service/tree.service';
 
@@ -22,11 +23,13 @@ export class AppComponent implements AfterViewInit {
   collapseFilters: boolean = true;
   hideMenu: boolean = false;
   collapsedProjectsIds: number[] = [];
-  contextProjectMenu: number| undefined;
+  contextProjectMenu: ProjectTreeElem | undefined;
   showContextProjectMenu: boolean = false;
   projectContextMenuX: number = 0;
   projectContextMenuY: number = 0;
   @ViewChild('projectContext', {read: ElementRef}) projectContextMenuElem!: ElementRef;
+  addAfter: number | undefined;
+  addBefore: number | undefined;
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private fb: FormBuilder, private router: Router, private renderer: Renderer2) {
@@ -53,6 +56,8 @@ export class AppComponent implements AfterViewInit {
     this.displayAddProject = "none";
     this.addProjForm.reset();
     this.projectFav = false;
+    this.addAfter = undefined;
+    this.addBefore = undefined;
   }
 
   addProjectModal() {
@@ -63,8 +68,42 @@ export class AppComponent implements AfterViewInit {
       favorite: this.projectFav
     };
 
+    let afterId: number | undefined = this.addAfter;
+    let beforeId: number | undefined = this.addBefore;
     this.closeProjectModal();
+    if(afterId) {
+      this.addAfterProjectModal(request, afterId);
+    } else if(beforeId) {
+      this.addBeforeProjectModal(request, beforeId);
+    } else {
+      this.addEndProjectModal(request)
+    }
+  }
+
+  addEndProjectModal(request: ProjectRequest) {
     this.projectService.addProject(request).subscribe(
+      (response: Project) => {
+        this.tree.addNewProject(response, 0);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+  }
+
+  addBeforeProjectModal(request: ProjectRequest, id: number) {
+    this.projectService.addProjectBefore(request, id).subscribe(
+      (response: Project) => {
+        this.tree.addNewProject(response, 0);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+  }
+
+  addAfterProjectModal(request: ProjectRequest, id: number) {
+    this.projectService.addProjectAfter(request, id).subscribe(
       (response: Project) => {
         this.tree.addNewProject(response, 0);
       },
@@ -125,7 +164,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   openContextProjectMenu(event: MouseEvent, projectId: number) {
-	  this.contextProjectMenu = projectId;
+	  this.contextProjectMenu = this.tree.getProjectById(projectId);
     this.showContextProjectMenu = true;
     this.projectContextMenuX = event.clientX;
     this.projectContextMenuY = event.clientY;
@@ -139,20 +178,22 @@ export class AppComponent implements AfterViewInit {
 
   openProjectModalAbove() {
     if(this.contextProjectMenu) {
+      this.addBefore = this.contextProjectMenu.id;
       this.displayAddProject = "block";
     }
   }
 
   openProjectModalBelow() {
     if(this.contextProjectMenu) {
+      this.addAfter = this.contextProjectMenu.id;
       this.displayAddProject = "block";
     }
   }
 
   deleteProject() {
     if(this.contextProjectMenu) {
-      let deletedProjectId: number = this.contextProjectMenu;
-      this.projectService.deleteProject(this.contextProjectMenu).subscribe(
+      let deletedProjectId: number = this.contextProjectMenu.id;
+      this.projectService.deleteProject(deletedProjectId).subscribe(
         (response: any, projectId: number = deletedProjectId) => {
         this.tree.deleteProject(projectId);
       },

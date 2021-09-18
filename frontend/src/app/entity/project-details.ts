@@ -5,5 +5,6 @@ export interface ProjectDetails {
     name: string;
     parent: ProjectWithNameAndId | null;
     color: string;
-    order: number;
+    generalOrder: number;
+    favorite: boolean;
 }

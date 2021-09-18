@@ -38,7 +38,7 @@ public class ProjectService {
 
     public Project addProject(ProjectRequest request, Integer userId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
-        projectToAdd.setGeneralOrder(getMaxGeneralOrder(request, userId));
+        projectToAdd.setGeneralOrder(getMaxGeneralOrder(request, userId)+1);
         return projectRepository.save(projectToAdd);
     }
 
@@ -348,7 +348,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
         List<Project> projectsAfter = getAllProjectsAfterGivenProjects(userId, proj);
 
-        projectToAdd.setParent(proj);
+        projectToAdd.setParent(proj.getParent());
 
         projectToAdd.setGeneralOrder(proj.getGeneralOrder()+1);
         projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
@@ -380,7 +380,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent project!"));
         List<Project> projectsAfter = getAllProjectsAfterGivenProjectAndThisProject(userId, proj);
 
-        projectToAdd.setParent(proj);
+        projectToAdd.setParent(proj.getParent());
 
         projectToAdd.setGeneralOrder(proj.getGeneralOrder());
         projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));

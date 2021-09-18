@@ -5,4 +5,5 @@ public interface ProjectDetails {
     String getName();
     String getColor();
     ProjectWithNameAndId getParent();
+    Integer getGeneralOrder();
 }

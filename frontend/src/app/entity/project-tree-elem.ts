@@ -10,4 +10,5 @@ export interface ProjectTreeElem {
     hasChildren: boolean;
     indent: number;
     parentList: number[];
+    favorite: boolean;
 }
