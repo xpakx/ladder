@@ -241,13 +241,28 @@ button {
 }
 
 .projects {
+    overflow: hidden;
     height: auto;
-    overflow: visible;
+    transition: max-height ease .375s;
+    max-height: 1000px;
 }
 
 .hidden {
-    height: 0;
-    overflow: hidden;
+    max-height: 0;
+}
+
+
+.hidden .projects_list_container {
+    transform: translateY(-100%);
+    -webkit-transform: translateY(-100%);
+}
+
+.projects_list_container {
+    padding: 0;
+    margin: 0;
+
+    transition: transform ease .375s;
+    will-change: transform;
 }
 
 .projects_list {
@@ -557,7 +572,7 @@ button {
 }
 
 @-webkit-keyframes slide-in {
-    0% { transform: translateX(-100%);  max-width: 0px;}
+    0% { -webkit-transform: translateX(-100%);  max-width: 0px;}
     100% { -webkit-transform: translateX(0%); max-width: 309px;}
 }
     
@@ -571,7 +586,6 @@ button {
     100% { -webkit-transform: translateX(-100%); max-width: 0px;}
 }
 
-
 @media (max-width: 767px) { 
     .left-nav-container   {
       position: fixed;
@@ -583,4 +597,4 @@ button {
     .top-navbar-right {
         visibility: hidden;
     }
-  }
+}

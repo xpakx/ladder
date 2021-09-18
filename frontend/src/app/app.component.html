@@ -92,30 +92,32 @@
 								</div>
 							</div>
 							<div class="projects" style="min-height: 0px;" [class.hidden]="collapseProjects">
-								<ul class="items generic_left_list projects_list">
-									<li class="project_list_item" *ngFor="let project of tree.projects" [class.hiddenProject]="isParentCollapsed(project.parentList)">
-										<span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
-										<button type="button" class="arrow" *ngIf="project.hasChildren" (click)="collapseProject(project.id)">
-											<i class="fa mx-2 fa-chevron-right"   [class.rotated]="!isProjectCollapsed(project.id)"></i>
-										</button>
-										<button class="text" (click)="toProject(project.id)">
-											<div class="div-color" [style]="'color: ' + project.color +';'"></div>
-											{{project.name}}
-											<div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
-										</button>
-										
-										<button type="button" class="icon_more">
-											<i class="fa fa-ellipsis-h"></i>
-										</button>
-										
-									</li>
-								</ul>
-								<button type="button" class="plus_add_button" (click)="openProjectModal()">
-									<span class="icon_add">
-										<i class="fa fa-plus"></i>
-									</span>
-									Add project
-								</button>
+								<div class="projects_list_container">
+									<ul class="items generic_left_list projects_list">
+										<li class="project_list_item" *ngFor="let project of tree.projects" [class.hiddenProject]="isParentCollapsed(project.parentList)">
+											<span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
+											<button type="button" class="arrow" *ngIf="project.hasChildren" (click)="collapseProject(project.id)">
+												<i class="fa mx-2 fa-chevron-right"   [class.rotated]="!isProjectCollapsed(project.id)"></i>
+											</button>
+											<button class="text" (click)="toProject(project.id)">
+												<div class="div-color" [style]="'color: ' + project.color +';'"></div>
+												{{project.name}}
+												<div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
+											</button>
+											
+											<button type="button" class="icon_more">
+												<i class="fa fa-ellipsis-h"></i>
+											</button>
+											
+										</li>
+									</ul>
+									<button type="button" class="plus_add_button" (click)="openProjectModal()">
+										<span class="icon_add">
+											<i class="fa fa-plus"></i>
+										</span>
+										Add project
+									</button>
+								</div>
 							</div>
 						</div>
 
