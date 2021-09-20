@@ -71,7 +71,6 @@
 .left-nav {
     height: calc(100vh - 44px);
     padding-top: 30px;
-    padding-left: 35px;
     overflow-x: hidden;
     overflow-y: hidden;
     background-color: #fafafa;
@@ -92,7 +91,7 @@
     color: #333;
     list-style: none;
     cursor: pointer;
-    padding: 5px 16px 5px 5px;
+    padding: 5px 16px 5px 40px;
     transition: color .1s ease-in,background-color .1s ease-in;
     line-height: 1.25;
     display: flex;
@@ -170,6 +169,7 @@ button {
     line-height: 1em;
     cursor: pointer;
     background-color: #fafafa;
+    padding-left: 35px;
 }
 
 .expansion_panel__toggle {
@@ -263,6 +263,7 @@ button {
     margin: 0;
     transition: transform ease .375s;
     will-change: transform;
+    padding-left: 35px;
 }
 
 .projects_list {

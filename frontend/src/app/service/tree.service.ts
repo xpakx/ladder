@@ -184,7 +184,7 @@ export class TreeService {
 
   filterProjects(text: string): ProjectTreeElem[] {
     return this.projects.filter((a) => 
-      a.name.includes(text)
+      a.name.toLowerCase().includes(text.toLowerCase())
     );
   }
 }
