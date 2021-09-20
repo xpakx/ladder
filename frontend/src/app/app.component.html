@@ -26,7 +26,7 @@
 			</div>
 			<ul class="navbar-nav top-navbar-right">
 				<li class="nav-item nav-item-font py-2">
-					<button class="nav-link nav-button top-right-part text-white mr-2" href="#"><i class="fa top-right-part fa-plus"></i> </button>
+					<button class="nav-link nav-button top-right-part text-white mr-2" (click)="openAddTaskModal()"><i class="fa top-right-part fa-plus"></i> </button>
 				</li>
 				<li class="nav-item nav-item-font py-2 ">
 					<button class="nav-link nav-button top-right-part text-white mr-2" href="#">
@@ -208,6 +208,20 @@
                 (click)="addProjectModal()" [disabled]="addProjForm.invalid">
         {{projectToEditId ? "Save" : "Add"}}
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{'display':displayAddTask}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <app-task-form (closeEvent)="closeAddTaskModal()"></app-task-form>
+  
       </div>
     </div>
   </div>

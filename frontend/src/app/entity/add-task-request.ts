@@ -2,9 +2,9 @@ export interface AddTaskRequest {
     title: string;
     description: string;
     projectOrder: number;
-    parentId: number;
-    projectId: number;
+    parentId: number | null;
+    projectId: number | null;
     priority: number;
-    due: Date;
-    completedAt: Date;
+    due: Date | null;
+    completedAt: Date | null;
 }

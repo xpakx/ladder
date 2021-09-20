@@ -96,6 +96,12 @@ public class ProjectController {
     public ResponseEntity<Task> addTaskToProject(@RequestBody AddTaskRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.addTask(request, projectId, userId), HttpStatus.CREATED);
     }
+    
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/inbox/tasks")
+    public ResponseEntity<Task> addTaskToProject(@RequestBody AddTaskRequest request, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(projectService.addTask(request, null, userId), HttpStatus.CREATED);
+    }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{projectId}/duplicate")

@@ -3,6 +3,7 @@ import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
+import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
 import { UserWithData } from '../entity/user-with-data';
 
@@ -126,7 +127,7 @@ export class TreeService {
   
   getByDate(date: Date): TaskDetails[] {
     return this.tasks.filter((a) => 
-      a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
+      a.due && a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
     );
   }
 
@@ -168,4 +169,16 @@ export class TreeService {
     }
   }
  
+
+  addNewTask(response: Task, projectId: number | undefined) {
+    this.tasks.push({
+      id:response.id,
+      title: response.title,
+      description: response.description,
+      project: null,
+      parent: null,
+      due: null,
+      completed: false
+    })
+  }
 }

@@ -16,6 +16,7 @@ import { TreeService } from './service/tree.service';
 export class AppComponent implements AfterViewInit {
   title = 'ladder';
   displayAddProject: string = "none";
+  displayAddTask: string = "none";
   projectFav: boolean = false;
   addProjForm: FormGroup;
   collapseProjects: boolean = true;
@@ -255,5 +256,13 @@ export class AppComponent implements AfterViewInit {
       }
     );
     }
+  }
+
+  openAddTaskModal() {
+    this.displayAddTask = "block";
+  }
+
+  closeAddTaskModal() {
+    this.displayAddTask = "none";
   }
 }

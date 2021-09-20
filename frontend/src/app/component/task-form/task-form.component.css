@@ -68,6 +68,11 @@ button {
     margin-left: 4px;
 }
 
+.taskFormInbox {
+    margin-right: 8px;
+    margin-left: 4px;
+}
+
 .taskFormExtraButton {
     display: flex;border: 1px solid #ddd;
     border-radius: 5px;
@@ -142,4 +147,50 @@ button {
 
 .taskFormContainer {
     margin: 8px 0;
+}
+
+
+.ist-menu {
+    background-color: #fff;
+    color: #333;
+    border-collapse: separate;
+    border-radius: 3px;
+    box-shadow: 0 1px 8px 0 rgba(0,0,0,.08);
+    border: 1px solid #ddd;
+    width: 250px;
+    position: fixed;
+    z-index: 999;
+}
+
+.ist-menu ul {
+    list-style: none;
+}
+
+.ist-menu ul li {
+    display: flex;
+}
+
+.ist-menu ul li button{
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.ist-menu ul li .menu_icon {
+    color: grey;
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ist-menu ul li .menu_label {
+    font-size: 13px;
+}
+
+.hidden-context-menu {
+    display: none;
 }

@@ -86,9 +86,13 @@ export class ProjectService {
     return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/duplicate`, null);
   }
 
-  public addTask(request: AddTaskRequest, projectId: number):  Observable<Task> {
+  public addTask(request: AddTaskRequest, projectId: number | undefined):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks`, request);
+    if(projectId) {
+      return this.http.post<Task>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks`, request);
+    } else {
+      return this.http.post<Task>(`${this.apiServerUrl}/${userId}/projects/inbox/tasks`, request);
+    }
   }
 
   private getUserId() {
