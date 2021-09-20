@@ -150,7 +150,7 @@ button {
 }
 
 
-.ist-menu {
+.modal-body {
     background-color: #fff;
     color: #333;
     border-collapse: separate;
@@ -162,22 +162,22 @@ button {
     z-index: 999;
 }
 
-.ist-menu ul {
+.modal-body ul {
     list-style: none;
 }
 
-.ist-menu ul li {
+.modal-body ul li {
     display: flex;
 }
 
-.ist-menu ul li button{
+.modal-body ul li button{
     display: flex;
     align-items: center;
     padding: 0;
     margin: 0;
 }
 
-.ist-menu ul li .menu_icon {
+.modal-body ul li .menu_icon {
     color: grey;
     height: 24px;
     width: 24px;
@@ -187,10 +187,20 @@ button {
     align-items: center;
 }
 
-.ist-menu ul li .menu_label {
+.modal-body ul li .menu_label {
     font-size: 13px;
 }
 
-.hidden-context-menu {
+.hiddenMenu {
     display: none;
+}
+
+.visibleMenu {
+    display: block;
+}
+
+.modal {
+    position: fixed;
+    top: 1;
+    left: 1;
 }

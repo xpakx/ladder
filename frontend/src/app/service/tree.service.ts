@@ -181,4 +181,10 @@ export class TreeService {
       completed: false
     })
   }
+
+  filterProjects(text: string): ProjectTreeElem[] {
+    return this.projects.filter((a) => 
+      a.name.includes(text)
+    );
+  }
 }

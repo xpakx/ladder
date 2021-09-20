@@ -12,7 +12,7 @@
                     </div>
                     <span class="taskFormExtraText">Schedule</span>
                 </button>
-                <button type="button" class="taskFormExtraButton" (click)="openSelectProjectMenu($event)">
+                <button type="button" class="taskFormExtraButton" (click)="openSelectProjectMenu()">
                     <div *ngIf="project">
                         <div class="taskFormExtraColor" [style]="'color: ' + project.color +';'"></div>
                         <span class="taskFormExtraText">{{project.name}}</span>
@@ -51,21 +51,43 @@
 
 
 
-<div class="ist-menu context" [class.hidden-context-menu]="!showSelectProjectMenu" [ngStyle]="{'left.px': projectContextMenuX, 'top.px': projectContextMenuY}">
-	<ul class="context-menu-project" #projectSelectMenu>
-		<li class="context-menu-project-item">
-            <button type="button" (click)="chooseProject(undefined)">
-                <span class="menu-icon">
-                    <i class="fa text-primary mr-2 fa-inbox"></i>
-                </span>
-                <span class="menu_label">Inbox</span>
-            </button>
-		</li>
-        <li class="context-menu-project-item" *ngFor="let projectSel of tree.projects">
-            <button type="button" (click)="chooseProject(projectSel)">
-                <div class="taskFormExtraColor" [style]="'color: ' + projectSel.color +';'"></div>
-                <span class="menu_label">{{projectSel.name}}</span>
-            </button>
-		</li>
-	</ul>
+
+<div class="modal"
+  tabindex="-1"
+  role="dialog"
+  [class.hiddenMenu]="!showSelectProjectMenu"
+  [class.visibleMenu]="showSelectProjectMenu">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+          <form *ngIf="projectSelectForm" [formGroup]="projectSelectForm">
+            <input formControlName="text" />
+          </form>
+        <ul class="context-menu-project" #projectSelectMenu>
+            <li class="context-menu-project-item" >
+                <button type="button" (click)="closeSelectProjectMenu()">
+                    <span class="menu-icon">
+                        <i class="fa mr-2 fa-cancel"></i>
+                    </span>
+                    <span class="menu_label">Cancel</span>
+                </button>
+            </li>
+            <li class="context-menu-project-item">
+                <button type="button" (click)="chooseProject(undefined)">
+                    <span class="menu-icon">
+                        <i class="fa text-primary mr-2 fa-inbox"></i>
+                    </span>
+                    <span class="menu_label">Inbox</span>
+                </button>
+            </li>
+            <li class="context-menu-project-item" *ngFor="let projectSel of projects">
+                <button type="button" (click)="chooseProject(projectSel)">
+                    <div class="taskFormExtraColor" [style]="'color: ' + projectSel.color +';'"></div>
+                    <span class="menu_label">{{projectSel.name}}</span>
+                </button>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>

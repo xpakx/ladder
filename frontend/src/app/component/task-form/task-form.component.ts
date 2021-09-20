@@ -18,12 +18,12 @@ export class TaskFormComponent implements OnInit {
   @Output() closeEvent = new EventEmitter<boolean>();
   taskForm: FormGroup | undefined;
   showSelectProjectMenu: boolean = false;
-  projectContextMenuX: number = 0;
-  projectContextMenuY: number = 0;
-  @ViewChild('projectSelectMenu', {read: ElementRef}) projectContextMenuElem!: ElementRef;
+  projects: ProjectTreeElem[] = [];
+
+  projectSelectForm: FormGroup | undefined;
 
   constructor(public tree: TreeService, private service: ProjectService, 
-    private fb: FormBuilder, private renderer: Renderer2) { }
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.taskForm = this.fb.group({
@@ -32,20 +32,21 @@ export class TaskFormComponent implements OnInit {
     });
   }
 
-  ngAfterViewInit() {
-    this.renderer.listen('window', 'click',(e:Event)=>{
-      if(this.showSelectProjectMenu &&
-        e.target !== this.projectContextMenuElem.nativeElement){
-          this.showSelectProjectMenu = false;
-      }
-    });
+  getProjects(text: string = "") {
+    this.projects = this.tree.filterProjects(text);
   }
 
-  openSelectProjectMenu(event: MouseEvent) {
+  openSelectProjectMenu() {
+    this.projectSelectForm = this.fb.group({text: ''});
+    this.projectSelectForm.valueChanges.subscribe(data => {
+      this.getProjects(data.text);
+    });
+    this.getProjects();
     this.showSelectProjectMenu = true;
-    this.projectContextMenuX = event.clientX;
-    this.projectContextMenuY = event.clientY;
-    event.stopPropagation();
+  }
+
+  closeSelectProjectMenu() {
+    this.showSelectProjectMenu = false;
   }
 
   closeForm() {
@@ -53,6 +54,7 @@ export class TaskFormComponent implements OnInit {
   }
 
   chooseProject(project: ProjectTreeElem | undefined) {
+    this.closeSelectProjectMenu();
     this.project = project;
   }
   
