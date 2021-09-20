@@ -171,11 +171,12 @@ export class TreeService {
  
 
   addNewTask(response: Task, projectId: number | undefined) {
+    let project = projectId ? this.getProjectById(projectId) : undefined;
     this.tasks.push({
       id:response.id,
       title: response.title,
       description: response.description,
-      project: null,
+      project: project ? project : null,
       parent: null,
       due: null,
       completed: false
