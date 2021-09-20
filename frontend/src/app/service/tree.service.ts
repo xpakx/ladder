@@ -159,5 +159,13 @@ export class TreeService {
   deleteProject(projectId: number) {
     this.projects = this.projects.filter((a) => a.id != projectId);
   }
+
+
+  changeFav(response: Project) {
+    let project = this.getProjectById(response.id);
+    if(project) {
+      project.favorite = response.favorite;
+    }
+  }
  
 }

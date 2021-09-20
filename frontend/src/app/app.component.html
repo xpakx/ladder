@@ -240,11 +240,13 @@
 			</button>
 		</li>
 		<li class="context-menu-project-item">
-			<span class="menu_icon" *ngIf="contextProjectMenu">
-				<i class="fa fa-heart-o" *ngIf="!contextProjectMenu.favorite"></i>
-				<i class="fa fa-heart" *ngIf="contextProjectMenu.favorite"></i>
-			</span>
-			<div class="menu_label">Add to favorites</div>
+			<button (click)="updateProjectFav()" *ngIf="contextProjectMenu">
+				<span class="menu_icon">
+					<i class="fa fa-heart-o" *ngIf="!contextProjectMenu.favorite"></i>
+					<i class="fa fa-heart" *ngIf="contextProjectMenu.favorite"></i>
+				</span>
+				<div class="menu_label">{{!contextProjectMenu.favorite ? "Add to favorites" : "Remove from favorites"}}</div>
+			</button>
 		</li>
 		<li class="context-menu-project-item">
 			<span class="menu_icon">

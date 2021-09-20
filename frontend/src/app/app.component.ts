@@ -230,5 +230,17 @@ export class AppComponent implements AfterViewInit {
     );
     }
   }
-  
+
+  updateProjectFav() {
+    if(this.contextProjectMenu) {
+      this.projectService.updateProjectFav(this.contextProjectMenu.id, {flag: !this.contextProjectMenu.favorite}).subscribe(
+        (response: Project) => {
+        this.tree.changeFav(response);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+  }
 }

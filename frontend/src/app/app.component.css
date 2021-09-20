@@ -606,7 +606,7 @@ button {
     border-radius: 3px;
     box-shadow: 0 1px 8px 0 rgba(0,0,0,.08);
     border: 1px solid #ddd;
-    width: 200px;
+    width: 250px;
     position: fixed;
     z-index: 999;
 }
