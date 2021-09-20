@@ -243,4 +243,17 @@ export class AppComponent implements AfterViewInit {
     );
     }
   }
+
+  duplicateProject() {
+    if(this.contextProjectMenu) {
+      this.projectService.duplicateProject(this.contextProjectMenu.id).subscribe(
+        (response: Project) => {
+        this.tree.addNewProject(response, 0);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+  }
 }
