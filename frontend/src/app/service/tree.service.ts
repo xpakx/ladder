@@ -49,6 +49,16 @@ export class TreeService {
     this.projects.sort((a, b) => a.realOrder - b.realOrder);
   }
 
+  updateProject(project: Project, id: number) {
+    let projectElem = this.getProjectById(id)
+    if(projectElem) {
+      projectElem.name = project.name;
+      projectElem.color = project.color;
+      projectElem.favorite = project.favorite;
+
+    }
+  }
+
   transformAll(projects: ProjectDetails[]):  ProjectTreeElem[] {
     return projects.map((a) => this.transform(a, projects));
   }

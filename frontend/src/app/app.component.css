@@ -283,8 +283,8 @@ button {
 	height: 10px;
 	background-color: currentColor;
 	border-radius: 50%;
-	margin-right: 14px;
-	margin-left: 14px;
+	margin-right: 22px;
+	margin-left: 6px;
 }
 
 .project_list_item {

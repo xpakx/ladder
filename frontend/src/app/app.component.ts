@@ -30,6 +30,7 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('projectContext', {read: ElementRef}) projectContextMenuElem!: ElementRef;
   addAfter: number | undefined;
   addBefore: number | undefined;
+  projectToEditId: number | undefined;
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private fb: FormBuilder, private router: Router, private renderer: Renderer2) {
@@ -52,12 +53,24 @@ export class AppComponent implements AfterViewInit {
     this.displayAddProject = "block";
   }
 
+  openProjectModalEdit() {
+    if(this.contextProjectMenu) {
+      this.projectToEditId = this.contextProjectMenu.id;
+      this.addProjForm.setValue({
+        name: this.contextProjectMenu.name,
+        color: this.contextProjectMenu.color
+      });
+      this.openProjectModal();
+    }
+  }
+
   closeProjectModal() {
     this.displayAddProject = "none";
     this.addProjForm.reset();
     this.projectFav = false;
     this.addAfter = undefined;
     this.addBefore = undefined;
+    this.projectToEditId = undefined;
   }
 
   addProjectModal() {
@@ -70,8 +83,11 @@ export class AppComponent implements AfterViewInit {
 
     let afterId: number | undefined = this.addAfter;
     let beforeId: number | undefined = this.addBefore;
+    let editId: number | undefined = this.projectToEditId;
     this.closeProjectModal();
-    if(afterId) {
+    if(editId) {
+      this.editProjectModal(request, editId);
+    } else if(afterId) {
       this.addAfterProjectModal(request, afterId);
     } else if(beforeId) {
       this.addBeforeProjectModal(request, beforeId);
@@ -95,6 +111,17 @@ export class AppComponent implements AfterViewInit {
     this.projectService.addProjectBefore(request, id).subscribe(
       (response: Project) => {
         this.tree.addNewProject(response, 0);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+  }
+
+  editProjectModal(request: ProjectRequest, id: number) {
+    this.projectService.updateProject(id, request).subscribe(
+      (response: Project) => {
+        this.tree.updateProject(response, id);
       },
       (error: HttpErrorResponse) => {
        
