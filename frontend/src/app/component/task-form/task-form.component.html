@@ -6,11 +6,14 @@
         </div> 
         <div class="taskFormExtra">
             <div class="taskFormExtraFields">
-                <button type="button" class="taskFormExtraButton">
+                <button type="button" class="taskFormExtraButton" (click)="openSelectDateMenu()">
                     <div class="taskFormExtraIcon">
                         <i class="fa fa-calendar"></i>
                     </div>
-                    <span class="taskFormExtraText">Schedule</span>
+                    <span class="taskFormExtraText" *ngIf="!taskDate">Schedule</span>
+                    <span class="taskFormExtraText" *ngIf="taskDate && taskDate.getFullYear() == today.getFullYear() && dateWithinWeek(taskDate)">{{taskDate | date: 'EEEE'}}</span>
+                    <span class="taskFormExtraText" *ngIf="taskDate && taskDate.getFullYear() == today.getFullYear() && !dateWithinWeek(taskDate)">{{taskDate | date: 'dd MMM'}}</span>
+                    <span class="taskFormExtraText" *ngIf="taskDate && taskDate.getFullYear() != today.getFullYear()">{{taskDate | date: 'dd MMM yyyy'}}</span>
                 </button>
                 <button type="button" class="taskFormExtraButton" (click)="openSelectProjectMenu()">
                     <div *ngIf="project">
@@ -50,49 +53,7 @@
 </div>
 
 
-
 <!-- Modal window for selecting project -->
-<div class="modal"
-  tabindex="-1"
-  role="dialog"
-  [class.hiddenMenu]="!showSelectProjectMenu"
-  [class.visibleMenu]="showSelectProjectMenu">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-          <form *ngIf="projectSelectForm" [formGroup]="projectSelectForm">
-            <input formControlName="text" />
-          </form>
-        <ul class="context-menu-project" #projectSelectMenu>
-            <li class="context-menu-project-item" >
-                <button type="button" (click)="closeSelectProjectMenu()">
-                    <span class="menu-icon">
-                        <i class="fa mr-2 fa-cancel"></i>
-                    </span>
-                    <span class="menu_label">Cancel</span>
-                </button>
-            </li>
-            <li class="context-menu-project-item">
-                <button type="button" (click)="chooseProject(undefined)">
-                    <span class="menu-icon">
-                        <i class="fa text-primary mr-2 fa-inbox"></i>
-                    </span>
-                    <span class="menu_label">Inbox</span>
-                </button>
-            </li>
-            <li class="context-menu-project-item" *ngFor="let projectSel of projects">
-                <button type="button" (click)="chooseProject(projectSel)">
-                    <div class="taskFormExtraColor" [style]="'color: ' + projectSel.color +';'"></div>
-                    <span class="menu_label">{{projectSel.name}}</span>
-                </button>
-            </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal window for selecting date -->
 <div class="modal"
   tabindex="-1"
   role="dialog"
@@ -108,7 +69,7 @@
             <input formControlName="text" placeholder="Type a project"/>
         </form>
         <ul class="context-menu-project" #projectSelectMenu class="form-field">
-            <li class="context-menu-project-item" [class.modal-choice]="!project">
+            <li class="context-menu-project-item">
                 <button type="button" (click)="chooseProject(undefined)">
                     <span class="menu-icon">
                         <i class="fa text-primary mr-2 fa-inbox"></i>
@@ -119,7 +80,7 @@
                     </span>
                 </button>
             </li>
-            <li class="context-menu-project-item" *ngFor="let projectSel of projects" [class.modal-choice]="project && projectSel.id == project.id">
+            <li class="context-menu-project-item" *ngFor="let projectSel of projects">
                 <button type="button" (click)="chooseProject(projectSel)">
                     <div class="taskFormExtraColor" [style]="'color: ' + projectSel.color +';'"></div>
                     <span class="menu_label">{{projectSel.name}}</span>
@@ -134,6 +95,74 @@
         <button type="button" class="modal-button" 
                 (click)="closeSelectProjectMenu()">
           Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal window for selecting date -->
+<div class="modal"
+  tabindex="-1"
+  role="dialog"
+  [class.hiddenMenu]="!showSelectDateMenu"
+  [class.visibleMenu]="showSelectDateMenu">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Select a date</h4>
+        </div>
+      <div class="modal-body">
+        <form *ngIf="dateSelectForm" [formGroup]="dateSelectForm">
+          <input type="date" formControlName="date">
+        </form>
+        <ul class="context-menu-project" #projectSelectMenu class="form-field">
+            <li class="context-menu-project-item">
+                <button type="button" (click)="chooseDate(today)">
+                    <span class="menu-icon">
+                        <i class="fa fa-calendar"></i>
+                    </span>
+                    <span class="menu_label">Today</span>
+                    <span class="date_holder">{{today | date: 'EEE'}}</span>
+                </button>
+            </li>
+            <li class="context-menu-project-item">
+                <button type="button" (click)="chooseDate(tomorrow)">
+                    <span class="menu-icon">
+                        <i class="fa fa-sun-o"></i>
+                    </span>
+                    <span class="menu_label">Tomorrow</span>
+                    <span class="date_holder">{{tomorrow | date: 'EEE'}}</span>
+                </button>
+            </li>
+            <li class="context-menu-project-item">
+                <button type="button" (click)="chooseDate(weekend)">
+                    <span class="menu-icon">
+                        <i class="fa fa-car"></i>
+                    </span>
+                    <span class="menu_label">This weekend</span>
+                    <span class="date_holder">{{weekend | date: 'EEE'}}</span>
+                </button>
+            </li>
+            <li class="context-menu-project-item">
+                <button type="button" (click)="chooseDate(nextWeek)">
+                    <span class="menu-icon">
+                        <i class="fa fa-arrow-right"></i>
+                    </span>
+                    <span class="menu_label">Next week</span>
+                    <span class="date_holder">{{nextWeek | date: 'EEE dd MMM'}}</span>
+                </button>
+            </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-button" 
+                (click)="closeSelectDateMenu()">
+          Cancel
+        </button>
+        <button type="button" class="modal-button modal-button-red" *ngIf="dateSelectForm"
+                (click)="selectDateFromForm()" [disabled]="dateSelectForm.invalid">
+            Select
         </button>
       </div>
     </div>

@@ -202,7 +202,7 @@ button {
 }
 
 .modal-body ul li .menu-icon-select {
-    color: grey;
+    color: #dd4b39;
     height: 24px;
     width: 24px;
     margin-right: 10px;
@@ -324,8 +324,4 @@ button {
 .modal-header h4 {
     font-size: 16px;
     font-weight: 700;
-}
-
-.modal-choice {
-    background-color: rgba(255, 0, 0, 0.157);;
 }

@@ -19,11 +19,29 @@ export class TaskFormComponent implements OnInit {
   taskForm: FormGroup | undefined;
   showSelectProjectMenu: boolean = false;
   projects: ProjectTreeElem[] = [];
+  showSelectDateMenu: boolean = false;
+  taskDate: Date | undefined;
 
   projectSelectForm: FormGroup | undefined;
+  dateSelectForm: FormGroup | undefined;
+
+  today: Date;
+  tomorrow: Date;
+  weekend: Date;
+  nextWeek: Date;
 
   constructor(public tree: TreeService, private service: ProjectService, 
-    private fb: FormBuilder) { }
+    private fb: FormBuilder) { 
+      this.today = new Date();
+      let dayOfTheMonth = this.today.getDate();
+      let dayOfTheWeek = this.today.getDay();
+      this.tomorrow = new Date();
+      this.tomorrow.setDate(dayOfTheMonth + 1);
+      this.weekend = new Date();
+      this.weekend.setDate(dayOfTheMonth - dayOfTheWeek + 6);
+      this.nextWeek = new Date();
+      this.nextWeek.setDate(this.weekend.getDate() + 2);
+    }
 
   ngOnInit(): void {
     this.taskForm = this.fb.group({
@@ -49,9 +67,48 @@ export class TaskFormComponent implements OnInit {
     this.showSelectProjectMenu = false;
   }
 
+  formatDate(date: Date): String {
+    return date.toISOString().split("T")[0];
+  }
+
+  dateWithinWeek(date: Date): boolean {
+    let dateToCompare: Date = new Date(this.today);
+    dateToCompare.setDate(dateToCompare.getDate() + 9);
+    dateToCompare.setHours(0);
+    dateToCompare.setMinutes(0);
+    dateToCompare.setSeconds(0);
+    dateToCompare.setMilliseconds(0);
+    return date < dateToCompare;
+  }
+
+  openSelectDateMenu() {
+    this.dateSelectForm = this.fb.group(
+      {
+        date: [this.taskDate ? this.formatDate(this.taskDate) : '', Validators.required]
+      }
+      );
+    this.showSelectDateMenu = true;
+  }
+
+  closeSelectDateMenu() {
+    this.showSelectDateMenu = false;
+  }
+
   closeForm() {
     this.closeEvent.emit(true);
   }
+
+  chooseDate(date: Date | undefined) {
+    this.closeSelectDateMenu();
+    this.taskDate = date;
+  } 
+
+  selectDateFromForm() {
+    if(this.dateSelectForm) {
+      this.taskDate = new Date(this.dateSelectForm.controls.date.value);
+    }
+    this.closeSelectDateMenu();
+  } 
 
   chooseProject(project: ProjectTreeElem | undefined) {
     this.closeSelectProjectMenu();
@@ -67,7 +124,7 @@ export class TaskFormComponent implements OnInit {
         parentId: null,
         projectId: this.project ? this.project.id : null,
         priority: 0,
-        due: null,
+        due: this.taskDate ? this.taskDate : null,
         completedAt: null
       }, this.project ? this.project.id : undefined).subscribe(
         (response: Task, projectId: number | undefined = this.project?.id) => {
