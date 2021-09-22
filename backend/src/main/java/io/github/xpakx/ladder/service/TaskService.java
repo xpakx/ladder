@@ -41,8 +41,8 @@ public class TaskService {
     }
 
     public Task updateTask(AddTaskRequest request, Integer taskId, Integer userId) {
-        Project project = projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
+        Project project = request.getProjectId() != null ? projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         taskToUpdate.setTitle(request.getTitle());
@@ -74,9 +74,9 @@ public class TaskService {
     public Task updateTaskProject(IdRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
-        Project parent = projectRepository.findByIdAndOwnerId(request.getId(), userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
-        taskToUpdate.setProject(parent);
+        Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+        taskToUpdate.setProject(project);
         return taskRepository.save(taskToUpdate);
     }
 

@@ -213,7 +213,7 @@ export class TreeService {
       description: response.description,
       project: project ? project : null,
       parent: null,
-      due: new Date(response.due),
+      due: response.due ? new Date(response.due) : null,
       completed: false,
       projectOrder: response.projectOrder
     })
@@ -226,7 +226,7 @@ export class TreeService {
       task.description = response.description;
       task.title = response.title;
       task.project = project ? project : null;
-      task.due = new Date(response.due);
+      task.due = response.due ? new Date(response.due) : null;
     }
   }
 
