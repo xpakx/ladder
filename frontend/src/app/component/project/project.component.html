@@ -60,7 +60,7 @@
                                 <span class="task_list_item__project" *ngIf="task.project">
                                     <a [href]="'/project/' + task.project.id + '#task-' + task.id">
                                         <span class="task_list_item__project__label">{{task.project.name}}</span>
-                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" style="color: rgb(219, 64, 53);"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
                                     </a>
                                 </span>
                             </div>
