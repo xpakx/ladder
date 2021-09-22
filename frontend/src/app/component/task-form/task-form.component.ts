@@ -5,6 +5,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskDetails } from 'src/app/entity/task-details';
 import { ProjectService } from 'src/app/service/project.service';
+import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
@@ -31,7 +32,7 @@ export class TaskFormComponent implements OnInit {
   nextWeek: Date;
 
   constructor(public tree: TreeService, private service: ProjectService, 
-    private fb: FormBuilder) { 
+    private fb: FormBuilder, private taskService: TaskService) { 
       this.today = new Date();
       let dayOfTheMonth = this.today.getDate();
       let dayOfTheWeek = this.today.getDay();
@@ -114,6 +115,16 @@ export class TaskFormComponent implements OnInit {
     this.closeSelectProjectMenu();
     this.project = project;
   }
+
+  save() {
+    if(this.task) {
+      this.updateTask();
+    } else {
+      this.addTask();
+    }
+
+    this.closeEvent.emit(true);
+  }
   
   addTask() {
     if(this.taskForm && this.taskForm.valid) {
@@ -134,7 +145,29 @@ export class TaskFormComponent implements OnInit {
          
         }
       );
-      this.closeEvent.emit(true);
+    }
+  }
+
+  updateTask() {
+    if(this.task && this.taskForm && this.taskForm.valid) {
+
+      this.taskService.updateTask({
+        title: this.taskForm.controls.title.value,
+        description: this.taskForm.controls.description.value,
+        projectOrder: this.task.projectOrder,
+        parentId: this.task.parent ? this.task.parent.id : null,
+        projectId: this.project ? this.project.id : null,
+        priority: 0,
+        due: this.taskDate ? this.taskDate : null,
+        completedAt: null
+      }, this.task.id).subscribe(
+        (response: Task, projectId: number | undefined = this.project?.id) => {
+          this.tree.updateTask(response, projectId);
+        },
+        (error: HttpErrorResponse) => {
+         
+        }
+      );
     }
   }
 }

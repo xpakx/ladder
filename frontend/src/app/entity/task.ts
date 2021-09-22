@@ -3,4 +3,6 @@ export interface Task {
     description: string;
     id: number;
     completed: boolean;
+    projectOrder: number;
+    due: Date;
 }

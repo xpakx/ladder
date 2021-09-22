@@ -43,7 +43,7 @@
     </form>
 
     <div class="taskFormButtons">
-        <button type="button" class="taskFormButton taskFormButtonRed" [disabled]="taskForm.invalid" (click)="addTask()">
+        <button type="button" class="taskFormButton taskFormButtonRed" [disabled]="taskForm.invalid" (click)="save()">
             {{task ? "Save" : "Add task"}}
         </button> 
         <button type="button" class="taskFormButton" (click)="closeForm()">

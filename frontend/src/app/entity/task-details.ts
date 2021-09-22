@@ -9,4 +9,5 @@ export interface TaskDetails {
     parent: ParentWithId | null;
     due: Date | null;
     completed: boolean;
+    projectOrder: number;
 }

@@ -183,8 +183,20 @@ export class TreeService {
       project: project ? project : null,
       parent: null,
       due: null,
-      completed: false
+      completed: false,
+      projectOrder: response.projectOrder
     })
+  }
+
+  updateTask(response: Task, projectId: number | undefined) {
+    let task = this.getTaskById(response.id);
+    if(task) {
+      let project = projectId ? this.getProjectById(projectId) : undefined;
+      task.description = response.description;
+      task.title = response.title;
+      task.project = project ? project : null;
+      task.due = response.due;
+    }
   }
 
   filterProjects(text: string): ProjectTreeElem[] {
