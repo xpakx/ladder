@@ -29,6 +29,7 @@ export class TreeService {
     this.calculateRealOrder();
     this.projects.sort((a, b) => a.realOrder - b.realOrder);
     this.tasks = tree.tasks;
+    this.tasks.forEach((a) => a.due = a.due ? new Date(a.due) : null);
     this.labels = tree.labels;
   }
 
@@ -174,7 +175,7 @@ export class TreeService {
   }
 
   getNumOfUncompletedTasksToday(): number {
-    return this.getByDate(new Date()).length;
+    return 0//this.getByDate(new Date()).length;
   }
 
   getProjectById(projectId: number): ProjectTreeElem | undefined {
@@ -212,7 +213,7 @@ export class TreeService {
       description: response.description,
       project: project ? project : null,
       parent: null,
-      due: null,
+      due: new Date(response.due),
       completed: false,
       projectOrder: response.projectOrder
     })
@@ -225,7 +226,7 @@ export class TreeService {
       task.description = response.description;
       task.title = response.title;
       task.project = project ? project : null;
-      task.due = response.due;
+      task.due = new Date(response.due);
     }
   }
 

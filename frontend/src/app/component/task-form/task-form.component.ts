@@ -49,6 +49,10 @@ export class TaskFormComponent implements OnInit {
       title: [this.task ? this.task.title : '', Validators.required],
       description: [this.task ? this.task.description : '', []]
     });
+    
+      if(this.task) {
+		  this.taskDate = this.task.due ? this.task.due : undefined;
+	  }
   }
 
   getProjects(text: string = "") {
