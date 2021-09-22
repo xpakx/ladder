@@ -110,8 +110,8 @@ export class AppComponent implements AfterViewInit {
 
   addBeforeProjectModal(request: ProjectRequest, id: number) {
     this.projectService.addProjectBefore(request, id).subscribe(
-      (response: Project) => {
-        this.tree.addNewProject(response, 0);
+      (response: Project, beforeId: number = id) => {
+        this.tree.addNewProjectBefore(response, 0, beforeId);
       },
       (error: HttpErrorResponse) => {
        
@@ -132,8 +132,8 @@ export class AppComponent implements AfterViewInit {
 
   addAfterProjectModal(request: ProjectRequest, id: number) {
     this.projectService.addProjectAfter(request, id).subscribe(
-      (response: Project) => {
-        this.tree.addNewProject(response, 0);
+      (response: Project, afterId: number = id) => {
+        this.tree.addNewProjectAfter(response, 0, afterId);
       },
       (error: HttpErrorResponse) => {
        

@@ -50,13 +50,43 @@ export class TreeService {
     this.projects.sort((a, b) => a.realOrder - b.realOrder);
   }
 
+  addNewProjectAfter(project: Project, indent: number, afterId: number) {
+    let afterProject = this.getProjectById(afterId);
+    if(afterProject) {
+      let proj : ProjectTreeElem = afterProject;
+      project.order = proj.order;
+      let projects = this.projects
+        .filter((a) => a.parent == proj.parent)
+        .filter((a) => a.order > proj.order);
+        for(let pro of projects) {
+          pro.order = pro.order + 1;
+        }
+        this.addNewProject(project, indent);
+    }
+  }
+
+  addNewProjectBefore(project: Project, indent: number, beforeId: number) {
+    let beforeProject = this.getProjectById(beforeId);
+    if(beforeProject) {
+      let proj : ProjectTreeElem = beforeProject;
+      project.order = proj.order;
+      let projects = this.projects
+        .filter((a) => a.parent == proj.parent)
+        .filter((a) => a.order >= proj.order);
+        for(let pro of projects) {
+          pro.order = pro.order + 1;
+        }
+        this.addNewProject(project, indent);
+    }
+  }
+  
+
   updateProject(project: Project, id: number) {
     let projectElem = this.getProjectById(id)
     if(projectElem) {
       projectElem.name = project.name;
       projectElem.color = project.color;
       projectElem.favorite = project.favorite;
-
     }
   }
 
@@ -196,7 +226,6 @@ export class TreeService {
       task.title = response.title;
       task.project = project ? project : null;
       task.due = response.due;
-      alert(task.completed)
     }
   }
 
