@@ -43,15 +43,13 @@ public class TaskService {
     public Task updateTask(AddTaskRequest request, Integer taskId, Integer userId) {
         Project project = projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        Task parent = taskRepository.findByIdAndOwnerId(taskId, userId)
+        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
-        Task taskToUpdate = taskRepository.findById(taskId)
-			.orElseThrow(() -> new NotFoundException("No such task!"));
         taskToUpdate.setTitle(request.getTitle());
         taskToUpdate.setDescription(request.getDescription());
         taskToUpdate.setProjectOrder(request.getProjectOrder());
         taskToUpdate.setDue(request.getDue());
-        taskToUpdate.setParent(parent);
+        //taskToUpdate.setParent(parent);
         taskToUpdate.setProject(project);
         taskToUpdate.setCompletedAt(request.getCompletedAt());
         taskToUpdate.setPriority(request.getPriority());

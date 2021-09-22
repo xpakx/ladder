@@ -196,6 +196,7 @@ export class TreeService {
       task.title = response.title;
       task.project = project ? project : null;
       task.due = response.due;
+      alert(task.completed)
     }
   }
 
