@@ -122,8 +122,8 @@ public class ProjectService {
     }
 
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
-        Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
+        Project project = projectId != null ? projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
         Task taskToAdd = buildTaskToAddFromRequest(request, userId, project);
         return taskRepository.save(taskToAdd);
     }
