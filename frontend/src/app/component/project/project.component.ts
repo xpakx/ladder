@@ -1,8 +1,11 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
+import { Task } from 'src/app/entity/task';
 import { TaskDetails } from 'src/app/entity/task-details';
 import { ProjectService } from 'src/app/service/project.service';
+import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
@@ -20,7 +23,7 @@ export class ProjectComponent implements OnInit {
   showEditTaskFormById: number | undefined;
 
   constructor(private router: Router, private route: ActivatedRoute, 
-    private tree: TreeService) { }
+    private tree: TreeService, private taskService: TaskService) { }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
@@ -53,5 +56,19 @@ export class ProjectComponent implements OnInit {
 
   closeEditTaskForm() {
     this.showEditTaskFormById = undefined;
+  }
+
+  completeTask(id: number) {
+    let task = this.tree.getTaskById(id);
+    if(task) {
+    this.taskService.completeTask(id, {flag: !task.completed}).subscribe(
+        (response: Task) => {
+        this.tree.changeTaskCompletion(response);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+    }
   }
 }

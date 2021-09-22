@@ -151,6 +151,10 @@ export class TreeService {
     return this.projects.find((a) => a.id == projectId);
   }
 
+  getTaskById(taskId: number): TaskDetails | undefined {
+    return this.tasks.find((a) => a.id == taskId);
+  }
+
   getTasksByProject(projectId: number): TaskDetails[] {
     return this.tasks.filter((a) => 
       a.project && a.project.id == projectId
@@ -187,5 +191,12 @@ export class TreeService {
     return this.projects.filter((a) => 
       a.name.toLowerCase().includes(text.toLowerCase())
     );
+  }
+
+  changeTaskCompletion(response: Task) {
+    let task = this.getTaskById(response.id);
+    if(task) {
+      task.completed = response.completed;
+    }
   }
 }
