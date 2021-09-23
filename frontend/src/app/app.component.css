@@ -329,10 +329,28 @@ button {
     opacity: 1;
 }
 
+.project_list_item .left_actions {
+    width: 30px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: right;
+    margin-left: -30px;
+    opacity: 0;
+}
+
+.project_list_item:hover .left_actions {
+    opacity: 1;
+}
+
 .project_list_item .arrow {
     color: rgb(184, 179, 179);
-    width: 30px;
-    margin-left: -30px;
+    width: 16px;
+}
+
+.project_list_item .handle {
+    color: rgb(184, 179, 179);
+    width: 10px;
+    cursor: grabbing;
 }
 
 .indent {

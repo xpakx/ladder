@@ -280,4 +280,10 @@ export class AppComponent implements AfterViewInit {
   closeAddTaskModal() {
     this.displayAddTask = "none";
   }
+
+  draggable: number | undefined;
+
+  moveProject(projectId: number, event: MouseEvent) {
+	  this.draggable = projectId;
+  }
 }
