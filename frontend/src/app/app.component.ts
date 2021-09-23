@@ -191,6 +191,14 @@ export class AppComponent implements AfterViewInit {
     this.router.navigate(['/project/'+id]);
   }
 
+  toInbox() {
+    this.router.navigate(['/inbox']);
+  }
+
+  toUpcoming() {
+    this.router.navigate(['/upcoming']);
+  }
+
   openContextProjectMenu(event: MouseEvent, projectId: number) {
 	  this.contextProjectMenu = this.tree.getProjectById(projectId);
     this.showContextProjectMenu = true;

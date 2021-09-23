@@ -11,6 +11,8 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'load', component: LoadProjectComponent },
   { path: '', component: DailyViewComponent },
+  { path: 'inbox', component: DailyViewComponent }, // todo
+  { path: 'upcoming', component: DailyViewComponent }, // todo
   { path: 'project/:id', component: ProjectComponent }
 ];
 

@@ -49,30 +49,36 @@
 				<div class="left-nav">
 						<ul class="top_filters">
 							<li class="filter" id="filter_inbox">
-								<span class="item_icon">
-									<i class="fa text-primary mr-2 fa-inbox"></i>
-								</span>
-								<span class="item_content">
-									Inbox
-									<small class="item_counter">{{ tree.getNumOfUncompletedTasksInInbox() }}</small>
-								</span>
+								<button class="filter_button" (click)="toInbox()">
+									<span class="item_icon">
+										<i class="fa text-primary mr-2 fa-inbox"></i>
+									</span>
+									<span class="item_content">
+										Inbox
+										<small class="item_counter">{{ tree.getNumOfUncompletedTasksInInbox() }}</small>
+									</span>
+								</button>
 							</li>
 							<li class="filter" id="filter_today">
-								<span class="item_icon">
-									<i class="fa mr-2 text-success fa-calendar-minus-o"></i>
-								</span>
-								<span class="item_content">
-									Today
-									<small class="item_counter">{{ tree.getNumOfUncompletedTasksToday() }}</small>
-								</span>
+								<button class="filter_button" (click)="toHome()">
+									<span class="item_icon">
+										<i class="fa mr-2 text-success fa-calendar-minus-o"></i>
+									</span>
+									<span class="item_content">
+										Today
+										<small class="item_counter">{{ tree.getNumOfUncompletedTasksToday() }}</small>
+									</span>
+								</button>
 							</li>
 							<li class="filter" id="filter_today">
-								<span class="item_icon">
-									<i class="fa text-warning mr-2 fa-calendar"></i>
-								</span>
-								<span class="item_content">
-									Upcoming
-								</span>
+								<button class="filter_button" (click)="toUpcoming()">
+									<span class="item_icon">
+										<i class="fa text-warning mr-2 fa-calendar"></i>
+									</span>
+									<span class="item_content">
+										Upcoming
+									</span>
+								</button>
 							</li>
 						</ul>
 
