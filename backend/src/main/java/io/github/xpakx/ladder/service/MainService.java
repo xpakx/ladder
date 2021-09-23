@@ -31,6 +31,7 @@ public class MainService {
         result.setId(userId);
         result.setUsername(userAccountRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("No user with id " + userId)).getUsername());
+        result.setProjectCollapsed(true);
         result.setProjects(projectRepository.findByOwnerId(userId, ProjectDetails.class));
         result.setTasks(taskRepository.findByOwnerId(userId, TaskDetails.class));
         result.setLabels(labelRepository.findByOwnerId(userId, LabelDetails.class));

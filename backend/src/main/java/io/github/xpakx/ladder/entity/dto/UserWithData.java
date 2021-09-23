@@ -10,6 +10,7 @@ import java.util.List;
 public class UserWithData {
     private Integer id;
     private String username;
+    private boolean projectCollapsed;
     private List<ProjectDetails> projects;
     private List<TaskDetails> tasks;
     private List<LabelDetails> labels;

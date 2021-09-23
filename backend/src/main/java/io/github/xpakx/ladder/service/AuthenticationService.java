@@ -69,6 +69,7 @@ public class AuthenticationService {
         userToAdd.setPassword(passwordEncoder.encode(request.getPassword()));
         userToAdd.setUsername(request.getUsername());
         userToAdd.setRoles(roles);
+        userToAdd.setProjectCollapsed(true);
 
         userRepository.save(userToAdd);
 

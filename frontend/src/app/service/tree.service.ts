@@ -15,6 +15,7 @@ export class TreeService {
   public tasks: TaskDetails[] = [];
   public labels: LabelDetails[] = [];
   public loaded: boolean = false;
+  public projectCollapsed: boolean = true;
 
   constructor() { }
 
@@ -24,6 +25,7 @@ export class TreeService {
 
   load(tree: UserWithData) {
     this.loaded = true;
+    this.projectCollapsed = tree.projectCollapsed;
     this.projects = this.transformAll(tree.projects);
     this.projects.sort((a, b) => a.order - b.order);
     this.calculateRealOrder();

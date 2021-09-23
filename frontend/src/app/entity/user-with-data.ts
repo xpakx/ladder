@@ -5,6 +5,7 @@ import { TaskDetails } from "./task-details";
 export interface UserWithData {
     username: string;
     id: number;
+    projectCollapsed: boolean;
     projects: ProjectDetails[];
     tasks: TaskDetails[];
     labels: LabelDetails[];

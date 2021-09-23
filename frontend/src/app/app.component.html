@@ -87,7 +87,7 @@
 							<div class="expansion_panel__header" style="top: 372px;">
 								<button type="button" class="expansion_panel__toggle" (click)="switchProjectCollapse()">
 									<div class="expansion_panel__toggle_icon">
-										<i class="fa mx-2 text-muted fa-chevron-right"  [class.rotated]="!collapseProjects"></i>
+										<i class="fa mx-2 text-muted fa-chevron-right"  [class.rotated]="!tree.projectCollapsed"></i>
 									</div>
 									Projects
 								</button>
@@ -97,7 +97,7 @@
 									</button>
 								</div>
 							</div>
-							<div class="projects" style="min-height: 0px;" [class.hidden]="collapseProjects">
+							<div class="projects" style="min-height: 0px;" [class.hidden]="tree.projectCollapsed">
 								<div class="projects_list_container">
 									<ul class="items generic_left_list projects_list">
 										<li class="project_list_item" *ngFor="let project of tree.projects" [class.hiddenProject]="isParentCollapsed(project.parentList)">

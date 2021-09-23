@@ -19,7 +19,6 @@ export class AppComponent implements AfterViewInit {
   displayAddTask: string = "none";
   projectFav: boolean = false;
   addProjForm: FormGroup;
-  collapseProjects: boolean = true;
   collapseLabels: boolean = true;
   collapseFilters: boolean = true;
   hideMenu: boolean = false;
@@ -145,7 +144,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   switchProjectCollapse() {
-    this.collapseProjects = !this.collapseProjects;
+    this.tree.projectCollapsed = !this.tree.projectCollapsed;
   }
 
   switchLabelCollapse() {
