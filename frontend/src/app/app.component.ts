@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Renderer2, ViewChild, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DndDropEvent } from 'ngx-drag-drop';
 import { Project } from './entity/project';
 import { ProjectRequest } from './entity/project-request';
 import { ProjectTreeElem } from './entity/project-tree-elem';
@@ -281,9 +282,30 @@ export class AppComponent implements AfterViewInit {
     this.displayAddTask = "none";
   }
 
-  draggable: number | undefined;
+  draggedId: number | undefined;
 
-  moveProject(projectId: number, event: MouseEvent) {
-	  this.draggable = projectId;
+  onDragStart(id: number) {
+	  this.draggedId = id;
+  }
+
+  onDragEnd() {
+	  this.draggedId = undefined;
+  }
+
+  isDragged(id: number): boolean {
+    return this.draggedId == id;
+  }
+
+  isParentDragged(projects: ProjectTreeElem[]): boolean {
+	  for(let project of projects) {
+      if(project.id == this.draggedId) {
+        return true;
+      }
+	  }
+	  return false;
+  }
+  
+  onDrop(event: DndDropEvent, targetId: number) {
+    alert(event.data + " " + targetId);
   }
 }

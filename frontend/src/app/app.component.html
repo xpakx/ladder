@@ -100,26 +100,32 @@
 							<div class="projects" style="min-height: 0px;" [class.hidden]="tree.projectCollapsed">
 								<div class="projects_list_container">
 									<ul class="items generic_left_list projects_list">
-										<li class="project_list_item" *ngFor="let project of tree.projects" [class.hiddenProject]="isParentCollapsed(project.parentList)">
-											<span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
-											<span class="left_actions">
-												<button type="button" class="handle" (click)="moveProject(project.id, $event)">
-													<i class="fa fa-ellipsis-v"></i>
+										<ng-container *ngFor="let project of tree.projects">
+											<li class="project_list_item" [class.hiddenProject]="isParentCollapsed(project.parentList) || isParentDragged(project.parentList)" 
+												[dndDraggable]="project.id" (dndStart)="onDragStart(project.id)" (dndEnd)="onDragEnd()">
+												<span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
+												<span class="left_actions">
+													<button type="button" class="handle" dndHandle>
+														<i class="fa fa-ellipsis-v"></i>
+													</button>
+													<button type="button" class="arrow" *ngIf="project.hasChildren" (click)="collapseProject(project.id)">
+														<i class="fa fa-chevron-right" [class.rotated]="!isProjectCollapsed(project.id)"></i>
+													</button>
+												</span>
+												<button class="text" (click)="toProject(project.id)">
+													<div class="div-color" [style]="'color: ' + project.color +';'"></div>
+													{{project.name}}
+													<div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
 												</button>
-												<button type="button" class="arrow" *ngIf="project.hasChildren" (click)="collapseProject(project.id)">
-													<i class="fa fa-chevron-right" [class.rotated]="!isProjectCollapsed(project.id)"></i>
+												
+												<button type="button" #contextMenuButton class="icon_more" (click)="openContextProjectMenu($event, project.id)">
+													<i class="fa fa-ellipsis-h"></i>
 												</button>
-											</span>
-											<button class="text" (click)="toProject(project.id)">
-												<div class="div-color" [style]="'color: ' + project.color +';'"></div>
-												{{project.name}}
-												<div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
-											</button>
-											
-											<button type="button" #contextMenuButton class="icon_more" (click)="openContextProjectMenu($event, project.id)">
-												<i class="fa fa-ellipsis-h"></i>
-											</button>
-										</li>
+											</li>
+											<li *ngIf="draggedId" [dndDropzone]="[]" (dndDrop)="onDrop($event, project.id)">
+												***
+											</li>
+										</ng-container>
 									</ul>
 									<button type="button" class="plus_add_button" (click)="openProjectModal()">
 										<span class="icon_add">
