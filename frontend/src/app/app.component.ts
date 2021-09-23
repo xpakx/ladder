@@ -305,7 +305,23 @@ export class AppComponent implements AfterViewInit {
 	  return false;
   }
   
-  onDrop(event: DndDropEvent, targetId: number) {
-    alert(event.data + " " + targetId);
+  onDrop(event: DndDropEvent, target: ProjectTreeElem, indentMore: boolean = false) {
+    if(!indentMore)
+    {
+    alert("Move project " + event.data + " to " + 
+    (target.parent ? target.parent.id : " top") + " after " + target.id);
+    } else {
+      alert("Move project " + event.data + " to " + target.id );
+    }
+  }
+
+  onDropFirst(event: DndDropEvent) {
+    alert(event.data + " on first item");
+  }
+
+  hideDropZone(project: ProjectTreeElem): boolean {
+    return this.isDragged(project.id) || 
+    this.isParentDragged(project.parentList) || 
+    this.isParentCollapsed(project.parentList);
   }
 }

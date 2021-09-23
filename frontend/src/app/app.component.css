@@ -686,3 +686,19 @@ button {
 .dndDraggingSource {
     display: none !important;
 }
+
+.drag-zone.dndDragover {
+    background: #ececec;
+}
+
+.drag-zone.dndDragover ~ .drag-zone {
+    background: #ececec;
+}
+
+.drag-zone {
+    background: #ffffff;
+}
+
+.last-drag-zone {
+    width: 100%;
+}

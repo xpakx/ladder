@@ -100,6 +100,9 @@
 							<div class="projects" style="min-height: 0px;" [class.hidden]="tree.projectCollapsed">
 								<div class="projects_list_container">
 									<ul class="items generic_left_list projects_list">
+										<li *ngIf="draggedId" [dndDropzone]="[]" (dndDrop)="onDropFirst($event)" class="drag-zone drag-list-item">
+											
+										</li>
 										<ng-container *ngFor="let project of tree.projects">
 											<li class="project_list_item" [class.hiddenProject]="isParentCollapsed(project.parentList) || isParentDragged(project.parentList)" 
 												[dndDraggable]="project.id" (dndStart)="onDragStart(project.id)" (dndEnd)="onDragEnd()">
@@ -122,8 +125,10 @@
 													<i class="fa fa-ellipsis-h"></i>
 												</button>
 											</li>
-											<li *ngIf="draggedId" [dndDropzone]="[]" (dndDrop)="onDrop($event, project.id)">
-												***
+											<li *ngIf="draggedId && !hideDropZone(project)" class="drag_list_item">
+												<span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
+												<span class="indent drag-zone" [dndDropzone]="[]" (dndDrop)="onDrop($event, project)" ></span>
+												<span [dndDropzone]="[]" (dndDrop)="onDrop($event, project, true)" class="drag-zone last-drag-zone"></span>
 											</li>
 										</ng-container>
 									</ul>
