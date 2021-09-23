@@ -68,7 +68,7 @@ public class ProjectService {
         return Project.builder()
                 .name(request.getName())
                 .parent(getParentFromProjectRequest(request))
-                .favorite(false)
+                .favorite(request.isFavorite())
                 .color(request.getColor())
                 .owner(userRepository.getById(userId))
                 .build();
@@ -84,6 +84,7 @@ public class ProjectService {
         projectToUpdate.setName(request.getName());
         projectToUpdate.setColor(request.getColor());
         projectToUpdate.setParent(getParentFromProjectRequest(request));
+        projectToUpdate.setFavorite(request.isFavorite());
         return projectRepository.save(projectToUpdate);
     }
 

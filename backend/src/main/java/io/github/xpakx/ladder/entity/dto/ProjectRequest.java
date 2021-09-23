@@ -8,5 +8,6 @@ import lombok.Setter;
 public class ProjectRequest {
     private String name;
     private String color;
+    private boolean favorite;
     private Integer parentId;
 }
