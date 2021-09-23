@@ -9,4 +9,5 @@ public interface TaskDetails {
     ProjectWithNameAndId getProject();
     ParentWithId getParent();
     LocalDateTime getDue();
+    boolean getCompleted();
 }

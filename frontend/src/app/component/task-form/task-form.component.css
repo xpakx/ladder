@@ -201,6 +201,12 @@ button {
     width: 100%;
 }
 
+
+.modal-body ul li .date_holder {
+    font-size: 13px;
+    color: grey;
+}
+
 .modal-body ul li .menu-icon-select {
     color: #dd4b39;
     height: 24px;

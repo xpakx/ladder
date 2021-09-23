@@ -50,7 +50,7 @@ export class TaskFormComponent implements OnInit {
       description: [this.task ? this.task.description : '', []]
     });
     
-      if(this.task) {
+    if(this.task) {
 		  this.taskDate = this.task.due ? this.task.due : undefined;
 	  }
   }

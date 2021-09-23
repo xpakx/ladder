@@ -12,6 +12,7 @@ import { DailyViewComponent } from './component/daily-view/daily-view.component'
 import { LoadProjectComponent } from './component/load-project/load-project.component';
 import { ProjectComponent } from './component/project/project.component';
 import { TaskFormComponent } from './component/task-form/task-form.component';
+import { DndModule } from 'ngx-drag-drop';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -38,7 +39,8 @@ export function tokenGetter() {
     }),
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    DndModule
   ],
   providers: [],
   bootstrap: [AppComponent]
