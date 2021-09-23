@@ -76,6 +76,11 @@ export class ProjectService {
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/favorite`, request);
   }
 
+  public updateProjectCollapse(projectId: number, request: BooleanRequest):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collapse`, request);
+  }
+
   public deleteProject(projectId: number):  Observable<any> {
     let userId  = this.getUserId();
     return this.http.delete<any>(`${this.apiServerUrl}/${userId}/projects/${projectId}`);

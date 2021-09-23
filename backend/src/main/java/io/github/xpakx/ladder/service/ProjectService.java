@@ -70,6 +70,7 @@ public class ProjectService {
                 .parent(getParentFromProjectRequest(request))
                 .favorite(request.isFavorite())
                 .color(request.getColor())
+                .collapsed(true)
                 .owner(userRepository.getById(userId))
                 .build();
     }
@@ -119,6 +120,13 @@ public class ProjectService {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setFavorite(request.isFlag());
+        return projectRepository.save(projectToUpdate);
+    }
+    
+    public Project updateProjectCollapsion(BooleanRequest request, Integer projectId, Integer userId) {
+        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        projectToUpdate.setCollapsed(request.isFlag());
         return projectRepository.save(projectToUpdate);
     }
 

@@ -44,7 +44,8 @@ export class TreeService {
       hasChildren: false,
       indent: indent,
       parentList: [],
-      favorite: project.favorite
+      favorite: project.favorite,
+      collapsed: true
     });
     this.projects.sort((a, b) => a.order - b.order);
     this.calculateRealOrder();
@@ -107,7 +108,8 @@ export class TreeService {
       hasChildren: this.hasChildrenByProjectId(project.id, projects),
       indent: indent,
       parentList: [],
-      favorite: project.favorite
+      favorite: project.favorite,
+      collapsed: project.collapsed
     }
   }
 
@@ -125,7 +127,7 @@ export class TreeService {
     
     if(parent) {
 		project.parentList = [...parent.parentList];
-		project.parentList.push(parent.id);
+		project.parentList.push(parent);
 	}
 
     if(!project.hasChildren) {

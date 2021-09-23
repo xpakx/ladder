@@ -83,6 +83,12 @@ public class ProjectController {
     public ResponseEntity<Project> updateProjectFav(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.updateProjectFav(request, projectId, userId), HttpStatus.OK);
     }
+    
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{projectId}/collapse")
+    public ResponseEntity<Project> updateProjectCollapsion(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(projectService.updateProjectCollapsion(request, projectId, userId), HttpStatus.OK);
+    }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @DeleteMapping("/{projectId}")

@@ -26,6 +26,7 @@ public class Project {
     private boolean favorite;
     private String color;
     private Integer generalOrder;
+    private boolean collapsed;
 
     @JsonIgnore
     @ManyToOne

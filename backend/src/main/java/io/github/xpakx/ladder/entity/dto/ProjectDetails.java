@@ -5,6 +5,7 @@ public interface ProjectDetails {
     String getName();
     String getColor();
     boolean getFavorite();
+    boolean getCollapsed();
     ProjectWithNameAndId getParent();
     Integer getGeneralOrder();
 }

@@ -7,4 +7,5 @@ export interface ProjectDetails {
     color: string;
     generalOrder: number;
     favorite: boolean;
+    collapsed: boolean;
 }

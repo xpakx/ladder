@@ -23,7 +23,6 @@ export class AppComponent implements AfterViewInit {
   collapseLabels: boolean = true;
   collapseFilters: boolean = true;
   hideMenu: boolean = false;
-  collapsedProjectsIds: number[] = [];
   contextProjectMenu: ProjectTreeElem | undefined;
   showContextProjectMenu: boolean = false;
   projectContextMenuX: number = 0;
@@ -162,21 +161,30 @@ export class AppComponent implements AfterViewInit {
   }
   
   collapseProject(projectId: number) {
-	  const index = this.collapsedProjectsIds.indexOf(projectId);
-	  if (index > -1) {
-			this.collapsedProjectsIds.splice(index, 1);
-	  } else {
-		  this.collapsedProjectsIds.push(projectId);
-	  }
+    let project = this.tree.getProjectById(projectId);
+    if(project) {
+      project.collapsed = !project.collapsed;
+      this.projectService.updateProjectCollapse(project.id, {flag: project.collapsed}).subscribe(
+        (response: Project) => {
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
   }
   
   isProjectCollapsed(projectId: number): boolean {
-	  return this.collapsedProjectsIds.indexOf(projectId) > -1;
+    let project = this.tree.getProjectById(projectId);
+    if(project) {
+      return project.collapsed ? true : false;
+    }
+	  return false;
   }
   
-  isParentCollapsed(projectsIds: number[]): boolean {
-	  for(let id of projectsIds) {
-      if(this.collapsedProjectsIds.indexOf(id) > -1) {
+  isParentCollapsed(projects: ProjectTreeElem[]): boolean {
+	  for(let project of projects) {
+      if(project.collapsed) {
         return true;
       }
 	  }
