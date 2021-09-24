@@ -115,8 +115,6 @@ export class TreeService {
       let parentChildren = this.projects.filter((a) => a.parent && a.parent.id == parent.id);
       parent.hasChildren = parentChildren.length > 0 ? true : false;
     }
-    
-    
   }
 
   moveProjectAsChild(project: Project, indent: number, parentId: number) {
@@ -135,15 +133,13 @@ export class TreeService {
       movedProject.order = 1;
       movedProject.parent = parentProject;
 
-      alert("My id: " + movedProject.id + ", my parent id: " + movedProject.parent ? movedProject.parent.id : "null")
+      console.log("My id: " + movedProject.id + ", my parent id: " + (movedProject.parent ? movedProject.parent.id : "null"))
 
       this.recalculateChildrenIndent(movedProject.id, indent+1);
-      alert("recalc indent")
       if(oldParent) {
         this.recalculateHasChildren(oldParent);
       }
       this.recalculateHasChildren(proj);
-      alert("recalc children")
 
       this.projects.sort((a, b) => a.order - b.order);
       this.calculateRealOrder();

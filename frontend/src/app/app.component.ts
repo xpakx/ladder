@@ -310,7 +310,7 @@ export class AppComponent implements AfterViewInit {
     if(!asChild)
     {
       this.projectService.moveProjectAfter({id: target.id}, id).subscribe(
-          (response: Project, indent: number = target.indent, afterId: number = id) => {
+          (response: Project, indent: number = target.indent, afterId: number = target.id) => {
           this.tree.moveProjectAfter(response, indent, afterId);
         },
         (error: HttpErrorResponse) => {
@@ -319,7 +319,7 @@ export class AppComponent implements AfterViewInit {
       );
     } else {
       this.projectService.moveProjectAsChild({id: target.id}, id).subscribe(
-          (response: Project, indent: number = target.indent+1, afterId: number = id) => {
+          (response: Project, indent: number = target.indent+1, afterId: number = target.id) => {
           this.tree.moveProjectAsChild(response, indent, afterId);
         },
         (error: HttpErrorResponse) => {
