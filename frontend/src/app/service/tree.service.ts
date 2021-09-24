@@ -197,6 +197,7 @@ export class TreeService {
     let proj = this.projects.filter((a) => a.indent == 0);
     var offset = 0;
     for(let project of proj) {
+      project.parentList = [];
       offset += this.countAllChildren(project, offset) +1;
     }
   }
@@ -206,9 +207,9 @@ export class TreeService {
     offset += 1;
     
     if(parent) {
-		project.parentList = [...parent.parentList];
-		project.parentList.push(parent);
-	}
+      project.parentList = [...parent.parentList];
+      project.parentList.push(parent);
+    }
 
     if(!project.hasChildren) {
       return 0;
