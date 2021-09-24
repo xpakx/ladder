@@ -114,4 +114,18 @@ public class ProjectController {
     public ResponseEntity<Project> duplicateProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.duplicate(projectId, userId), HttpStatus.CREATED);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{projectId}/move/after")
+    public ResponseEntity<Project> moveProjectAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
+                                                   @PathVariable Integer projectId) {
+        return  new ResponseEntity<>(projectService.moveProjectAfter(request, userId, projectId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{projectId}/move/asChild")
+    public ResponseEntity<Project> moveProjectAsFirstChild(@RequestBody IdRequest request, @PathVariable Integer userId,
+                                                    @PathVariable Integer projectId) {
+        return  new ResponseEntity<>(projectService.moveProjectAsFirstChild(request, userId, projectId), HttpStatus.OK);
+    }
 }

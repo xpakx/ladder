@@ -305,13 +305,27 @@ export class AppComponent implements AfterViewInit {
 	  return false;
   }
   
-  onDrop(event: DndDropEvent, target: ProjectTreeElem, indentMore: boolean = false) {
-    if(!indentMore)
+  onDrop(event: DndDropEvent, target: ProjectTreeElem, asChild: boolean = false) {
+    let id = Number(event.data);
+    if(!asChild)
     {
-    alert("Move project " + event.data + " to " + 
-    (target.parent ? target.parent.id : " top") + " after " + target.id);
+      this.projectService.moveProjectAfter({id: target.id}, id).subscribe(
+          (response: Project, indent: number = target.indent, afterId: number = id) => {
+          this.tree.moveProjectAfter(response, indent, afterId);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
     } else {
-      alert("Move project " + event.data + " to " + target.id );
+      this.projectService.moveProjectAsChild({id: target.id}, id).subscribe(
+          (response: Project, indent: number = target.indent+1, afterId: number = id) => {
+          this.tree.moveProjectAsChild(response, indent, afterId);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
     }
   }
 

@@ -103,4 +103,14 @@ export class ProjectService {
   private getUserId() {
     return localStorage.getItem("user_id");
   }
+
+  public moveProjectAfter(request: IdRequest, projectId: number):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/after`, request);
+  }
+
+  public moveProjectAsChild(request: IdRequest, projectId: number):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/asChild`, request);
+  }
 }
