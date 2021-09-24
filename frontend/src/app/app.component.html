@@ -126,8 +126,8 @@
 												</button>
 											</li>
 											<li *ngIf="draggedId && !hideDropZone(project)" class="drag_list_item">
-												<span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
-												<span class="indent drag-zone" [dndDropzone]="[]" (dndDrop)="onDrop($event, project)" ></span>
+												<span class="indent" *ngFor="let e of [].constructor(project.hasChildren && !project.collapsed ? project.indent+1 : project.indent)"></span>
+												<span class="indent drag-zone" [dndDropzone]="[]" (dndDrop)="onDrop($event, project)" *ngIf="!project.hasChildren || project.collapsed"></span>
 												<span [dndDropzone]="[]" (dndDrop)="onDrop($event, project, true)" class="drag-zone last-drag-zone"></span>
 											</li>
 										</ng-container>
