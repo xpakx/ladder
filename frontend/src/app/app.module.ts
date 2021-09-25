@@ -13,6 +13,7 @@ import { LoadProjectComponent } from './component/load-project/load-project.comp
 import { ProjectComponent } from './component/project/project.component';
 import { TaskFormComponent } from './component/task-form/task-form.component';
 import { DndModule } from 'ngx-drag-drop';
+import { ProjectDialogComponent } from './component/project-dialog/project-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -26,7 +27,8 @@ export function tokenGetter() {
     DailyViewComponent,
     LoadProjectComponent,
     ProjectComponent,
-    TaskFormComponent
+    TaskFormComponent,
+    ProjectDialogComponent
   ],
   imports: [
     BrowserModule,

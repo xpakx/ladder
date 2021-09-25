@@ -16,10 +16,8 @@ import { TreeService } from './service/tree.service';
 })
 export class AppComponent implements AfterViewInit {
   title = 'ladder';
-  displayAddProject: string = "none";
   displayAddTask: string = "none";
   projectFav: boolean = false;
-  addProjForm: FormGroup;
   collapseLabels: boolean = true;
   collapseFilters: boolean = true;
   hideMenu: boolean = false;
@@ -28,16 +26,14 @@ export class AppComponent implements AfterViewInit {
   projectContextMenuX: number = 0;
   projectContextMenuY: number = 0;
   @ViewChild('projectContext', {read: ElementRef}) projectContextMenuElem!: ElementRef;
-  addAfter: number | undefined;
-  addBefore: number | undefined;
-  projectToEditId: number | undefined;
+
+  addAfter: boolean = false;
+  addBefore: boolean = false;
+  projectToEditId: ProjectTreeElem | undefined;
+  displayProjectModal: boolean = false;
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
-    private fb: FormBuilder, private router: Router, private renderer: Renderer2) {
-    this.addProjForm = this.fb.group({
-      name: ['', Validators.required],
-      color: ['', Validators.required]
-    });
+    private router: Router, private renderer: Renderer2) {
   }
 
   ngAfterViewInit() {
@@ -50,98 +46,37 @@ export class AppComponent implements AfterViewInit {
   }
 
   openProjectModal() {
-    this.displayAddProject = "block";
+    this.displayProjectModal = true;
   }
 
   openProjectModalEdit() {
     if(this.contextProjectMenu) {
-      this.projectToEditId = this.contextProjectMenu.id;
-      this.addProjForm.setValue({
-        name: this.contextProjectMenu.name,
-        color: this.contextProjectMenu.color
-      });
+      this.projectToEditId = this.contextProjectMenu;
+      this.openProjectModal();
+    }
+  }
+
+  openProjectModalAbove() {
+    if(this.contextProjectMenu) {
+      this.projectToEditId = this.contextProjectMenu;
+      this.addBefore = true;
+      this.openProjectModal();
+    }
+  }
+
+  openProjectModalBelow() {
+    if(this.contextProjectMenu) {
+      this.projectToEditId = this.contextProjectMenu;
+      this.addAfter = true;
       this.openProjectModal();
     }
   }
 
   closeProjectModal() {
-    this.displayAddProject = "none";
-    this.addProjForm.reset();
-    this.projectFav = false;
-    this.addAfter = undefined;
-    this.addBefore = undefined;
+    this.displayProjectModal = false;
     this.projectToEditId = undefined;
-  }
-
-  addProjectModal() {
-    let request: ProjectRequest = {
-      name: this.addProjForm.controls.name.value,
-      color: this.addProjForm.controls.color.value,
-      parentId: null,
-      favorite: this.projectFav
-    };
-
-    let afterId: number | undefined = this.addAfter;
-    let beforeId: number | undefined = this.addBefore;
-    let editId: number | undefined = this.projectToEditId;
-    this.closeProjectModal();
-    if(editId) {
-      this.editProjectModal(request, editId);
-    } else if(afterId) {
-      this.addAfterProjectModal(request, afterId);
-    } else if(beforeId) {
-      this.addBeforeProjectModal(request, beforeId);
-    } else {
-      this.addEndProjectModal(request)
-    }
-  }
-
-  addEndProjectModal(request: ProjectRequest) {
-    this.projectService.addProject(request).subscribe(
-      (response: Project) => {
-        this.tree.addNewProject(response, 0);
-      },
-      (error: HttpErrorResponse) => {
-       
-      }
-    );
-  }
-
-  addBeforeProjectModal(request: ProjectRequest, id: number) {
-    this.projectService.addProjectBefore(request, id).subscribe(
-      (response: Project, beforeId: number = id) => {
-        this.tree.addNewProjectBefore(response, 0, beforeId);
-      },
-      (error: HttpErrorResponse) => {
-       
-      }
-    );
-  }
-
-  editProjectModal(request: ProjectRequest, id: number) {
-    this.projectService.updateProject(id, request).subscribe(
-      (response: Project) => {
-        this.tree.updateProject(response, id);
-      },
-      (error: HttpErrorResponse) => {
-       
-      }
-    );
-  }
-
-  addAfterProjectModal(request: ProjectRequest, id: number) {
-    this.projectService.addProjectAfter(request, id).subscribe(
-      (response: Project, afterId: number = id) => {
-        this.tree.addNewProjectAfter(response, 0, afterId);
-      },
-      (error: HttpErrorResponse) => {
-       
-      }
-    );
-  }
-
-  switchProjectFav() {
-    this.projectFav = !this.projectFav;
+    this.addAfter = false;
+    this.addBefore = false;
   }
 
   switchProjectCollapse() {
@@ -218,20 +153,6 @@ export class AppComponent implements AfterViewInit {
   closeContextProjectMenu() {
     this.contextProjectMenu = undefined;
     this.showContextProjectMenu = false;
-  }
-
-  openProjectModalAbove() {
-    if(this.contextProjectMenu) {
-      this.addBefore = this.contextProjectMenu.id;
-      this.displayAddProject = "block";
-    }
-  }
-
-  openProjectModalBelow() {
-    if(this.contextProjectMenu) {
-      this.addAfter = this.contextProjectMenu.id;
-      this.displayAddProject = "block";
-    }
   }
 
   deleteProject() {

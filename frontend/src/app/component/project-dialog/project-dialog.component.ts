@@ -1,0 +1,119 @@
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Project } from 'src/app/entity/project';
+import { ProjectRequest } from 'src/app/entity/project-request';
+import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
+import { ProjectService } from 'src/app/service/project.service';
+import { TreeService } from 'src/app/service/tree.service';
+
+@Component({
+  selector: 'app-project-dialog',
+  templateUrl: './project-dialog.component.html',
+  styleUrls: ['./project-dialog.component.css']
+})
+export class ProjectDialogComponent implements OnInit {
+  addProjForm: FormGroup;
+  projectFav: boolean = false;
+
+  @Output() closeEvent = new EventEmitter<boolean>();
+  @Input() project: ProjectTreeElem | undefined;
+  @Input() after: boolean = false;
+  @Input() before: boolean = false;
+  editMode: boolean = false;
+
+  constructor(private fb: FormBuilder, public tree : TreeService, 
+    private projectService: ProjectService) { 
+    this.addProjForm = this.fb.group({
+      name: ['', Validators.required],
+      color: ['', Validators.required]
+    });
+  }
+
+  ngOnInit(): void {
+    if(this.project && !this.after && !this.before) {
+      this.editMode = true;
+    }
+    if(this.editMode && this.project) {
+      this.addProjForm.setValue({
+        name: this.project.name,
+        color: this.project.color
+      });
+    }
+  }
+
+  switchProjectFav() {
+    this.projectFav = !this.projectFav;
+  }
+
+  closeProjectModal() {
+    this.closeEvent.emit(true);
+  }
+
+  addProjectModal() {
+    let request: ProjectRequest = {
+      name: this.addProjForm.controls.name.value,
+      color: this.addProjForm.controls.color.value,
+      parentId: null,
+      favorite: this.projectFav
+    };
+    
+    this.closeProjectModal();
+    
+    if(this.project && this.after) {
+      this.addAfterProjectModal(request, this.project.id);
+    } else if(this.project && this.before) {
+      this.addBeforeProjectModal(request, this.project.id);
+    } else if(this.project) {
+      this.editProjectModal(request, this.project.id);
+    } else {
+      this.addEndProjectModal(request)
+    }
+
+  }
+
+  addEndProjectModal(request: ProjectRequest) {
+    this.projectService.addProject(request).subscribe(
+      (response: Project) => {
+        this.tree.addNewProject(response, 0);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+  }
+
+  addBeforeProjectModal(request: ProjectRequest, id: number) {
+    this.projectService.addProjectBefore(request, id).subscribe(
+      (response: Project, beforeId: number = id) => {
+        this.tree.addNewProjectBefore(response, 0, beforeId);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+  }
+
+  editProjectModal(request: ProjectRequest, id: number) {
+    this.projectService.updateProject(id, request).subscribe(
+      (response: Project) => {
+        this.tree.updateProject(response, id);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+  }
+
+  addAfterProjectModal(request: ProjectRequest, id: number) {
+    this.projectService.addProjectAfter(request, id).subscribe(
+      (response: Project, afterId: number = id) => {
+        this.tree.addNewProjectAfter(response, 0, afterId);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+  }
+
+}
