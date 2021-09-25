@@ -1,10 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, Renderer2, ViewChild, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, Renderer2, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { Project } from './entity/project';
-import { ProjectRequest } from './entity/project-request';
 import { ProjectTreeElem } from './entity/project-tree-elem';
 import { ProjectService } from './service/project.service';
 import { TreeService } from './service/tree.service';
@@ -28,9 +26,8 @@ export class AppComponent implements AfterViewInit {
 
   addAfter: boolean = false;
   addBefore: boolean = false;
-  projectToEditId: ProjectTreeElem | undefined;
+  projectForModalWindow: ProjectTreeElem | undefined;
   displayProjectModal: boolean = false;
-
 
   displayAddTask: boolean = false;
 
@@ -53,32 +50,24 @@ export class AppComponent implements AfterViewInit {
     this.displayProjectModal = true;
   }
 
-  openProjectModalEdit() {
-    if(this.contextProjectMenu) {
-      this.projectToEditId = this.contextProjectMenu;
-      this.openProjectModal();
-    }
+  openProjectModalWithProject() {
+    this.projectForModalWindow = this.contextProjectMenu;
+    this.openProjectModal();
   }
 
   openProjectModalAbove() {
-    if(this.contextProjectMenu) {
-      this.projectToEditId = this.contextProjectMenu;
-      this.addBefore = true;
-      this.openProjectModal();
-    }
+    this.addBefore = true;
+    this.openProjectModalWithProject();
   }
 
   openProjectModalBelow() {
-    if(this.contextProjectMenu) {
-      this.projectToEditId = this.contextProjectMenu;
-      this.addAfter = true;
-      this.openProjectModal();
-    }
+    this.addAfter = true;
+    this.openProjectModalWithProject();
   }
 
   closeProjectModal() {
     this.displayProjectModal = false;
-    this.projectToEditId = undefined;
+    this.projectForModalWindow = undefined;
     this.addAfter = false;
     this.addBefore = false;
   }

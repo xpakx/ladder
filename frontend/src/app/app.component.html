@@ -187,7 +187,7 @@
 
 </div>
 
-<app-project-dialog *ngIf="displayProjectModal" (closeEvent)="closeProjectModal()" [project]="projectToEditId" [after]="addAfter" [before]="addBefore"> </app-project-dialog>
+<app-project-dialog *ngIf="displayProjectModal" (closeEvent)="closeProjectModal()" [project]="projectForModalWindow" [after]="addAfter" [before]="addBefore"> </app-project-dialog>
 <app-task-dialog *ngIf="displayAddTask" (closeEvent)="closeAddTaskModal()"></app-task-dialog>
 
 <div class="ist-menu context" [class.hidden-context-menu]="!showContextProjectMenu" [ngStyle]="{'left.px': projectContextMenuX, 'top.px': projectContextMenuY}">
@@ -209,7 +209,7 @@
 			</button>
 		</li>
 		<li class="context-menu-project-item">
-			<button (click)="openProjectModalEdit()">
+			<button (click)="openProjectModalWithProject()">
 				<span class="menu_icon">
 					<i class="fa fa-edit"></i>
 				</span>
