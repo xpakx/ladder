@@ -20,7 +20,7 @@
     <div class="tasks_content">
         <ul class="task_list_items">
 
-            <li class="task_list_item" *ngFor="let task of tasks" [id] = "'task-' + task.id">
+            <li class="task_list_item" *ngFor="let task of tasks" [id] = "'task-' + task.id" [class.completed]="task.completed">
                 <div role="button" tabindex="0" class="task_list_item_body">
                     <div class="task_list_item__overflow_actions">
                         <div class="task_list_item__drag_container">
@@ -29,7 +29,7 @@
                             </span>
                         </div>
                     </div>
-                    <button type="button" role="checkbox" class="task_checkbox priority_1">
+                    <button type="button" role="checkbox" class="task_checkbox priority_1" (click)="completeTask(task.id)">
                         <div class="task_checkbox_circle">
                             <span class="icon_check">
                                 <i class="fa fa-check"></i>

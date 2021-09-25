@@ -113,12 +113,7 @@ export class AppComponent implements AfterViewInit {
   }
   
   isParentCollapsed(projects: ProjectTreeElem[]): boolean {
-	  for(let project of projects) {
-      if(project.collapsed) {
-        return true;
-      }
-	  }
-	  return false;
+    return projects.find((a) => a.collapsed) ? true : false;
   }
 
   // Navigation
