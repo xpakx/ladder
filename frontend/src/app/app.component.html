@@ -188,20 +188,7 @@
 </div>
 
 <app-project-dialog *ngIf="displayProjectModal" (closeEvent)="closeProjectModal()" [project]="projectToEditId" [after]="addAfter" [before]="addBefore"> </app-project-dialog>
-
-<div class="modal"
-  tabindex="-1"
-  role="dialog"
-  [ngStyle]="{'display':displayAddTask}">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <app-task-form (closeEvent)="closeAddTaskModal()"></app-task-form>
-  
-      </div>
-    </div>
-  </div>
-</div>
+<app-task-dialog *ngIf="displayAddTask" (closeEvent)="closeAddTaskModal()"></app-task-dialog>
 
 <div class="ist-menu context" [class.hidden-context-menu]="!showContextProjectMenu" [ngStyle]="{'left.px': projectContextMenuX, 'top.px': projectContextMenuY}">
 	<ul class="context-menu-project" #projectContext>

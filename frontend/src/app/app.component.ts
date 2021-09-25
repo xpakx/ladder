@@ -16,7 +16,6 @@ import { TreeService } from './service/tree.service';
 })
 export class AppComponent implements AfterViewInit {
   title = 'ladder';
-  displayAddTask: string = "none";
   projectFav: boolean = false;
   collapseLabels: boolean = true;
   collapseFilters: boolean = true;
@@ -32,6 +31,9 @@ export class AppComponent implements AfterViewInit {
   projectToEditId: ProjectTreeElem | undefined;
   displayProjectModal: boolean = false;
 
+
+  displayAddTask: boolean = false;
+
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private router: Router, private renderer: Renderer2) {
   }
@@ -44,6 +46,8 @@ export class AppComponent implements AfterViewInit {
       }
     });
   }
+
+  //Project modal window
 
   openProjectModal() {
     this.displayProjectModal = true;
@@ -78,6 +82,8 @@ export class AppComponent implements AfterViewInit {
     this.addAfter = false;
     this.addBefore = false;
   }
+
+  // List collapsion
 
   switchProjectCollapse() {
     this.tree.projectCollapsed = !this.tree.projectCollapsed;
@@ -126,6 +132,8 @@ export class AppComponent implements AfterViewInit {
 	  return false;
   }
 
+  // Navigation
+
   toHome() {
     this.router.navigate(['/']);
   }
@@ -141,6 +149,8 @@ export class AppComponent implements AfterViewInit {
   toUpcoming() {
     this.router.navigate(['/upcoming']);
   }
+
+  // Project context menu
 
   openContextProjectMenu(event: MouseEvent, projectId: number) {
 	  this.contextProjectMenu = this.tree.getProjectById(projectId);
@@ -195,13 +205,17 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  // Task modal window
+
   openAddTaskModal() {
-    this.displayAddTask = "block";
+    this.displayAddTask = true;
   }
 
   closeAddTaskModal() {
-    this.displayAddTask = "none";
+    this.displayAddTask = false;
   }
+
+  // Drag'n'drop
 
   draggedId: number | undefined;
 

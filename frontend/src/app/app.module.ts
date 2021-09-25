@@ -14,6 +14,7 @@ import { ProjectComponent } from './component/project/project.component';
 import { TaskFormComponent } from './component/task-form/task-form.component';
 import { DndModule } from 'ngx-drag-drop';
 import { ProjectDialogComponent } from './component/project-dialog/project-dialog.component';
+import { TaskDialogComponent } from './component/task-dialog/task-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -28,7 +29,8 @@ export function tokenGetter() {
     LoadProjectComponent,
     ProjectComponent,
     TaskFormComponent,
-    ProjectDialogComponent
+    ProjectDialogComponent,
+    TaskDialogComponent
   ],
   imports: [
     BrowserModule,

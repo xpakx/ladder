@@ -1,0 +1,129 @@
+.modal {
+    display: block;
+}
+
+.modal-dialog {
+    box-shadow: 0 15px 50px 0 rgba(0,0,0,.35);
+}
+
+.modal-button {
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 17px;
+    padding: 6px 12px 7px;
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 1px 0 #fff;
+    background: #f3f3f3;
+    white-space: nowrap;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    color: #202020; 
+    text-decoration: none;
+    text-align: center;
+    transition-property: box-shadow, border;
+    transition-duration: .3s;
+    transition-timing-function: ease;
+    margin-left: 10px;
+}
+
+.modal-button:hover {
+    border-color: #999;
+    box-shadow: 0 1px 2px rgba(0,0,0,.15);
+}
+
+.modal-button-red {
+    color: #fff;
+    background-color: #db4c3f;
+    text-shadow: none;
+    border: 1px solid transparent;
+}
+
+.modal-button:disabled {
+    opacity: .3;
+}
+
+.modal .form-field {
+    margin-bottom: 20px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
+.modal .form-field label {
+    font-size: 14px;
+    font-weight: 700;
+    display: block;
+    margin: 0 0 7px;
+}
+
+.modal .form-field input {
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    transition-property: box-shadow,border;
+    transition-duration: .3s;
+    transition-timing-function: ease;
+}
+
+.modal .form-field input:focus {
+    border: 1px solid grey;
+}
+
+.modal .form-field-inline {
+    display: flex;
+    text-align: left;
+    margin-bottom: 20px;
+    font-size: 14px;
+    margin: 0 0 7px;
+}
+
+.modal .form-field-inline label {
+    font-weight: normal;
+    display: block;
+}
+
+.modal .switch {
+    position: relative;
+    display: inline-block;
+    overflow: visible;
+    margin-right: 10px;
+    width: 32px;
+    height: 18px;
+    min-height: auto;
+    border-radius: 9px;
+    background-color: #aaa;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.modal .switch .switch-handle {
+    position: absolute;
+    display: block;
+    padding: 0;
+    top: 3px;
+    left: 3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left .28s cubic-bezier(.4,0,.2,1);
+}
+
+.modal-header {
+    position: relative;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    background-color: #fafafa;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: 1px solid #ddd;
+    flex-grow: 1;
+}
+
+.modal-header h4 {
+    font-size: 16px;
+    font-weight: 700;
+}
