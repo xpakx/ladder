@@ -70,6 +70,7 @@ button {
 .panel {
     max-width: 800px;
     margin: auto;
+    padding: 0 10px;
 }
 
 .view_header, .header_content {
@@ -305,4 +306,15 @@ button {
     display: flex;
     justify-content: center;
     width: 100%;
+}
+
+.handle {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+@media (max-width: 767px) { 
+    .task_list_item__overflow_actions {
+        opacity: 1;
+    }
 }

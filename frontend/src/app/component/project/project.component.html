@@ -29,6 +29,9 @@
 
     <div class="tasks_content">
         <ul class="task_list_items">
+            <li *ngIf="draggedId" [dndDropzone]="[]" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
+
+            </li>
             <ng-container *ngFor="let task of tasks">
                 <li class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
                     [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()">
@@ -37,7 +40,8 @@
                         <div role="button" tabindex="0" class="task_list_item_body">
                             <div class="task_list_item__overflow_actions">
                                 <div class="task_list_item__drag_container">
-                                    <span class="task_list_item__drag_handle item_dnd_handle" >
+                                    <span class="handle" dndHandle>
+                                        <i class="fa fa-ellipsis-v"></i>
                                         <i class="fa fa-ellipsis-v"></i>
                                     </span>
                                     <button type="button" class="arrow" *ngIf="task.hasChildren">

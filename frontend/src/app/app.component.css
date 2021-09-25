@@ -639,6 +639,14 @@ button {
     .top-navbar-right {
         visibility: hidden;
     }
+
+    .project_list_item .left_actions {
+        opacity: 1;
+    }
+
+    .project_list_item .icon_more {
+        opacity: 1;
+    }
 }
 
 .ist-menu {
@@ -704,4 +712,9 @@ button {
 
 .last-drag-zone {
     width: 100%;
+}
+
+.project_list_item .left_actions button {
+    display: flex;
+    flex-wrap: nowrap;
 }
