@@ -3,6 +3,7 @@ import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
+import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
 import { UserWithData } from '../entity/user-with-data';
@@ -35,11 +36,11 @@ export class TreeService {
     this.labels = tree.labels;
   }
 
-  addNewProject(project: Project, indent: number) {
+  addNewProject(project: Project, indent: number, parent: ProjectWithNameAndId | null = null) {
     this.projects.push({
       id: project.id,
       name: project.name,
-      parent: null,
+      parent: parent,
       color: project.color,
       order: project.order,
       realOrder: this.projects.length+1,
@@ -65,7 +66,7 @@ export class TreeService {
         for(let pro of projects) {
           pro.order = pro.order + 1;
         }
-        this.addNewProject(project, indent);
+        this.addNewProject(project, indent, proj.parent);
     }
   }
 
@@ -158,7 +159,7 @@ export class TreeService {
         for(let pro of projects) {
           pro.order = pro.order + 1;
         }
-        this.addNewProject(project, indent);
+        this.addNewProject(project, indent, proj.parent);
     }
   }
   

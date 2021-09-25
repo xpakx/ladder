@@ -61,15 +61,14 @@ export class ProjectDialogComponent implements OnInit {
     this.closeProjectModal();
     
     if(this.project && this.after) {
-      this.addAfterProjectModal(request, this.project.id);
+      this.addAfterProjectModal(request, this.project);
     } else if(this.project && this.before) {
-      this.addBeforeProjectModal(request, this.project.id);
+      this.addBeforeProjectModal(request, this.project);
     } else if(this.project) {
       this.editProjectModal(request, this.project.id);
     } else {
       this.addEndProjectModal(request)
     }
-
   }
 
   addEndProjectModal(request: ProjectRequest) {
@@ -83,10 +82,10 @@ export class ProjectDialogComponent implements OnInit {
     );
   }
 
-  addBeforeProjectModal(request: ProjectRequest, id: number) {
-    this.projectService.addProjectBefore(request, id).subscribe(
-      (response: Project, beforeId: number = id) => {
-        this.tree.addNewProjectBefore(response, 0, beforeId);
+  addBeforeProjectModal(request: ProjectRequest, projectBefore: ProjectTreeElem) {
+    this.projectService.addProjectBefore(request, projectBefore.id).subscribe(
+      (response: Project, beforeId: number = projectBefore.id, indent: number = projectBefore.indent) => {
+        this.tree.addNewProjectBefore(response, indent, beforeId);
       },
       (error: HttpErrorResponse) => {
        
@@ -105,10 +104,10 @@ export class ProjectDialogComponent implements OnInit {
     );
   }
 
-  addAfterProjectModal(request: ProjectRequest, id: number) {
-    this.projectService.addProjectAfter(request, id).subscribe(
-      (response: Project, afterId: number = id) => {
-        this.tree.addNewProjectAfter(response, 0, afterId);
+  addAfterProjectModal(request: ProjectRequest, projectAfter: ProjectTreeElem) {
+    this.projectService.addProjectAfter(request, projectAfter.id).subscribe(
+      (response: Project, afterId: number = projectAfter.id, indent: number = projectAfter.indent) => {
+        this.tree.addNewProjectAfter(response, indent, afterId);
       },
       (error: HttpErrorResponse) => {
        
