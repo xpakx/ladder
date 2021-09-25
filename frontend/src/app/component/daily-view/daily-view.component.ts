@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Task } from 'src/app/entity/task';
 import { TaskDetails } from 'src/app/entity/task-details';
+import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 
@@ -14,7 +15,7 @@ import { TreeService } from 'src/app/service/tree.service';
 export class DailyViewComponent implements OnInit {
   public invalid: boolean = false;
   public message: string = '';
-  tasks: TaskDetails[] = [];
+  tasks: TaskTreeElem[] = [];
   todayDate: Date | undefined;
 
   constructor(private router: Router, private tree: TreeService, private taskService: TaskService) { }

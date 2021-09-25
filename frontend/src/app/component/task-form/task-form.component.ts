@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskDetails } from 'src/app/entity/task-details';
+import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -14,7 +15,7 @@ import { TreeService } from 'src/app/service/tree.service';
   styleUrls: ['./task-form.component.css']
 })
 export class TaskFormComponent implements OnInit {
-  @Input() task: TaskDetails | undefined;
+  @Input() task: TaskTreeElem | undefined;
   @Input() project: ProjectTreeElem | undefined;
   @Output() closeEvent = new EventEmitter<boolean>();
   taskForm: FormGroup | undefined;
@@ -158,7 +159,7 @@ export class TaskFormComponent implements OnInit {
       this.taskService.updateTask({
         title: this.taskForm.controls.title.value,
         description: this.taskForm.controls.description.value,
-        projectOrder: this.task.projectOrder,
+        projectOrder: this.task.order,
         parentId: this.task.parent ? this.task.parent.id : null,
         projectId: this.project ? this.project.id : null,
         priority: 0,

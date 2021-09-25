@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskDetails } from 'src/app/entity/task-details';
+import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -16,7 +17,7 @@ import { TreeService } from 'src/app/service/tree.service';
 export class ProjectComponent implements OnInit {
   public invalid: boolean = false;
   public message: string = '';
-  tasks: TaskDetails[] = [];
+  tasks: TaskTreeElem[] = [];
   todayDate: Date | undefined;
   project: ProjectTreeElem | undefined;
   showAddTaskForm: boolean = false;

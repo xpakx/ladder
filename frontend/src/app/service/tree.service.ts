@@ -6,6 +6,7 @@ import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
+import { TaskTreeElem } from '../entity/task-tree-elem';
 import { UserWithData } from '../entity/user-with-data';
 
 @Injectable({
@@ -13,7 +14,7 @@ import { UserWithData } from '../entity/user-with-data';
 })
 export class TreeService {
   public projects: ProjectTreeElem[] = [];
-  public tasks: TaskDetails[] = [];
+  public tasks: TaskTreeElem[] = [];
   public labels: LabelDetails[] = [];
   public loaded: boolean = false;
   public projectCollapsed: boolean = true;
@@ -27,12 +28,15 @@ export class TreeService {
   load(tree: UserWithData) {
     this.loaded = true;
     this.projectCollapsed = tree.projectCollapsed;
-    this.projects = this.transformAll(tree.projects);
+    this.projects = this.transformAllProjects(tree.projects);
     this.projects.sort((a, b) => a.order - b.order);
-    this.calculateRealOrder();
+    this.calculateRealOrderForProjects();
     this.projects.sort((a, b) => a.realOrder - b.realOrder);
-    this.tasks = tree.tasks;
-    this.tasks.forEach((a) => a.due = a.due ? new Date(a.due) : null);
+
+    this.tasks = this.transformAllTasks(tree.tasks);
+    this.tasks.sort((a, b) => a.order - b.order);
+    this.calculateRealOrderForTasks();
+    this.tasks.sort((a, b) => a.realOrder - b.realOrder);
     this.labels = tree.labels;
   }
 
@@ -51,7 +55,7 @@ export class TreeService {
       collapsed: true
     });
     this.projects.sort((a, b) => a.order - b.order);
-    this.calculateRealOrder();
+    this.calculateRealOrderForProjects();
     this.projects.sort((a, b) => a.realOrder - b.realOrder);
   }
 
@@ -95,7 +99,7 @@ export class TreeService {
       this.recalculateHasChildren(proj);
 
       this.projects.sort((a, b) => a.order - b.order);
-      this.calculateRealOrder();
+      this.calculateRealOrderForProjects();
       this.projects.sort((a, b) => a.realOrder - b.realOrder);
     }
   }
@@ -143,7 +147,7 @@ export class TreeService {
       this.recalculateHasChildren(proj);
 
       this.projects.sort((a, b) => a.order - b.order);
-      this.calculateRealOrder();
+      this.calculateRealOrderForProjects();
       this.projects.sort((a, b) => a.realOrder - b.realOrder);
     }
   }
@@ -173,11 +177,11 @@ export class TreeService {
     }
   }
 
-  transformAll(projects: ProjectDetails[]):  ProjectTreeElem[] {
-    return projects.map((a) => this.transform(a, projects));
+  transformAllProjects(projects: ProjectDetails[]):  ProjectTreeElem[] {
+    return projects.map((a) => this.transformProject(a, projects));
   }
 
-  transform(project: ProjectDetails, projects: ProjectDetails[]): ProjectTreeElem {
+  transformProject(project: ProjectDetails, projects: ProjectDetails[]): ProjectTreeElem {
     let indent: number = this.getProjectIndent(project.id, projects);
     return {
       id: project.id,
@@ -194,16 +198,53 @@ export class TreeService {
     }
   }
 
-  calculateRealOrder() {
+  transformAllTasks(tasks: TaskDetails[]):  TaskTreeElem[] {
+    return tasks.map((a) => this.transformTask(a, tasks));
+  }
+
+  transformTask(task: TaskDetails, tasks: TaskDetails[]): TaskTreeElem {
+    let indent: number = this.getTaskIndent(task.id, tasks);
+    return {
+      id: task.id,
+      title: task.title,
+      parent: task.parent,
+      order: task.projectOrder,
+      realOrder: task.projectOrder,
+      hasChildren: this.hasChildrenByTaskId(task.id, tasks),
+      indent: indent,
+      parentList: [],
+      collapsed: false,
+      description: task.description, 
+      project: task.project, 
+      due: task.due ? new Date(task.due) : null, 
+      completed: task.completed
+    }
+  }
+
+  getTaskIndent(taskId: number, tasks: TaskDetails[]): number {
+    let parentId: number | undefined = tasks.find((a) => a.id == taskId)?.parent?.id;
+    let counter = 0;
+    while(parentId != null) {
+      counter +=1;
+      parentId = tasks.find((a) => a.id == parentId)?.parent?.id;
+    }
+    return counter;
+  }
+
+  hasChildrenByTaskId(taskId: number, tasks: TaskDetails[]): boolean {
+    return tasks.find((a) => a.parent?.id == taskId) != null;
+  }
+
+  calculateRealOrderForProjects() {
     let proj = this.projects.filter((a) => a.indent == 0);
     var offset = 0;
     for(let project of proj) {
       project.parentList = [];
-      offset += this.countAllChildren(project, offset) +1;
+      offset += this.countAllProjectChildren(project, offset) +1;
     }
   }
 
-  countAllChildren(project: ProjectTreeElem, offset: number, parent?: ProjectTreeElem): number {
+  countAllProjectChildren(project: ProjectTreeElem, offset: number, parent?: ProjectTreeElem): number {
     project.realOrder = offset;
     offset += 1;
     
@@ -219,7 +260,39 @@ export class TreeService {
     let children = this.projects.filter((a) => a.parent?.id == project.id);
     var num = 0;
     for(let proj of children) {
-      let childNum = this.countAllChildren(proj, offset, project);
+      let childNum = this.countAllProjectChildren(proj, offset, project);
+      num += childNum+1;
+      offset += childNum+1;      
+    } 
+    return num;
+  }
+
+  calculateRealOrderForTasks() {
+    let tsk = this.tasks.filter((a) => a.indent == 0);
+    var offset = 0;
+    for(let task of tsk) {
+      task.parentList = [];
+      offset += this.countAllTaskChildren(task, offset) +1;
+    }
+  }
+
+  countAllTaskChildren(task: TaskTreeElem, offset: number, parent?: TaskTreeElem): number {
+    task.realOrder = offset;
+    offset += 1;
+    
+    if(parent) {
+      task.parentList = [...parent.parentList];
+      task.parentList.push(parent);
+    }
+
+    if(!task.hasChildren) {
+      return 0;
+    }
+
+    let children = this.tasks.filter((a) => a.parent?.id == task.id);
+    var num = 0;
+    for(let tsk of children) {
+      let childNum = this.countAllTaskChildren(tsk, offset, task);
       num += childNum+1;
       offset += childNum+1;      
     } 
@@ -240,7 +313,7 @@ export class TreeService {
     return counter;
   }
   
-  getByDate(date: Date): TaskDetails[] {
+  getByDate(date: Date): TaskTreeElem[] {
     return this.tasks.filter((a) => 
       a.due && a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
     );
@@ -266,11 +339,11 @@ export class TreeService {
     return this.projects.find((a) => a.id == projectId);
   }
 
-  getTaskById(taskId: number): TaskDetails | undefined {
+  getTaskById(taskId: number): TaskTreeElem | undefined {
     return this.tasks.find((a) => a.id == taskId);
   }
 
-  getTasksByProject(projectId: number): TaskDetails[] {
+  getTasksByProject(projectId: number): TaskTreeElem[] {
     return this.tasks.filter((a) => 
       a.project && a.project.id == projectId
     );
@@ -299,7 +372,12 @@ export class TreeService {
       parent: null,
       due: response.due ? new Date(response.due) : null,
       completed: false,
-      projectOrder: response.projectOrder
+      order: response.projectOrder,
+      realOrder: response.projectOrder, //todo
+      hasChildren: false, 
+      indent: 0, //todo
+      parentList: [], 
+      collapsed: false
     })
   }
 
