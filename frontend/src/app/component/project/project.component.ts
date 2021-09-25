@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DndDropEvent } from 'ngx-drag-drop';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskDetails } from 'src/app/entity/task-details';
@@ -22,6 +23,8 @@ export class ProjectComponent implements OnInit {
   project: ProjectTreeElem | undefined;
   showAddTaskForm: boolean = false;
   showEditTaskFormById: number | undefined;
+
+  draggedId: number | undefined;
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService, private taskService: TaskService) { }
@@ -71,5 +74,44 @@ export class ProjectComponent implements OnInit {
       }
     );
     }
+  }
+
+  isParentCollapsed(tasks: TaskTreeElem[]): boolean {
+    return tasks.find((a) => a.collapsed) ? true : false;
+  }
+
+  hideDropZone(task: TaskTreeElem): boolean {
+    return this.isDragged(task.id) || 
+    this.isParentDragged(task.parentList) || 
+    this.isParentCollapsed(task.parentList);
+  }
+
+  onDrop(event: DndDropEvent, target: TaskTreeElem, asChild: boolean = false) {
+    alert(event.data + " on " + target.id)
+  }
+
+  onDropFirst(event: DndDropEvent) {
+    alert(event.data + " on first item");
+  }
+
+  onDragStart(id: number) {
+	  this.draggedId = id;
+  }
+
+  onDragEnd() {
+	  this.draggedId = undefined;
+  }
+
+  isDragged(id: number): boolean {
+    return this.draggedId == id;
+  }
+
+  isParentDragged(tasks: TaskTreeElem[]): boolean {
+	  for(let task of tasks) {
+      if(task.id == this.draggedId) {
+        return true;
+      }
+	  }
+	  return false;
   }
 }

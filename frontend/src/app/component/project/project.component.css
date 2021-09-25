@@ -279,3 +279,30 @@ button {
     overflow: hidden;
     color: grey;
 }
+
+.dndDraggingSource {
+    display: none !important;
+}
+
+.drag-zone.dndDragover {
+    background: #ececec;
+}
+
+.drag-zone.dndDragover ~ .drag-zone {
+    background: #ececec;
+}
+
+.last-drag-zone {
+    width: 100%;
+}
+
+.indent {
+    width: 20px;
+}
+
+.drag_list_item {
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}

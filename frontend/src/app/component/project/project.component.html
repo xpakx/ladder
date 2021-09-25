@@ -29,61 +29,72 @@
 
     <div class="tasks_content">
         <ul class="task_list_items">
-
-            <li class="task_list_item" *ngFor="let task of tasks" [id] = "'task-' + task.id" [class.completed]="task.completed">
-                <div *ngIf="task.id != showEditTaskFormById">
-                    <div role="button" tabindex="0" class="task_list_item_body">
-                        <div class="task_list_item__overflow_actions">
-                            <div class="task_list_item__drag_container">
-                                <span class="task_list_item__drag_handle item_dnd_handle" >
-                                    <i class="fa fa-ellipsis-v"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <button type="button" role="checkbox" class="task_checkbox priority_1" (click)="completeTask(task.id)">
-                            <div class="task_checkbox_circle">
-                                <span class="icon_check">
-                                    <i class="fa fa-check"></i>
-                                </span>
-                            </div>
-                        </button>
-                        <div class="task_list_item_content">
-                            <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
-                                <div class="markdown_content task_content">
-                                    {{task.title}}
-                                </div>
-                                <div class="markdown_content task_description" *ngIf="task.description">
-                                    {{task.description}}
+            <ng-container *ngFor="let task of tasks">
+                <li class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
+                    [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()">
+                    <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
+                    <div *ngIf="task.id != showEditTaskFormById">
+                        <div role="button" tabindex="0" class="task_list_item_body">
+                            <div class="task_list_item__overflow_actions">
+                                <div class="task_list_item__drag_container">
+                                    <span class="task_list_item__drag_handle item_dnd_handle" >
+                                        <i class="fa fa-ellipsis-v"></i>
+                                    </span>
+                                    <button type="button" class="arrow" *ngIf="task.hasChildren">
+                                        <i class="fa fa-chevron-right" [class.rotated]="true"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="task_list_item__info_tags" data-layout="list">
-                                <span class="task_list_item__project" *ngIf="task.project">
-                                    <a [href]="'/project/' + task.project.id + '#task-' + task.id">
-                                        <span class="task_list_item__project__label">{{task.project.name}}</span>
-                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
-                                    </a>
-                                </span>
+                            <button type="button" role="checkbox" class="task_checkbox priority_1" (click)="completeTask(task.id)">
+                                <div class="task_checkbox_circle">
+                                    <span class="icon_check">
+                                        <i class="fa fa-check"></i>
+                                    </span>
+                                </div>
+                            </button>
+                            <div class="task_list_item_content">
+                                <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
+                                    <div class="markdown_content task_content">
+                                        {{task.title}}
+                                    </div>
+                                    <div class="markdown_content task_description" *ngIf="task.description">
+                                        {{task.description}}
+                                    </div>
+                                </div>
+                                <div class="task_list_item__info_tags" data-layout="list">
+                                    <span class="task_list_item__project" *ngIf="task.project">
+                                        <a [href]="'/project/' + task.project.id + '#task-' + task.id">
+                                            <span class="task_list_item__project__label">{{task.project.name}}</span>
+                                            <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                        </a>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="task_list_item__actions task_list_item__actions--active">
-                            <button type="button" (click)="openEditTaskForm(task.id)">
-                                <i class="fa fa-edit"></i>
-                            </button>
-                            <button type="button">
-                                <i class="fa fa-calendar"></i>
-                            </button>
-                            <a class="task_list_item__comments_link">
-                                <i class="fa fa-comment-o"></i>
-                            </a>
-                            <button type="button">
-                                <i class="fa fa-ellipsis-h"></i>
-                            </button>
+                            <div class="task_list_item__actions task_list_item__actions--active">
+                                <button type="button" (click)="openEditTaskForm(task.id)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="button">
+                                    <i class="fa fa-calendar"></i>
+                                </button>
+                                <a class="task_list_item__comments_link">
+                                    <i class="fa fa-comment-o"></i>
+                                </a>
+                                <button type="button">
+                                    <i class="fa fa-ellipsis-h"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <app-task-form *ngIf="task.id == showEditTaskFormById" [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()"></app-task-form>
-            </li>
+                    <app-task-form *ngIf="task.id == showEditTaskFormById" [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()"></app-task-form>
+                </li>
+                <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item">
+                    <span class="indent" *ngFor="let e of [].constructor(task.hasChildren && !task.collapsed ? task.indent+1 : task.indent)"></span>
+                    <span class="indent drag-zone" [dndDropzone]="[]" (dndDrop)="onDrop($event, task)" *ngIf="!task.hasChildren || task.collapsed"></span>
+                    <span [dndDropzone]="[]" (dndDrop)="onDrop($event, task, true)" class="drag-zone last-drag-zone"></span>
+                </li>
+            </ng-container>
 
             <li>
                 <button type="button" class="plus_add_button" *ngIf="!showAddTaskForm" (click)="openAddTaskForm()">
