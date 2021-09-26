@@ -153,6 +153,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       this.recalculateHasChildren(tas);
 
       this.sort();
+      console.log(JSON.stringify(movedTask, undefined, 2));
     }
   }
 
@@ -181,6 +182,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       this.recalculateHasChildren(tas);
 
       this.sort();
+      console.log(JSON.stringify(movedTask, undefined, 2));
     }
   }
 }

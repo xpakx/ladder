@@ -36,7 +36,7 @@
                 <li *ngIf="task.id != showEditTaskFormById" class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
                     [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                    <div>
+                    <div class="task_list_item_main">
                         <div role="button" tabindex="0" class="task_list_item_body">
                             <div class="task_list_item__overflow_actions">
                                 <div class="task_list_item__drag_container">
@@ -93,7 +93,7 @@
                 </li>
                 <li *ngIf="task.id == showEditTaskFormById" class="task_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                    <app-task-form [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()"></app-task-form>
+                    <app-task-form [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()"  class="task_list_item_main"></app-task-form>
                 </li>
                 <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.hasChildren && !task.collapsed ? task.indent+1 : task.indent)"></span>

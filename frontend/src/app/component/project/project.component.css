@@ -105,11 +105,17 @@ button {
     padding-left: 0;
 }
 
+.task_list_item_main {
+    width: 100%;
+}
+
 .task_list_item {
     cursor: pointer;
     border-bottom: 1px solid #f0f0f0;
     margin: 8px 0;
     padding-bottom: 8px;
+    display: flex;
+    width: 100%;
 }
 
 .task_list_item_body {
@@ -118,6 +124,7 @@ button {
     position: relative;
     padding: 0;
     cursor: pointer;
+    width: 100%;
 }
 
 .task_checkbox {

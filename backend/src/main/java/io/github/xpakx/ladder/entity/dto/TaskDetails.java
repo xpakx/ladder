@@ -10,4 +10,5 @@ public interface TaskDetails {
     ParentWithId getParent();
     LocalDateTime getDue();
     boolean getCompleted();
+    Integer getProjectOrder();
 }
