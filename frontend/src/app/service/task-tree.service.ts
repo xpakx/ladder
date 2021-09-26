@@ -62,6 +62,12 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     );
   }
 
+  getByDateUncompleted(date: Date): TaskTreeElem[] {
+    return this.list.filter((a) => 
+      !a.completed && a.due && a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
+    );
+  }
+
   getNumOfUncompletedTasksByProject(projectId: number): number {
     return this.list.filter((a) => 
       a.project && a.project.id == projectId && !a.completed
@@ -75,7 +81,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
   }
 
   getNumOfUncompletedTasksToday(): number {
-    return this.getByDate(new Date()).length;
+    return this.getByDateUncompleted(new Date()).length;
   }
 
   getTaskById(taskId: number): TaskTreeElem | undefined {
