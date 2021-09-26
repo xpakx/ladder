@@ -355,7 +355,7 @@ public class ProjectService {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
-        List<Project> projectsAfter = getAllProjectsAfterGivenProjects(userId, proj);
+        List<Project> projectsAfter = getAllProjectsAfterGivenProject(userId, proj);
 
         projectToAdd.setParent(proj.getParent());
 
@@ -365,7 +365,7 @@ public class ProjectService {
         return projectRepository.save(projectToAdd);
     }
 
-    private List<Project> getAllProjectsAfterGivenProjects(Integer userId, Project proj) {
+    private List<Project> getAllProjectsAfterGivenProject(Integer userId, Project proj) {
         return hasParent(proj) ? getAllSiblingsAfter(userId, proj) : getAllProjectsWithNoParentAfter(userId, proj);
     }
 
@@ -415,7 +415,7 @@ public class ProjectService {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
         Project afterProject = findIdFromIdRequest(request);
-        List<Project> projectsAfter = getAllProjectsAfterGivenProjects(userId, afterProject);
+        List<Project> projectsAfter = getAllProjectsAfterGivenProject(userId, afterProject);
 
         projectToMove.setParent(afterProject.getParent());
 
@@ -424,7 +424,6 @@ public class ProjectService {
         projectRepository.saveAll(projectsAfter);
         return projectRepository.save(projectToMove);
     }
-    
     
     private Project findIdFromIdRequest(IdRequest request) {
         return hasId(request) ? projectRepository.findById(request.getId()).orElse(null) : null;

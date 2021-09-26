@@ -22,6 +22,9 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Task> findByOwnerIdAndProjectId(Integer userId, Integer projectId);
 
     void deleteByIdAndOwnerId(Integer taskId, Integer ownerId);
+    List<Task> findByOwnerIdAndParentIdAndProjectOrderGreaterThan(Integer ownerId, Integer parentId, Integer projectOrder);
+    List<Task> findByOwnerIdAndParentIsNullAndProjectOrderGreaterThan(Integer ownerID, Integer projectOrder);
 
-
+    List<Task> findByOwnerIdAndParentId(Integer ownerId, Integer parentId);
+    <T> List<T> findByOwnerIdAndParentIsNull(Integer ownerId, Class<T> type);
 }

@@ -164,4 +164,57 @@ public class TaskService {
                 .parent(parent)
                 .build();
     }
+
+    public Task moveTaskAfter(IdRequest request, Integer userId, Integer taskToMoveId) {
+        Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
+        Task afterTask = findIdFromIdRequest(request);
+        List<Task> projectsAfter = getAllTasksAfterGivenTask(userId, afterTask);
+
+        taskToMove.setParent(afterTask.getParent());
+
+        taskToMove.setProjectOrder(afterTask.getProjectOrder()+1);
+        projectsAfter.forEach(((p) -> p.setProjectOrder(p.getProjectOrder()+1)));
+        taskRepository.saveAll(projectsAfter);
+        return taskRepository.save(taskToMove);
+    }
+
+    private Task findIdFromIdRequest(IdRequest request) {
+        return hasId(request) ? taskRepository.findById(request.getId()).orElse(null) : null;
+    }
+    private List<Task> getAllTasksAfterGivenTask(Integer userId, Task task) {
+        return hasParent(task) ? getAllSiblingsAfter(userId, task) : getAllProjectsWithNoParentAfter(userId, task);
+    }
+    private boolean hasId(IdRequest request) {
+        return request.getId() != null;
+    }
+
+    private boolean hasParent(Task task) {
+        return task.getParent() != null;
+    }
+
+    private List<Task> getAllSiblingsAfter(Integer userId, Task task) {
+        return taskRepository
+                .findByOwnerIdAndParentIdAndProjectOrderGreaterThan(userId, task.getParent().getId(), task.getProjectOrder());
+    }
+
+    private List<Task> getAllProjectsWithNoParentAfter(Integer userId, Task task) {
+        return taskRepository
+                .findByOwnerIdAndParentIsNullAndProjectOrderGreaterThan(userId, task.getProjectOrder());
+    }
+
+    public Task moveTaskAsFirstChild(IdRequest request, Integer userId, Integer taskToMoveId) {
+        Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
+        Task parentTask = findIdFromIdRequest(request);
+        List<Task> children = request.getId() != null ? taskRepository.findByOwnerIdAndParentId(userId, request.getId()) :
+                taskRepository.findByOwnerIdAndParentIsNull(userId, Task.class);
+
+        taskToMove.setParent(parentTask);
+
+        taskToMove.setProjectOrder(1);
+        children.forEach(((p) -> p.setProjectOrder(p.getProjectOrder()+1)));
+        taskRepository.saveAll(children);
+        return taskRepository.save(taskToMove);
+    }
 }

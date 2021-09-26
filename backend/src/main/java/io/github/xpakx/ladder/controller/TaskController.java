@@ -67,4 +67,18 @@ public class TaskController {
     public ResponseEntity<Task> duplicateTask(@PathVariable Integer taskId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(taskService.duplicate(taskId, userId), HttpStatus.CREATED);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{taskId}/move/after")
+    public ResponseEntity<Task> moveTaskAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
+                                                    @PathVariable Integer taskId) {
+        return new ResponseEntity<>(taskService.moveTaskAfter(request, userId, taskId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{taskId}/move/asChild")
+    public ResponseEntity<Task> moveTaskAsFirstChild(@RequestBody IdRequest request, @PathVariable Integer userId,
+                                                           @PathVariable Integer taskId) {
+        return new ResponseEntity<>(taskService.moveTaskAsFirstChild(request, userId, taskId), HttpStatus.OK);
+    }
 }
