@@ -103,7 +103,7 @@
 										<li *ngIf="draggedId" [dndDropzone]="[]" (dndDrop)="onDropFirst($event)" class="drag-zone drag-list-item">
 											
 										</li>
-										<ng-container *ngFor="let project of tree.projects">
+										<ng-container *ngFor="let project of tree.getProjects()">
 											<li class="project_list_item" [class.hiddenProject]="isParentCollapsed(project.parentList) || isParentDragged(project.parentList)" 
 												[dndDraggable]="project.id" (dndStart)="onDragStart(project.id)" (dndEnd)="onDragEnd()">
 												<span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
