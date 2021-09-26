@@ -13,18 +13,22 @@ export class ProjectTreeService {
   constructor() { }
 
   load(projects: ProjectDetails[]) {
-    this.projectList = this.transformAllProjects(projects);
+    this.projectList = this.transformAll(projects);
+    this.sort();
+  }
+
+  private sort() {
     this.projectList.sort((a, b) => a.order - b.order);
-    this.calculateRealOrderForProjects();
+    this.calculateRealOrder();
     this.projectList.sort((a, b) => a.realOrder - b.realOrder);
   }
 
-  transformAllProjects(projects: ProjectDetails[]):  ProjectTreeElem[] {
-    return projects.map((a) => this.transformProject(a, projects));
+  private transformAll(projects: ProjectDetails[]):  ProjectTreeElem[] {
+    return projects.map((a) => this.transform(a, projects));
   }
 
-  transformProject(project: ProjectDetails, projects: ProjectDetails[]): ProjectTreeElem {
-    let indent: number = this.getProjectIndent(project.id, projects);
+  private transform(project: ProjectDetails, projects: ProjectDetails[]): ProjectTreeElem {
+    let indent: number = this.getIndent(project.id, projects);
     return {
       id: project.id,
       name: project.name,
@@ -40,16 +44,16 @@ export class ProjectTreeService {
     }
   }
 
-  calculateRealOrderForProjects() {
+  private calculateRealOrder() {
     let proj = this.projectList.filter((a) => a.indent == 0);
     var offset = 0;
     for(let project of proj) {
       project.parentList = [];
-      offset += this.countAllProjectChildren(project, offset) +1;
+      offset += this.countAllChildren(project, offset) +1;
     }
   }
 
-  countAllProjectChildren(project: ProjectTreeElem, offset: number, parent?: ProjectTreeElem): number {
+  private countAllChildren(project: ProjectTreeElem, offset: number, parent?: ProjectTreeElem): number {
     project.realOrder = offset;
     offset += 1;
     
@@ -65,18 +69,18 @@ export class ProjectTreeService {
     let children = this.projectList.filter((a) => a.parent?.id == project.id);
     var num = 0;
     for(let proj of children) {
-      let childNum = this.countAllProjectChildren(proj, offset, project);
+      let childNum = this.countAllChildren(proj, offset, project);
       num += childNum+1;
       offset += childNum+1;      
     } 
     return num;
   }
 
-  hasChildrenByProjectId(projectId: number, projects: ProjectDetails[]): boolean {
+  private hasChildrenByProjectId(projectId: number, projects: ProjectDetails[]): boolean {
     return projects.find((a) => a.parent?.id == projectId) != null;
   }
 
-  getProjectIndent(projectId: number, projects: ProjectDetails[]): number {
+  private getIndent(projectId: number, projects: ProjectDetails[]): number {
     let parentId: number | undefined = projects.find((a) => a.id == projectId)?.parent?.id;
     let counter = 0;
     while(parentId != null) {
@@ -100,9 +104,7 @@ export class ProjectTreeService {
       favorite: project.favorite,
       collapsed: true
     });
-    this.projectList.sort((a, b) => a.order - b.order);
-    this.calculateRealOrderForProjects();
-    this.projectList.sort((a, b) => a.realOrder - b.realOrder);
+    this.sort();
   }
 
   addNewProjectAfter(project: Project, indent: number, afterId: number) {
@@ -143,13 +145,11 @@ export class ProjectTreeService {
       }
       this.recalculateHasChildren(proj);
 
-      this.projectList.sort((a, b) => a.order - b.order);
-      this.calculateRealOrderForProjects();
-      this.projectList.sort((a, b) => a.realOrder - b.realOrder);
+      this.sort();
     }
   }
 
-  recalculateChildrenIndent(projectId: number, indent: number) {
+  private recalculateChildrenIndent(projectId: number, indent: number) {
     let children = this.projectList
     .filter((a) => a.parent && a.parent.id == projectId);
     for(let child of children) {
@@ -158,7 +158,7 @@ export class ProjectTreeService {
     }
   }
 
-  recalculateHasChildren(project: ProjectTreeElem) {
+  private recalculateHasChildren(project: ProjectTreeElem) {
     let children = this.projectList.filter((a) => a.parent && a.parent.id == project.id);
     project.hasChildren = children.length > 0 ? true : false;
     for(let parent of project.parentList) {
@@ -191,9 +191,7 @@ export class ProjectTreeService {
       }
       this.recalculateHasChildren(proj);
 
-      this.projectList.sort((a, b) => a.order - b.order);
-      this.calculateRealOrderForProjects();
-      this.projectList.sort((a, b) => a.realOrder - b.realOrder);
+      this.sort();
     }
   }
 
