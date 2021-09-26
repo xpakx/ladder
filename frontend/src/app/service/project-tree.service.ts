@@ -3,24 +3,19 @@ import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
+import { IndentableService } from './indentable-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectTreeService {
-  public projectList: ProjectTreeElem[] = [];
+export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> {
+  public list: ProjectTreeElem[] = [];
 
-  constructor() { }
+  constructor() { super() }
 
   load(projects: ProjectDetails[]) {
-    this.projectList = this.transformAll(projects);
+    this.list = this.transformAll(projects);
     this.sort();
-  }
-
-  private sort() {
-    this.projectList.sort((a, b) => a.order - b.order);
-    this.calculateRealOrder();
-    this.projectList.sort((a, b) => a.realOrder - b.realOrder);
   }
 
   private transformAll(projects: ProjectDetails[]):  ProjectTreeElem[] {
@@ -44,38 +39,6 @@ export class ProjectTreeService {
     }
   }
 
-  private calculateRealOrder() {
-    let proj = this.projectList.filter((a) => a.indent == 0);
-    var offset = 0;
-    for(let project of proj) {
-      project.parentList = [];
-      offset += this.countAllChildren(project, offset) +1;
-    }
-  }
-
-  private countAllChildren(project: ProjectTreeElem, offset: number, parent?: ProjectTreeElem): number {
-    project.realOrder = offset;
-    offset += 1;
-    
-    if(parent) {
-      project.parentList = [...parent.parentList];
-      project.parentList.push(parent);
-    }
-
-    if(!project.hasChildren) {
-      return 0;
-    }
-
-    let children = this.projectList.filter((a) => a.parent?.id == project.id);
-    var num = 0;
-    for(let proj of children) {
-      let childNum = this.countAllChildren(proj, offset, project);
-      num += childNum+1;
-      offset += childNum+1;      
-    } 
-    return num;
-  }
-
   private hasChildrenByProjectId(projectId: number, projects: ProjectDetails[]): boolean {
     return projects.find((a) => a.parent?.id == projectId) != null;
   }
@@ -91,13 +54,13 @@ export class ProjectTreeService {
   }
 
   addNewProject(project: Project, indent: number, parent: ProjectWithNameAndId | null = null) {
-    this.projectList.push({
+    this.list.push({
       id: project.id,
       name: project.name,
       parent: parent,
       color: project.color,
       order: project.order,
-      realOrder: this.projectList.length+1,
+      realOrder: this.list.length+1,
       hasChildren: false,
       indent: indent,
       parentList: [],
@@ -112,7 +75,7 @@ export class ProjectTreeService {
     if(afterProject) {
       let proj : ProjectTreeElem = afterProject;
       project.order = proj.order+1;
-      let projects = this.projectList
+      let projects = this.list
         .filter((a) => a.parent == proj.parent)
         .filter((a) => a.order > proj.order);
         for(let pro of projects) {
@@ -128,7 +91,7 @@ export class ProjectTreeService {
     if(afterProject && movedProject) {
       let proj : ProjectTreeElem = afterProject;
       let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getProjectById(movedProject.parent.id) : undefined;
-      let projects = this.projectList
+      let projects = this.list
         .filter((a) => a.parent == proj.parent)
         .filter((a) => a.order > proj.order);
         for(let pro of projects) {
@@ -149,31 +112,13 @@ export class ProjectTreeService {
     }
   }
 
-  private recalculateChildrenIndent(projectId: number, indent: number) {
-    let children = this.projectList
-    .filter((a) => a.parent && a.parent.id == projectId);
-    for(let child of children) {
-      child.indent = indent;
-      this.recalculateChildrenIndent(child.id, indent+1);
-    }
-  }
-
-  private recalculateHasChildren(project: ProjectTreeElem) {
-    let children = this.projectList.filter((a) => a.parent && a.parent.id == project.id);
-    project.hasChildren = children.length > 0 ? true : false;
-    for(let parent of project.parentList) {
-      let parentChildren = this.projectList.filter((a) => a.parent && a.parent.id == parent.id);
-      parent.hasChildren = parentChildren.length > 0 ? true : false;
-    }
-  }
-
   moveProjectAsChild(project: Project, indent: number, parentId: number) {
     let parentProject = this.getProjectById(parentId);
     let movedProject = this.getProjectById(project.id);
     if(parentProject && movedProject) {
       let proj : ProjectTreeElem = parentProject;
       let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getProjectById(movedProject.parent.id) : undefined;
-      let projects = this.projectList
+      let projects = this.list
         .filter((a) => a.parent == proj);
         for(let pro of projects) {
           pro.order = pro.order + 1;
@@ -200,7 +145,7 @@ export class ProjectTreeService {
     if(beforeProject) {
       let proj : ProjectTreeElem = beforeProject;
       project.order = proj.order;
-      let projects = this.projectList
+      let projects = this.list
         .filter((a) => a.parent == proj.parent)
         .filter((a) => a.order >= proj.order);
         for(let pro of projects) {
@@ -220,11 +165,11 @@ export class ProjectTreeService {
   }
 
   getProjectById(projectId: number): ProjectTreeElem | undefined {
-    return this.projectList.find((a) => a.id == projectId);
+    return this.list.find((a) => a.id == projectId);
   }
 
   deleteProject(projectId: number) {
-    this.projectList = this.projectList.filter((a) => a.id != projectId);
+    this.list = this.list.filter((a) => a.id != projectId);
   }
 
   changeFav(response: Project) {
@@ -235,7 +180,7 @@ export class ProjectTreeService {
   }
 
   filterProjects(text: string): ProjectTreeElem[] {
-    return this.projectList.filter((a) => 
+    return this.list.filter((a) => 
       a.name.toLowerCase().includes(text.toLowerCase())
     );
   }

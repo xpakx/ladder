@@ -38,7 +38,7 @@ export class TreeService {
   }
 
   getProjects() {
-    return this.projects.projectList;
+    return this.projects.list;
   }
 
   addNewProject(project: Project, indent: number, parent: ProjectWithNameAndId | null = null) {

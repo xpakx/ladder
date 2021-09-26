@@ -1,7 +1,8 @@
+import { IndentableTreeElem } from "./indentable-tree-elem";
 import { ParentWithId } from "./parent-with-id";
 import { ProjectWithNameAndId } from "./project-with-name-and-id";
 
-export interface TaskTreeElem {
+export interface TaskTreeElem extends IndentableTreeElem<ParentWithId> {
     id: number;
     title: string;
     description: string;

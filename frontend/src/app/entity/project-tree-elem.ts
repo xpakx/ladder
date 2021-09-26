@@ -1,7 +1,7 @@
+import { IndentableTreeElem } from "./indentable-tree-elem";
 import { ProjectWithNameAndId } from "./project-with-name-and-id";
 
-export interface ProjectTreeElem {
-    id: number;
+export interface ProjectTreeElem extends IndentableTreeElem<ProjectWithNameAndId> {
     name: string;
     parent: ProjectWithNameAndId | null;
     color: string;
