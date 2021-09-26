@@ -320,8 +320,16 @@ button {
     flex-wrap: nowrap;
 }
 
+.arrow {
+    display: flex;
+}
+
 @media (max-width: 767px) { 
     .task_list_item__overflow_actions {
         opacity: 1;
     }
+}
+
+.hiddenTask {
+    display: none !important;
 }
