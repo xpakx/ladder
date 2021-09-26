@@ -31,7 +31,7 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
       color: project.color,
       order: project.generalOrder,
       realOrder: project.generalOrder,
-      hasChildren: this.hasChildrenByProjectId(project.id, projects),
+      hasChildren: this.hasChildrenById(project.id, projects),
       indent: indent,
       parentList: [],
       favorite: project.favorite,
@@ -39,7 +39,7 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
     }
   }
 
-  private hasChildrenByProjectId(projectId: number, projects: ProjectDetails[]): boolean {
+  private hasChildrenById(projectId: number, projects: ProjectDetails[]): boolean {
     return projects.find((a) => a.parent?.id == projectId) != null;
   }
 

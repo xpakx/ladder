@@ -9,17 +9,17 @@ import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { UserWithData } from '../entity/user-with-data';
 import { ProjectTreeService } from './project-tree.service';
+import { TaskTreeService } from './task-tree.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TreeService {
-  public tasks: TaskTreeElem[] = [];
   public labels: LabelDetails[] = [];
   public loaded: boolean = false;
   public projectCollapsed: boolean = true;
   
-  constructor(private projects: ProjectTreeService) { }
+  constructor(private projects: ProjectTreeService, private tasks: TaskTreeService) { }
 
   isLoaded(): boolean {
     return this.loaded;
@@ -29,11 +29,7 @@ export class TreeService {
     this.loaded = true;
     this.projectCollapsed = tree.projectCollapsed;
     this.projects.load(tree.projects);
-
-    this.tasks = this.transformAllTasks(tree.tasks);
-    this.tasks.sort((a, b) => a.order - b.order);
-    this.calculateRealOrderForTasks();
-    this.tasks.sort((a, b) => a.realOrder - b.realOrder);
+    this.tasks.load(tree.tasks);
     this.labels = tree.labels;
   }
 
@@ -81,147 +77,45 @@ export class TreeService {
     return this.projects.filterProjects(text);
   }
 
-
-
-
-
-
-  transformAllTasks(tasks: TaskDetails[]):  TaskTreeElem[] {
-    return tasks.map((a) => this.transformTask(a, tasks));
-  }
-
-  transformTask(task: TaskDetails, tasks: TaskDetails[]): TaskTreeElem {
-    let indent: number = this.getTaskIndent(task.id, tasks);
-    return {
-      id: task.id,
-      title: task.title,
-      parent: task.parent,
-      order: task.projectOrder,
-      realOrder: task.projectOrder,
-      hasChildren: this.hasChildrenByTaskId(task.id, tasks),
-      indent: indent,
-      parentList: [],
-      collapsed: false,
-      description: task.description, 
-      project: task.project, 
-      due: task.due ? new Date(task.due) : null, 
-      completed: task.completed
-    }
-  }
-
-  getTaskIndent(taskId: number, tasks: TaskDetails[]): number {
-    let parentId: number | undefined = tasks.find((a) => a.id == taskId)?.parent?.id;
-    let counter = 0;
-    while(parentId != null) {
-      counter +=1;
-      parentId = tasks.find((a) => a.id == parentId)?.parent?.id;
-    }
-    return counter;
-  }
-
-  hasChildrenByTaskId(taskId: number, tasks: TaskDetails[]): boolean {
-    return tasks.find((a) => a.parent?.id == taskId) != null;
-  }
-
-  calculateRealOrderForTasks() {
-    let tsk = this.tasks.filter((a) => a.indent == 0);
-    var offset = 0;
-    for(let task of tsk) {
-      task.parentList = [];
-      offset += this.countAllTaskChildren(task, offset) +1;
-    }
-  }
-
-  countAllTaskChildren(task: TaskTreeElem, offset: number, parent?: TaskTreeElem): number {
-    task.realOrder = offset;
-    offset += 1;
-    
-    if(parent) {
-      task.parentList = [...parent.parentList];
-      task.parentList.push(parent);
-    }
-
-    if(!task.hasChildren) {
-      return 0;
-    }
-
-    let children = this.tasks.filter((a) => a.parent?.id == task.id);
-    var num = 0;
-    for(let tsk of children) {
-      let childNum = this.countAllTaskChildren(tsk, offset, task);
-      num += childNum+1;
-      offset += childNum+1;      
-    } 
-    return num;
+  getTasks() {
+    return this.tasks.list;
   }
   
   getByDate(date: Date): TaskTreeElem[] {
-    return this.tasks.filter((a) => 
-      a.due && a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
-    );
+    return this.tasks.getByDate(date);
   }
 
   getNumOfUncompletedTasksByProject(projectId: number): number {
-    return this.tasks.filter((a) => 
-      a.project && a.project.id == projectId && !a.completed
-    ).length;
+    return this.tasks.getNumOfUncompletedTasksByProject(projectId);
   }
 
   getNumOfUncompletedTasksInInbox(): number {
-    return this.tasks.filter((a) => 
-      !a.project && !a.completed
-    ).length;
+    return this.tasks.getNumOfUncompletedTasksInInbox();
   }
 
   getNumOfUncompletedTasksToday(): number {
-    return this.getByDate(new Date()).length;
+    return this.tasks.getNumOfUncompletedTasksToday();
   }
 
   getTaskById(taskId: number): TaskTreeElem | undefined {
-    return this.tasks.find((a) => a.id == taskId);
+    return this.tasks.getTaskById(taskId);
   }
 
   getTasksByProject(projectId: number): TaskTreeElem[] {
-    return this.tasks.filter((a) => 
-      a.project && a.project.id == projectId
-    );
+    return this.tasks.getTasksByProject(projectId);
   }
-
 
   addNewTask(response: Task, projectId: number | undefined) {
     let project = projectId ? this.getProjectById(projectId) : undefined;
-    this.tasks.push({
-      id:response.id,
-      title: response.title,
-      description: response.description,
-      project: project ? project : null,
-      parent: null,
-      due: response.due ? new Date(response.due) : null,
-      completed: false,
-      order: response.projectOrder,
-      realOrder: response.projectOrder, //todo
-      hasChildren: false, 
-      indent: 0, //todo
-      parentList: [], 
-      collapsed: false
-    })
+    this.tasks.addNewTask(response, project);
   }
 
   updateTask(response: Task, projectId: number | undefined) {
-    let task = this.getTaskById(response.id);
-    if(task) {
-      let project = projectId ? this.getProjectById(projectId) : undefined;
-      task.description = response.description;
-      task.title = response.title;
-      task.project = project ? project : null;
-      task.due = response.due ? new Date(response.due) : null;
-    }
+    let project = projectId ? this.getProjectById(projectId) : undefined;
+    this.tasks.updateTask(response, project);
   }
 
   changeTaskCompletion(response: Task) {
-    let task = this.getTaskById(response.id);
-    if(task) {
-      task.completed = response.completed;
-    }
+    this.tasks.changeTaskCompletion(response);
   }
 }
