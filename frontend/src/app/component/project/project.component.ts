@@ -87,7 +87,27 @@ export class ProjectComponent implements OnInit {
   }
 
   onDrop(event: DndDropEvent, target: TaskTreeElem, asChild: boolean = false) {
-    alert(event.data + " on " + target.id)
+    let id = Number(event.data);
+    if(!asChild)
+    {
+      this.taskService.moveTaskAfter({id: target.id}, id).subscribe(
+          (response: Task, indent: number = target.indent, afterId: number = target.id) => {
+          this.tree.moveTaskAfter(response, indent, afterId);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    } else {
+      this.taskService.moveTaskAsChild({id: target.id}, id).subscribe(
+          (response: Task, indent: number = target.indent+1, afterId: number = target.id) => {
+          this.tree.moveTaskAsChild(response, indent, afterId);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
   }
 
   onDropFirst(event: DndDropEvent) {

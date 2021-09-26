@@ -128,4 +128,59 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       task.completed = response.completed;
     }
   }
+
+  moveTaskAfter(task: Task, indent: number, afterId: number) {
+    let afterTask = this.getTaskById(afterId);
+    let movedTask = this.getTaskById(task.id);
+    if(afterTask && movedTask) {
+      let tas : TaskTreeElem = afterTask;
+      let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getTaskById(movedTask.parent.id) : undefined;
+      let tasks = this.list
+        .filter((a) => a.parent == tas.parent)
+        .filter((a) => a.order > tas.order);
+        for(let tsk of tasks) {
+          tsk.order = tsk.order + 1;
+        }
+      
+      movedTask.indent = indent;
+      movedTask.parent = afterTask.parent;
+      movedTask.order = afterTask.order+1;
+
+      this.recalculateChildrenIndent(movedTask.id, indent+1);
+      if(oldParent) {
+        this.recalculateHasChildren(oldParent);
+      }
+      this.recalculateHasChildren(tas);
+
+      this.sort();
+    }
+  }
+
+  moveTaskAsChild(task: Task, indent: number, parentId: number) {
+    let parentTask = this.getTaskById(parentId);
+    let movedTask = this.getTaskById(task.id);
+    if(parentTask && movedTask) {
+      let tas : TaskTreeElem = parentTask;
+      let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getTaskById(movedTask.parent.id) : undefined;
+      let tasks = this.list
+        .filter((a) => a.parent == tas);
+        for(let tsk of tasks) {
+          tsk.order = tsk.order + 1;
+        }
+      
+      movedTask.indent = indent;
+      movedTask.order = 1;
+      movedTask.parent = parentTask;
+
+      console.log("My id: " + movedTask.id + ", my parent id: " + (movedTask.parent ? movedTask.parent.id : "null"))
+
+      this.recalculateChildrenIndent(movedTask.id, indent+1);
+      if(oldParent) {
+        this.recalculateHasChildren(oldParent);
+      }
+      this.recalculateHasChildren(tas);
+
+      this.sort();
+    }
+  }
 }

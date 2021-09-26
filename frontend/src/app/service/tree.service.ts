@@ -118,4 +118,12 @@ export class TreeService {
   changeTaskCompletion(response: Task) {
     this.tasks.changeTaskCompletion(response);
   }
+
+  moveTaskAfter(task: Task, indent: number, afterId: number) {
+    this.tasks.moveTaskAfter(task, indent, afterId);
+  }
+
+  moveTaskAsChild(task: Task, indent: number, parentId: number) {
+    this.tasks.moveTaskAsChild(task, indent, parentId);
+  }
 }

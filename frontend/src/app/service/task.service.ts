@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AddTaskRequest } from '../entity/add-task-request';
 import { BooleanRequest } from '../entity/boolean-request';
+import { IdRequest } from '../entity/id-request';
 import { Task } from '../entity/task';
 
 @Injectable({
@@ -26,5 +27,15 @@ export class TaskService {
   updateTask(request: AddTaskRequest, taskId: number): Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}`, request);
+  }
+
+  public moveTaskAfter(request: IdRequest, taskId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/after`, request);
+  }
+
+  public moveTaskAsChild(request: IdRequest, taskId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asChild`, request);
   }
 }
