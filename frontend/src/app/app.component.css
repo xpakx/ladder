@@ -364,6 +364,9 @@ button {
     border-radius: 3px;
     transition: color .1s ease-in,background-color .1s ease-in;
     padding: 5px 16px 5px 5px;
+    flex-basis: 100%;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .project_list_item .text:hover {
