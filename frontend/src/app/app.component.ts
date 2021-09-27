@@ -20,6 +20,7 @@ export class AppComponent implements AfterViewInit {
   hideMenu: boolean = false;
   contextProjectMenu: ProjectTreeElem | undefined;
   showContextProjectMenu: boolean = false;
+  contextProjectMenuJustOpened: boolean = false;
   projectContextMenuX: number = 0;
   projectContextMenuY: number = 0;
   @ViewChild('projectContext', {read: ElementRef}) projectContextMenuElem!: ElementRef;
@@ -38,8 +39,12 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.renderer.listen('window', 'click',(e:Event)=>{
       if(this.showContextProjectMenu &&
-        e.target !== this.projectContextMenuElem.nativeElement){
-          this.showContextProjectMenu = false;
+        !this.projectContextMenuElem.nativeElement.contains(e.target)){
+          if(this.contextProjectMenuJustOpened) {
+            this.contextProjectMenuJustOpened = false
+          } else {
+            this.showContextProjectMenu = false;
+          }
       }
     });
   }
@@ -53,6 +58,7 @@ export class AppComponent implements AfterViewInit {
   openProjectModalWithProject() {
     this.projectForModalWindow = this.contextProjectMenu;
     this.openProjectModal();
+    this.closeContextProjectMenu();
   }
 
   openProjectModalAbove() {
@@ -139,9 +145,9 @@ export class AppComponent implements AfterViewInit {
   openContextProjectMenu(event: MouseEvent, projectId: number) {
 	  this.contextProjectMenu = this.tree.getProjectById(projectId);
     this.showContextProjectMenu = true;
+    this.contextProjectMenuJustOpened = true;
     this.projectContextMenuX = event.clientX;
     this.projectContextMenuY = event.clientY;
-    event.stopPropagation();
   }
 
   closeContextProjectMenu() {
@@ -161,6 +167,7 @@ export class AppComponent implements AfterViewInit {
       }
     );
     }
+    this.closeContextProjectMenu();
   }
 
   updateProjectFav() {
@@ -174,6 +181,8 @@ export class AppComponent implements AfterViewInit {
       }
     );
     }
+
+    this.closeContextProjectMenu();
   }
 
   duplicateProject() {
@@ -187,6 +196,8 @@ export class AppComponent implements AfterViewInit {
       }
     );
     }
+
+    this.closeContextProjectMenu();
   }
 
   // Task modal window

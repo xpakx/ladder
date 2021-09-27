@@ -202,25 +202,31 @@ export class ProjectComponent implements OnInit, AfterViewInit {
 
   contextTaskMenu: TaskTreeElem | undefined;
   showContextTaskMenu: boolean = false;
+  contextTaskMenuJustOpened: boolean = false;
   taskContextMenuX: number = 0;
   taskContextMenuY: number = 0;
   @ViewChild('taskContext', {read: ElementRef}) taskContextMenuElem!: ElementRef;
 
+
   ngAfterViewInit() {
     this.renderer.listen('window', 'click',(e:Event)=>{
-      if(this.showContextTaskMenu &&
-        e.target !== this.taskContextMenuElem.nativeElement){
+      if(this.showContextTaskMenu && 
+        !this.taskContextMenuElem.nativeElement.contains(e.target)){
+        if(this.contextTaskMenuJustOpened) {
+          this.contextTaskMenuJustOpened = false
+        } else {
           this.showContextTaskMenu = false;
+        }
       }
-    });
+    })
   }
 
   openContextTaskMenu(event: MouseEvent, taskId: number) {
 	  this.contextTaskMenu = this.tree.getTaskById(taskId);
     this.showContextTaskMenu = true;
-    this.taskContextMenuX = event.clientX-300;
+    this.contextTaskMenuJustOpened = true;
+    this.taskContextMenuX = event.clientX-250;
     this.taskContextMenuY = event.clientY;
-    event.stopPropagation();
   }
 
   closeContextTaskMenu() {
