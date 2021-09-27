@@ -134,4 +134,26 @@ export class ProjectComponent implements OnInit {
 	  }
 	  return false;
   }
+  
+  collapseTask(taskId: number) {
+    let task = this.tree.getTaskById(taskId);
+    if(task) {
+      task.collapsed = !task.collapsed;
+      this.taskService.updateTaskCollapse(task.id, {flag: task.collapsed}).subscribe(
+        (response: Task) => {
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
+  }
+  
+  isTaskCollapsed(taskId: number): boolean {
+    let task = this.tree.getTaskById(taskId);
+    if(task) {
+      return task.collapsed ? true : false;
+    }
+	  return false;
+  }
 }

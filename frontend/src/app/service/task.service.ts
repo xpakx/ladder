@@ -38,4 +38,9 @@ export class TaskService {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asChild`, request);
   }
+
+
+  updateTaskCollapse(id: number, request: BooleanRequest):  Observable<Task> {
+    throw new Error('Method not implemented.');
+  }
 }
