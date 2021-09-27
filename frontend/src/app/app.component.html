@@ -118,7 +118,7 @@
 												</span>
 												<button class="text" (click)="toProject(project.id)">
 													<div class="div-color" [style]="'color: ' + project.color +';'"></div>
-													{{project.name}}
+													<span class="project-name">{{project.name}}</span>
 													<div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
 												</button>
 												
