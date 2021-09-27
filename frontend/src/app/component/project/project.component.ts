@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -15,7 +15,7 @@ import { TreeService } from 'src/app/service/tree.service';
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.css']
 })
-export class ProjectComponent implements OnInit {
+export class ProjectComponent implements OnInit, AfterViewInit {
   public invalid: boolean = false;
   public message: string = '';
   tasks: TaskTreeElem[] = [];
@@ -27,7 +27,8 @@ export class ProjectComponent implements OnInit {
   draggedId: number | undefined;
 
   constructor(private router: Router, private route: ActivatedRoute, 
-    private tree: TreeService, private taskService: TaskService) { }
+    private tree: TreeService, private taskService: TaskService,
+    private renderer: Renderer2) { }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
@@ -195,4 +196,31 @@ export class ProjectComponent implements OnInit {
     return today.getFullYear() == date.getFullYear();
   }
 
+  contextTaskMenu: TaskTreeElem | undefined;
+  showContextTaskMenu: boolean = false;
+  taskContextMenuX: number = 0;
+  taskContextMenuY: number = 0;
+  @ViewChild('taskContext', {read: ElementRef}) taskContextMenuElem!: ElementRef;
+
+  ngAfterViewInit() {
+    this.renderer.listen('window', 'click',(e:Event)=>{
+      if(this.showContextTaskMenu &&
+        e.target !== this.taskContextMenuElem.nativeElement){
+          this.showContextTaskMenu = false;
+      }
+    });
+  }
+
+  openContextTaskMenu(event: MouseEvent, taskId: number) {
+	  this.contextTaskMenu = this.tree.getTaskById(taskId);
+    this.showContextTaskMenu = true;
+    this.taskContextMenuX = event.clientX-300;
+    this.taskContextMenuY = event.clientY;
+    event.stopPropagation();
+  }
+
+  closeContextTaskMenu() {
+    this.contextTaskMenu = undefined;
+    this.showContextTaskMenu = false;
+  }
 }
