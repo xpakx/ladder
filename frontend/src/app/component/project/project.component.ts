@@ -18,11 +18,11 @@ import { TreeService } from 'src/app/service/tree.service';
 export class ProjectComponent implements OnInit, AfterViewInit {
   public invalid: boolean = false;
   public message: string = '';
-  tasks: TaskTreeElem[] = [];
   todayDate: Date | undefined;
   project: ProjectTreeElem | undefined;
   showAddTaskForm: boolean = false;
   showEditTaskFormById: number | undefined;
+  id!: number;
 
   draggedId: number | undefined;
 
@@ -40,9 +40,13 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     });    
   }
 
+  get tasks(): TaskTreeElem[] {
+    return this.tree.getTasksByProject(this.id);
+  }
+
   loadProject(id: number) {
+    this.id = id;
     this.project = this.tree.getProjectById(id);
-    this.tasks = this.tree.getTasksByProject(id);
   }
 
   openAddTaskForm() {
