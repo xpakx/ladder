@@ -138,4 +138,8 @@ export class TreeService {
   moveTaskAsChild(task: Task, indent: number, parentId: number) {
     this.tasks.moveTaskAsChild(task, indent, parentId);
   }
+
+  deleteTask(taskId: number) {
+    this.tasks.deleteTask(taskId);
+  }
 }

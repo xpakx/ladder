@@ -157,7 +157,7 @@
 			</button>
 		</li>
         <li class="context-menu-project-item">
-			<button >
+			<button (click)="openEditTaskFromContextMenu()">
 				<span class="menu_icon">
 					<i class="fa fa-edit"></i>
 				</span>
@@ -197,7 +197,7 @@
 			</button>
 		</li>
         <li class="context-menu-project-item">
-			<button >
+			<button (click)=deleteTask()>
 				<span class="menu_icon">
 					<i class="fa fa-trash-o"></i>
 				</span>

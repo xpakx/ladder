@@ -241,4 +241,26 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   getNumOfTasksByParent(parentId: number): number {
     return this.tree.getNumOfTasksByParent(parentId);
   }
+
+  openEditTaskFromContextMenu() {
+    if(this.contextTaskMenu) {
+      this.openEditTaskForm(this.contextTaskMenu.id);
+    }
+    this.closeContextTaskMenu();
+  }
+
+  deleteTask() {
+    if(this.contextTaskMenu) {
+      let deletedTaskId: number = this.contextTaskMenu.id;
+      this.taskService.deleteTask(deletedTaskId).subscribe(
+        (response: any, taskId: number = deletedTaskId) => {
+        this.tree.deleteTask(taskId);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+    this.closeContextTaskMenu();
+  }
 }

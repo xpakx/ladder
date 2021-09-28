@@ -39,9 +39,13 @@ export class TaskService {
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asChild`, request);
   }
 
-
   public updateTaskCollapse(taskId: number, request: BooleanRequest):  Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/collapse`, request);
+  }
+
+  public deleteTask(taskId: number):  Observable<any> {
+    let userId  = this.getUserId();
+    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/tasks/${taskId}`);
   }
 }

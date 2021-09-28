@@ -197,4 +197,8 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       console.log(JSON.stringify(movedTask, undefined, 2));
     }
   }
+
+  deleteTask(taskId: number) {
+    this.list = this.list.filter((a) => a.id != taskId);
+  }
 }
