@@ -34,7 +34,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       hasChildren: this.hasChildrenById(task.id, tasks),
       indent: indent,
       parentList: [],
-      collapsed: false,
+      collapsed: task.collapsed,
       description: task.description, 
       project: task.project, 
       due: task.due ? new Date(task.due) : null, 

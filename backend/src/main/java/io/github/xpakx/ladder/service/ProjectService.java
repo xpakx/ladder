@@ -167,6 +167,7 @@ public class ProjectService {
                 .parent(getParentFromAddTaskRequest(request))
                 .priority(0)
                 .completed(false)
+                .collapsed(false)
                 .owner(userRepository.getById(userId))
                 .build();
     }

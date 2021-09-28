@@ -40,7 +40,8 @@ export class TaskService {
   }
 
 
-  updateTaskCollapse(id: number, request: BooleanRequest):  Observable<Task> {
-    throw new Error('Method not implemented.');
+  public updateTaskCollapse(taskId: number, request: BooleanRequest):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/collapse`, request);
   }
 }

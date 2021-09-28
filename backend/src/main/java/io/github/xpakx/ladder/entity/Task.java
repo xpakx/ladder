@@ -28,6 +28,7 @@ public class Task {
     private LocalDateTime due;
     private LocalDateTime completedAt;
     private boolean completed;
+    private boolean collapsed;
     private LocalDateTime createdAt;
 
     private Integer projectOrder;
