@@ -25,25 +25,10 @@ export class TaskFormComponent implements OnInit {
   taskDate: Date | undefined;
 
   projectSelectForm: FormGroup | undefined;
-  dateSelectForm: FormGroup | undefined;
 
-  today: Date;
-  tomorrow: Date;
-  weekend: Date;
-  nextWeek: Date;
 
   constructor(public tree: TreeService, private service: ProjectService, 
-    private fb: FormBuilder, private taskService: TaskService) { 
-      this.today = new Date();
-      let dayOfTheMonth = this.today.getDate();
-      let dayOfTheWeek = this.today.getDay();
-      this.tomorrow = new Date();
-      this.tomorrow.setDate(dayOfTheMonth + 1);
-      this.weekend = new Date();
-      this.weekend.setDate(dayOfTheMonth - dayOfTheWeek + 6);
-      this.nextWeek = new Date(this.weekend);
-      this.nextWeek.setDate(this.weekend.getDate() + 2);
-    }
+    private fb: FormBuilder, private taskService: TaskService) {  }
 
   ngOnInit(): void {
     this.taskForm = this.fb.group({
@@ -71,10 +56,6 @@ export class TaskFormComponent implements OnInit {
 
   closeSelectProjectMenu() {
     this.showSelectProjectMenu = false;
-  }
-
-  formatDate(date: Date): String {
-    return date.toISOString().split("T")[0];
   }
 
   dateWithinWeek(date: Date): boolean {
@@ -116,33 +97,17 @@ export class TaskFormComponent implements OnInit {
   }
 
   openSelectDateMenu() {
-    this.dateSelectForm = this.fb.group(
-      {
-        date: [this.taskDate ? this.formatDate(this.taskDate) : '', Validators.required]
-      }
-      );
     this.showSelectDateMenu = true;
   }
 
-  closeSelectDateMenu() {
+  closeSelectDateMenu(date: Date | undefined) {
+    this.taskDate = date;
     this.showSelectDateMenu = false;
   }
 
   closeForm() {
     this.closeEvent.emit(true);
   }
-
-  chooseDate(date: Date | undefined) {
-    this.closeSelectDateMenu();
-    this.taskDate = date;
-  } 
-
-  selectDateFromForm() {
-    if(this.dateSelectForm) {
-      this.taskDate = new Date(this.dateSelectForm.controls.date.value);
-    }
-    this.closeSelectDateMenu();
-  } 
 
   chooseProject(project: ProjectTreeElem | undefined) {
     this.closeSelectProjectMenu();
