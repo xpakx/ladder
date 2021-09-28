@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AddTaskRequest } from '../entity/add-task-request';
 import { BooleanRequest } from '../entity/boolean-request';
+import { DateRequest } from '../entity/date-request';
 import { IdRequest } from '../entity/id-request';
 import { Task } from '../entity/task';
 
@@ -47,5 +48,10 @@ export class TaskService {
   public deleteTask(taskId: number):  Observable<any> {
     let userId  = this.getUserId();
     return this.http.delete<any>(`${this.apiServerUrl}/${userId}/tasks/${taskId}`);
+  }
+
+  public updateTaskDueDate(request: DateRequest, taskId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/due`, request);
   }
 }

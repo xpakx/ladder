@@ -201,4 +201,11 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
   deleteTask(taskId: number) {
     this.list = this.list.filter((a) => a.id != taskId);
   }
+
+  updateTaskDate(task: Task) {
+    let taskToEdit =  this.getTaskById(task.id);
+    if(taskToEdit) {
+      taskToEdit.due = task.due? new Date(task.due) : null;
+    }
+  }
 }

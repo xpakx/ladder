@@ -142,4 +142,8 @@ export class TreeService {
   deleteTask(taskId: number) {
     this.tasks.deleteTask(taskId);
   }
+
+  updateTaskDate(task: Task) {
+    this.tasks.updateTaskDate(task);
+  }
 }

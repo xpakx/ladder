@@ -263,4 +263,38 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     }
     this.closeContextTaskMenu();
   }
+
+  showSelectDateModal: boolean = false;
+  dateForDateModal: Date | undefined;
+  taskIdForDateModal: number | undefined;
+
+  closeSelectDateModal(date: Date | undefined) {
+    this.showSelectDateModal = false;
+    if(this.taskIdForDateModal) {
+      this.taskService.updateTaskDueDate({date: date}, this.taskIdForDateModal).subscribe(
+          (response: Task) => {
+          this.tree.updateTaskDate(response);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
+    this.dateForDateModal = undefined;
+    this.taskIdForDateModal = undefined;
+  }
+
+  openSelectDateModal(task: TaskTreeElem) {
+    this.taskIdForDateModal = task.id;
+    this.dateForDateModal = task.due ? task.due : undefined;
+    this.showSelectDateModal = true;
+  }
+
+  openSelectDateModalFormContextMenu() {
+    if(this.contextTaskMenu) {
+      this.openSelectDateModal(this.contextTaskMenu);
+    }
+    this.closeContextTaskMenu();
+  }
+
 }
