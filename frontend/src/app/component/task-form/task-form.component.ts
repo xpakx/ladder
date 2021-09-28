@@ -105,6 +105,10 @@ export class TaskFormComponent implements OnInit {
     this.showSelectDateMenu = false;
   }
 
+  cancelDateSelection() {
+    this.showSelectDateMenu = false;
+  }
+
   closeForm() {
     this.closeEvent.emit(true);
   }

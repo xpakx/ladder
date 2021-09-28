@@ -111,4 +111,4 @@
 </div>
 
 
-<app-date-dialog *ngIf="showSelectDateMenu" [taskDate]="taskDate" (closeEvent)="closeSelectDateMenu($event)"></app-date-dialog>
+<app-date-dialog *ngIf="showSelectDateMenu" [taskDate]="taskDate" (closeEvent)="closeSelectDateMenu($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>

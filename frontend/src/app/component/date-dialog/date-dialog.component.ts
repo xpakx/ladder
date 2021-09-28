@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class DateDialogComponent implements OnInit {
   @Output() closeEvent = new EventEmitter<Date | undefined>();
+  @Output() cancelEvent = new EventEmitter<boolean>();
   @Input() taskDate: Date | undefined;
   dateSelectForm: FormGroup | undefined;
 
@@ -42,6 +43,10 @@ export class DateDialogComponent implements OnInit {
 
   closeSelectDateMenu() {
     this.closeEvent.emit(this.taskDate);
+  }
+
+  cancel() {
+    this.cancelEvent.emit(true);
   }
 
   chooseDate(date: Date | undefined) {

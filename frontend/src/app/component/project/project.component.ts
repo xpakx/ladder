@@ -284,6 +284,12 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     this.taskIdForDateModal = undefined;
   }
 
+  cancelDateSelection() {
+    this.showSelectDateModal = false;
+    this.dateForDateModal = undefined;
+    this.taskIdForDateModal = undefined;
+  }
+
   openSelectDateModal(task: TaskTreeElem) {
     this.taskIdForDateModal = task.id;
     this.dateForDateModal = task.due ? task.due : undefined;

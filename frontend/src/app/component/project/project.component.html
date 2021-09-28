@@ -207,4 +207,4 @@
 	</ul>
 </div>
 
-<app-date-dialog *ngIf="showSelectDateModal" [taskDate]="dateForDateModal" (closeEvent)="closeSelectDateModal($event)"></app-date-dialog>
+<app-date-dialog *ngIf="showSelectDateModal" [taskDate]="dateForDateModal" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
