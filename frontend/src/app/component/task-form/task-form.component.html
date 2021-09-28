@@ -10,10 +10,19 @@
                     <div class="taskFormExtraIcon">
                         <i class="fa fa-calendar"></i>
                     </div>
+
                     <span class="taskFormExtraText" *ngIf="!taskDate">Schedule</span>
-                    <span class="taskFormExtraText" *ngIf="taskDate && taskDate.getFullYear() == today.getFullYear() && dateWithinWeek(taskDate)">{{taskDate | date: 'EEEE'}}</span>
-                    <span class="taskFormExtraText" *ngIf="taskDate && taskDate.getFullYear() == today.getFullYear() && !dateWithinWeek(taskDate)">{{taskDate | date: 'dd MMM'}}</span>
-                    <span class="taskFormExtraText" *ngIf="taskDate && taskDate.getFullYear() != today.getFullYear()">{{taskDate | date: 'dd MMM yyyy'}}</span>
+                    <ng-container *ngIf="taskDate">
+                        <ng-container *ngIf="dateWithinWeek(taskDate)">
+                            <span class="taskFormExtraText" *ngIf="isToday(taskDate)">Today</span>
+                            <span class="taskFormExtraText" *ngIf="isTomorrow(taskDate)">Tomorrow</span>
+                            <span class="taskFormExtraText" *ngIf="!isToday(taskDate) && !isTomorrow(taskDate)">{{taskDate | date: 'EEEE'}}</span>
+                        </ng-container>
+                        <ng-container *ngIf="!dateWithinWeek(taskDate)">
+                            <span class="taskFormExtraText" *ngIf="thisYear(taskDate)">{{taskDate | date: 'dd MMM'}}</span>
+                            <span class="taskFormExtraText" *ngIf="!thisYear(taskDate)">{{taskDate| date: 'dd MMM yyyy'}}</span>
+                        </ng-container>
+                    </ng-container>
                 </button>
                 <button type="button" class="taskFormExtraButton" (click)="openSelectProjectMenu()">
                     <div *ngIf="project">
@@ -151,6 +160,15 @@
                     </span>
                     <span class="menu_label">Next week</span>
                     <span class="date_holder">{{nextWeek | date: 'EEE&nbsp;dd&nbsp;MMM'}}</span>
+                </button>
+            </li>
+            <li class="context-menu-project-item">
+                <button type="button" (click)="chooseDate(undefined)">
+                    <span class="menu-icon">
+                        <i class="fa fa-times-circle-o"></i>
+                    </span>
+                    <span class="menu_label">No date</span>
+                    <span class="date_holder"></span>
                 </button>
             </li>
         </ul>
