@@ -113,4 +113,9 @@ export class ProjectService {
     let userId  = this.getUserId();
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/asChild`, request);
   }
+
+  public moveProjectToBeginning(projectId: number):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/asFirst`, null);
+  }
 }

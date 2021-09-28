@@ -134,7 +134,26 @@ public class ProjectService {
         Project project = projectId != null ? projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
         Task taskToAdd = buildTaskToAddFromRequest(request, userId, project);
+        taskToAdd.setProjectOrder(getMaxProjectOrder(request, userId)+1);
         return taskRepository.save(taskToAdd);
+    }
+
+    private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
+        return hasParent(request) ? getMaxProjectOrderForParent(request, userId) : getMaxProjectOrderIfNoParent(userId, request.getProjectId());
+    }
+
+    private Integer getMaxProjectOrderForParent(AddTaskRequest request, Integer userId) {
+        return taskRepository.findByOwnerIdAndParentId(userId, request.getParentId()).stream()
+                .max(Comparator.comparing(Task::getProjectOrder))
+                .map(Task::getProjectOrder)
+                .orElse(0);
+    }
+
+    private Integer getMaxProjectOrderIfNoParent(Integer userId, Integer projectId) {
+        return taskRepository.findByOwnerIdAndProjectIdAndParentIsNull(userId, projectId).stream()
+                .max(Comparator.comparing(Task::getProjectOrder))
+                .map(Task::getProjectOrder)
+                .orElse(0);
     }
 
     private Task buildTaskToAddFromRequest(AddTaskRequest request, Integer userId, Project project) {
