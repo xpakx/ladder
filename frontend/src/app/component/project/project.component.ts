@@ -233,4 +233,12 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     this.contextTaskMenu = undefined;
     this.showContextTaskMenu = false;
   }
+
+  getNumOfUncompletedTasksByParent(parentId: number): number {
+    return this.tree.getNumOfUncompletedTasksByParent(parentId);
+  }
+
+  getNumOfTasksByParent(parentId: number): number {
+    return this.tree.getNumOfTasksByParent(parentId);
+  }
 }
