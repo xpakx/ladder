@@ -53,6 +53,10 @@ export class TreeService {
     this.projects.moveProjectAsChild(project, indent, parentId);
   }
 
+  moveProjectAsFirst(project: Project) {
+    this.projects.moveProjectAsFirst(project);
+  }
+
   addNewProjectBefore(project: Project, indent: number, beforeId: number) {
     this.projects.addNewProjectBefore(project, indent, beforeId);
   }

@@ -140,6 +140,28 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
     }
   }
 
+  moveProjectAsFirst(project: Project) {
+    let movedProject = this.getProjectById(project.id);
+    if(movedProject) {
+      let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getProjectById(movedProject.parent.id) : undefined;
+      let projects = this.list.filter((a) => !a.parent);
+        for(let pro of projects) {
+          pro.order = pro.order + 1;
+        }
+      
+      movedProject.indent = 0;
+      movedProject.order = 1;
+      movedProject.parent = null;
+
+      this.recalculateChildrenIndent(movedProject.id, 2);
+      if(oldParent) {
+        this.recalculateHasChildren(oldParent);
+      }
+
+      this.sort();
+    }
+  }
+
   addNewProjectBefore(project: Project, indent: number, beforeId: number) {
     let beforeProject = this.getProjectById(beforeId);
     if(beforeProject) {

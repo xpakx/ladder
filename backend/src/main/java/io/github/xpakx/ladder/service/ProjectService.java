@@ -462,4 +462,10 @@ public class ProjectService {
         projectRepository.saveAll(children);
         return projectRepository.save(projectToMove);
     }
+
+    public Project moveProjectAsFirst(Integer userId, Integer projectToMoveId) {
+        IdRequest request = new IdRequest();
+        request.setId(null);
+        return moveProjectAsFirstChild(request, userId, projectToMoveId);
+    }
 }

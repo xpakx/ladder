@@ -260,7 +260,15 @@ export class AppComponent implements AfterViewInit {
   }
 
   onDropFirst(event: DndDropEvent) {
-    alert(event.data + " on first item");
+    let id = Number(event.data);
+    this.projectService.moveProjectToBeginning(id).subscribe(
+      (response: Project) => {
+      this.tree.moveProjectAsFirst(response);
+    },
+    (error: HttpErrorResponse) => {
+    
+    }
+  );
   }
 
   hideDropZone(project: ProjectTreeElem): boolean {

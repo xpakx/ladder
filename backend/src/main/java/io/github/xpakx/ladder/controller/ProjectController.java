@@ -128,4 +128,10 @@ public class ProjectController {
                                                     @PathVariable Integer projectId) {
         return  new ResponseEntity<>(projectService.moveProjectAsFirstChild(request, userId, projectId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{projectId}/move/asFirst")
+    public ResponseEntity<Project> moveProjectAsFirst(@PathVariable Integer userId, @PathVariable Integer projectId) {
+        return  new ResponseEntity<>(projectService.moveProjectAsFirst(userId, projectId), HttpStatus.OK);
+    }
 }
