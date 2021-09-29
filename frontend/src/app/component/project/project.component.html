@@ -29,7 +29,7 @@
 
     <div class="tasks_content">
         <ul class="task_list_items">
-            <li *ngIf="draggedId" [dndDropzone]="[]" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
+            <li *ngIf="draggedId" [dndDropzone]="['task']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
 
             </li>
             <ng-container *ngFor="let task of tasks">
@@ -39,7 +39,7 @@
                 </li>
                 <li *ngIf="task.id != showEditTaskFormById || (addAfter || addBefore)" class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
                     [class.hiddenTask]="isParentCollapsed(task.parentList) || isParentDragged(task.parentList)"
-                    [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()">
+                    [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="task">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
                     <div class="task_list_item_main">
                         <div role="button" tabindex="0" class="task_list_item_body">
@@ -119,8 +119,8 @@
                 </li>
                 <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.hasChildren && !task.collapsed ? task.indent+1 : task.indent)"></span>
-                    <span class="indent drag-zone" [dndDropzone]="[]" (dndDrop)="onDrop($event, task)" *ngIf="!task.hasChildren || task.collapsed"></span>
-                    <span [dndDropzone]="[]" (dndDrop)="onDrop($event, task, true)" class="drag-zone last-drag-zone"></span>
+                    <span class="indent drag-zone" [dndDropzone]="['task']" (dndDrop)="onDrop($event, task)" *ngIf="!task.hasChildren || task.collapsed"></span>
+                    <span [dndDropzone]="['task']" (dndDrop)="onDrop($event, task, true)" class="drag-zone last-drag-zone"></span>
                 </li>
                 <li *ngIf="task.id == showEditTaskFormById && addAfter" class="task_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>

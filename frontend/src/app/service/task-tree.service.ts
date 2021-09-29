@@ -106,6 +106,12 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     );
   }
 
+  getTasksFromInbox(): TaskTreeElem[] {
+    return this.list.filter((a) => 
+      !a.project
+    );
+  }
+
   addNewTask(response: Task, project: ProjectTreeElem | undefined, indent: number = 0, parent: ParentWithId | null = null) {
     this.list.push({
       id:response.id,
@@ -166,7 +172,6 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       this.recalculateHasChildren(tas);
 
       this.sort();
-      console.log(JSON.stringify(movedTask, undefined, 2));
     }
   }
 
@@ -186,8 +191,6 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       movedTask.order = 1;
       movedTask.parent = parentTask;
 
-      console.log("My id: " + movedTask.id + ", my parent id: " + (movedTask.parent ? movedTask.parent.id : "null"))
-
       this.recalculateChildrenIndent(movedTask.id, indent+1);
       if(oldParent) {
         this.recalculateHasChildren(oldParent);
@@ -195,7 +198,6 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       this.recalculateHasChildren(tas);
 
       this.sort();
-      console.log(JSON.stringify(movedTask, undefined, 2));
     }
   }
 
@@ -243,7 +245,6 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
         .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
         .filter((a) => a.parent == tsk.parent)
         .filter((a) => a.order > tsk.order);
-      console.log(JSON.stringify(tasks))
       for(let sibling of tasks) {
         sibling.order = sibling.order + 1;
       }
@@ -260,11 +261,22 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
         .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
         .filter((a) => a.parent == tsk.parent)
         .filter((a) => a.order >= tsk.order);
-      console.log(JSON.stringify(tasks))
       for(let sibling of tasks) {
         sibling.order = sibling.order + 1;
       }
       this.addNewTask(task, project, indent, tsk.parent);
+    }
+  }
+
+  moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
+    let taskToMove = this.getTaskById(task.id);
+    if(taskToMove) {
+      let tasks = project ? this.getTasksByProject(project.id) : this.getTasksFromInbox();
+      taskToMove.project = project ? project : null;
+      taskToMove.order = tasks
+        .map((a) => a.order)
+        .reduce(((total, curr)=>Math.max(total, curr)), 0) + 1;
+      this.sort();
     }
   }
 }

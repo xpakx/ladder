@@ -703,6 +703,10 @@ button {
     background: #ececec;
 }
 
+.project_list_item.dndDragover {
+    background: #ececec;
+}
+
 .drag-zone.dndDragover ~ .drag-zone {
     background: #ececec;
 }

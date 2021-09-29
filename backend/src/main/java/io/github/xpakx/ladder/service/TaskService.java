@@ -83,18 +83,18 @@ public class TaskService {
     }
 
     private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
-        return hasId(request) ? getMaxProjectOrderForParent(request, userId) : getMaxProjectOrderIfNoParent(userId, request.getId());
+        return hasId(request) ? getMaxProjectOrderForProject(userId, request.getId()) : getMaxProjectOrderForInbox(userId);
     }
 
-    private Integer getMaxProjectOrderForParent(IdRequest request, Integer userId) {
-        return taskRepository.findByOwnerIdAndParentId(userId, request.getId()).stream()
+    private Integer getMaxProjectOrderForProject(Integer userId, Integer projectId) {
+        return taskRepository.findByOwnerIdAndProjectIdAndParentIsNull(userId, projectId).stream()
                 .max(Comparator.comparing(Task::getProjectOrder))
                 .map(Task::getProjectOrder)
                 .orElse(0);
     }
 
-    private Integer getMaxProjectOrderIfNoParent(Integer userId, Integer projectId) {
-        return taskRepository.findByOwnerIdAndProjectIdAndParentIsNull(userId, projectId).stream()
+    private Integer getMaxProjectOrderForInbox(Integer userId) {
+        return taskRepository.findByOwnerIdAndProjectIsNullAndParentIsNull(userId).stream()
                 .max(Comparator.comparing(Task::getProjectOrder))
                 .map(Task::getProjectOrder)
                 .orElse(0);

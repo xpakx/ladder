@@ -128,8 +128,6 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
       movedProject.order = 1;
       movedProject.parent = parentProject;
 
-      console.log("My id: " + movedProject.id + ", my parent id: " + (movedProject.parent ? movedProject.parent.id : "null"))
-
       this.recalculateChildrenIndent(movedProject.id, indent+1);
       if(oldParent) {
         this.recalculateHasChildren(oldParent);

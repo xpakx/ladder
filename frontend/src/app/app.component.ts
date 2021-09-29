@@ -4,7 +4,10 @@ import { Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { Project } from './entity/project';
 import { ProjectTreeElem } from './entity/project-tree-elem';
+import { Task } from './entity/task';
+import { ProjectTreeService } from './service/project-tree.service';
 import { ProjectService } from './service/project.service';
+import { TaskService } from './service/task.service';
 import { TreeService } from './service/tree.service';
 
 @Component({
@@ -33,7 +36,7 @@ export class AppComponent implements AfterViewInit {
   displayAddTask: boolean = false;
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
-    private router: Router, private renderer: Renderer2) {
+    private router: Router, private renderer: Renderer2, private taskService: TaskService) {
   }
 
   ngAfterViewInit() {
@@ -262,18 +265,30 @@ export class AppComponent implements AfterViewInit {
   onDropFirst(event: DndDropEvent) {
     let id = Number(event.data);
     this.projectService.moveProjectToBeginning(id).subscribe(
-      (response: Project) => {
-      this.tree.moveProjectAsFirst(response);
-    },
-    (error: HttpErrorResponse) => {
-    
-    }
-  );
+        (response: Project) => {
+        this.tree.moveProjectAsFirst(response);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
   }
 
   hideDropZone(project: ProjectTreeElem): boolean {
     return this.isDragged(project.id) || 
     this.isParentDragged(project.parentList) || 
     this.isParentCollapsed(project.parentList);
+  }
+
+  onDropTask(event: DndDropEvent, project: ProjectTreeElem) {
+    let id = Number(event.data);
+    this.taskService.updateTaskProject({id: project.id}, id).subscribe(
+        (response: Task, proj: ProjectTreeElem = project ) => {
+        this.tree.moveTaskToProject(response, proj);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
   }
 }

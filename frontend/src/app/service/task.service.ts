@@ -69,4 +69,9 @@ export class TaskService {
     let userId  = this.getUserId();
     return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/before`, request);
   }
+
+  updateTaskProject(request: IdRequest, taskId: number): Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/project`, request);
+  }
 }

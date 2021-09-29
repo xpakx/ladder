@@ -158,4 +158,8 @@ export class TreeService {
   addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined) {
     this.tasks.addNewTaskBefore(task, indent, beforeId, project);
   }
+
+  moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
+    this.tasks.moveTaskToProject(task, project);
+  }
 }
