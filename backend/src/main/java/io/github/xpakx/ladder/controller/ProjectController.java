@@ -105,7 +105,7 @@ public class ProjectController {
     
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/inbox/tasks")
-    public ResponseEntity<Task> addTaskToProject(@RequestBody AddTaskRequest request, @PathVariable Integer userId) {
+    public ResponseEntity<Task> addTaskToInbox(@RequestBody AddTaskRequest request, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.addTask(request, null, userId), HttpStatus.CREATED);
     }
 
