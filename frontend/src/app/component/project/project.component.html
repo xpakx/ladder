@@ -115,7 +115,7 @@
                 </li>
                 <li *ngIf="task.id == showEditTaskFormById && !addAfter && !addBefore" class="task_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                    <app-task-form [project]="project" [task]="task" [after]="addAfter"  (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+                    <app-task-form [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
                 </li>
                 <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.hasChildren && !task.collapsed ? task.indent+1 : task.indent)"></span>
@@ -124,7 +124,7 @@
                 </li>
                 <li *ngIf="task.id == showEditTaskFormById && addAfter" class="task_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                    <app-task-form [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+                    <app-task-form [project]="project" [task]="task" [after]="addAfter" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
                 </li>
             </ng-container>
 
