@@ -139,6 +139,10 @@ export class TreeService {
     this.tasks.moveTaskAsChild(task, indent, parentId);
   }
 
+  moveTaskAsFirst(task: Task, project: ProjectTreeElem | undefined) {
+    this.tasks.moveTaskAsFirst(task, project);
+  }
+
   deleteTask(taskId: number) {
     this.tasks.deleteTask(taskId);
   }

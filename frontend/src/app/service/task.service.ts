@@ -40,6 +40,11 @@ export class TaskService {
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asChild`, request);
   }
 
+  public moveTaskToBeginning(taskId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asFirst`, null);
+  }
+
   public updateTaskCollapse(taskId: number, request: BooleanRequest):  Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/collapse`, request);

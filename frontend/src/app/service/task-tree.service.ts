@@ -199,6 +199,30 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     }
   }
 
+  moveTaskAsFirst(task: Task, project: ProjectTreeElem | undefined) {
+    let movedTask = this.getTaskById(task.id);
+    if(movedTask) {
+      let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getTaskById(movedTask.parent.id) : undefined;
+      let tasks = this.list
+        .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
+        .filter((a) => !a.parent);
+      for(let pro of tasks) {
+        pro.order = pro.order + 1;
+      }
+      
+      movedTask.indent = 0;
+      movedTask.order = 1;
+      movedTask.parent = null;
+
+      this.recalculateChildrenIndent(movedTask.id, 2);
+      if(oldParent) {
+        this.recalculateHasChildren(oldParent);
+      }
+
+      this.sort();
+    }
+  }
+
   deleteTask(taskId: number) {
     this.list = this.list.filter((a) => a.id != taskId);
   }

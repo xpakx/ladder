@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } fr
 import { ActivatedRoute, Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
+import { ProjectWithNameAndId } from 'src/app/entity/project-with-name-and-id';
 import { Task } from 'src/app/entity/task';
 import { TaskDetails } from 'src/app/entity/task-details';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -118,7 +119,15 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   }
 
   onDropFirst(event: DndDropEvent) {
-    alert(event.data + " on first item");
+    let id = Number(event.data);
+    this.taskService.moveTaskToBeginning(id).subscribe(
+      (response: Task, project: ProjectTreeElem | undefined = this.project) => {
+      this.tree.moveTaskAsFirst(response, project);
+    },
+    (error: HttpErrorResponse) => {
+    
+    }
+  );
   }
 
   onDragStart(id: number) {
