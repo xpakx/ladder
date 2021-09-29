@@ -30,9 +30,9 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     List<Task> findByOwnerIdAndParentIdAndProjectOrderGreaterThanEqual(Integer ownerId, Integer parentId, Integer projectOrder);
 
-    List<Task> findByOwnerIdAndAndProjectIdAndParentIsNullAndProjectOrderGreaterThanEqual(Integer ownerId, Integer projectId, Integer projectOrder);
-    List<Task> findByOwnerIdAndAndProjectIdAndParentIsNullAndProjectOrderGreaterThan(Integer ownerId, Integer projectId, Integer projectOrder);
+    List<Task> findByOwnerIdAndProjectIdAndParentIsNullAndProjectOrderGreaterThanEqual(Integer ownerId, Integer projectId, Integer projectOrder);
+    List<Task> findByOwnerIdAndProjectIdAndParentIsNullAndProjectOrderGreaterThan(Integer ownerId, Integer projectId, Integer projectOrder);
 
-    List<Task> findByOwnerIdAndAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThanEqual(Integer ownerId, Integer projectOrder);
-    List<Task> findByOwnerIdAndAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThan(Integer ownerId, Integer projectOrder);
+    List<Task> findByOwnerIdAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThanEqual(Integer ownerId, Integer projectOrder);
+    List<Task> findByOwnerIdAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThan(Integer ownerId, Integer projectOrder);
 }

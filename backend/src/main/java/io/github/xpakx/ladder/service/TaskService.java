@@ -203,7 +203,7 @@ public class TaskService {
         return hasId(request) ? taskRepository.findById(request.getId()).orElse(null) : null;
     }
     private List<Task> getAllTasksAfterGivenTask(Integer userId, Task task) {
-        return hasParent(task) ? getAllSiblingsAfter(userId, task) : getAllProjectsWithNoParentAfter(userId, task);
+        return hasParent(task) ? getAllSiblingsAfter(userId, task) : getAllTasksWithNoParentAfter(userId, task);
     }
     private boolean hasId(IdRequest request) {
         return request.getId() != null;
@@ -218,7 +218,7 @@ public class TaskService {
                 .findByOwnerIdAndParentIdAndProjectOrderGreaterThan(userId, task.getParent().getId(), task.getProjectOrder());
     }
 
-    private List<Task> getAllProjectsWithNoParentAfter(Integer userId, Task task) {
+    private List<Task> getAllTasksWithNoParentAfter(Integer userId, Task task) {
         return hasProject(task) ? getAllFirstOrderTasksFromProjectAfter(userId, task) : getAllFirstOrderTasksFromInboxAfter(userId, task);
     }
 
@@ -303,21 +303,21 @@ public class TaskService {
 
     private List<Task> getAllFirstOrderTasksFromInboxAfterIncl(Integer userId, Task task) {
         return taskRepository
-            .findByOwnerIdAndAndProjectIdAndParentIsNullAndProjectOrderGreaterThanEqual(userId, task.getProject().getId(), task.getProjectOrder());
+            .findByOwnerIdAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThanEqual(userId, task.getProjectOrder());
     }
 
     private List<Task> getAllFirstOrderTasksFromInboxAfter(Integer userId, Task task) {
         return taskRepository
-                .findByOwnerIdAndAndProjectIdAndParentIsNullAndProjectOrderGreaterThan(userId, task.getProject().getId(), task.getProjectOrder());
+                .findByOwnerIdAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThan(userId, task.getProjectOrder());
     }
 
     private List<Task> getAllFirstOrderTasksFromProjectAfterIncl(Integer userId, Task task) {
         return taskRepository
-                .findByOwnerIdAndAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThanEqual(userId, task.getProjectOrder());
+                .findByOwnerIdAndProjectIdAndParentIsNullAndProjectOrderGreaterThanEqual(userId, task.getProject().getId(), task.getProjectOrder());
     }
     private List<Task> getAllFirstOrderTasksFromProjectAfter(Integer userId, Task task) {
         return taskRepository
-                .findByOwnerIdAndAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThan(userId, task.getProjectOrder());
+                .findByOwnerIdAndProjectIdAndParentIsNullAndProjectOrderGreaterThan(userId, task.getProject().getId(), task.getProjectOrder());
     }
 
     private boolean hasProject(Task task) {
