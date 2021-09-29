@@ -148,7 +148,7 @@ export class TreeService {
   }
 
   addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined) {
-    this.tasks.addNewTaskBefore(task, indent, afterId, project);
+    this.tasks.addNewTaskAfter(task, indent, afterId, project);
   }
 
   addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined) {

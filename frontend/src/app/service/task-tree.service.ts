@@ -121,7 +121,8 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       indent: indent,
       parentList: [], 
       collapsed: false
-    })
+    });
+    this.sort();
   }
 
   updateTask(response: Task, project: ProjectTreeElem | undefined) {
@@ -218,10 +219,11 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
         .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
         .filter((a) => a.parent == tsk.parent)
         .filter((a) => a.order > tsk.order);
-        for(let sibling of tasks) {
-          sibling.order = sibling.order + 1;
-        }
-        this.addNewTask(task, project, indent, tsk.parent);
+      console.log(JSON.stringify(tasks))
+      for(let sibling of tasks) {
+        sibling.order = sibling.order + 1;
+      }
+      this.addNewTask(task, project, indent, tsk.parent);
     }
   }
 
@@ -234,10 +236,11 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
         .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
         .filter((a) => a.parent == tsk.parent)
         .filter((a) => a.order >= tsk.order);
-        for(let sibling of tasks) {
-          sibling.order = sibling.order + 1;
-        }
-        this.addNewTask(task, project, indent, tsk.parent);
+      console.log(JSON.stringify(tasks))
+      for(let sibling of tasks) {
+        sibling.order = sibling.order + 1;
+      }
+      this.addNewTask(task, project, indent, tsk.parent);
     }
   }
 }
