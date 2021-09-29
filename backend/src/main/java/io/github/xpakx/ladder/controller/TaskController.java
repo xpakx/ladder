@@ -88,4 +88,10 @@ public class TaskController {
     public ResponseEntity<Task> updateTaskCollapsion(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(taskService.updateTaskCollapsion(request, taskId, userId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{taskId}/move/asFirst")
+    public ResponseEntity<Task> moveTaskAsFirst(@PathVariable Integer userId, @PathVariable Integer taskId) {
+        return  new ResponseEntity<>(taskService.moveTaskAsFirst(userId, taskId), HttpStatus.OK);
+    }
 }

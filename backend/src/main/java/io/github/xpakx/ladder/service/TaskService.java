@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -77,7 +78,26 @@ public class TaskService {
         Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
         taskToUpdate.setProject(project);
+        taskToUpdate.setProjectOrder(getMaxProjectOrder(request, userId)+1);
         return taskRepository.save(taskToUpdate);
+    }
+
+    private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
+        return hasId(request) ? getMaxProjectOrderForParent(request, userId) : getMaxProjectOrderIfNoParent(userId, request.getId());
+    }
+
+    private Integer getMaxProjectOrderForParent(IdRequest request, Integer userId) {
+        return taskRepository.findByOwnerIdAndParentId(userId, request.getId()).stream()
+                .max(Comparator.comparing(Task::getProjectOrder))
+                .map(Task::getProjectOrder)
+                .orElse(0);
+    }
+
+    private Integer getMaxProjectOrderIfNoParent(Integer userId, Integer projectId) {
+        return taskRepository.findByOwnerIdAndProjectIdAndParentIsNull(userId, projectId).stream()
+                .max(Comparator.comparing(Task::getProjectOrder))
+                .map(Task::getProjectOrder)
+                .orElse(0);
     }
 
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
@@ -223,5 +243,11 @@ public class TaskService {
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         taskToUpdate.setCollapsed(request.isFlag());
         return taskRepository.save(taskToUpdate);
+    }
+
+    public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {
+        IdRequest request = new IdRequest();
+        request.setId(null);
+        return moveTaskAsFirstChild(request, userId, taskToMoveId);
     }
 }
