@@ -36,11 +36,11 @@ export class TaskFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.taskForm = this.fb.group({
-      title: [this.task ? this.task.title : '', Validators.required],
-      description: [this.task ? this.task.description : '', []]
+      title: [this.task && !this.after && !this.before ? this.task.title : '', Validators.required],
+      description: [this.task && !this.after && !this.before  ? this.task.description : '', []]
     });
     
-    if(this.task) {
+    if(this.task && !this.after && !this.before ) {
 		  this.taskDate = this.task.due ? this.task.due : undefined;
 	  }
   }
@@ -120,11 +120,13 @@ export class TaskFormComponent implements OnInit {
   chooseProject(project: ProjectTreeElem | undefined) {
     this.closeSelectProjectMenu();
     this.project = project;
+    this.after = false;
+    this.before = false;
   }
 
   save() {
     if(this.task) {
-      this.updateTask();
+      this.makeRequestWithTask();
     } else {
       this.addTask();
     }
@@ -154,6 +156,16 @@ export class TaskFormComponent implements OnInit {
     }
   }
 
+  makeRequestWithTask() {
+    if(this.before) {
+      this.addTaskBefore();
+    } else if(this.after) {
+      this.addTaskAfter();
+    } else {
+      this.updateTask();
+    }
+  }
+
   updateTask() {
     if(this.task && this.taskForm && this.taskForm.valid) {
 
@@ -169,6 +181,54 @@ export class TaskFormComponent implements OnInit {
       }, this.task.id).subscribe(
         (response: Task, projectId: number | undefined = this.project?.id) => {
           this.tree.updateTask(response, projectId);
+        },
+        (error: HttpErrorResponse) => {
+         
+        }
+      );
+    }
+  }
+
+  addTaskAfter() {
+    if(this.task && this.taskForm && this.taskForm.valid) {
+      let indentAfter = this.task.indent;
+      let idAfter = this.task.id;
+      this.taskService.addTaskAfter({
+        title: this.taskForm.controls.title.value,
+        description: this.taskForm.controls.description.value,
+        projectOrder: this.task.order,
+        parentId: this.task.id,
+        projectId: this.project ? this.project.id : null,
+        priority: 0,
+        due: this.taskDate ? this.taskDate : null,
+        completedAt: null
+      }, this.task.id).subscribe(
+        (response: Task, indent: number = indentAfter, taskId: number = idAfter, project: ProjectTreeElem | undefined = this.project) => {
+          this.tree.addNewTaskAfter(response, indent, taskId, project);
+        },
+        (error: HttpErrorResponse) => {
+         
+        }
+      );
+    }
+  }
+
+  addTaskBefore() {
+    if(this.task && this.taskForm && this.taskForm.valid) {
+      let indentBefore = this.task.indent;
+      let idBfore = this.task.id;
+      this.taskService.addTaskBefore({
+        title: this.taskForm.controls.title.value,
+        description: this.taskForm.controls.description.value,
+        projectOrder: this.task.order,
+        parentId: this.task.id,
+        projectId: this.project ? this.project.id : null,
+        priority: 0,
+        due: this.taskDate ? this.taskDate : null,
+        completedAt: null
+      }, this.task.id).subscribe(
+        (response: Task, indent: number = indentBefore, taskId: number = idBfore, project: ProjectTreeElem | undefined = this.project) => {
+          this.tree.addNewTaskBefore(response, indent, taskId, project);
         },
         (error: HttpErrorResponse) => {
          

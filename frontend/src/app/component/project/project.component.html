@@ -37,7 +37,7 @@
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
                     <app-task-form [project]="project" [task]="task" [before]="addBefore" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
                 </li>
-                <li *ngIf="task.id != showEditTaskFormById" class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
+                <li *ngIf="task.id != showEditTaskFormById || (addAfter || addBefore)" class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
                     [class.hiddenTask]="isParentCollapsed(task.parentList) || isParentDragged(task.parentList)"
                     [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
