@@ -33,6 +33,10 @@
 
             </li>
             <ng-container *ngFor="let task of tasks">
+                <li *ngIf="task.id == showEditTaskFormById && addBefore" class="task_list_item">
+                    <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
+                    <app-task-form [project]="project" [task]="task" [before]="addBefore" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+                </li>
                 <li *ngIf="task.id != showEditTaskFormById" class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
                     [class.hiddenTask]="isParentCollapsed(task.parentList) || isParentDragged(task.parentList)"
                     [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()">
@@ -109,14 +113,18 @@
                         </div>
                     </div>
                 </li>
-                <li *ngIf="task.id == showEditTaskFormById" class="task_list_item">
+                <li *ngIf="task.id == showEditTaskFormById && !addAfter && !addBefore" class="task_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                    <app-task-form [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()"  class="task_list_item_main"></app-task-form>
+                    <app-task-form [project]="project" [task]="task" [after]="addAfter"  (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
                 </li>
                 <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.hasChildren && !task.collapsed ? task.indent+1 : task.indent)"></span>
                     <span class="indent drag-zone" [dndDropzone]="[]" (dndDrop)="onDrop($event, task)" *ngIf="!task.hasChildren || task.collapsed"></span>
                     <span [dndDropzone]="[]" (dndDrop)="onDrop($event, task, true)" class="drag-zone last-drag-zone"></span>
+                </li>
+                <li *ngIf="task.id == showEditTaskFormById && addAfter" class="task_list_item">
+                    <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
+                    <app-task-form [project]="project" [task]="task" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
                 </li>
             </ng-container>
 
@@ -141,7 +149,7 @@
 <div class="ist-menu context" [class.hidden-context-menu]="!showContextTaskMenu" [ngStyle]="{'left.px': taskContextMenuX, 'top.px': taskContextMenuY}">
 	<ul class="context-menu-project" #taskContext>
 		<li class="context-menu-project-item">
-			<button >
+			<button (click)="openEditTaskAbove()">
 				<span class="menu_icon">
 					<i class="fa fa-arrow-up"></i>
 				</span>
@@ -149,7 +157,7 @@
 			</button>
 		</li>
         <li class="context-menu-project-item">
-			<button >
+			<button (click)="openEditTaskBelow()">
 				<span class="menu_icon">
 					<i class="fa fa-arrow-down"></i>
 				</span>

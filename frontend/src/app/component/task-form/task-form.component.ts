@@ -27,6 +27,10 @@ export class TaskFormComponent implements OnInit {
   projectSelectForm: FormGroup | undefined;
 
 
+  @Input() after: boolean = false;
+  @Input() before: boolean = false;
+
+
   constructor(public tree: TreeService, private service: ProjectService, 
     private fb: FormBuilder, private taskService: TaskService) {  }
 

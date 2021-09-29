@@ -65,6 +65,8 @@ export class ProjectComponent implements OnInit, AfterViewInit {
 
   closeEditTaskForm() {
     this.showEditTaskFormById = undefined;
+    this.addAfter = false;
+    this.addBefore = false;
   }
 
   completeTask(id: number) {
@@ -303,4 +305,16 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     this.closeContextTaskMenu();
   }
 
+  addBefore: boolean = false;;
+  addAfter: boolean = false;;
+
+  openEditTaskAbove() {
+    this.addBefore = true;
+    this.openEditTaskFromContextMenu();
+  }
+
+  openEditTaskBelow() {
+    this.addAfter = true;
+    this.openEditTaskFromContextMenu();
+  }
 }

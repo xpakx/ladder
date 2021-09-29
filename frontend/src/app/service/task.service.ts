@@ -54,4 +54,14 @@ export class TaskService {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/due`, request);
   }
+
+  public addTaskAfter(request: AddTaskRequest, taskId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/after`, request);
+  }
+
+  public addTaskBefore(request: AddTaskRequest, taskId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/before`, request);
+  }
 }

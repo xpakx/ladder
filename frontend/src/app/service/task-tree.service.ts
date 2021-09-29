@@ -106,19 +106,19 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     );
   }
 
-  addNewTask(response: Task, project: ProjectTreeElem | undefined) {
+  addNewTask(response: Task, project: ProjectTreeElem | undefined, indent: number = 0, parent: ParentWithId | null = null) {
     this.list.push({
       id:response.id,
       title: response.title,
       description: response.description,
       project: project ? project : null,
-      parent: null,
+      parent: parent,
       due: response.due ? new Date(response.due) : null,
       completed: false,
       order: response.projectOrder,
       realOrder: response.projectOrder, //todo
       hasChildren: false, 
-      indent: 0, //todo
+      indent: indent,
       parentList: [], 
       collapsed: false
     })
@@ -206,6 +206,38 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     let taskToEdit =  this.getTaskById(task.id);
     if(taskToEdit) {
       taskToEdit.due = task.due? new Date(task.due) : null;
+    }
+  }
+
+  addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined) {
+    let afterTask = this.getTaskById(afterId);
+    if(afterTask) {
+      let tsk : TaskTreeElem = afterTask;
+      task.projectOrder = tsk.order+1;
+      let tasks = this.list
+        .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
+        .filter((a) => a.parent == tsk.parent)
+        .filter((a) => a.order > tsk.order);
+        for(let pro of tasks) {
+          pro.order = pro.order + 1;
+        }
+        this.addNewTask(task, project, indent, tsk.parent);
+    }
+  }
+
+  addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined) {
+    let beforeTask = this.getTaskById(beforeId);
+    if(beforeTask) {
+      let tsk : TaskTreeElem = beforeTask;
+      task.projectOrder = tsk.order;
+      let tasks = this.list
+        .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
+        .filter((a) => a.parent == tsk.parent)
+        .filter((a) => a.order >= tsk.order);
+        for(let pro of tasks) {
+          pro.order = pro.order + 1;
+        }
+        this.addNewTask(task, project, indent, tsk.parent);
     }
   }
 }
