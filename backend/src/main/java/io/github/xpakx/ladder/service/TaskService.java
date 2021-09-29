@@ -285,6 +285,7 @@ public class TaskService {
         List<Task> tasksAfter = getAllTasksAfterGivenTaskAndThisTask(userId, beforeTask);
 
         taskToAdd.setParent(beforeTask.getParent());
+        taskToAdd.setProject(beforeTask.getProject());
 
         taskToAdd.setProjectOrder(beforeTask.getProjectOrder());
         tasksAfter.forEach(((p) -> p.setProjectOrder(p.getProjectOrder()+1)));
