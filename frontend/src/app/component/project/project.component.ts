@@ -326,4 +326,43 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     this.addAfter = true;
     this.openEditTaskFromContextMenu();
   }
+
+  showSelectProjectModal: boolean = false;
+  projectForProjectModal: ProjectTreeElem | undefined;
+  taskIdForProjectModal: number | undefined;
+
+  closeSelectProjectModal(project: ProjectTreeElem | undefined) {
+    this.showSelectProjectModal = false;
+    if(this.taskIdForProjectModal && project) {
+      this.taskService.updateTaskProject({id: project.id}, this.taskIdForProjectModal).subscribe(
+          (response: Task, proj: ProjectTreeElem | undefined = project) => {
+          this.tree.moveTaskToProject(response, proj);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
+    this.projectForProjectModal = undefined;
+    this.taskIdForProjectModal = undefined;
+  }
+
+  cancelProjectSelection() {
+    this.showSelectProjectModal = false;
+    this.projectForProjectModal = undefined;
+    this.taskIdForProjectModal = undefined;
+  }
+
+  openSelectProjectModal(task: TaskTreeElem) {
+    this.taskIdForProjectModal = task.id;
+    this.projectForProjectModal = this.project;
+    this.showSelectProjectModal = true;
+  }
+
+  openSelectProjectModalFormContextMenu() {
+    if(this.contextTaskMenu) {
+      this.openSelectProjectModal(this.contextTaskMenu);
+    }
+    this.closeContextTaskMenu();
+  }
 }
