@@ -165,7 +165,7 @@ public class ProjectService {
                 .createdAt(LocalDateTime.now())
                 .due(request.getDue())
                 .parent(getParentFromAddTaskRequest(request))
-                .priority(0)
+                .priority(request.getPriority())
                 .completed(false)
                 .collapsed(false)
                 .owner(userRepository.getById(userId))

@@ -18,6 +18,7 @@ import { TaskDialogComponent } from './component/task-dialog/task-dialog.compone
 import { DateDialogComponent } from './component/date-dialog/date-dialog.component';
 import { LabelDialogComponent } from './component/label-dialog/label-dialog.component';
 import { ProjectChoiceDialogComponent } from './component/project-choice-dialog/project-choice-dialog.component';
+import { PriorityModalComponent } from './component/priority-modal/priority-modal.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -36,7 +37,8 @@ export function tokenGetter() {
     TaskDialogComponent,
     DateDialogComponent,
     LabelDialogComponent,
-    ProjectChoiceDialogComponent
+    ProjectChoiceDialogComponent,
+    PriorityModalComponent
   ],
   imports: [
     BrowserModule,

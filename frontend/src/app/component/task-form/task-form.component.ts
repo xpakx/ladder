@@ -45,16 +45,7 @@ export class TaskFormComponent implements OnInit {
 	  }
   }
 
-  getProjects(text: string = "") {
-    this.projects = this.tree.filterProjects(text);
-  }
-
   openSelectProjectMenu() {
-    this.projectSelectForm = this.fb.group({text: ''});
-    this.projectSelectForm.valueChanges.subscribe(data => {
-      this.getProjects(data.text);
-    });
-    this.getProjects();
     this.showSelectProjectMenu = true;
   }
 
@@ -142,7 +133,7 @@ export class TaskFormComponent implements OnInit {
         projectOrder: 0,
         parentId: null,
         projectId: this.project ? this.project.id : null,
-        priority: 0,
+        priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
         completedAt: null
       }, this.project ? this.project.id : undefined).subscribe(
@@ -175,7 +166,7 @@ export class TaskFormComponent implements OnInit {
         projectOrder: this.task.order,
         parentId: this.task.parent ? this.task.parent.id : null,
         projectId: this.project ? this.project.id : null,
-        priority: 0,
+        priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
         completedAt: null
       }, this.task.id).subscribe(
@@ -199,7 +190,7 @@ export class TaskFormComponent implements OnInit {
         projectOrder: this.task.order,
         parentId: this.task.id,
         projectId: this.project ? this.project.id : null,
-        priority: 0,
+        priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
         completedAt: null
       }, this.task.id).subscribe(
@@ -223,7 +214,7 @@ export class TaskFormComponent implements OnInit {
         projectOrder: this.task.order,
         parentId: this.task.id,
         projectId: this.project ? this.project.id : null,
-        priority: 0,
+        priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
         completedAt: null
       }, this.task.id).subscribe(
@@ -235,5 +226,23 @@ export class TaskFormComponent implements OnInit {
         }
       );
     }
+  }
+
+  priority: number = 0;
+  priorityForModal: number = 0;
+  showSelectPriorityMenu: boolean = false;
+
+  openSelectPriorityMenu() {
+    this.priorityForModal = this.priority;
+    this.showSelectPriorityMenu = true;
+  }
+
+  closeSelectPriorityMenu() {
+    this.showSelectPriorityMenu = false;
+  }
+
+  choosePriority(priority: number) {
+    this.closeSelectPriorityMenu();
+    this.priority = priority;
   }
 }

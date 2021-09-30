@@ -142,6 +142,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       task.title = response.title;
       task.project = project ? project : null;
       task.due = response.due ? new Date(response.due) : null;
+      task.priority = response.priority;
     }
   }
 

@@ -52,6 +52,7 @@ public class TaskService {
         taskToUpdate.setDue(request.getDue());
         //taskToUpdate.setParent(parent);
         taskToUpdate.setProject(project);
+        taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setCompletedAt(request.getCompletedAt());
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setOwner(userRepository.getById(userId));
@@ -256,7 +257,7 @@ public class TaskService {
                 .description(request.getDescription())
                 .createdAt(LocalDateTime.now())
                 .due(request.getDue())
-                .priority(0)
+                .priority(request.getPriority())
                 .completed(false)
                 .collapsed(false)
                 .owner(userRepository.getById(userId))

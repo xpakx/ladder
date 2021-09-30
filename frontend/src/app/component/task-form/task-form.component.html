@@ -41,8 +41,8 @@
                 <button type="button" class="itemAction">
                     <i class="fa fa-tag"></i>
                 </button>
-                <button type="button" class="itemAction">
-                    <i class="fa fa-flag"></i>
+                <button type="button" class="itemAction" (click)="openSelectPriorityMenu()">
+                    <i class="fa fa-flag" [ngClass]="'priority_' + priority"></i>
                 </button>
                 <button type="button" class="itemAction">
                     <i class="fa fa-clock-o"></i>
@@ -68,3 +68,4 @@
 
 <app-date-dialog *ngIf="showSelectDateMenu" [taskDate]="taskDate" (closeEvent)="closeSelectDateMenu($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
 <app-project-choice-dialog *ngIf="showSelectProjectMenu" [project]="project" (closeEvent)="chooseProject($event)" (cancelEvent)="closeSelectProjectMenu()"></app-project-choice-dialog>
+<app-priority-modal *ngIf="showSelectPriorityMenu" [priority]="priorityForModal" (closeEvent)="choosePriority($event)" (cancelEvent)="closeSelectPriorityMenu()"></app-priority-modal>
