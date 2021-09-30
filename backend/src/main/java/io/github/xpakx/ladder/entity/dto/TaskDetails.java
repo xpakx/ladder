@@ -14,4 +14,5 @@ public interface TaskDetails {
     boolean getCollapsed();
     Integer getProjectOrder();
     Set<LabelDetails> getLabels();
+    Integer getPriority();
 }

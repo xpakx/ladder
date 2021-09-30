@@ -141,15 +141,27 @@ button {
     background-color: grey;
 }
 
-.priority_1 {
+.priority_0 {
     border-color: grey;
     color: grey;
 }
 
-.priority_3 {
+.priority_1 {
+    background-color: rgba(36,111,224,.1);
+    border-color: #246fe0;
+    color: #246fe0;
+}
+
+.priority_2 {
     background-color: rgba(235,137,9,.1);
     border-color: #eb8909;
     color: #eb8909;
+}
+
+.priority_3 {
+    background-color: rgba(209,69,59,.1);
+    border-color: #d1453b;
+    color: #d1453b;
 }
 
 .task_checkbox:hover {

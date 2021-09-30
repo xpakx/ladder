@@ -13,4 +13,5 @@ export interface TaskDetails {
     collapsed: boolean;
     projectOrder: number;
     labels: LabelDetails[];
+    priority: number;
 }

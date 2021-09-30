@@ -5,4 +5,5 @@ export interface Task {
     completed: boolean;
     projectOrder: number;
     due: Date;
+    priority: number;
 }
