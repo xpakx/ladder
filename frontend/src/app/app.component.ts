@@ -5,7 +5,6 @@ import { DndDropEvent } from 'ngx-drag-drop';
 import { Project } from './entity/project';
 import { ProjectTreeElem } from './entity/project-tree-elem';
 import { Task } from './entity/task';
-import { ProjectTreeService } from './service/project-tree.service';
 import { ProjectService } from './service/project.service';
 import { TaskService } from './service/task.service';
 import { TreeService } from './service/tree.service';
@@ -18,7 +17,6 @@ import { TreeService } from './service/tree.service';
 export class AppComponent implements AfterViewInit {
   title = 'ladder';
   projectFav: boolean = false;
-  collapseLabels: boolean = true;
   collapseFilters: boolean = true;
   hideMenu: boolean = false;
   contextProjectMenu: ProjectTreeElem | undefined;
@@ -88,7 +86,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   switchLabelCollapse() {
-    this.collapseLabels = !this.collapseLabels;
+    this.tree.labelCollapsed = !this.tree.labelCollapsed;
   }
 
   switchFilterCollapse() {
@@ -133,6 +131,10 @@ export class AppComponent implements AfterViewInit {
 
   toProject(id: number) {
     this.router.navigate(['/project/'+id]);
+  }
+
+  toLabel(id: number) {
+    this.router.navigate(['/label/'+id]);
   }
 
   toInbox() {
@@ -290,5 +292,16 @@ export class AppComponent implements AfterViewInit {
       
       }
     );
+  }
+
+
+  displayLabelModal: boolean = false;
+
+  openLabelModal() {
+    this.displayLabelModal = true;
+  }
+
+  closeLabelModal() {
+    this.displayLabelModal = false;
   }
 }

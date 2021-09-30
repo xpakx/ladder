@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
@@ -18,6 +19,7 @@ export class TreeService {
   public labels: LabelDetails[] = [];
   public loaded: boolean = false;
   public projectCollapsed: boolean = true;
+  public labelCollapsed: boolean = true;
   
   constructor(private projects: ProjectTreeService, private tasks: TaskTreeService) { }
 
@@ -161,5 +163,29 @@ export class TreeService {
 
   moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
     this.tasks.moveTaskToProject(task, project);
+  }
+
+  getLabels() {
+    return this.labels;
+  }
+
+  addNewLabel(request: Label) {
+    this.labels.push({
+      name: request.name,
+      id: request.id,
+      color: request.color
+    })
+  }
+
+  updateLabel(request: Label, labelId: number) {
+    let label: LabelDetails | undefined = this.getLabelById(labelId);
+    if(label) {
+      label.name = request.name;
+      label.color = request.color;
+    } 
+  }
+
+  getLabelById(id: number): LabelDetails | undefined {
+    return this.labels.find((a) => a.id == id);
   }
 }

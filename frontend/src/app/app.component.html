@@ -164,14 +164,41 @@
 							<div class="expansion_panel__header" style="top: 372px;">
 								<button type="button" class="expansion_panel__toggle" (click)="switchLabelCollapse()">
 									<div class="expansion_panel__toggle_icon">
-										<i class="fa mx-2 text-muted fa-chevron-right"  [class.rotated]="!collapseLabels"></i>
+										<i class="fa mx-2 text-muted fa-chevron-right"  [class.rotated]="!tree.labelCollapsed"></i>
 									</div>
 									Labels
 								</button>
 								<div class="expansion_panel__actions">
-									<button type="button" class="adder_icon">
+									<button type="button" class="adder_icon" (click)="openLabelModal()">
 										<i class="fa fa-plus"></i>
 									</button>
+								</div>
+							</div>
+							<div class="projects" style="min-height: 0px;" [class.hidden]="tree.labelCollapsed">
+								<div class="projects_list_container">
+									<ul class="items generic_left_list projects_list">
+										<ng-container *ngFor="let label of tree.getLabels()">
+											<li class="project_list_item">
+												<span class="left_actions">
+													<button type="button" class="handle">
+														<i class="fa fa-ellipsis-v"></i>
+														<i class="fa fa-ellipsis-v"></i>
+													</button>
+												</span>
+												<button class="text" (click)="toLabel(label.id)">
+													<div class="label-color" [style]="'font-color: ' + label.color +';'">
+														<i class="fa fa-tag"></i>
+													</div>
+													<span class="project-name">{{label.name}}</span>
+													<div class="counter_count">0</div>
+												</button>
+												
+												<button type="button" #contextMenuButton class="icon_more" (click)="openContextProjectMenu($event, label.id)">
+													<i class="fa fa-ellipsis-h"></i>
+												</button>
+											</li>
+										</ng-container>
+									</ul>
 								</div>
 							</div>
 						</div>
@@ -190,6 +217,7 @@
 </div>
 
 <app-project-dialog *ngIf="displayProjectModal" (closeEvent)="closeProjectModal()" [project]="projectForModalWindow" [after]="addAfter" [before]="addBefore"> </app-project-dialog>
+<app-label-dialog *ngIf="displayLabelModal" (closeEvent)="closeLabelModal()"> </app-label-dialog>
 <app-task-dialog *ngIf="displayAddTask" (closeEvent)="closeAddTaskModal()"></app-task-dialog>
 
 <div class="ist-menu context" [class.hidden-context-menu]="!showContextProjectMenu" [ngStyle]="{'left.px': projectContextMenuX, 'top.px': projectContextMenuY}">

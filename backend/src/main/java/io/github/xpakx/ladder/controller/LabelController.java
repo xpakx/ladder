@@ -33,7 +33,7 @@ public class LabelController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @DeleteMapping("/{labelId}")
-    public ResponseEntity<?> deleteProject(@PathVariable Integer labelId, @PathVariable Integer userId) {
+    public ResponseEntity<?> deleteLabel(@PathVariable Integer labelId, @PathVariable Integer userId) {
         labelService.deleteLabel(labelId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

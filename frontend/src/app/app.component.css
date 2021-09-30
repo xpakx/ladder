@@ -732,3 +732,12 @@ button {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+
+.label-color {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 38px;
+    flex-shrink: 0;
+}
