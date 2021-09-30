@@ -83,66 +83,10 @@
 						</ul>
 
 
-						<div class="expansion_panel">
-							<div class="expansion_panel__header" style="top: 372px;">
-								<button type="button" class="expansion_panel__toggle" (click)="switchProjectCollapse()">
-									<div class="expansion_panel__toggle_icon">
-										<i class="fa mx-2 text-muted fa-chevron-right"  [class.rotated]="!tree.projectCollapsed"></i>
-									</div>
-									Projects
-								</button>
-								<div class="expansion_panel__actions">
-									<button type="button" class="adder_icon" (click)="openProjectModal()">
-										<i class="fa fa-plus"></i>
-									</button>
-								</div>
-							</div>
-							<div class="projects" style="min-height: 0px;" [class.hidden]="tree.projectCollapsed">
-								<div class="projects_list_container">
-									<ul class="items generic_left_list projects_list">
-										<li *ngIf="draggedId" [dndDropzone]="['project']" (dndDrop)="onDropFirst($event)" class="drag-zone drag-list-item">
-											
-										</li>
-										<ng-container *ngFor="let project of tree.getProjects()">
-											<li class="project_list_item" [class.hiddenProject]="isParentCollapsed(project.parentList) || isParentDragged(project.parentList)" 
-												[dndDraggable]="project.id" (dndStart)="onDragStart(project.id)" (dndEnd)="onDragEnd()"  
-												[dndDropzone]="['task']" (dndDrop)="onDropTask($event, project)"  dndType="project">
-												<span class="indent" *ngFor="let e of [].constructor(project.indent)"></span>
-												<span class="left_actions">
-													<button type="button" class="handle" dndHandle>
-														<i class="fa fa-ellipsis-v"></i>
-														<i class="fa fa-ellipsis-v"></i>
-													</button>
-													<button type="button" class="arrow" *ngIf="project.hasChildren" (click)="collapseProject(project.id)">
-														<i class="fa fa-chevron-right" [class.rotated]="!isProjectCollapsed(project.id)"></i>
-													</button>
-												</span>
-												<button class="text" (click)="toProject(project.id)">
-													<div class="div-color" [style]="'color: ' + project.color +';'"></div>
-													<span class="project-name">{{project.name}}</span>
-													<div class="counter_count">{{tree.getNumOfUncompletedTasksByProject(project.id)}}</div>
-												</button>
-												
-												<button type="button" #contextMenuButton class="icon_more" (click)="openContextProjectMenu($event, project.id)">
-													<i class="fa fa-ellipsis-h"></i>
-												</button>
-											</li>
-											<li *ngIf="draggedId && !hideDropZone(project)" class="drag_list_item">
-												<span class="indent" *ngFor="let e of [].constructor(project.hasChildren && !project.collapsed ? project.indent+1 : project.indent)"></span>
-												<span class="indent drag-zone" [dndDropzone]="['project']" (dndDrop)="onDrop($event, project)" *ngIf="!project.hasChildren || project.collapsed"></span>
-												<span [dndDropzone]="['project']" (dndDrop)="onDrop($event, project, true)" class="drag-zone last-drag-zone"></span>
-											</li>
-										</ng-container>
-									</ul>
-									<button type="button" class="plus_add_button" (click)="openProjectModal()">
-										<span class="icon_add">
-											<i class="fa fa-plus"></i>
-										</span>
-										Add project
-									</button>
-								</div>
-							</div>
-						</div>
+						<app-project-list (addProjectModal)="openProjectModal()"
+						(addProjectModalEdit)="openProjectModalWithProject($event)"
+						(addProjectModalAbove)="openProjectModalAbove($event)"
+						(addProjectModalBelow)="openProjectModalBelow($event)"></app-project-list>
 
 						<div class="expansion_panel">
 							<div class="expansion_panel__header" style="top: 372px;">
@@ -193,7 +137,7 @@
 													<div class="counter_count">0</div>
 												</button>
 												
-												<button type="button" #contextMenuButton class="icon_more" (click)="openContextProjectMenu($event, label.id)">
+												<button type="button" #contextMenuButton class="icon_more">
 													<i class="fa fa-ellipsis-h"></i>
 												</button>
 											</li>
@@ -219,57 +163,3 @@
 <app-project-dialog *ngIf="displayProjectModal" (closeEvent)="closeProjectModal()" [project]="projectForModalWindow" [after]="addAfter" [before]="addBefore"> </app-project-dialog>
 <app-label-dialog *ngIf="displayLabelModal" (closeEvent)="closeLabelModal()"> </app-label-dialog>
 <app-task-dialog *ngIf="displayAddTask" (closeEvent)="closeAddTaskModal()"></app-task-dialog>
-
-<div class="ist-menu context" [class.hidden-context-menu]="!showContextProjectMenu" [ngStyle]="{'left.px': projectContextMenuX, 'top.px': projectContextMenuY}">
-	<ul class="context-menu-project" #projectContext>
-		<li class="context-menu-project-item">
-			<button (click)="openProjectModalAbove()">
-				<span class="menu_icon">
-					<i class="fa fa-arrow-up"></i>
-				</span>
-				<div class="menu_label">Add project above</div>
-			</button>
-		</li>
-		<li class="context-menu-project-item">
-			<button (click)="openProjectModalBelow()">
-				<span class="menu_icon">
-					<i class="fa fa-arrow-down"></i>
-				</span>
-				<div class="menu_label">Add project below</div>
-			</button>
-		</li>
-		<li class="context-menu-project-item">
-			<button (click)="openProjectModalWithProject()">
-				<span class="menu_icon">
-					<i class="fa fa-edit"></i>
-				</span>
-				<div class="menu_label">Edit project</div>
-			</button>
-		</li>
-		<li class="context-menu-project-item">
-			<button (click)="updateProjectFav()" *ngIf="contextProjectMenu">
-				<span class="menu_icon">
-					<i class="fa fa-heart-o" *ngIf="!contextProjectMenu.favorite"></i>
-					<i class="fa fa-heart" *ngIf="contextProjectMenu.favorite"></i>
-				</span>
-				<div class="menu_label">{{!contextProjectMenu.favorite ? "Add to favorites" : "Remove from favorites"}}</div>
-			</button>
-		</li>
-		<li class="context-menu-project-item">
-			<button (click)="duplicateProject()" >
-				<span class="menu_icon">
-					<i class="fa fa-clone"></i>
-				</span>
-				<div class="menu_label">Duplicate</div>
-			</button>
-		</li>
-		<li class="context-menu-project-item">
-			<button (click)="deleteProject()">
-				<span class="menu_icon">
-					<i class="fa fa-trash-o"></i>
-				</span>
-				<div class="menu_label">Delete project</div>
-			</button>
-		</li>
-	</ul>
-</div>

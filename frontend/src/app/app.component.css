@@ -581,6 +581,7 @@ button {
 
 .left-nav-container {
     width: 309px;
+    z-index: 5;
 }
 
 .main-container {
