@@ -60,6 +60,12 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   }
 
   openEditTaskForm(id: number) {
+    this.addAfter = false;
+    this.addBefore = false;
+    this.openEditTaskFormCommon(id);
+  }
+
+  openEditTaskFormCommon(id: number) {
     this.closeAddTaskForm();
     this.showEditTaskFormById = id;
   }
@@ -253,11 +259,17 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     return this.tree.getNumOfTasksByParent(parentId);
   }
 
-  openEditTaskFromContextMenu() {
+  openEditTaskFromContextMenuCommon() {
     if(this.contextTaskMenu) {
-      this.openEditTaskForm(this.contextTaskMenu.id);
+      this.openEditTaskFormCommon(this.contextTaskMenu.id);
     }
     this.closeContextTaskMenu();
+  }
+
+  openEditTaskFromContextMenu() {
+    this.addBefore = false;
+    this.addAfter = false;
+    this.openEditTaskFromContextMenuCommon();
   }
 
   deleteTask() {
@@ -319,12 +331,14 @@ export class ProjectComponent implements OnInit, AfterViewInit {
 
   openEditTaskAbove() {
     this.addBefore = true;
-    this.openEditTaskFromContextMenu();
+    this.addAfter = false;
+    this.openEditTaskFromContextMenuCommon();
   }
 
   openEditTaskBelow() {
     this.addAfter = true;
-    this.openEditTaskFromContextMenu();
+    this.addBefore = false;
+    this.openEditTaskFromContextMenuCommon();
   }
 
   showSelectProjectModal: boolean = false;
