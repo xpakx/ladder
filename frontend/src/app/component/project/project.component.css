@@ -172,6 +172,18 @@ button {
     background-color: grey;
 }
 
+.task_list_item.completed  .task_checkbox.priority_1 {
+    background-color: rgb(36,111,224);
+}
+
+.task_list_item.completed  .task_checkbox.priority_2 {
+    background-color: rgb(235,137,9);
+}
+
+.task_list_item.completed  .task_checkbox.priority_3 {
+    background-color: rgb(209,69,59);
+}
+
 .task_list_item.completed  .task_checkbox .task_checkbox_circle {
     opacity: 1;
     color: #fff;
