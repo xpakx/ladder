@@ -24,6 +24,7 @@ public class LabelService {
         Label labelToAdd = Label.builder()
                 .name(request.getName())
                 .owner(userRepository.getById(userId))
+                .color(request.getColor())
                 .build();
         return labelRepository.save(labelToAdd);
     }
@@ -32,6 +33,7 @@ public class LabelService {
         Label labelToUpdate = labelRepository.findByIdAndOwnerId(labelId, userId)
                 .orElseThrow(() -> new NotFoundException("No such label!"));
         labelToUpdate.setName(request.getName());
+        labelToUpdate.setColor(request.getColor());
         return labelRepository.save(labelToUpdate);
     }
 

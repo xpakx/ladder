@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class LabelRequest {
     private String name;
+    private String color;
 }

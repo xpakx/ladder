@@ -18,6 +18,7 @@ public class Label {
     private Integer id;
 
     private String name;
+    private String color;
 
     @JsonIgnore
     @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE})
