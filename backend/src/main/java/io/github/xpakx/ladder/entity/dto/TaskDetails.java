@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.entity.dto;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public interface TaskDetails {
     Integer getId();
@@ -12,4 +13,5 @@ public interface TaskDetails {
     boolean getCompleted();
     boolean getCollapsed();
     Integer getProjectOrder();
+    Set<LabelDetails> getLabels();
 }

@@ -1,4 +1,5 @@
 import { IndentableTreeElem } from "./indentable-tree-elem";
+import { LabelDetails } from "./label-details";
 import { ParentWithId } from "./parent-with-id";
 import { ProjectWithNameAndId } from "./project-with-name-and-id";
 
@@ -17,4 +18,5 @@ export interface TaskTreeElem extends IndentableTreeElem<ParentWithId> {
     indent: number;
     parentList: TaskTreeElem[];
     collapsed: boolean;
+    labels: LabelDetails[];
 }

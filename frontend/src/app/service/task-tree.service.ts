@@ -38,7 +38,8 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       description: task.description, 
       project: task.project, 
       due: task.due ? new Date(task.due) : null, 
-      completed: task.completed
+      completed: task.completed,
+      labels: task.labels
     }
   }
 
@@ -126,7 +127,8 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       hasChildren: false, 
       indent: indent,
       parentList: [], 
-      collapsed: false
+      collapsed: false,
+      labels: []
     });
     this.sort();
   }

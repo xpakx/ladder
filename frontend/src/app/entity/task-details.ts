@@ -1,3 +1,4 @@
+import { LabelDetails } from "./label-details";
 import { ParentWithId } from "./parent-with-id";
 import { ProjectWithNameAndId } from "./project-with-name-and-id";
 
@@ -11,4 +12,5 @@ export interface TaskDetails {
     completed: boolean;
     collapsed: boolean;
     projectOrder: number;
+    labels: LabelDetails[];
 }
