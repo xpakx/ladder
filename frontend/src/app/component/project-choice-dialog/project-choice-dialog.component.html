@@ -1,0 +1,44 @@
+<div class="modal"
+  tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Select project</h4>
+        </div>
+      <div class="modal-body">
+        <form *ngIf="projectSelectForm" [formGroup]="projectSelectForm">
+            <input formControlName="text" placeholder="Type a project"/>
+        </form>
+        <ul class="context-menu-project" #projectSelectMenu class="form-field">
+            <li class="context-menu-project-item">
+                <button type="button" (click)="chooseProject(undefined)">
+                    <span class="menu-icon">
+                        <i class="fa text-primary mr-2 fa-inbox"></i>
+                    </span>
+                    <span class="menu_label">Inbox</span>
+                    <span class="menu-icon-select" *ngIf="!project">
+                        <i class="fa fa-check"></i>
+                    </span>
+                </button>
+            </li>
+            <li class="context-menu-project-item" *ngFor="let projectSel of projects">
+                <button type="button" (click)="chooseProject(projectSel)">
+                    <div class="taskFormExtraColor" [style]="'color: ' + projectSel.color +';'"></div>
+                    <span class="menu_label">{{projectSel.name}}</span>
+                    <span class="menu-icon-select" *ngIf="project && projectSel.id == project.id">
+                        <i class="fa fa-check"></i>
+                    </span>
+                </button>
+            </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-button" 
+                (click)="closeSelectProjectMenu()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

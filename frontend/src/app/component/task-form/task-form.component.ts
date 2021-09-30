@@ -62,6 +62,13 @@ export class TaskFormComponent implements OnInit {
     this.showSelectProjectMenu = false;
   }
 
+  chooseProject(project: ProjectTreeElem | undefined) {
+    this.closeSelectProjectMenu();
+    this.project = project;
+    this.after = false;
+    this.before = false;
+  }
+
   dateWithinWeek(date: Date): boolean {
     let dateToCompare: Date = new Date();
     dateToCompare.setDate(dateToCompare.getDate() + 9);
@@ -115,13 +122,6 @@ export class TaskFormComponent implements OnInit {
 
   closeForm() {
     this.closeEvent.emit(true);
-  }
-
-  chooseProject(project: ProjectTreeElem | undefined) {
-    this.closeSelectProjectMenu();
-    this.project = project;
-    this.after = false;
-    this.before = false;
   }
 
   save() {
