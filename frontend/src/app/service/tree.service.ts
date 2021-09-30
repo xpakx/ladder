@@ -165,6 +165,10 @@ export class TreeService {
     this.tasks.moveTaskToProject(task, project);
   }
 
+  updateTaskPriority(task: Task) {
+    this.tasks.updateTaskPriority(task);
+  }
+
   getLabels() {
     return this.labels;
   }

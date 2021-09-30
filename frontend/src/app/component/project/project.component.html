@@ -189,7 +189,7 @@
 			</button>
 		</li>
         <li class="context-menu-project-item">
-			<button >
+			<button (click)="openSelectPriorityModalFormContextMenu()">
 				<span class="menu_icon">
 					<i class="fa fa-flag-o"></i>
 				</span>
@@ -217,3 +217,4 @@
 
 <app-date-dialog *ngIf="showSelectDateModal" [taskDate]="dateForDateModal" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
 <app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="projectForProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
+<app-priority-modal *ngIf="showSelectPriorityModal" [priority]="priorityForPriorityModal" (closeEvent)="closeSelectPriorityModal($event)" (cancelEvent)="cancelPrioritySelection()"></app-priority-modal>

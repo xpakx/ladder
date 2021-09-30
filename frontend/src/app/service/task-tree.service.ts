@@ -284,4 +284,11 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       this.sort();
     }
   }
+
+  updateTaskPriority(task: Task) {
+    let taskToUpdate = this.getTaskById(task.id);
+    if(taskToUpdate) {
+      taskToUpdate.priority = task.priority;
+    }
+  }
 }

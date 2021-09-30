@@ -365,4 +365,43 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     }
     this.closeContextTaskMenu();
   }
+
+  showSelectPriorityModal: boolean = false;
+  priorityForPriorityModal: number = 0;
+  taskIdForPriorityModal: number | undefined;
+
+  closeSelectPriorityModal(priority: number) {
+    this.showSelectPriorityModal = false;
+    if(this.taskIdForPriorityModal) {
+      this.taskService.updateTaskPriority({priority: priority}, this.taskIdForPriorityModal).subscribe(
+          (response: Task) => {
+          this.tree.updateTaskPriority(response);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
+    this.priorityForPriorityModal = 0;
+    this.taskIdForPriorityModal = undefined;
+  }
+
+  cancelPrioritySelection() {
+    this.showSelectPriorityModal = false;
+    this.priorityForPriorityModal = 0;
+    this.taskIdForPriorityModal = undefined;
+  }
+
+  openSelectPriorityModal(task: TaskTreeElem) {
+    this.taskIdForPriorityModal = task.id;
+    this.priorityForPriorityModal = task.priority;
+    this.showSelectPriorityModal = true;
+  }
+
+  openSelectPriorityModalFormContextMenu() {
+    if(this.contextTaskMenu) {
+      this.openSelectPriorityModal(this.contextTaskMenu);
+    }
+    this.closeContextTaskMenu();
+  }
 }

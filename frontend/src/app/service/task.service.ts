@@ -6,6 +6,7 @@ import { AddTaskRequest } from '../entity/add-task-request';
 import { BooleanRequest } from '../entity/boolean-request';
 import { DateRequest } from '../entity/date-request';
 import { IdRequest } from '../entity/id-request';
+import { PriorityRequest } from '../entity/priority-request';
 import { Task } from '../entity/task';
 
 @Injectable({
@@ -73,5 +74,10 @@ export class TaskService {
   updateTaskProject(request: IdRequest, taskId: number): Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/project`, request);
+  }
+
+  updateTaskPriority(request: PriorityRequest, taskId: number): Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/priority`, request);
   }
 }
