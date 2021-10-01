@@ -57,6 +57,7 @@ public class TaskService {
         taskToUpdate.setCompletedAt(request.getCompletedAt());
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setOwner(userRepository.getById(userId));
+        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request));
         return taskRepository.save(taskToUpdate);
     }
 
