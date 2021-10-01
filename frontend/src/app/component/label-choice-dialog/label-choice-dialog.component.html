@@ -1,0 +1,39 @@
+<div class="modal"
+  tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Select labels</h4>
+        </div>
+      <div class="modal-body">
+        <form *ngIf="labelSelectForm" [formGroup]="labelSelectForm">
+            <input formControlName="text" placeholder="Type label"/>
+        </form>
+        <ul class="context-menu-project" #projectSelectMenu class="form-field">
+            <li class="context-menu-project-item" *ngFor="let labelSel of visibleLabels">
+                <button type="button" (click)="chooseLabel(labelSel)">
+                    <div class="taskFormExtraColor" [style]="'color: ' + labelSel.color +';'">
+                        <i class="fa fa-tag ta-flip-horizontal"></i>
+                    </div>
+                    <span class="menu_label">{{labelSel.name}}</span>
+                    <span class="menu-icon-select" *ngIf="isLabelChosen(labelSel.id)">
+                        <i class="fa fa-check"></i>
+                    </span>
+                </button>
+            </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-button" 
+                (click)="closeSelectLabelMenu()">
+          Cancel
+        </button>
+        <button type="button" class="modal-button modal-button-red" 
+                (click)="chooseLabels()">
+            Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

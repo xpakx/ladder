@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -41,6 +42,7 @@ export class TaskFormComponent implements OnInit {
     
     if(this.task && !this.after && !this.before ) {
 		  this.taskDate = this.task.due ? this.task.due : undefined;
+      this.labels = this.task.labels;
 	  }
   }
 
@@ -126,6 +128,7 @@ export class TaskFormComponent implements OnInit {
   
   addTask() {
     if(this.taskForm && this.taskForm.valid) {
+      let lbls = this.labels.map((a) => a.id);
       this.service.addTask({
         title: this.taskForm.controls.title.value,
         description: this.taskForm.controls.description.value,
@@ -135,10 +138,10 @@ export class TaskFormComponent implements OnInit {
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
         completedAt: null,
-        labelIds: [1]
+        labelIds: lbls
       }, this.project ? this.project.id : undefined).subscribe(
-        (response: Task, projectId: number | undefined = this.project?.id) => {
-          this.tree.addNewTask(response, projectId);
+        (response: Task, projectId: number | undefined = this.project?.id, labels: number[] = lbls) => {
+          this.tree.addNewTask(response, projectId, labels);
         },
         (error: HttpErrorResponse) => {
          
@@ -159,7 +162,7 @@ export class TaskFormComponent implements OnInit {
 
   updateTask() {
     if(this.task && this.taskForm && this.taskForm.valid) {
-
+      let lbls = this.labels.map((a) => a.id);
       this.taskService.updateTask({
         title: this.taskForm.controls.title.value,
         description: this.taskForm.controls.description.value,
@@ -169,10 +172,10 @@ export class TaskFormComponent implements OnInit {
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
         completedAt: null,
-        labelIds: []
+        labelIds: lbls
       }, this.task.id).subscribe(
-        (response: Task, projectId: number | undefined = this.project?.id) => {
-          this.tree.updateTask(response, projectId);
+        (response: Task, projectId: number | undefined = this.project?.id, labels: number[] = lbls) => {
+          this.tree.updateTask(response, projectId, labels);
         },
         (error: HttpErrorResponse) => {
          
@@ -185,6 +188,7 @@ export class TaskFormComponent implements OnInit {
     if(this.task && this.taskForm && this.taskForm.valid) {
       let indentAfter = this.task.indent;
       let idAfter = this.task.id;
+      let lbls = this.labels.map((a) => a.id);
       this.taskService.addTaskAfter({
         title: this.taskForm.controls.title.value,
         description: this.taskForm.controls.description.value,
@@ -194,10 +198,10 @@ export class TaskFormComponent implements OnInit {
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
         completedAt: null,
-        labelIds: []
+        labelIds: lbls
       }, this.task.id).subscribe(
-        (response: Task, indent: number = indentAfter, taskId: number = idAfter, project: ProjectTreeElem | undefined = this.project) => {
-          this.tree.addNewTaskAfter(response, indent, taskId, project);
+        (response: Task, indent: number = indentAfter, taskId: number = idAfter, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
+          this.tree.addNewTaskAfter(response, indent, taskId, project, labels);
         },
         (error: HttpErrorResponse) => {
          
@@ -210,6 +214,7 @@ export class TaskFormComponent implements OnInit {
     if(this.task && this.taskForm && this.taskForm.valid) {
       let indentBefore = this.task.indent;
       let idBfore = this.task.id;
+      let lbls = this.labels.map((a) => a.id);
       this.taskService.addTaskBefore({
         title: this.taskForm.controls.title.value,
         description: this.taskForm.controls.description.value,
@@ -219,10 +224,10 @@ export class TaskFormComponent implements OnInit {
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
         completedAt: null,
-        labelIds: []
+        labelIds: lbls
       }, this.task.id).subscribe(
-        (response: Task, indent: number = indentBefore, taskId: number = idBfore, project: ProjectTreeElem | undefined = this.project) => {
-          this.tree.addNewTaskBefore(response, indent, taskId, project);
+        (response: Task, indent: number = indentBefore, taskId: number = idBfore, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
+          this.tree.addNewTaskBefore(response, indent, taskId, project, labels);
         },
         (error: HttpErrorResponse) => {
          
@@ -247,5 +252,23 @@ export class TaskFormComponent implements OnInit {
   choosePriority(priority: number) {
     this.closeSelectPriorityMenu();
     this.priority = priority;
+  }
+
+  labels: LabelDetails[] = [];
+  labelsForModal: LabelDetails[] = [];
+  showSelectLabelsMenu: boolean = false;
+
+  openSelectLabelsMenu() {
+    this.labelsForModal = [...this.labels];
+    this.showSelectLabelsMenu = true;
+  }
+
+  closeSelectLabelsMenu() {
+    this.showSelectLabelsMenu = false;
+  }
+
+  chooseLabel(labels: LabelDetails[]) {
+    this.closeSelectLabelsMenu();
+    this.labels = labels;
   }
 }

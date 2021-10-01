@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { LabelDetails } from '../entity/label-details';
 import { ParentWithId } from '../entity/parent-with-id';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { Task } from '../entity/task';
@@ -114,7 +115,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     );
   }
 
-  addNewTask(response: Task, project: ProjectTreeElem | undefined, indent: number = 0, parent: ParentWithId | null = null) {
+  addNewTask(response: Task, project: ProjectTreeElem | undefined, indent: number = 0, parent: ParentWithId | null = null, labels: LabelDetails[] = []) {
     this.list.push({
       id:response.id,
       title: response.title,
@@ -129,13 +130,13 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       indent: indent,
       parentList: [], 
       collapsed: false,
-      labels: [],
+      labels: labels,
       priority: response.priority
     });
     this.sort();
   }
 
-  updateTask(response: Task, project: ProjectTreeElem | undefined) {
+  updateTask(response: Task, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
     let task = this.getTaskById(response.id);
     if(task) {
       task.description = response.description;
@@ -143,6 +144,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       task.project = project ? project : null;
       task.due = response.due ? new Date(response.due) : null;
       task.priority = response.priority;
+      task.labels = labels
     }
   }
 
@@ -241,7 +243,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     }
   }
 
-  addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined) {
+  addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
     let afterTask = this.getTaskById(afterId);
     if(afterTask) {
       let tsk : TaskTreeElem = afterTask;
@@ -253,11 +255,11 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       for(let sibling of tasks) {
         sibling.order = sibling.order + 1;
       }
-      this.addNewTask(task, project, indent, tsk.parent);
+      this.addNewTask(task, project, indent, tsk.parent, labels);
     }
   }
 
-  addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined) {
+  addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
     let beforeTask = this.getTaskById(beforeId);
     if(beforeTask) {
       let tsk : TaskTreeElem = beforeTask;
@@ -269,7 +271,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       for(let sibling of tasks) {
         sibling.order = sibling.order + 1;
       }
-      this.addNewTask(task, project, indent, tsk.parent);
+      this.addNewTask(task, project, indent, tsk.parent, labels);
     }
   }
 

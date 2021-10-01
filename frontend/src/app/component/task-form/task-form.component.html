@@ -38,7 +38,7 @@
                 </button>
             </div>
             <div class="taskFormExtraActions">
-                <button type="button" class="itemAction">
+                <button type="button" class="itemAction" (click)="openSelectLabelsMenu()">
                     <i class="fa fa-tag"></i>
                 </button>
                 <button type="button" class="itemAction" (click)="openSelectPriorityMenu()">
@@ -68,4 +68,5 @@
 
 <app-date-dialog *ngIf="showSelectDateMenu" [taskDate]="taskDate" (closeEvent)="closeSelectDateMenu($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
 <app-project-choice-dialog *ngIf="showSelectProjectMenu" [project]="project" (closeEvent)="chooseProject($event)" (cancelEvent)="closeSelectProjectMenu()"></app-project-choice-dialog>
+<app-label-choice-dialog *ngIf="showSelectLabelsMenu" [labels]="labels" (closeEvent)="chooseLabel($event)" (cancelEvent)="closeSelectLabelsMenu()"></app-label-choice-dialog>
 <app-priority-modal *ngIf="showSelectPriorityMenu" [priority]="priorityForModal" (closeEvent)="choosePriority($event)" (cancelEvent)="closeSelectPriorityMenu()"></app-priority-modal>

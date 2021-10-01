@@ -119,14 +119,23 @@ export class TreeService {
     return this.tasks.getTasksByProject(projectId);
   }
 
-  addNewTask(response: Task, projectId: number | undefined) {
+  addNewTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
     let project = projectId ? this.getProjectById(projectId) : undefined;
-    this.tasks.addNewTask(response, project);
+    this.tasks.addNewTask(response, project, 0, null, this.getLabelsFromIds(labelIds));
   }
 
-  updateTask(response: Task, projectId: number | undefined) {
+  private getLabelsFromIds(labelIds: number[]): LabelDetails[] {
+    let labels: LabelDetails[] = [];
+    for (let id of labelIds) {
+      let label = this.getLabelById(id);
+      if (label) { labels.push(label); }
+    }
+    return labels;
+  }
+
+  updateTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
     let project = projectId ? this.getProjectById(projectId) : undefined;
-    this.tasks.updateTask(response, project);
+    this.tasks.updateTask(response, project, this.getLabelsFromIds(labelIds));
   }
 
   changeTaskCompletion(response: Task) {
@@ -153,12 +162,12 @@ export class TreeService {
     this.tasks.updateTaskDate(task);
   }
 
-  addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined) {
-    this.tasks.addNewTaskAfter(task, indent, afterId, project);
+  addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+    this.tasks.addNewTaskAfter(task, indent, afterId, project, this.getLabelsFromIds(labelIds));
   }
 
-  addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined) {
-    this.tasks.addNewTaskBefore(task, indent, beforeId, project);
+  addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+    this.tasks.addNewTaskBefore(task, indent, beforeId, project, this.getLabelsFromIds(labelIds));
   }
 
   moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
@@ -191,5 +200,11 @@ export class TreeService {
 
   getLabelById(id: number): LabelDetails | undefined {
     return this.labels.find((a) => a.id == id);
+  }
+
+  filterLabels(text: string): LabelDetails[] {
+    return this.labels.filter((a) => 
+      a.name.toLowerCase().includes(text.toLowerCase())
+    );
   }
 }
