@@ -7,4 +7,5 @@ export interface AddTaskRequest {
     priority: number;
     due: Date | null;
     completedAt: Date | null;
+    labelIds: number[];
 }

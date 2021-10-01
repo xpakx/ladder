@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +17,5 @@ public class AddTaskRequest {
     private Integer parentId;
     private Integer projectId;
     private Integer priority;
+    private List<Integer> labelIds;
 }

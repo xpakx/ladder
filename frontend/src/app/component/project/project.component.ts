@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
+import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { ProjectWithNameAndId } from 'src/app/entity/project-with-name-and-id';
 import { Task } from 'src/app/entity/task';
@@ -10,6 +11,7 @@ import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
+import { TaskDialogComponent } from '../task-dialog/task-dialog.component';
 
 @Component({
   selector: 'app-project',
@@ -417,5 +419,16 @@ export class ProjectComponent implements OnInit, AfterViewInit {
       this.openSelectPriorityModal(this.contextTaskMenu);
     }
     this.closeContextTaskMenu();
+  }
+
+  getTaskLabels(task: TaskTreeElem): LabelDetails[] {
+    let labels: LabelDetails[] = [];
+    for(let label of task.labels) {
+      let labelFromTree = this.tree.getLabelById(label.id);
+      if(labelFromTree) {
+        labels.push(labelFromTree);
+      }
+    }
+    return labels;
   }
 }

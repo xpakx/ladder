@@ -1,9 +1,11 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
+import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -12,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,12 +22,14 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
+    private final LabelRepository labelRepository;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, TaskRepository taskRepository, UserAccountRepository userRepository) {
+    public ProjectService(ProjectRepository projectRepository, TaskRepository taskRepository, UserAccountRepository userRepository, LabelRepository labelRepository) {
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.labelRepository = labelRepository;
     }
 
     public ProjectDetails getProjectById(Integer projectId, Integer userId) {
@@ -169,7 +170,14 @@ public class ProjectService {
                 .completed(false)
                 .collapsed(false)
                 .owner(userRepository.getById(userId))
+                .labels(transformLabelIdsToLabelReferences(request))
                 .build();
+    }
+
+    private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request) {
+        return request.getLabelIds() != null ?
+                request.getLabelIds().stream().map(labelRepository::getById).collect(Collectors.toSet()) :
+                new HashSet<>();
     }
 
     private Task getParentFromAddTaskRequest(AddTaskRequest request) {

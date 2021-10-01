@@ -3,7 +3,6 @@ import { Component, Input, OnInit, Output, EventEmitter, Renderer2, ViewChild, E
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
-import { TaskDetails } from 'src/app/entity/task-details';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
@@ -135,7 +134,8 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
-        completedAt: null
+        completedAt: null,
+        labelIds: [1]
       }, this.project ? this.project.id : undefined).subscribe(
         (response: Task, projectId: number | undefined = this.project?.id) => {
           this.tree.addNewTask(response, projectId);
@@ -168,7 +168,8 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
-        completedAt: null
+        completedAt: null,
+        labelIds: []
       }, this.task.id).subscribe(
         (response: Task, projectId: number | undefined = this.project?.id) => {
           this.tree.updateTask(response, projectId);
@@ -192,7 +193,8 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
-        completedAt: null
+        completedAt: null,
+        labelIds: []
       }, this.task.id).subscribe(
         (response: Task, indent: number = indentAfter, taskId: number = idAfter, project: ProjectTreeElem | undefined = this.project) => {
           this.tree.addNewTaskAfter(response, indent, taskId, project);
@@ -216,7 +218,8 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
-        completedAt: null
+        completedAt: null,
+        labelIds: []
       }, this.task.id).subscribe(
         (response: Task, indent: number = indentBefore, taskId: number = idBfore, project: ProjectTreeElem | undefined = this.project) => {
           this.tree.addNewTaskBefore(response, indent, taskId, project);

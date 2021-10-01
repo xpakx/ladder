@@ -441,3 +441,13 @@ button {
 .hidden-context-menu {
     display: none;
 }
+
+.task_list_item__info_tags__label {
+    font-size: 12px;
+    white-space: nowrap;
+    height: 16px;
+    line-height: 16px;
+    color: grey;
+    margin: 0 8px 0 0;
+    text-decoration: underline;
+}

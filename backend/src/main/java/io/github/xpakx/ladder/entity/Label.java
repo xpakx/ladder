@@ -21,10 +21,7 @@ public class Label {
     private String color;
 
     @JsonIgnore
-    @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name="task_label",
-            joinColumns={@JoinColumn(name="task_id")},
-            inverseJoinColumns={@JoinColumn(name="label_id")})
+    @ManyToMany(mappedBy = "labels")
     private Set<Task> tasks;
 
     @JsonIgnore
