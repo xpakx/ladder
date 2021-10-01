@@ -15,7 +15,7 @@
     <div class="projects" style="min-height: 0px;" [class.hidden]="tree.projectCollapsed">
         <div class="projects_list_container">
             <ul class="items generic_left_list projects_list">
-                <li *ngIf="draggedId" [dndDropzone]="['project']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item"></li>
+                <li *ngIf="draggedId" [dndDropzone]="['project']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item"  [dndDropzone]="['project']"></li>
                 <ng-container *ngFor="let project of tree.getProjects()">
                     <li class="project_list_item" [class.hiddenProject]="isParentCollapsed(project.parentList) || isParentDragged(project.parentList)" 
                         [dndDraggable]="project.id" (dndStart)="onDragStart(project.id)" (dndEnd)="onDragEnd()"  
@@ -40,7 +40,7 @@
                             <i class="fa fa-ellipsis-h"></i>
                         </button>
                     </li>
-                    <li *ngIf="draggedId && !hideDropZone(project)" class="drag_list_item"> <!--  [dndDropzone]="['project']" [dndDisableDropIf]="true" -->
+                    <li *ngIf="draggedId && !hideDropZone(project)" class="drag_list_item" [dndDropzone]="['project']"> <!-- [dndDisableDropIf]="true">-->
                         <span class="indent" *ngFor="let e of [].constructor(project.hasChildren && !project.collapsed ? project.indent+1 : project.indent)"></span>
                         <span class="indent drag-zone" [dndDropzone]="['project']" (dndDrop)="onDrop($event, project)" *ngIf="!project.hasChildren || project.collapsed"></span>
                         <span [dndDropzone]="['project']" (dndDrop)="onDrop($event, project, true)" class="drag-zone last-drag-zone"></span>

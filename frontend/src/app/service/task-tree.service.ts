@@ -77,9 +77,9 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     ).length;
   }
 
-  getNumOfUncompletedTasksByParent(taskId: number): number {
+  getNumOfCompletedTasksByParent(taskId: number): number {
     return this.list.filter((a) => 
-      a.parent && a.parent.id == taskId && !a.completed
+      a.parent && a.parent.id == taskId && a.completed
     ).length;
   }
 

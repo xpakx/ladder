@@ -95,8 +95,8 @@ export class TreeService {
     return this.tasks.getNumOfUncompletedTasksByProject(projectId);
   }
 
-  getNumOfUncompletedTasksByParent(parentId: number): number {
-    return this.tasks.getNumOfUncompletedTasksByParent(parentId);
+  getNumOfCompletedTasksByParent(parentId: number): number {
+    return this.tasks.getNumOfCompletedTasksByParent(parentId);
   }
 
   getNumOfTasksByParent(parentId: number): number {

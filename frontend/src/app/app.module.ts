@@ -21,6 +21,7 @@ import { ProjectChoiceDialogComponent } from './component/project-choice-dialog/
 import { PriorityModalComponent } from './component/priority-modal/priority-modal.component';
 import { ProjectListComponent } from './component/project-list/project-list.component';
 import { LabelChoiceDialogComponent } from './component/label-choice-dialog/label-choice-dialog.component';
+import { LabelListComponent } from './component/label-list/label-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -42,7 +43,8 @@ export function tokenGetter() {
     ProjectChoiceDialogComponent,
     PriorityModalComponent,
     ProjectListComponent,
-    LabelChoiceDialogComponent
+    LabelChoiceDialogComponent,
+    LabelListComponent
   ],
   imports: [
     BrowserModule,
