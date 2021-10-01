@@ -33,8 +33,20 @@ export class LabelChoiceDialogComponent implements OnInit {
     this.cancelEvent.emit(true);
   }
 
+  choice(label: LabelDetails) {
+    if(this.isLabelChosen(label.id)) {
+      this.cancelChoice(label);
+    } else {
+      this.chooseLabel(label);
+    }
+  }
+
   chooseLabel(label: LabelDetails) {
     this.labels.push(label);
+  }
+
+  cancelChoice(label: LabelDetails) {
+    this.labels = this.labels.filter((a) => a.id != label.id);
   }
 
   chooseLabels() {

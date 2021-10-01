@@ -12,7 +12,7 @@
         </form>
         <ul class="context-menu-project" #projectSelectMenu class="form-field">
             <li class="context-menu-project-item" *ngFor="let labelSel of visibleLabels">
-                <button type="button" (click)="chooseLabel(labelSel)">
+                <button type="button" (click)="choice(labelSel)">
                     <div class="taskFormExtraColor" [style]="'color: ' + labelSel.color +';'">
                         <i class="fa fa-tag ta-flip-horizontal"></i>
                     </div>
