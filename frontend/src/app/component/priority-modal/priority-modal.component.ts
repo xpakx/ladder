@@ -10,6 +10,13 @@ export class PriorityModalComponent implements OnInit {
   @Output() cancelEvent = new EventEmitter<boolean>();
   @Input() priority: number = 0;
 
+  priorities = [
+    {priority: 0, name: "No priority"},
+    {priority: 1, name: "Low priority"},
+    {priority: 2, name: "Medium priority"},
+    {priority: 3, name: "High priority"},
+  ];
+
   constructor() { }
 
   ngOnInit(): void {

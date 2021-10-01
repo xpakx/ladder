@@ -9,36 +9,15 @@
       </div>
       <div class="modal-body">
         <ul class="context-menu-project" class="form-field">
-            <li class="context-menu-project-item">
-                <button type="button" (click)="choosePriority(0)">
+            <li class="context-menu-project-item" *ngFor="let p of priorities">
+                <button type="button" (click)="choosePriority(p.priority)">
                     <span class="menu-icon">
-                        <i class="fa fa-flag priority_0"></i>
+                        <i class="fa fa-flag" [ngClass]="'priority_'+p.priority"></i>
                     </span>
-                    <span class="menu_label">No priority</span>
-                </button>
-            </li>
-            <li class="context-menu-project-item">
-                <button type="button" (click)="choosePriority(1)">
-                    <span class="menu-icon">
-                        <i class="fa fa-flag priority_1"></i>
+                    <span class="menu_label">{{p.name}}</span>
+                    <span class="menu-icon-select" *ngIf="priority == p.priority">
+                      <i class="fa fa-check"></i>
                     </span>
-                    <span class="menu_label">Low priority</span>
-                </button>
-            </li>
-            <li class="context-menu-project-item">
-                <button type="button" (click)="choosePriority(2)">
-                    <span class="menu-icon">
-                        <i class="fa fa-flag priority_2"></i>
-                    </span>
-                    <span class="menu_label">Medium priority</span>
-                </button>
-            </li>
-            <li class="context-menu-project-item">
-                <button type="button" (click)="choosePriority(3)">
-                    <span class="menu-icon">
-                        <i class="fa fa-flag priority_3"></i>
-                    </span>
-                    <span class="menu_label">High priority</span>
                 </button>
             </li>
         </ul>
