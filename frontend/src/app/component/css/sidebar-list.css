@@ -343,8 +343,6 @@ button {
     width: 100%;
 }
 
-
-
 .drag_list_item {
     position: relative;
     transition: height .3s cubic-bezier(.4,0,.2,1) 0ms;

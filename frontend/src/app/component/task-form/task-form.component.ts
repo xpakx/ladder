@@ -42,6 +42,7 @@ export class TaskFormComponent implements OnInit {
     
     if(this.task && !this.after && !this.before ) {
 		  this.taskDate = this.task.due ? this.task.due : undefined;
+      this.priority = this.task.priority;
       this.labels = this.task.labels;
 	  }
   }
