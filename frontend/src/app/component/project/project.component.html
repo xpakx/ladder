@@ -1,5 +1,4 @@
 <div class="panel"  role="tabpanel" *ngIf="project">
-
     <header class="view_header">
         <div class="header_content">
             <h1 class="editable">
@@ -70,7 +69,7 @@
                                 </div>
                                 <div class="task_list_item__info_tags" data-layout="list">
                                     <a *ngIf="task.hasChildren" class="task_list_item__info_tags__subtasks" href="/app/project/2255406154/task/4496282067">
-                                        <i class="fa fa-child"></i>
+                                        <i class="fa fa-folder"></i>
                                         <span>{{getNumOfUncompletedTasksByParent(task.id)}}/{{getNumOfTasksByParent(task.id)}}</span>
                                     </a>
                                     <button *ngIf="task.due && !task.completed" type="button" class="due_date_controls">

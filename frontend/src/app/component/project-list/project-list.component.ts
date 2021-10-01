@@ -27,8 +27,6 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
   @Output() addProjectModalBelow = new EventEmitter<ProjectTreeElem | undefined>();
   @Output() addProjectModalEdit = new EventEmitter<ProjectTreeElem | undefined>();
 
-
-
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private renderer: Renderer2, private router: Router, 
     private taskService: TaskService) { }
