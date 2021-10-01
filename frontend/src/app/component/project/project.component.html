@@ -86,7 +86,7 @@
                                             </ng-container>
                                         </span>
                                     </button>
-                                    <span *ngFor="let label of getTaskLabels(task)" class="task_list_item__info_tags__label">
+                                    <span *ngFor="let label of getTaskLabels(task)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
                                         <span>{{label.name}}</span>
                                     </span>
                                     

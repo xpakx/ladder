@@ -636,6 +636,11 @@ button {
       display: block;
       z-index: 5;
       box-shadow: 0px 0px 9px 3px rgba(41,41,41,.25);
+      transition: box-shadow 0 .25s;
+    }
+
+    .hiddenLeftNav {
+        box-shadow: none;
     }
 
     .top-navbar-right {
