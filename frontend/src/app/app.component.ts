@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
 import { ProjectService } from './service/project.service';
 import { TaskService } from './service/task.service';
@@ -96,5 +97,13 @@ export class AppComponent {
 
   closeLabelModal() {
     this.displayLabelModal = false;
+  }
+
+
+  labelForModalWindow: LabelDetails | undefined;
+
+  openLabelModalWithLabel(label: LabelDetails | undefined) {
+    this.labelForModalWindow = label;
+    this.openLabelModal();
   }
 }

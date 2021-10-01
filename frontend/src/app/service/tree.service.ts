@@ -207,4 +207,8 @@ export class TreeService {
       a.name.toLowerCase().includes(text.toLowerCase())
     );
   }
+
+  deleteLabel(labelId: number) {
+    this.labels = this.labels.filter((a) => a.id != labelId);
+  }
 }

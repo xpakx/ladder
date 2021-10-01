@@ -88,7 +88,8 @@
 						(addProjectModalAbove)="openProjectModalAbove($event)"
 						(addProjectModalBelow)="openProjectModalBelow($event)"></app-project-list>
 
-						<app-label-list (addLabelModal)="openLabelModal()"></app-label-list>
+						<app-label-list (addLabelModal)="openLabelModal()"
+						(addLabelModalEdit)="openLabelModalWithLabel($event)"></app-label-list>
 
 						<div class="expansion_panel">
 							<div class="expansion_panel__header" style="top: 372px;">
@@ -147,5 +148,5 @@
 </div>
 
 <app-project-dialog *ngIf="displayProjectModal" (closeEvent)="closeProjectModal()" [project]="projectForModalWindow" [after]="addAfter" [before]="addBefore"> </app-project-dialog>
-<app-label-dialog *ngIf="displayLabelModal" (closeEvent)="closeLabelModal()"> </app-label-dialog>
+<app-label-dialog *ngIf="displayLabelModal" (closeEvent)="closeLabelModal()" [label]="labelForModalWindow"> </app-label-dialog>
 <app-task-dialog *ngIf="displayAddTask" (closeEvent)="closeAddTaskModal()"></app-task-dialog>
