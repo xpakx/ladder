@@ -31,6 +31,11 @@ export class TreeService {
     this.projects.load(tree.projects);
     this.tasks.load(tree.tasks);
     this.labels = tree.labels;
+    this.sortLabels();
+  }
+
+  sortLabels() {
+    this.labels.sort((a, b) => a.generalOrder - b.generalOrder);
   }
 
   getProjects() {
@@ -185,8 +190,10 @@ export class TreeService {
       name: request.name,
       id: request.id,
       color: request.color,
-      favorite: request.favorite
-    })
+      favorite: request.favorite,
+      generalOrder: request.generalOrder
+    });
+    this.sortLabels();
   }
 
   updateLabel(request: Label, labelId: number) {
@@ -194,6 +201,7 @@ export class TreeService {
     if(label) {
       label.name = request.name;
       label.color = request.color;
+      label.favorite = request.favorite;
     } 
   }
 
@@ -215,6 +223,34 @@ export class TreeService {
     let label = this.getLabelById(response.id);
     if(label) {
       label.favorite = response.favorite;
+    }
+  }
+
+  addNewLabelBefore(label: Label, beforeId: number) {
+    let beforeLabel = this.getLabelById(beforeId);
+    if(beforeLabel) {
+      let lbl : LabelDetails = beforeLabel;
+      label.generalOrder = lbl.generalOrder;
+      let labels = this.labels
+        .filter((a) => a.generalOrder >= lbl.generalOrder);
+        for(let lab of labels) {
+          lab.generalOrder = lab.generalOrder + 1;
+        }
+      this.addNewLabel(label);
+    }
+  }
+
+  addNewLabelAfter(label: Label, afterId: number) {
+    let afterLabel = this.getLabelById(afterId);
+    if(afterLabel) {
+      let lbl : LabelDetails = afterLabel;
+      label.generalOrder = lbl.generalOrder + 1;
+      let labels = this.labels
+        .filter((a) => a.generalOrder > lbl.generalOrder);
+        for(let lab of labels) {
+          lab.generalOrder = lab.generalOrder + 1;
+        }
+      this.addNewLabel(label);
     }
   }
 }

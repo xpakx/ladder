@@ -83,7 +83,14 @@ export class LabelDialogComponent implements OnInit {
   }
 
   addBeforeLabelModal(request: LabelRequest, labelBefore: LabelDetails) {
-    
+    this.labelService.addLabelBefore(request, labelBefore.id).subscribe(
+      (response: Label, beforeId: number = labelBefore.id) => {
+        this.tree.addNewLabelBefore(response, beforeId);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
   }
 
   editProjectModal(request: LabelRequest, id: number) {
@@ -97,7 +104,14 @@ export class LabelDialogComponent implements OnInit {
     );
   }
 
-  addAfterLabelModal(request: LabelRequest, labelBefore: LabelDetails) {
-    
+  addAfterLabelModal(request: LabelRequest, labelAfter: LabelDetails) {
+    this.labelService.addLabelAfter(request, labelAfter.id).subscribe(
+      (response: Label, afterId: number = labelAfter.id) => {
+        this.tree.addNewLabelAfter(response, afterId);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
   }
 }

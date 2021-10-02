@@ -13,8 +13,8 @@ import { TreeService } from 'src/app/service/tree.service';
 })
 export class LabelListComponent implements OnInit, AfterViewInit {
   @Output() addLabelModal = new EventEmitter<boolean>();
-  @Output() addProjectModalAbove = new EventEmitter<LabelDetails | undefined>();
-  @Output() addProjectModalBelow = new EventEmitter<LabelDetails | undefined>();
+  @Output() addLabelModalAbove = new EventEmitter<LabelDetails | undefined>();
+  @Output() addLabelModalBelow = new EventEmitter<LabelDetails | undefined>();
   @Output() addLabelModalEdit = new EventEmitter<LabelDetails | undefined>();
 
   displayLabelModal: boolean = false;
@@ -89,6 +89,17 @@ export class LabelListComponent implements OnInit, AfterViewInit {
     this.addLabelModalEdit.emit(this.contextMenuLabel);
     this.closeContextMenu();
   }
+
+  openProjectModalAbove() {
+    this.addLabelModalAbove.emit(this.contextMenuLabel);
+    this.closeContextMenu();
+  }
+
+  openProjectModalBelow() {
+    this.addLabelModalBelow.emit(this.contextMenuLabel);
+    this.closeContextMenu();
+  }
+
 
   updateLabelFav() {
     if(this.contextMenuLabel) {

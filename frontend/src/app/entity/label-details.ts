@@ -3,4 +3,5 @@ export interface LabelDetails {
     id: number;
     color: string;
     favorite: boolean;
+    generalOrder: number;
 }

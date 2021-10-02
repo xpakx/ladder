@@ -45,7 +45,7 @@
 <div class="ist-menu context" [class.hidden-context-menu]="!showContextMenu" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
 	<ul class="context-menu-project" #labelContext>
 		<li class="context-menu-project-item">
-			<button>
+			<button (click)="openProjectModalAbove()">
 				<span class="menu_icon">
 					<i class="fa fa-arrow-up"></i>
 				</span>
@@ -53,7 +53,7 @@
 			</button>
 		</li>
 		<li class="context-menu-project-item">
-			<button>
+			<button (click)="openProjectModalBelow()">
 				<span class="menu_icon">
 					<i class="fa fa-arrow-down"></i>
 				</span>

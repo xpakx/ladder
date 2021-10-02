@@ -37,4 +37,14 @@ export class LabelService {
     let userId  = this.getUserId();
     return this.http.put<Label>(`${this.apiServerUrl}/${userId}/labels/${labelId}/favorite`, request);
   }
+
+  public addLabelAfter(request: LabelRequest, labelId: number):  Observable<Label> {
+    let userId  = this.getUserId();
+    return this.http.post<Label>(`${this.apiServerUrl}/${userId}/labels/${labelId}/after`, request);
+  }
+
+  public addLabelBefore(request: LabelRequest, labelId: number):  Observable<Label> {
+    let userId  = this.getUserId();
+    return this.http.post<Label>(`${this.apiServerUrl}/${userId}/labels/${labelId}/before`, request);
+  }
 }

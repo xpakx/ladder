@@ -97,13 +97,28 @@ export class AppComponent {
 
   closeLabelModal() {
     this.displayLabelModal = false;
+    this.labelForModalWindow = undefined;
+    this.addLabelAfter = false;
+    this.addLabelBefore = false;
   }
 
 
   labelForModalWindow: LabelDetails | undefined;
+  addLabelAfter: boolean = false;
+  addLabelBefore: boolean = false;
 
   openLabelModalWithLabel(label: LabelDetails | undefined) {
     this.labelForModalWindow = label;
     this.openLabelModal();
+  }
+
+  openLabelModalAbove(project: LabelDetails | undefined) {
+    this.addLabelBefore = true;
+    this.openLabelModalWithLabel(project);
+  }
+
+  openLabelModalBelow(project: LabelDetails | undefined) {
+    this.addLabelAfter = true;
+    this.openLabelModalWithLabel(project);
   }
 }
