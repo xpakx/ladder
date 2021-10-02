@@ -8,4 +8,5 @@ import lombok.Setter;
 public class LabelRequest {
     private String name;
     private String color;
+    private boolean favorite;
 }

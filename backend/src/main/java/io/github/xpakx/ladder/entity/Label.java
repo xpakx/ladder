@@ -19,6 +19,8 @@ public class Label {
 
     private String name;
     private String color;
+    private Integer generalOrder;
+    private boolean favorite;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "labels")

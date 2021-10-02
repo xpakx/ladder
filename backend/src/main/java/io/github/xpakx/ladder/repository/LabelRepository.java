@@ -14,4 +14,7 @@ public interface LabelRepository extends JpaRepository<Label, Integer> {
     void deleteByIdAndOwnerId(Integer labelId, Integer ownerId);
 
     <T> List<T> findByOwnerId(Integer userId, Class<T> type);
+
+    List<Label> findByOwnerIdAndGeneralOrderGreaterThan(Integer ownerId, Integer generalOrder);
+    List<Label> findByOwnerIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer generalOrder);
 }
