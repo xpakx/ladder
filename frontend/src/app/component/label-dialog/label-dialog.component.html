@@ -18,6 +18,15 @@
                 <label for="labelColor">Color</label>
                 <input class="form-control mr-sm-2" placeholder="" id="color" formControlName="color">
             </div>
+
+            <div class="form-field-inline">
+              <div class="switch" [class.switch-checked]="favorite" (click)="switchFav()">
+                  <span class="switch-handle"></span>
+              </div>
+              <label>
+                  Add to favorites
+              </label>
+          </div>
         </form>
   
       </div>

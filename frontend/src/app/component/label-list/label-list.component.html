@@ -68,11 +68,11 @@
 				<div class="menu_label">Edit label</div>
 			</button>
 		</li>
-		<li class="context-menu-project-item">
-			<button>
+		<li class="context-menu-project-item" *ngIf="contextMenuLabel">
+			<button (click)="updateLabelFav()">
 				<span class="menu_icon">
-					<i class="fa fa-heart-o"></i>
-					<!--<i class="fa fa-heart" *ngIf="contextProjectMenu.favorite"></i>-->
+					<i class="fa fa-heart-o" *ngIf="!contextMenuLabel.favorite"></i>
+					<i class="fa fa-heart" *ngIf="contextMenuLabel.favorite"></i>
 				</span>
 				<div class="menu_label">Add to favorites</div>
 			</button>

@@ -2,11 +2,9 @@ import { Injectable } from '@angular/core';
 import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
-import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { Task } from '../entity/task';
-import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { UserWithData } from '../entity/user-with-data';
 import { ProjectTreeService } from './project-tree.service';
@@ -186,7 +184,8 @@ export class TreeService {
     this.labels.push({
       name: request.name,
       id: request.id,
-      color: request.color
+      color: request.color,
+      favorite: request.favorite
     })
   }
 
@@ -210,5 +209,12 @@ export class TreeService {
 
   deleteLabel(labelId: number) {
     this.labels = this.labels.filter((a) => a.id != labelId);
+  }
+
+  changeLabelFav(response: Label) {
+    let label = this.getLabelById(response.id);
+    if(label) {
+      label.favorite = response.favorite;
+    }
   }
 }

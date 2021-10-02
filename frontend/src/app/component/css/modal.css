@@ -285,3 +285,38 @@ button {
 .modal.modal-background {
     background-color: rgba(0,0,0,.5);
 }
+
+.modal .switch {
+    position: relative;
+    display: inline-block;
+    overflow: visible;
+    margin-right: 10px;
+    width: 32px;
+    height: 18px;
+    min-height: auto;
+    border-radius: 9px;
+    background-color: #aaa;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.modal .switch .switch-handle {
+    position: absolute;
+    display: block;
+    padding: 0;
+    top: 3px;
+    left: 3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left .28s cubic-bezier(.4,0,.2,1);
+}
+
+.modal .switch-checked {
+    background-color: #058527;
+}
+
+.modal .switch-checked .switch-handle {
+    left: 17px;
+}

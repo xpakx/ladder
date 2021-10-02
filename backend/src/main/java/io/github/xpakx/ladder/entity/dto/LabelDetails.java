@@ -4,4 +4,5 @@ public interface LabelDetails {
     Integer getId();
     String getName();
     String getColor();
+    boolean getFavorite();
 }

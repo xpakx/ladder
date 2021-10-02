@@ -21,6 +21,8 @@ export class LabelDialogComponent implements OnInit {
   @Input() before: boolean = false;
   editMode: boolean = false;
 
+  favorite: boolean = false;
+
   constructor(private fb: FormBuilder, public tree : TreeService, 
     private labelService: LabelService) { 
     this.addLabelForm = this.fb.group({
@@ -45,10 +47,15 @@ export class LabelDialogComponent implements OnInit {
     this.closeEvent.emit(true);
   }
 
+  switchFav() {
+    this.favorite = !this.favorite;
+  }
+
   addLabelModal() {
     let request: LabelRequest = {
       name: this.addLabelForm.controls.name.value,
-      color: this.addLabelForm.controls.color.value
+      color: this.addLabelForm.controls.color.value,
+      favorite: this.favorite
     };
     
     this.closeLabelModal();

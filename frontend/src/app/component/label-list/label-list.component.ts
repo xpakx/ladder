@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Label } from 'src/app/entity/label';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -86,6 +87,21 @@ export class LabelListComponent implements OnInit, AfterViewInit {
 
   openLabelModalWithLabel() {
     this.addLabelModalEdit.emit(this.contextMenuLabel);
+    this.closeContextMenu();
+  }
+
+  updateLabelFav() {
+    if(this.contextMenuLabel) {
+      this.labelService.updateLabelFav(this.contextMenuLabel.id, {flag: !this.contextMenuLabel.favorite}).subscribe(
+        (response: Label) => {
+        this.tree.changeLabelFav(response);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+
     this.closeContextMenu();
   }
 }
