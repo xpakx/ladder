@@ -48,10 +48,10 @@ export abstract class IndentableService<T extends ParentWithId> {
         let children = this.list
         .filter((a) => a.parent && a.parent.id == projectId);
         for(let child of children) {
-          child.indent = indent;
-          this.recalculateChildrenIndent(child.id, indent+1);
+            child.indent = indent;
+            this.recalculateChildrenIndent(child.id, indent+1);
         }
-      }
+    }
     
     protected recalculateHasChildren(project: IndentableTreeElem<T>) {
         let children = this.list.filter((a) => a.parent && a.parent.id == project.id);

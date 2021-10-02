@@ -233,7 +233,23 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
   }
 
   deleteTask(taskId: number) {
-    this.list = this.list.filter((a) => a.id != taskId);
+    let ids = this.getAllChildren(taskId);
+    this.list = this.list.filter((a) => !ids.includes(a.id));
+  }
+
+  deleteAllTasksFromProject(projectId: number) {
+    this.list = this.list.filter((a) => !a.project || a.project.id != projectId);
+  }
+
+  protected getAllChildren(taskId: number): number[] {
+    let children = this.list
+    .filter((a) => a.parent && a.parent.id == taskId);
+    let result: number[] = [];
+    result.push(taskId);
+    for(let child of children) {
+        result = result.concat(this.getAllChildren(child.id));
+    }
+    return result;
   }
 
   updateTaskDate(task: Task) {

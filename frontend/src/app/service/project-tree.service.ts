@@ -188,8 +188,21 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
     return this.list.find((a) => a.id == projectId);
   }
 
-  deleteProject(projectId: number) {
-    this.list = this.list.filter((a) => a.id != projectId);
+  deleteProject(projectId: number): number[] {
+    let ids = this.getAllChildren(projectId);
+    this.list = this.list.filter((a) => !ids.includes(a.id));
+    return ids;
+  }
+
+  protected getAllChildren(projectId: number): number[] {
+    let children = this.list
+    .filter((a) => a.parent && a.parent.id == projectId);
+    let result: number[] = [];
+    result.push(projectId);
+    for(let child of children) {
+        result = result.concat(this.getAllChildren(child.id));
+    }
+    return result;
   }
 
   changeFav(response: Project) {

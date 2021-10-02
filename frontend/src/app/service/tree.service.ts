@@ -75,7 +75,10 @@ export class TreeService {
   }
 
   deleteProject(projectId: number) {
-    this.projects.deleteProject(projectId);
+    let ids = this.projects.deleteProject(projectId);
+    for(let id of ids) {
+      this.tasks.deleteAllTasksFromProject(id);
+    }
   }
 
   changeFav(response: Project) {

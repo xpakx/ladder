@@ -323,26 +323,6 @@ button {
     display: none;
 }
 
-.dndDraggingSource {
-    display: none !important;
-}
-
-.drag-zone.dndDragover {
-    background: #ececec;
-}
-
-.project_list_item.dndDragover {
-    background: #ececec;
-}
-
-.last-drag-zone {
-    width: 100%;
-}
-
-.drag_list_item {
-    height: 35px;
-}
-
 .project_list_item .left_actions button {
     display: flex;
     flex-wrap: nowrap;
@@ -365,9 +345,17 @@ button {
     flex-shrink: 0;
 }
 
+.drag_list_item {
+    height: 35px;
+}
 
+.dndDraggingSource {
+    display: none !important;
+}
 
-
+.drag-zone.dndDragover {
+    background: #ececec;
+}
 
 .drag_list_item {
     position: relative;

@@ -155,8 +155,8 @@ button {
 	height: 10px;
 	background-color: currentColor;
 	border-radius: 50%;
-	margin-right: 22px;
-	margin-left: 6px;
+	margin-right: 28px;
+	margin-left: 0;
     flex-shrink: 0;
 }
 
