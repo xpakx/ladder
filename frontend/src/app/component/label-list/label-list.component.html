@@ -15,10 +15,12 @@
     <div class="projects" style="min-height: 0px;" [class.hidden]="tree.labelCollapsed">
         <div class="projects_list_container">
             <ul class="items generic_left_list projects_list">
+				<li *ngIf="draggedId" [dndDropzone]="['label']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item"></li>
                 <ng-container *ngFor="let label of tree.getLabels()">
-                    <li class="project_list_item">
+                    <li class="project_list_item" [dndDraggable]="label.id" (dndStart)="onDragStart(label.id)" (dndEnd)="onDragEnd()"  
+					dndType="label">
                         <span class="left_actions">
-                            <button type="button" class="handle">
+                            <button type="button" class="handle" dndHandle>
                                 <i class="fa fa-ellipsis-v"></i>
                                 <i class="fa fa-ellipsis-v"></i>
                             </button>
@@ -35,6 +37,8 @@
                             <i class="fa fa-ellipsis-h"></i>
                         </button>
                     </li>
+
+					<li *ngIf="draggedId" [dndDropzone]="['label']" (dndDrop)="onDrop($event, label)" class="drag-zone drag_list_item"></li>
                 </ng-container>
             </ul>
         </div>

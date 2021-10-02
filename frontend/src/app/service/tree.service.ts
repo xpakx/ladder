@@ -253,4 +253,32 @@ export class TreeService {
       this.addNewLabel(label);
     }
   }
+
+  moveLabelAfter(label: Label, afterId: number) {
+    let afterLabel = this.getLabelById(afterId);
+    let movedLabel = this.getLabelById(label.id);
+    if(afterLabel && movedLabel) {
+      let lbl : LabelDetails = afterLabel;
+      let labels = this.labels
+        .filter((a) => a.generalOrder > lbl.generalOrder);
+        for(let lab of labels) {
+          lab.generalOrder = lab.generalOrder + 1;
+        }
+      
+      movedLabel.generalOrder = afterLabel.generalOrder+1;
+
+      this.sortLabels();
+    }
+  }
+
+  moveLabelAsFirst(label: Label) {
+    let movedLabel = this.getLabelById(label.id);
+    if(movedLabel) {
+      for(let lbl of this.labels) {
+        lbl.generalOrder = lbl.generalOrder + 1;
+      }
+      movedLabel.generalOrder = 1;
+      this.sortLabels();
+    }
+  }
 }

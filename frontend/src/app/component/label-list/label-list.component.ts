@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { DndDropEvent } from 'ngx-drag-drop';
 import { Label } from 'src/app/entity/label';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { LabelService } from 'src/app/service/label.service';
@@ -114,5 +115,46 @@ export class LabelListComponent implements OnInit, AfterViewInit {
     }
 
     this.closeContextMenu();
+  }
+
+  // drag'n'drop
+
+  draggedId: number | undefined;
+
+  onDragStart(id: number) {
+	  this.draggedId = id;
+  }
+
+  onDragEnd() {
+	  this.draggedId = undefined;
+  }
+
+  isDragged(id: number): boolean {
+    return this.draggedId == id;
+  }
+  
+  onDrop(event: DndDropEvent, target: LabelDetails) {
+    let id = Number(event.data);
+    
+    this.labelService.moveLabelAfter({id: target.id}, id).subscribe(
+        (response: Label, afterId: number = target.id) => {
+        this.tree.moveLabelAfter(response, afterId);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+  }
+
+  onDropFirst(event: DndDropEvent) {
+    let id = Number(event.data);
+    this.labelService.moveLabelToBeginning(id).subscribe(
+        (response: Label) => {
+        this.tree.moveLabelAsFirst(response);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
   }
 }

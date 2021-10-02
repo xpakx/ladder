@@ -335,10 +335,6 @@ button {
     background: #ececec;
 }
 
-.drag-zone.dndDragover ~ .drag-zone {
-    background: #ececec;
-}
-
 .last-drag-zone {
     width: 100%;
 }
@@ -346,35 +342,6 @@ button {
 .drag_list_item {
     height: 35px;
 }
-
-/*
-.drag_list_item {
-    position: relative;
-}
-
-.drag_list_item > * {
-    height: 0;
-}
-
-.drag_list_item.dndDragover > * {
-    height: 35px;
-}
-
-.drag_list_item::before {
-    content: '';
-    height: 18px;
-    width: 100%;
-    margin-top: 17px;
-    position: absolute;
-}
-
-.drag_list_item::after {
-    content: '';
-    height: 17px;
-    width: 100%;
-    margin-top: 35px;
-    position: absolute;
-}*/
 
 .project_list_item .left_actions button {
     display: flex;

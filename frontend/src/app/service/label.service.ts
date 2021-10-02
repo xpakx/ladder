@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { BooleanRequest } from '../entity/boolean-request';
+import { IdRequest } from '../entity/id-request';
 import { Label } from '../entity/label';
 import { LabelRequest } from '../entity/label-request';
 
@@ -46,5 +47,15 @@ export class LabelService {
   public addLabelBefore(request: LabelRequest, labelId: number):  Observable<Label> {
     let userId  = this.getUserId();
     return this.http.post<Label>(`${this.apiServerUrl}/${userId}/labels/${labelId}/before`, request);
+  }
+
+  public moveLabelAfter(request: IdRequest, labelId: number):  Observable<Label> {
+    let userId  = this.getUserId();
+    return this.http.put<Label>(`${this.apiServerUrl}/${userId}/labels/${labelId}/move/after`, request);
+  }
+
+  public moveLabelToBeginning(labelId: number):  Observable<Label> {
+    let userId  = this.getUserId();
+    return this.http.put<Label>(`${this.apiServerUrl}/${userId}/labels/${labelId}/move/asFirst`, null);
   }
 }
