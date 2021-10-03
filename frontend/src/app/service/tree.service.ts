@@ -284,4 +284,8 @@ export class TreeService {
       this.sortLabels();
     }
   }
+
+  getNumOfUncompletedTasksByLabel(labelId: number): number {
+    return this.tasks.getNumOfUncompletedTasksByLabel(labelId);
+  }
 }

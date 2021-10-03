@@ -309,4 +309,10 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
       taskToUpdate.priority = task.priority;
     }
   }
+
+  getNumOfUncompletedTasksByLabel(labelId: number): number {
+    return this.list.filter((a) => 
+      a.labels.find((b) => b.id == labelId)
+    ).length;
+  }
 }

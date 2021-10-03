@@ -30,7 +30,7 @@
                                 <i class="fa fa-flip-horizontal fa-tag"></i>
                             </div>
                             <span class="project-name">{{label.name}}</span>
-                            <div class="counter_count">0</div>
+                            <div class="counter_count">{{tree.getNumOfUncompletedTasksByLabel(label.id)}}</div>
                         </button>
                         
                         <button type="button" #contextMenuButton class="icon_more" (click)="openContextMenu($event, label)">
