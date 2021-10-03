@@ -16,7 +16,7 @@
         <div class="projects_list_container">
             <ul class="items generic_left_list projects_list">
                 <li *ngIf="draggedId" [dndDropzone]="['project']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item"  [dndDropzone]="['project']"></li>
-                <ng-container *ngFor="let project of tree.getProjects()">
+                <ng-container *ngFor="let project of tree.getProjects(); let i = index">
                     <li class="project_list_item" [class.hiddenProject]="isParentCollapsed(project.parentList) || isParentDragged(project.parentList)" 
                         [dndDraggable]="project.id" (dndStart)="onDragStart(project.id)" (dndEnd)="onDragEnd()"  
                         [dndDropzone]="['task']" (dndDrop)="onDropTask($event, project)"  dndType="project">
@@ -41,8 +41,15 @@
                         </button>
                     </li>
                     <li *ngIf="draggedId && !hideDropZone(project)" class="drag_list_item" [dndDropzone]="['project']"> <!-- [dndDisableDropIf]="true">-->
-                        <span class="indent" *ngFor="let e of [].constructor(project.hasChildren && !project.collapsed ? project.indent+1 : project.indent)"></span>
-                        <span class="indent drag-zone" [dndDropzone]="['project']" (dndDrop)="onDrop($event, project)" *ngIf="!project.hasChildren || project.collapsed"></span>
+                        <ng-container *ngIf="calculateAdditionalDropzones(i, project); else noAdditionalDropzones">
+                            <span class="indent" *ngFor="let e of [].constructor(getAmountOfNormalDropzones(i, project))"></span>
+                            <span class="indent drag-zone" *ngFor="let e of getListForDropzones(i, project)" [dndDropzone]="['project']" (dndDrop)="onDrop($event, e)"></span>
+                            <span class="indent drag-zone" [dndDropzone]="['project']" (dndDrop)="onDrop($event, project)"></span>
+                        </ng-container>
+                        <ng-template #noAdditionalDropzones>
+                            <span class="indent" *ngFor="let e of [].constructor(project.hasChildren && !project.collapsed ? project.indent+1 : project.indent)"></span>
+                            <span class="indent drag-zone" [dndDropzone]="['project']" (dndDrop)="onDrop($event, project)" *ngIf="!project.hasChildren || project.collapsed"></span>
+                        </ng-template>
                         <span [dndDropzone]="['project']" (dndDrop)="onDrop($event, project, true)" class="drag-zone last-drag-zone"></span>
                     </li>
                 </ng-container>

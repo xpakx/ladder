@@ -244,4 +244,52 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
       }
     );
   }
+
+
+  getListForDropzones(i: number, project: ProjectTreeElem) {
+    let dropzones = project.indent - this.amountOfDropzones(i, project);
+    return project.parentList.slice(-dropzones);
+  }
+
+  private amountOfDropzones(i: number, project: ProjectTreeElem): number {
+    return project.hasChildren ?
+      this.findFirstWithSmallerIndentAndReturnIndent(i + 1, project.indent) : this.indentForPosition(i + 1);
+  }
+
+  getAmountOfNormalDropzones(i: number, project: ProjectTreeElem): number {
+    return this.amountOfDropzones(i, project);
+  }
+
+
+  calculateAdditionalDropzones(i: number, project: ProjectTreeElem): boolean {
+    if(!project.hasChildren) {
+     return project.indent > this.indentForPosition(i+1);
+    } 
+    if(!project.collapsed) {
+      return false;
+    }
+    return this.findFirstWithSmallerIndentAndReturnIndent(i+1, project.indent) < project.indent;
+  }
+
+  private findFirstWithSmallerIndentAndReturnIndent(index: number, indent: number): number {
+    for (let i = index; i < this.tree.getProjects().length; i++) {
+      if (indent >= this.tree.getProjects()[i].indent) {
+        return this.tree.getProjects()[i].indent;
+      }
+    }
+    return 0;
+  }
+
+  private indentForPosition(i: number): number {
+    if(this.outOfBound(i)) {
+      return 0;
+    } else {
+      return this.tree.getProjects()[i].indent;
+    }
+    
+  }
+
+  private outOfBound(i: number): boolean {
+    return i >= this.tree.getProjects().length;
+  }
 }
