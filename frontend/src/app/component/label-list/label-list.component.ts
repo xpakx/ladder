@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { Label } from 'src/app/entity/label';
 import { LabelDetails } from 'src/app/entity/label-details';
-import { AddLabelEvent } from 'src/app/entity/utils/add-label-event';
+import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete-service.service';
 import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -15,11 +15,7 @@ import { TreeService } from 'src/app/service/tree.service';
   styleUrls: ['./label-list.component.css']
 })
 export class LabelListComponent implements OnInit, AfterViewInit {
-  @Output() addLabelModal = new EventEmitter<boolean>();
-  @Output() addLabelModalAbove = new EventEmitter<LabelDetails | undefined>();
-  @Output() addLabelModalBelow = new EventEmitter<LabelDetails | undefined>();
-  @Output() addLabelModalEdit = new EventEmitter<LabelDetails | undefined>();
-  @Output() addLabel = new EventEmitter<AddLabelEvent>();
+  @Output() addLabel = new EventEmitter<AddEvent<LabelDetails>>();
 
   displayLabelModal: boolean = false;
 
@@ -31,7 +27,7 @@ export class LabelListComponent implements OnInit, AfterViewInit {
   }
 
   openLabelModal() {
-    this.addLabel.emit({label: undefined, after: false, before: false});
+    this.addLabel.emit({object: undefined, after: false, before: false});
   }
 
   toLabel(id: number) {
@@ -83,17 +79,17 @@ export class LabelListComponent implements OnInit, AfterViewInit {
   }
 
   openLabelModalWithLabel() {
-    this.addLabel.emit({label: this.contextMenuLabel, after: false, before: false});
+    this.addLabel.emit({object: this.contextMenuLabel, after: false, before: false});
     this.closeContextMenu();
   }
 
   openProjectModalAbove() {
-    this.addLabel.emit({label: this.contextMenuLabel, after: false, before: true});
+    this.addLabel.emit({object: this.contextMenuLabel, after: false, before: true});
     this.closeContextMenu();
   }
 
   openProjectModalBelow() {
-    this.addLabel.emit({label: this.contextMenuLabel, after: true, before: false});
+    this.addLabel.emit({object: this.contextMenuLabel, after: true, before: false});
     this.closeContextMenu();
   }
 

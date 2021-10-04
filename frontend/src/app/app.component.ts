@@ -2,10 +2,9 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
-import { AddLabelEvent } from './entity/utils/add-label-event';
+import { AddEvent } from './entity/utils/add-event';
 import { DeleteService } from './service/delete-service.service';
 import { ProjectService } from './service/project.service';
-import { TaskService } from './service/task.service';
 import { TreeService } from './service/tree.service';
 
 @Component({
@@ -92,9 +91,9 @@ export class AppComponent {
   }
 
   displayLabelModal: boolean = false;
-  labelData: AddLabelEvent | undefined;
+  labelData: AddEvent<LabelDetails> | undefined;
 
-  openLabelModal(event: AddLabelEvent) {
+  openLabelModal(event: AddEvent<LabelDetails>) {
     this.displayLabelModal = true;
     this.labelData = event;
   }
