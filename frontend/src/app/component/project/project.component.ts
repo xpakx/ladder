@@ -4,16 +4,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
-import { ProjectWithNameAndId } from 'src/app/entity/project-with-name-and-id';
 import { Task } from 'src/app/entity/task';
-import { TaskDetails } from 'src/app/entity/task-details';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
+import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete-service.service';
-import { ProjectService } from 'src/app/service/project.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { TaskDialogComponent } from '../task-dialog/task-dialog.component';
 
 @Component({
   selector: 'app-project',
@@ -28,6 +25,7 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   showAddTaskForm: boolean = false;
   showEditTaskFormById: number | undefined;
   id!: number;
+  taskData: AddEvent<TaskTreeElem>  = {object: undefined, after: false, before: true};
 
   draggedId: number | undefined;
 
@@ -59,27 +57,21 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   openAddTaskForm() {
     this.closeEditTaskForm();
     this.showAddTaskForm = true;
+    this.taskData = {object: undefined, after: false, before: false};
   }
 
   closeAddTaskForm() {
     this.showAddTaskForm = false;
   }
 
-  openEditTaskForm(id: number) {
-    this.addAfter = false;
-    this.addBefore = false;
-    this.openEditTaskFormCommon(id);
-  }
 
-  openEditTaskFormCommon(id: number) {
+  openEditTaskForm(task: TaskTreeElem) {
     this.closeAddTaskForm();
-    this.showEditTaskFormById = id;
+    this.taskData = {object: task, after: false, before: false};
   }
 
   closeEditTaskForm() {
-    this.showEditTaskFormById = undefined;
-    this.addAfter = false;
-    this.addBefore = false;
+    this.taskData = {object: undefined, after: false, before: false};
   }
 
   completeTask(id: number) {
@@ -265,17 +257,12 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     return this.tree.getNumOfTasksByParent(parentId);
   }
 
-  openEditTaskFromContextMenuCommon() {
+  openEditTaskFromContextMenu() {
     if(this.contextTaskMenu) {
-      this.openEditTaskFormCommon(this.contextTaskMenu.id);
+      this.closeAddTaskForm();
+      this.taskData = {object: this.contextTaskMenu, after: false, before: false};
     }
     this.closeContextTaskMenu();
-  }
-
-  openEditTaskFromContextMenu() {
-    this.addBefore = false;
-    this.addAfter = false;
-    this.openEditTaskFromContextMenuCommon();
   }
 
   askForDelete() {
@@ -328,15 +315,19 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   addAfter: boolean = false;;
 
   openEditTaskAbove() {
-    this.addBefore = true;
-    this.addAfter = false;
-    this.openEditTaskFromContextMenuCommon();
+    if(this.contextTaskMenu) {
+      this.closeAddTaskForm();
+      this.taskData = {object: this.contextTaskMenu, after: false, before: true};
+    }
+    this.closeContextTaskMenu();
   }
 
   openEditTaskBelow() {
-    this.addAfter = true;
-    this.addBefore = false;
-    this.openEditTaskFromContextMenuCommon();
+    if(this.contextTaskMenu) {
+      this.closeAddTaskForm();
+      this.taskData = {object: this.contextTaskMenu, after: true, before: false};
+    }
+    this.closeContextTaskMenu();
   }
 
   showSelectProjectModal: boolean = false;
@@ -426,5 +417,25 @@ export class ProjectComponent implements OnInit, AfterViewInit {
       }
     }
     return labels;
+  }
+
+  shouldEditTaskById(taskId: number): boolean {
+     return this.taskObjectContains(taskId) && this.taskObjectinEditMode();
+  }
+
+  taskObjectContains(taskId: number) {
+    return taskId == this.taskData.object?.id;
+  }
+
+  taskObjectinEditMode(): boolean {
+    return !this.taskData.after && !this.taskData.before
+  }
+
+  shouldAddTaskBelowById(taskId: number): boolean {
+    return this.taskObjectContains(taskId) && this.taskData.after;
+  }
+
+  shouldAddTaskAboveById(taskId: number): boolean {
+    return this.taskObjectContains(taskId) && this.taskData.before;
   }
 }

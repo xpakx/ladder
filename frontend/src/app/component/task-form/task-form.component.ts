@@ -5,6 +5,7 @@ import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
+import { AddEvent } from 'src/app/entity/utils/add-event';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -15,8 +16,6 @@ import { TreeService } from 'src/app/service/tree.service';
   styleUrls: ['./task-form.component.css']
 })
 export class TaskFormComponent implements OnInit {
-  @Input() task: TaskTreeElem | undefined;
-  @Input() project: ProjectTreeElem | undefined;
   @Output() closeEvent = new EventEmitter<boolean>();
   taskForm: FormGroup | undefined;
   showSelectProjectMenu: boolean = false;
@@ -25,16 +24,24 @@ export class TaskFormComponent implements OnInit {
   taskDate: Date | undefined;
 
   projectSelectForm: FormGroup | undefined;
+  @Input() project: ProjectTreeElem | undefined;
 
+  task: TaskTreeElem | undefined;
+  after: boolean = false;
+  before: boolean = false;
 
-  @Input() after: boolean = false;
-  @Input() before: boolean = false;
-
+  @Input() data: AddEvent<TaskTreeElem> | undefined;
 
   constructor(public tree: TreeService, private service: ProjectService, 
     private fb: FormBuilder, private taskService: TaskService) {  }
 
   ngOnInit(): void {
+    if(this.data) {
+      this.task = this.data.object;
+      this.after = this.data.after;
+      this.before = this.data.before;
+    }
+
     this.taskForm = this.fb.group({
       title: [this.task && !this.after && !this.before ? this.task.title : '', Validators.required],
       description: [this.task && !this.after && !this.before  ? this.task.description : '', []]
