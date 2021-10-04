@@ -27,23 +27,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Task> findByOwnerIdAndProjectId(Integer userId, Integer projectId);
 
     void deleteByIdAndOwnerId(Integer taskId, Integer ownerId);
-    List<Task> findByOwnerIdAndParentIdAndProjectOrderGreaterThan(Integer ownerId, Integer parentId, Integer projectOrder);
-
     List<Task> findByOwnerIdAndParentId(Integer ownerId, Integer parentId);
-    List<Task> findByOwnerIdAndProjectIdAndParentIsNull(Integer ownerId, Integer projectId);
     <T> List<T> findByOwnerIdAndParentIsNull(Integer ownerId, Class<T> type);
-
-    List<Task> findByOwnerIdAndParentIdAndProjectOrderGreaterThanEqual(Integer ownerId, Integer parentId, Integer projectOrder);
-
-    List<Task> findByOwnerIdAndProjectIdAndParentIsNullAndProjectOrderGreaterThanEqual(Integer ownerId, Integer projectId, Integer projectOrder);
-    List<Task> findByOwnerIdAndProjectIdAndParentIsNullAndProjectOrderGreaterThan(Integer ownerId, Integer projectId, Integer projectOrder);
-
-    List<Task> findByOwnerIdAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThanEqual(Integer ownerId, Integer projectOrder);
-    List<Task> findByOwnerIdAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThan(Integer ownerId, Integer projectOrder);
-
-    List<Task> findByOwnerIdAndProjectIsNullAndParentIsNull(Integer ownerId);
-
-
 
     @Query("SELECT coalesce(max(p.projectOrder), 0) FROM Task p WHERE p.owner.id = :ownerId AND p.project IS NULL AND p.parent IS NULL")
     Integer getMaxOrderByOwnerId(Integer ownerId);
@@ -56,8 +41,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query("SELECT coalesce(max(p.projectOrder), 0) FROM Task p WHERE p.owner.id = :ownerId AND p.project.id = :projectId AND p.parent.id = :parentId")
     Integer getMaxOrderByOwnerIdAndProjectIdAndParentId(Integer ownerId, Integer projectId, Integer parentId);
-
-
+    
     @Modifying
     @Transactional
     @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent.id = :parentId AND t.projectOrder > :projectOrder")
