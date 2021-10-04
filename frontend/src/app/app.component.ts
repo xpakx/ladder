@@ -4,7 +4,6 @@ import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
 import { AddEvent } from './entity/utils/add-event';
 import { DeleteService } from './service/delete.service';
-import { ProjectService } from './service/project.service';
 import { TreeService } from './service/tree.service';
 
 @Component({
@@ -26,8 +25,8 @@ export class AppComponent {
 
   displayAddTask: boolean = false;
 
-  constructor(public tree : TreeService, private projectService: ProjectService, 
-    private router: Router, public deleteService: DeleteService) {
+  constructor(public tree : TreeService, public deleteService: DeleteService,
+    private router: Router) {
   }
 
   //Project modal window
@@ -44,10 +43,6 @@ export class AppComponent {
   
   // List collapsion
 
-  switchFilterCollapse() {
-    this.collapseFilters = !this.collapseFilters;
-  }
-
   switchHideMenu() {
     this.hideMenu = !this.hideMenu;
   }
@@ -56,14 +51,6 @@ export class AppComponent {
 
   toHome() {
     this.router.navigate(['/']);
-  }
-
-  toInbox() {
-    this.router.navigate(['/inbox']);
-  }
-
-  toUpcoming() {
-    this.router.navigate(['/upcoming']);
   }
 
   // Task modal window

@@ -23,6 +23,7 @@ import { ProjectListComponent } from './component/project-list/project-list.comp
 import { LabelChoiceDialogComponent } from './component/label-choice-dialog/label-choice-dialog.component';
 import { LabelListComponent } from './component/label-list/label-list.component';
 import { DeleteDialogComponent } from './component/delete-dialog/delete-dialog.component';
+import { SidebarComponent } from './component/sidebar/sidebar.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -46,7 +47,8 @@ export function tokenGetter() {
     ProjectListComponent,
     LabelChoiceDialogComponent,
     LabelListComponent,
-    DeleteDialogComponent
+    DeleteDialogComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,

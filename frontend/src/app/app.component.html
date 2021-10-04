@@ -1,5 +1,4 @@
 <div class="top-container">
-
 	 <!-- Nav bar -->
 	<div class="fixed-top">
 		<nav class="navbar-container navbar-expand-md">
@@ -47,88 +46,7 @@
 		<div class="row-container">
 			<div class="left-nav-container" [class.visibleLeftNav]="!hideMenu" [class.hiddenLeftNav]="hideMenu">
 				<div class="left-nav">
-						<ul class="top_filters">
-							<li class="filter" id="filter_inbox">
-								<button class="filter_button" (click)="toInbox()">
-									<span class="item_icon">
-										<i class="fa text-primary mr-2 fa-inbox"></i>
-									</span>
-									<span class="item_content">
-										Inbox
-										<small class="item_counter">{{ tree.getNumOfUncompletedTasksInInbox() }}</small>
-									</span>
-								</button>
-							</li>
-							<li class="filter" id="filter_today">
-								<button class="filter_button" (click)="toHome()">
-									<span class="item_icon">
-										<i class="fa mr-2 text-success fa-calendar-minus-o"></i>
-									</span>
-									<span class="item_content">
-										Today
-										<small class="item_counter">{{ tree.getNumOfUncompletedTasksToday() }}</small>
-									</span>
-								</button>
-							</li>
-							<li class="filter" id="filter_today">
-								<button class="filter_button" (click)="toUpcoming()">
-									<span class="item_icon">
-										<i class="fa text-warning mr-2 fa-calendar"></i>
-									</span>
-									<span class="item_content">
-										Upcoming
-									</span>
-								</button>
-							</li>
-						</ul>
-
-
-						<app-project-list (addProject)="openProjectModal($event)"></app-project-list>
-
-						<app-label-list (addLabel)="openLabelModal($event)"></app-label-list>
-
-						<div class="expansion_panel">
-							<div class="expansion_panel__header" style="top: 372px;">
-								<button type="button" class="expansion_panel__toggle" (click)="switchFilterCollapse()">
-									<div class="expansion_panel__toggle_icon">
-										<i class="fa mx-2 text-muted fa-chevron-right"  [class.rotated]="!collapseFilters"></i>
-									</div>
-									Filters
-								</button>
-								<div class="expansion_panel__actions">
-									<button type="button" class="adder_icon">
-										<i class="fa fa-plus"></i>
-									</button>
-								</div>
-							</div>
-							<div class="projects" style="min-height: 0px;" [class.hidden]="collapseFilters">
-								<div class="projects_list_container">
-									<ul class="items generic_left_list projects_list">
-										<!--<ng-container *ngFor="let label of tree.getLabels()">-->
-											<li class="project_list_item">
-												<span class="left_actions">
-													<button type="button" class="handle">
-														<i class="fa fa-ellipsis-v"></i>
-														<i class="fa fa-ellipsis-v"></i>
-													</button>
-												</span>
-												<button class="text">
-													<div class="label-color" [style]="'color: rgb(21, 143, 173);'">
-														<i class="fa fa-tint"></i>
-													</div>
-													<span class="project-name">Filter</span>
-													<div class="counter_count">0</div>
-												</button>
-												
-												<button type="button" #contextMenuButton class="icon_more">
-													<i class="fa fa-ellipsis-h"></i>
-												</button>
-											</li>
-										<!--</ng-container>-->
-									</ul>
-								</div>
-							</div>
-						</div>
+						<app-sidebar (projectEvent)="openProjectModal($event)" (labelEvent)="openLabelModal($event)"></app-sidebar>
 					
 				</div>
 			</div>
