@@ -60,8 +60,8 @@ public class Task {
     @JsonIgnore
     @ManyToMany(cascade={CascadeType.MERGE})
     @JoinTable(name="task_label",
-            joinColumns={@JoinColumn(name="label_id")},
-            inverseJoinColumns={@JoinColumn(name="task_id")})
+            joinColumns={@JoinColumn(name="task_id")},
+            inverseJoinColumns={@JoinColumn(name="label_id")})
     private Set<Label> labels;
 
     @JsonIgnore
