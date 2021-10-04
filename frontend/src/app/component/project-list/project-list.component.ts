@@ -6,7 +6,7 @@ import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { AddEvent } from 'src/app/entity/utils/add-event';
-import { DeleteService } from 'src/app/service/delete-service.service';
+import { DeleteService } from 'src/app/service/delete.service';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';

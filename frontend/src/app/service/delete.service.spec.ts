@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DeleteService } from './delete-service.service';
+import { DeleteService } from './delete.service';
 
 describe('DeleteServiceService', () => {
   let service: DeleteService;

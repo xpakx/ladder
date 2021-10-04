@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
 import { AddEvent } from './entity/utils/add-event';
-import { DeleteService } from './service/delete-service.service';
+import { DeleteService } from './service/delete.service';
 import { ProjectService } from './service/project.service';
 import { TreeService } from './service/tree.service';
 

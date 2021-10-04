@@ -5,7 +5,7 @@ import { DndDropEvent } from 'ngx-drag-drop';
 import { Label } from 'src/app/entity/label';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { AddEvent } from 'src/app/entity/utils/add-event';
-import { DeleteService } from 'src/app/service/delete-service.service';
+import { DeleteService } from 'src/app/service/delete.service';
 import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
 
