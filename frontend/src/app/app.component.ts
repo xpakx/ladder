@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
+import { AddLabelEvent } from './entity/utils/add-label-event';
 import { DeleteService } from './service/delete-service.service';
 import { ProjectService } from './service/project.service';
 import { TaskService } from './service/task.service';
@@ -91,35 +92,16 @@ export class AppComponent {
   }
 
   displayLabelModal: boolean = false;
+  labelData: AddLabelEvent | undefined;
 
-  openLabelModal() {
+  openLabelModal(event: AddLabelEvent) {
     this.displayLabelModal = true;
+    this.labelData = event;
   }
 
   closeLabelModal() {
     this.displayLabelModal = false;
-    this.labelForModalWindow = undefined;
-    this.addLabelAfter = false;
-    this.addLabelBefore = false;
+    this.labelData = undefined;
   }
 
-
-  labelForModalWindow: LabelDetails | undefined;
-  addLabelAfter: boolean = false;
-  addLabelBefore: boolean = false;
-
-  openLabelModalWithLabel(label: LabelDetails | undefined) {
-    this.labelForModalWindow = label;
-    this.openLabelModal();
-  }
-
-  openLabelModalAbove(project: LabelDetails | undefined) {
-    this.addLabelBefore = true;
-    this.openLabelModalWithLabel(project);
-  }
-
-  openLabelModalBelow(project: LabelDetails | undefined) {
-    this.addLabelAfter = true;
-    this.openLabelModalWithLabel(project);
-  }
 }

@@ -88,10 +88,7 @@
 						(addProjectModalAbove)="openProjectModalAbove($event)"
 						(addProjectModalBelow)="openProjectModalBelow($event)"></app-project-list>
 
-						<app-label-list (addLabelModal)="openLabelModal()"
-						(addLabelModalEdit)="openLabelModalWithLabel($event)"
-						(addLabelModalAbove)="openLabelModalAbove($event)"
-						(addLabelModalBelow)="openLabelModalBelow($event)"></app-label-list>
+						<app-label-list (addLabel)="openLabelModal($event)"></app-label-list>
 
 						<div class="expansion_panel">
 							<div class="expansion_panel__header" style="top: 372px;">
@@ -150,7 +147,7 @@
 </div>
 
 <app-project-dialog *ngIf="displayProjectModal" (closeEvent)="closeProjectModal()" [project]="projectForModalWindow" [after]="addAfter" [before]="addBefore"> </app-project-dialog>
-<app-label-dialog *ngIf="displayLabelModal" (closeEvent)="closeLabelModal()" [label]="labelForModalWindow" [after]="addLabelAfter" [before]="addLabelBefore"> </app-label-dialog>
+<app-label-dialog *ngIf="displayLabelModal" (closeEvent)="closeLabelModal()" [data]="labelData"> </app-label-dialog>
 <app-task-dialog *ngIf="displayAddTask" (closeEvent)="closeAddTaskModal()"></app-task-dialog>
 
 <app-delete-dialog *ngIf="deleteService.showDeleteMonit" [name]="deleteService.name" [id]="deleteService.id" (closeEvent)="deleteService.closeModal()" (deleteEvent)="deleteService.delete($event)"></app-delete-dialog>

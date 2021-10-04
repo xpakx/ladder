@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Label } from 'src/app/entity/label';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { LabelRequest } from 'src/app/entity/label-request';
+import { AddLabelEvent } from 'src/app/entity/utils/add-label-event';
 import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
 
@@ -16,9 +17,10 @@ export class LabelDialogComponent implements OnInit {
   addLabelForm: FormGroup;
 
   @Output() closeEvent = new EventEmitter<boolean>();
-  @Input() label: LabelDetails | undefined;
-  @Input() after: boolean = false;
-  @Input() before: boolean = false;
+  @Input() data: AddLabelEvent | undefined;
+  label: LabelDetails | undefined;
+  after: boolean = false;
+  before: boolean = false;
   editMode: boolean = false;
 
   favorite: boolean = false;
@@ -32,6 +34,12 @@ export class LabelDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(this.data) {
+      this.label = this.data.label;
+      this.after = this.data.after;
+      this.before = this.data.before;
+    }
+    alert((this.label ? this.label.name : "No label") + " " + this.before + " " + this.after);
     if(this.label && !this.after && !this.before) {
       this.editMode = true;
     }

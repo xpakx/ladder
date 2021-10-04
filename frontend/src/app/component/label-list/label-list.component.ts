@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { Label } from 'src/app/entity/label';
 import { LabelDetails } from 'src/app/entity/label-details';
+import { AddLabelEvent } from 'src/app/entity/utils/add-label-event';
 import { DeleteService } from 'src/app/service/delete-service.service';
 import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -18,6 +19,7 @@ export class LabelListComponent implements OnInit, AfterViewInit {
   @Output() addLabelModalAbove = new EventEmitter<LabelDetails | undefined>();
   @Output() addLabelModalBelow = new EventEmitter<LabelDetails | undefined>();
   @Output() addLabelModalEdit = new EventEmitter<LabelDetails | undefined>();
+  @Output() addLabel = new EventEmitter<AddLabelEvent>();
 
   displayLabelModal: boolean = false;
 
@@ -29,7 +31,7 @@ export class LabelListComponent implements OnInit, AfterViewInit {
   }
 
   openLabelModal() {
-    this.addLabelModal.emit(true);
+    this.addLabel.emit({label: undefined, after: false, before: false});
   }
 
   toLabel(id: number) {
@@ -81,17 +83,17 @@ export class LabelListComponent implements OnInit, AfterViewInit {
   }
 
   openLabelModalWithLabel() {
-    this.addLabelModalEdit.emit(this.contextMenuLabel);
+    this.addLabel.emit({label: this.contextMenuLabel, after: false, before: false});
     this.closeContextMenu();
   }
 
   openProjectModalAbove() {
-    this.addLabelModalAbove.emit(this.contextMenuLabel);
+    this.addLabel.emit({label: this.contextMenuLabel, after: false, before: true});
     this.closeContextMenu();
   }
 
   openProjectModalBelow() {
-    this.addLabelModalBelow.emit(this.contextMenuLabel);
+    this.addLabel.emit({label: this.contextMenuLabel, after: true, before: false});
     this.closeContextMenu();
   }
 
