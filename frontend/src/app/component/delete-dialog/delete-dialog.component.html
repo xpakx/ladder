@@ -1,0 +1,26 @@
+<div class="modal modal-background"
+  tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Delete</h4>
+        <i class="fa fa-question fa-circle"></i>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete <b>{{name}}</b>?
+  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-button" 
+                (click)="cancel()">
+            Cancel
+        </button>
+        <button type="button" class="modal-button modal-button-red" 
+                (click)="delete()">
+            Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

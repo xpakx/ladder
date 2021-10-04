@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
+import { DeleteService } from './service/delete-service.service';
 import { ProjectService } from './service/project.service';
 import { TaskService } from './service/task.service';
 import { TreeService } from './service/tree.service';
@@ -24,7 +25,7 @@ export class AppComponent {
   displayAddTask: boolean = false;
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
-    private router: Router, private taskService: TaskService) {
+    private router: Router, public deleteService: DeleteService) {
   }
 
   //Project modal window

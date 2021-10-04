@@ -152,3 +152,5 @@
 <app-project-dialog *ngIf="displayProjectModal" (closeEvent)="closeProjectModal()" [project]="projectForModalWindow" [after]="addAfter" [before]="addBefore"> </app-project-dialog>
 <app-label-dialog *ngIf="displayLabelModal" (closeEvent)="closeLabelModal()" [label]="labelForModalWindow" [after]="addLabelAfter" [before]="addLabelBefore"> </app-label-dialog>
 <app-task-dialog *ngIf="displayAddTask" (closeEvent)="closeAddTaskModal()"></app-task-dialog>
+
+<app-delete-dialog *ngIf="deleteService.showDeleteMonit" [name]="deleteService.name" [id]="deleteService.id" (closeEvent)="deleteService.closeModal()" (deleteEvent)="deleteService.delete($event)"></app-delete-dialog>

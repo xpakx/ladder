@@ -5,6 +5,7 @@ import { DndDropEvent } from 'ngx-drag-drop';
 import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
+import { DeleteService } from 'src/app/service/delete-service.service';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -29,7 +30,7 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private renderer: Renderer2, private router: Router, 
-    private taskService: TaskService) { }
+    private taskService: TaskService, private deleteService: DeleteService) { }
 
   ngOnInit(): void {
   }
@@ -121,17 +122,10 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
     this.showContextProjectMenu = false;
   }
 
-  deleteProject() {
+
+  askForDelete() {
     if(this.contextProjectMenu) {
-      let deletedProjectId: number = this.contextProjectMenu.id;
-      this.projectService.deleteProject(deletedProjectId).subscribe(
-        (response: any, projectId: number = deletedProjectId) => {
-        this.tree.deleteProject(projectId);
-      },
-      (error: HttpErrorResponse) => {
-       
-      }
-    );
+      this.deleteService.openModalForProject(this.contextProjectMenu);
     }
     this.closeContextProjectMenu();
   }

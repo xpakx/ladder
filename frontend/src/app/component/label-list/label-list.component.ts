@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { Label } from 'src/app/entity/label';
 import { LabelDetails } from 'src/app/entity/label-details';
+import { DeleteService } from 'src/app/service/delete-service.service';
 import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
 
@@ -21,7 +22,8 @@ export class LabelListComponent implements OnInit, AfterViewInit {
   displayLabelModal: boolean = false;
 
   constructor(public tree : TreeService, private router: Router,
-    private renderer: Renderer2, private labelService: LabelService) { }
+    private renderer: Renderer2, private labelService: LabelService, 
+    private deleteService: DeleteService) { }
 
   ngOnInit(): void {
   }
@@ -71,17 +73,9 @@ export class LabelListComponent implements OnInit, AfterViewInit {
     this.showContextMenu = false;
   }
 
-  deleteLabel() {
+  askForDelete() {
     if(this.contextMenuLabel) {
-      let deletedLabelId: number = this.contextMenuLabel.id;
-      this.labelService.deleteLabel(deletedLabelId).subscribe(
-        (response: any, labelId: number = deletedLabelId) => {
-        this.tree.deleteLabel(labelId);
-      },
-      (error: HttpErrorResponse) => {
-       
-      }
-    );
+      this.deleteService.openModalForLabel(this.contextMenuLabel);
     }
     this.closeContextMenu();
   }

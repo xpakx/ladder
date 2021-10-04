@@ -22,6 +22,7 @@ import { PriorityModalComponent } from './component/priority-modal/priority-moda
 import { ProjectListComponent } from './component/project-list/project-list.component';
 import { LabelChoiceDialogComponent } from './component/label-choice-dialog/label-choice-dialog.component';
 import { LabelListComponent } from './component/label-list/label-list.component';
+import { DeleteDialogComponent } from './component/delete-dialog/delete-dialog.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -44,7 +45,8 @@ export function tokenGetter() {
     PriorityModalComponent,
     ProjectListComponent,
     LabelChoiceDialogComponent,
-    LabelListComponent
+    LabelListComponent,
+    DeleteDialogComponent
   ],
   imports: [
     BrowserModule,
