@@ -10,6 +10,7 @@ import { TaskDetails } from 'src/app/entity/task-details';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { DeleteService } from 'src/app/service/delete-service.service';
 import { ProjectService } from 'src/app/service/project.service';
+import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { TaskDialogComponent } from '../task-dialog/task-dialog.component';
@@ -32,10 +33,12 @@ export class ProjectComponent implements OnInit, AfterViewInit {
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService, private taskService: TaskService,
-    private renderer: Renderer2, private deleteService: DeleteService) { }
+    private renderer: Renderer2, private deleteService: DeleteService,
+    private redirService: RedirectionService) { }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
+      this.redirService.setAddress("project/"+this.route.snapshot.params.id)
       this.router.navigate(["load"]);
     }
 

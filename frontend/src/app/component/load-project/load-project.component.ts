@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FullProjectTree } from 'src/app/entity/full-project-tree';
 import { UserWithData } from 'src/app/entity/user-with-data';
 import { ProjectService } from 'src/app/service/project.service';
+import { RedirectionService } from 'src/app/service/redirection.service';
 import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
@@ -14,7 +15,7 @@ import { TreeService } from 'src/app/service/tree.service';
 export class LoadProjectComponent implements OnInit {
 
   constructor(private router: Router, private tree: TreeService,
-    private service: ProjectService) { }
+    private service: ProjectService, private redirService: RedirectionService) { }
 
   ngOnInit(): void {
     let id = localStorage.getItem('user_id');
@@ -22,7 +23,7 @@ export class LoadProjectComponent implements OnInit {
       this.service.getFullInfo().subscribe(
         (response: UserWithData) => {
           this.tree.load(response);
-          this.router.navigate([""]);
+          this.router.navigate([this.redirService.getAddress()]);
         },
         (error: HttpErrorResponse) => {
           if(error.status === 401) {
