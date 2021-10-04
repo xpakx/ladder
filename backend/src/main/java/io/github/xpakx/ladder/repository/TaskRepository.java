@@ -4,6 +4,7 @@ import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
@@ -39,4 +40,18 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Task> findByOwnerIdAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThan(Integer ownerId, Integer projectOrder);
 
     List<Task> findByOwnerIdAndProjectIsNullAndParentIsNull(Integer ownerId);
+
+
+
+    @Query("SELECT coalesce(max(p.projectOrder), 0) FROM Task p WHERE p.owner.id = :ownerId AND p.project IS NULL AND p.parent IS NULL")
+    Integer getMaxOrderByOwnerId(Integer ownerId);
+
+    @Query("SELECT coalesce(max(p.projectOrder), 0) FROM Task p WHERE p.owner.id = :ownerId AND p.parent.id = :parentId AND p.project IS NULL")
+    Integer getMaxOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId);
+
+    @Query("SELECT coalesce(max(p.projectOrder), 0) FROM Task p WHERE p.owner.id = :ownerId AND p.project.id = :projectId AND p.parent IS NULL")
+    Integer getMaxOrderByOwnerIdAndProjectId(Integer ownerId, Integer projectId);
+
+    @Query("SELECT coalesce(max(p.projectOrder), 0) FROM Task p WHERE p.owner.id = :ownerId AND p.project.id = :projectId AND p.parent.id = :parentId")
+    Integer getMaxOrderByOwnerIdAndProjectIdAndParentId(Integer ownerId, Integer projectId, Integer parentId);
 }

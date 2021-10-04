@@ -33,6 +33,6 @@ public interface LabelRepository extends JpaRepository<Label, Integer> {
     @Query("Update Label l SET l.generalOrder = l.generalOrder + 1 WHERE l.owner.id = :ownerId")
     void incrementGeneralOrderByOwnerId(Integer ownerId);
 
-    @Query("SELECT coalesce(max(l.generalOrder)) FROM Label l WHERE l.owner.id = :ownerId")
+    @Query("SELECT coalesce(max(l.generalOrder), 0) FROM Label l WHERE l.owner.id = :ownerId")
     Integer getMaxOrderByOwnerId(Integer ownerId);
 }

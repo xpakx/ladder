@@ -21,7 +21,6 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     List<Project> getByOwnerId(Integer ownerId);
     void deleteByIdAndOwnerId(Integer Id, Integer ownerId);
 
-
     @Modifying
     @Transactional
     @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent IS NULL AND p.generalOrder > :generalOrder")
@@ -54,9 +53,9 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     List<Project> findByOwnerIdAndParentId(Integer ownerId, Integer parentId);
 
-    @Query("SELECT coalesce(max(p.generalOrder)) FROM Project p WHERE p.owner.id = :ownerId AND p.parent IS NULL")
+    @Query("SELECT coalesce(max(p.generalOrder), 0) FROM Project p WHERE p.owner.id = :ownerId AND p.parent IS NULL")
     Integer getMaxOrderByOwnerId(Integer ownerId);
 
-    @Query("SELECT coalesce(max(p.generalOrder)) FROM Project p WHERE p.owner.id = :ownerId AND p.parent.id = :parentId")
+    @Query("SELECT coalesce(max(p.generalOrder), 0) FROM Project p WHERE p.owner.id = :ownerId AND p.parent.id = :parentId")
     Integer getMaxOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId);
 }

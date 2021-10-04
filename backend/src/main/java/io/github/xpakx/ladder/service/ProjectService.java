@@ -44,25 +44,15 @@ public class ProjectService {
     }
 
     private Integer getMaxGeneralOrder(ProjectRequest request, Integer userId) {
-        return hasParent(request) ? getMaxGeneralOrderForParent(request, userId) : getMaxGeneralOrderIfNoParent(userId);
+        if(hasParent(request)) {
+            return projectRepository.getMaxOrderByOwnerIdAndParentId(userId, request.getParentId());
+        } else {
+            return projectRepository.getMaxOrderByOwnerId(userId);
+        }
     }
 
     private boolean hasParent(ProjectRequest request) {
         return request.getParentId() != null;
-    }
-
-    private Integer getMaxGeneralOrderForParent(ProjectRequest request, Integer userId) {
-        return projectRepository.findByOwnerIdAndParentId(userId, request.getParentId()).stream()
-                .max(Comparator.comparing(Project::getGeneralOrder))
-                .map(Project::getGeneralOrder)
-                .orElse(0);
-    }
-
-    private Integer getMaxGeneralOrderIfNoParent(Integer userId) {
-        return projectRepository.findByOwnerIdAndParentIsNull(userId, Project.class).stream()
-                .max(Comparator.comparing(Project::getGeneralOrder))
-                .map(Project::getGeneralOrder)
-                .orElse(0);
     }
 
     private Project buildProjectToAddFromRequest(ProjectRequest request, Integer userId) {
@@ -141,9 +131,9 @@ public class ProjectService {
 
     private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
         if(hasParent(request)) {
-            return projectRepository.getMaxOrderByOwnerIdAndParentId(userId, request.getParentId());
+            return taskRepository.getMaxOrderByOwnerIdAndProjectIdAndParentId(userId, request.getProjectId(), request.getParentId());
         } else {
-            return projectRepository.getMaxOrderByOwnerId(userId);
+            return taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getProjectId());
         }
     }
 
@@ -404,7 +394,6 @@ public class ProjectService {
                     proj.getGeneralOrder());
         }
     }
-
 
     private boolean hasParent(Project project) {
         return project.getParent() != null;

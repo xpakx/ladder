@@ -86,22 +86,12 @@ public class TaskService {
     }
 
     private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
-        return hasId(request) ? getMaxProjectOrderForProject(userId, request.getId()) : getMaxProjectOrderForInbox(userId);
-    }
-
-    private Integer getMaxProjectOrderForProject(Integer userId, Integer projectId) {
-        return taskRepository.findByOwnerIdAndProjectIdAndParentIsNull(userId, projectId).stream()
-                .max(Comparator.comparing(Task::getProjectOrder))
-                .map(Task::getProjectOrder)
-                .orElse(0);
-    }
-
-    private Integer getMaxProjectOrderForInbox(Integer userId) {
-        return taskRepository.findByOwnerIdAndProjectIsNullAndParentIsNull(userId).stream()
-                .max(Comparator.comparing(Task::getProjectOrder))
-                .map(Task::getProjectOrder)
-                .orElse(0);
-    }
+        if(hasId(request)) {
+            return taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getId());
+        } else {
+            return taskRepository.getMaxOrderByOwnerId(userId);
+        }
+   }
 
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.getByIdAndOwnerId(taskId, userId)
