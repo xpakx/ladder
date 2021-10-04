@@ -17,7 +17,7 @@ export class LabelDialogComponent implements OnInit {
   addLabelForm: FormGroup;
 
   @Output() closeEvent = new EventEmitter<boolean>();
-  @Input() data: AddEvent<Label> | undefined;
+  @Input() data: AddEvent<LabelDetails> | undefined;
   label: LabelDetails | undefined;
   after: boolean = false;
   before: boolean = false;

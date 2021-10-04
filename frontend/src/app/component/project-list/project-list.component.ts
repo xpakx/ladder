@@ -5,6 +5,7 @@ import { DndDropEvent } from 'ngx-drag-drop';
 import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
+import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete-service.service';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
@@ -23,10 +24,7 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
   projectContextMenuY: number = 0;
   @ViewChild('projectContext', {read: ElementRef}) projectContextMenuElem!: ElementRef;
 
-  @Output() addProjectModal = new EventEmitter<boolean>();
-  @Output() addProjectModalAbove = new EventEmitter<ProjectTreeElem | undefined>();
-  @Output() addProjectModalBelow = new EventEmitter<ProjectTreeElem | undefined>();
-  @Output() addProjectModalEdit = new EventEmitter<ProjectTreeElem | undefined>();
+  @Output() addProject = new EventEmitter<AddEvent<ProjectTreeElem>>();
 
   constructor(public tree : TreeService, private projectService: ProjectService, 
     private renderer: Renderer2, private router: Router, 
@@ -51,21 +49,21 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
   //Project modal window
 
   openProjectModal() {
-    this.addProjectModal.emit(true);
+    this.addProject.emit({object: undefined, after: false, before: false});
   }
 
   openProjectModalWithProject() {
-    this.addProjectModalEdit.emit(this.contextProjectMenu);
+    this.addProject.emit({object: this.contextProjectMenu, after: false, before: false});
     this.closeContextProjectMenu();
   }
 
   openProjectModalAbove() {
-    this.addProjectModalAbove.emit(this.contextProjectMenu);
+    this.addProject.emit({object: this.contextProjectMenu, after: false, before: true});
     this.closeContextProjectMenu();
   }
 
   openProjectModalBelow() {
-    this.addProjectModalBelow.emit(this.contextProjectMenu);
+    this.addProject.emit({object: this.contextProjectMenu, after: true, before: false});
     this.closeContextProjectMenu();
   }
 

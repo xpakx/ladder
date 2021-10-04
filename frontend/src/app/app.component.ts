@@ -20,7 +20,9 @@ export class AppComponent {
   addAfter: boolean = false;
   addBefore: boolean = false;
   projectForModalWindow: ProjectTreeElem | undefined;
+
   displayProjectModal: boolean = false;
+  projectData: AddEvent<ProjectTreeElem> | undefined;
 
   displayAddTask: boolean = false;
 
@@ -30,32 +32,16 @@ export class AppComponent {
 
   //Project modal window
 
-  openProjectModal() {
+  openProjectModal(event: AddEvent<ProjectTreeElem>) {
     this.displayProjectModal = true;
-  }
-
-  openProjectModalWithProject(project: ProjectTreeElem | undefined) {
-    this.projectForModalWindow = project;
-    this.openProjectModal();
-  }
-
-  openProjectModalAbove(project: ProjectTreeElem | undefined) {
-    this.addBefore = true;
-    this.openProjectModalWithProject(project);
-  }
-
-  openProjectModalBelow(project: ProjectTreeElem | undefined) {
-    this.addAfter = true;
-    this.openProjectModalWithProject(project);
+    this.projectData = event;
   }
 
   closeProjectModal() {
     this.displayProjectModal = false;
-    this.projectForModalWindow = undefined;
-    this.addAfter = false;
-    this.addBefore = false;
+    this.projectData = undefined;
   }
-
+  
   // List collapsion
 
   switchFilterCollapse() {

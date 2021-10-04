@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Project } from 'src/app/entity/project';
 import { ProjectRequest } from 'src/app/entity/project-request';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
+import { AddEvent } from 'src/app/entity/utils/add-event';
 import { ProjectService } from 'src/app/service/project.service';
 import { TreeService } from 'src/app/service/tree.service';
 
@@ -17,9 +18,10 @@ export class ProjectDialogComponent implements OnInit {
   projectFav: boolean = false;
 
   @Output() closeEvent = new EventEmitter<boolean>();
-  @Input() project: ProjectTreeElem | undefined;
-  @Input() after: boolean = false;
-  @Input() before: boolean = false;
+  @Input() data: AddEvent<ProjectTreeElem> | undefined;
+  project: ProjectTreeElem | undefined;
+  after: boolean = false;
+  before: boolean = false;
   editMode: boolean = false;
 
   constructor(private fb: FormBuilder, public tree : TreeService, 
@@ -31,6 +33,11 @@ export class ProjectDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(this.data) {
+      this.project = this.data.object;
+      this.after = this.data.after;
+      this.before = this.data.before;
+    }
     if(this.project && !this.after && !this.before) {
       this.editMode = true;
     }
