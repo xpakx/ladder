@@ -1,0 +1,119 @@
+import { Injectable } from '@angular/core';
+import { Label } from '../entity/label';
+import { LabelDetails } from '../entity/label-details';
+import { MovableTreeService } from './movable-tree-service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LabelTreeService implements MovableTreeService<Label> {
+  public labels: LabelDetails[] = [];
+
+  constructor() { }
+
+  load(labels: LabelDetails[] = []) {
+    this.labels = labels;
+    this.sort();
+  }
+
+  sort() {
+    this.labels.sort((a, b) => a.generalOrder - b.generalOrder);
+  }
+
+  addNewLabel(request: Label) {
+    this.labels.push({
+      name: request.name,
+      id: request.id,
+      color: request.color,
+      favorite: request.favorite,
+      generalOrder: request.generalOrder
+    });
+    this.sort();
+  }
+
+  updateLabel(request: Label, labelId: number) {
+    let label: LabelDetails | undefined = this.getLabelById(labelId);
+    if(label) {
+      label.name = request.name;
+      label.color = request.color;
+      label.favorite = request.favorite;
+    } 
+  }
+
+  getLabelById(id: number): LabelDetails | undefined {
+    return this.labels.find((a) => a.id == id);
+  }
+
+  filterLabels(text: string): LabelDetails[] {
+    return this.labels.filter((a) => 
+      a.name.toLowerCase().includes(text.toLowerCase())
+    );
+  }
+
+  deleteLabel(labelId: number) {
+    this.labels = this.labels.filter((a) => a.id != labelId);
+  }
+
+  changeLabelFav(response: Label) {
+    let label = this.getLabelById(response.id);
+    if(label) {
+      label.favorite = response.favorite;
+    }
+  }
+
+  addNewLabelBefore(label: Label, beforeId: number) {
+    let beforeLabel = this.getLabelById(beforeId);
+    if(beforeLabel) {
+      let lbl : LabelDetails = beforeLabel;
+      label.generalOrder = lbl.generalOrder;
+      let labels = this.labels
+        .filter((a) => a.generalOrder >= lbl.generalOrder);
+        for(let lab of labels) {
+          lab.generalOrder = lab.generalOrder + 1;
+        }
+      this.addNewLabel(label);
+    }
+  }
+
+  addNewLabelAfter(label: Label, afterId: number) {
+    let afterLabel = this.getLabelById(afterId);
+    if(afterLabel) {
+      let lbl : LabelDetails = afterLabel;
+      label.generalOrder = lbl.generalOrder + 1;
+      let labels = this.labels
+        .filter((a) => a.generalOrder > lbl.generalOrder);
+        for(let lab of labels) {
+          lab.generalOrder = lab.generalOrder + 1;
+        }
+      this.addNewLabel(label);
+    }
+  }
+
+  moveAfter(label: Label, afterId: number) {
+    let afterLabel = this.getLabelById(afterId);
+    let movedLabel = this.getLabelById(label.id);
+    if(afterLabel && movedLabel) {
+      let lbl : LabelDetails = afterLabel;
+      let labels = this.labels
+        .filter((a) => a.generalOrder > lbl.generalOrder);
+        for(let lab of labels) {
+          lab.generalOrder = lab.generalOrder + 1;
+        }
+      
+      movedLabel.generalOrder = afterLabel.generalOrder+1;
+
+      this.sort();
+    }
+  }
+
+  moveAsFirst(label: Label) {
+    let movedLabel = this.getLabelById(label.id);
+    if(movedLabel) {
+      for(let lbl of this.labels) {
+        lbl.generalOrder = lbl.generalOrder + 1;
+      }
+      movedLabel.generalOrder = 1;
+      this.sort();
+    }
+  }
+}

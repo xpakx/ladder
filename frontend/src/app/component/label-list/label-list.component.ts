@@ -1,27 +1,32 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { DndDropEvent } from 'ngx-drag-drop';
 import { Label } from 'src/app/entity/label';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
+import { LabelTreeService } from 'src/app/service/label-tree.service';
 import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
+import { DraggableComponent } from '../abstract/draggable-component';
 
 @Component({
   selector: 'app-label-list',
   templateUrl: './label-list.component.html',
   styleUrls: ['./label-list.component.css']
 })
-export class LabelListComponent implements OnInit, AfterViewInit {
+export class LabelListComponent extends DraggableComponent<LabelDetails, Label, LabelService, LabelTreeService>
+    implements OnInit, AfterViewInit 
+   {
   @Output() addLabel = new EventEmitter<AddEvent<LabelDetails>>();
 
   displayLabelModal: boolean = false;
 
   constructor(public tree : TreeService, private router: Router,
     private renderer: Renderer2, private labelService: LabelService, 
-    private deleteService: DeleteService) { }
+    private deleteService: DeleteService, protected treeService: LabelTreeService) {
+      super(treeService, labelService);
+     }
 
   ngOnInit(): void {
   }
@@ -98,7 +103,7 @@ export class LabelListComponent implements OnInit, AfterViewInit {
     if(this.contextMenuLabel) {
       this.labelService.updateLabelFav(this.contextMenuLabel.id, {flag: !this.contextMenuLabel.favorite}).subscribe(
         (response: Label) => {
-        this.tree.changeLabelFav(response);
+        this.treeService.changeLabelFav(response);
       },
       (error: HttpErrorResponse) => {
        
@@ -107,46 +112,5 @@ export class LabelListComponent implements OnInit, AfterViewInit {
     }
 
     this.closeContextMenu();
-  }
-
-  // drag'n'drop
-
-  draggedId: number | undefined;
-
-  onDragStart(id: number) {
-	  this.draggedId = id;
-  }
-
-  onDragEnd() {
-	  this.draggedId = undefined;
-  }
-
-  isDragged(id: number): boolean {
-    return this.draggedId == id;
-  }
-  
-  onDrop(event: DndDropEvent, target: LabelDetails) {
-    let id = Number(event.data);
-    
-    this.labelService.moveLabelAfter({id: target.id}, id).subscribe(
-        (response: Label, afterId: number = target.id) => {
-        this.tree.moveLabelAfter(response, afterId);
-      },
-      (error: HttpErrorResponse) => {
-      
-      }
-    );
-  }
-
-  onDropFirst(event: DndDropEvent) {
-    let id = Number(event.data);
-    this.labelService.moveLabelToBeginning(id).subscribe(
-        (response: Label) => {
-        this.tree.moveLabelAsFirst(response);
-      },
-      (error: HttpErrorResponse) => {
-      
-      }
-    );
   }
 }

@@ -7,6 +7,7 @@ import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { Task } from '../entity/task';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { UserWithData } from '../entity/user-with-data';
+import { LabelTreeService } from './label-tree.service';
 import { ProjectTreeService } from './project-tree.service';
 import { TaskTreeService } from './task-tree.service';
 
@@ -14,12 +15,12 @@ import { TaskTreeService } from './task-tree.service';
   providedIn: 'root'
 })
 export class TreeService {
-  public labels: LabelDetails[] = [];
   public loaded: boolean = false;
   public projectCollapsed: boolean = true;
   public labelCollapsed: boolean = true;
   
-  constructor(private projects: ProjectTreeService, private tasks: TaskTreeService) { }
+  constructor(private projects: ProjectTreeService, private tasks: TaskTreeService,
+    private labels: LabelTreeService) { }
 
   isLoaded(): boolean {
     return this.loaded;
@@ -30,12 +31,7 @@ export class TreeService {
     this.projectCollapsed = tree.projectCollapsed;
     this.projects.load(tree.projects);
     this.tasks.load(tree.tasks);
-    this.labels = tree.labels;
-    this.sortLabels();
-  }
-
-  sortLabels() {
-    this.labels.sort((a, b) => a.generalOrder - b.generalOrder);
+    this.labels.load(tree.labels);
   }
 
   getProjects() {
@@ -185,104 +181,47 @@ export class TreeService {
   }
 
   getLabels() {
-    return this.labels;
+    return this.labels.labels;
   }
 
   addNewLabel(request: Label) {
-    this.labels.push({
-      name: request.name,
-      id: request.id,
-      color: request.color,
-      favorite: request.favorite,
-      generalOrder: request.generalOrder
-    });
-    this.sortLabels();
+    this.labels.addNewLabel(request);
   }
 
   updateLabel(request: Label, labelId: number) {
-    let label: LabelDetails | undefined = this.getLabelById(labelId);
-    if(label) {
-      label.name = request.name;
-      label.color = request.color;
-      label.favorite = request.favorite;
-    } 
+    this.labels.updateLabel(request, labelId);
   }
 
   getLabelById(id: number): LabelDetails | undefined {
-    return this.labels.find((a) => a.id == id);
+    return this.labels.getLabelById(id);
   }
 
   filterLabels(text: string): LabelDetails[] {
-    return this.labels.filter((a) => 
-      a.name.toLowerCase().includes(text.toLowerCase())
-    );
+    return this.labels.filterLabels(text);
   }
 
   deleteLabel(labelId: number) {
-    this.labels = this.labels.filter((a) => a.id != labelId);
+    this.labels.deleteLabel(labelId);
   }
 
   changeLabelFav(response: Label) {
-    let label = this.getLabelById(response.id);
-    if(label) {
-      label.favorite = response.favorite;
-    }
+    this.labels.changeLabelFav(response);
   }
 
   addNewLabelBefore(label: Label, beforeId: number) {
-    let beforeLabel = this.getLabelById(beforeId);
-    if(beforeLabel) {
-      let lbl : LabelDetails = beforeLabel;
-      label.generalOrder = lbl.generalOrder;
-      let labels = this.labels
-        .filter((a) => a.generalOrder >= lbl.generalOrder);
-        for(let lab of labels) {
-          lab.generalOrder = lab.generalOrder + 1;
-        }
-      this.addNewLabel(label);
-    }
+    this.labels.addNewLabelBefore(label, beforeId);
   }
 
   addNewLabelAfter(label: Label, afterId: number) {
-    let afterLabel = this.getLabelById(afterId);
-    if(afterLabel) {
-      let lbl : LabelDetails = afterLabel;
-      label.generalOrder = lbl.generalOrder + 1;
-      let labels = this.labels
-        .filter((a) => a.generalOrder > lbl.generalOrder);
-        for(let lab of labels) {
-          lab.generalOrder = lab.generalOrder + 1;
-        }
-      this.addNewLabel(label);
-    }
+    this.labels.addNewLabelAfter(label, afterId);
   }
 
   moveLabelAfter(label: Label, afterId: number) {
-    let afterLabel = this.getLabelById(afterId);
-    let movedLabel = this.getLabelById(label.id);
-    if(afterLabel && movedLabel) {
-      let lbl : LabelDetails = afterLabel;
-      let labels = this.labels
-        .filter((a) => a.generalOrder > lbl.generalOrder);
-        for(let lab of labels) {
-          lab.generalOrder = lab.generalOrder + 1;
-        }
-      
-      movedLabel.generalOrder = afterLabel.generalOrder+1;
-
-      this.sortLabels();
-    }
+    this.labels.moveAfter(label, afterId);
   }
 
   moveLabelAsFirst(label: Label) {
-    let movedLabel = this.getLabelById(label.id);
-    if(movedLabel) {
-      for(let lbl of this.labels) {
-        lbl.generalOrder = lbl.generalOrder + 1;
-      }
-      movedLabel.generalOrder = 1;
-      this.sortLabels();
-    }
+    this.labels.moveAsFirst(label);
   }
 
   getNumOfUncompletedTasksByLabel(labelId: number): number {

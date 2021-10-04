@@ -5,12 +5,14 @@ import { environment } from 'src/environments/environment';
 import { BooleanRequest } from '../entity/boolean-request';
 import { IdRequest } from '../entity/id-request';
 import { Label } from '../entity/label';
+import { LabelDetails } from '../entity/label-details';
 import { LabelRequest } from '../entity/label-request';
+import { MovableService } from './movable-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LabelService {
+export class LabelService implements MovableService<Label> {
   private apiServerUrl = environment.apiServerUrl;
 
   constructor(private http: HttpClient) { }
@@ -49,12 +51,12 @@ export class LabelService {
     return this.http.post<Label>(`${this.apiServerUrl}/${userId}/labels/${labelId}/before`, request);
   }
 
-  public moveLabelAfter(request: IdRequest, labelId: number):  Observable<Label> {
+  public moveAfter(request: IdRequest, labelId: number):  Observable<Label> {
     let userId  = this.getUserId();
     return this.http.put<Label>(`${this.apiServerUrl}/${userId}/labels/${labelId}/move/after`, request);
   }
 
-  public moveLabelToBeginning(labelId: number):  Observable<Label> {
+  public moveAsFirst(labelId: number):  Observable<Label> {
     let userId  = this.getUserId();
     return this.http.put<Label>(`${this.apiServerUrl}/${userId}/labels/${labelId}/move/asFirst`, null);
   }
