@@ -27,7 +27,7 @@ export class LabelListComponent implements OnInit, AfterViewInit {
   }
 
   openLabelModal() {
-    this.addLabel.emit({object: undefined, after: false, before: false});
+    this.addLabel.emit(new AddEvent<LabelDetails>());
   }
 
   toLabel(id: number) {
@@ -79,17 +79,17 @@ export class LabelListComponent implements OnInit, AfterViewInit {
   }
 
   openLabelModalWithLabel() {
-    this.addLabel.emit({object: this.contextMenuLabel, after: false, before: false});
+    this.addLabel.emit(new AddEvent<LabelDetails>(this.contextMenuLabel));
     this.closeContextMenu();
   }
 
   openProjectModalAbove() {
-    this.addLabel.emit({object: this.contextMenuLabel, after: false, before: true});
+    this.addLabel.emit(new AddEvent<LabelDetails>(this.contextMenuLabel, false, true));
     this.closeContextMenu();
   }
 
   openProjectModalBelow() {
-    this.addLabel.emit({object: this.contextMenuLabel, after: true, before: false});
+    this.addLabel.emit(new AddEvent<LabelDetails>(this.contextMenuLabel, true, false));
     this.closeContextMenu();
   }
 

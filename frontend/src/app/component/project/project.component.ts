@@ -23,9 +23,8 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   todayDate: Date | undefined;
   project: ProjectTreeElem | undefined;
   showAddTaskForm: boolean = false;
-  showEditTaskFormById: number | undefined;
   id!: number;
-  taskData: AddEvent<TaskTreeElem>  = {object: undefined, after: false, before: true};
+  taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
 
   draggedId: number | undefined;
 
@@ -54,25 +53,65 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     this.project = this.tree.getProjectById(id);
   }
 
+  // Task form
   openAddTaskForm() {
     this.closeEditTaskForm();
     this.showAddTaskForm = true;
-    this.taskData = {object: undefined, after: false, before: false};
+    this.taskData = new AddEvent<TaskTreeElem>();
   }
 
   closeAddTaskForm() {
     this.showAddTaskForm = false;
   }
 
-
   openEditTaskForm(task: TaskTreeElem) {
     this.closeAddTaskForm();
-    this.taskData = {object: task, after: false, before: false};
+    this.taskData = new AddEvent<TaskTreeElem>(task);
   }
 
   closeEditTaskForm() {
-    this.taskData = {object: undefined, after: false, before: false};
+    this.taskData = new AddEvent<TaskTreeElem>();
   }
+
+  openEditTaskFromContextMenu() {
+    if(this.contextTaskMenu) {
+      this.closeAddTaskForm();
+      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu);
+    }
+    this.closeContextTaskMenu();
+  }
+
+  openEditTaskAbove() {
+    if(this.contextTaskMenu) {
+      this.closeAddTaskForm();
+      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, false, true);
+    }
+    this.closeContextTaskMenu();
+  }
+
+  openEditTaskBelow() {
+    if(this.contextTaskMenu) {
+      this.closeAddTaskForm();
+      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, true, false);
+    }
+    this.closeContextTaskMenu();
+  }
+
+  shouldEditTaskById(taskId: number): boolean {
+    return this.taskObjectContains(taskId) && this.taskData.isInEditMode();
+ }
+
+ taskObjectContains(taskId: number) {
+   return taskId == this.taskData.object?.id;
+ }
+
+ shouldAddTaskBelowById(taskId: number): boolean {
+   return this.taskObjectContains(taskId) && this.taskData.after;
+ }
+
+ shouldAddTaskAboveById(taskId: number): boolean {
+   return this.taskObjectContains(taskId) && this.taskData.before;
+ }
 
   completeTask(id: number) {
     let task = this.tree.getTaskById(id);
@@ -257,14 +296,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     return this.tree.getNumOfTasksByParent(parentId);
   }
 
-  openEditTaskFromContextMenu() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = {object: this.contextTaskMenu, after: false, before: false};
-    }
-    this.closeContextTaskMenu();
-  }
-
   askForDelete() {
     if(this.contextTaskMenu) {
       this.deleteService.openModalForTask(this.contextTaskMenu);
@@ -307,25 +338,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   openSelectDateModalFormContextMenu() {
     if(this.contextTaskMenu) {
       this.openSelectDateModal(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
-  }
-
-  addBefore: boolean = false;;
-  addAfter: boolean = false;;
-
-  openEditTaskAbove() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = {object: this.contextTaskMenu, after: false, before: true};
-    }
-    this.closeContextTaskMenu();
-  }
-
-  openEditTaskBelow() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = {object: this.contextTaskMenu, after: true, before: false};
     }
     this.closeContextTaskMenu();
   }
@@ -417,25 +429,5 @@ export class ProjectComponent implements OnInit, AfterViewInit {
       }
     }
     return labels;
-  }
-
-  shouldEditTaskById(taskId: number): boolean {
-     return this.taskObjectContains(taskId) && this.taskObjectinEditMode();
-  }
-
-  taskObjectContains(taskId: number) {
-    return taskId == this.taskData.object?.id;
-  }
-
-  taskObjectinEditMode(): boolean {
-    return !this.taskData.after && !this.taskData.before
-  }
-
-  shouldAddTaskBelowById(taskId: number): boolean {
-    return this.taskObjectContains(taskId) && this.taskData.after;
-  }
-
-  shouldAddTaskAboveById(taskId: number): boolean {
-    return this.taskObjectContains(taskId) && this.taskData.before;
   }
 }

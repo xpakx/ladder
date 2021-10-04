@@ -39,7 +39,7 @@ export class LabelDialogComponent implements OnInit {
       this.after = this.data.after;
       this.before = this.data.before;
     }
-    alert((this.label ? this.label.name : "No label") + " " + this.before + " " + this.after);
+    
     if(this.label && !this.after && !this.before) {
       this.editMode = true;
     }

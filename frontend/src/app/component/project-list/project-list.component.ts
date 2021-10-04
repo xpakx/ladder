@@ -49,21 +49,21 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
   //Project modal window
 
   openProjectModal() {
-    this.addProject.emit({object: undefined, after: false, before: false});
+    this.addProject.emit(new AddEvent<ProjectTreeElem>());
   }
 
   openProjectModalWithProject() {
-    this.addProject.emit({object: this.contextProjectMenu, after: false, before: false});
+    this.addProject.emit(new AddEvent<ProjectTreeElem>(this.contextProjectMenu));
     this.closeContextProjectMenu();
   }
 
   openProjectModalAbove() {
-    this.addProject.emit({object: this.contextProjectMenu, after: false, before: true});
+    this.addProject.emit(new AddEvent<ProjectTreeElem>(this.contextProjectMenu, false, true));
     this.closeContextProjectMenu();
   }
 
   openProjectModalBelow() {
-    this.addProject.emit({object: this.contextProjectMenu, after: true, before: false});
+    this.addProject.emit(new AddEvent<ProjectTreeElem>(this.contextProjectMenu, true, false));
     this.closeContextProjectMenu();
   }
 
