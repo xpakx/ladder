@@ -182,22 +182,16 @@ public class TaskService {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
         Task afterTask = findIdFromIdRequest(request);
-        List<Task> projectsAfter = getAllTasksAfterGivenTask(userId, afterTask);
-
         taskToMove.setParent(afterTask.getParent());
-
         taskToMove.setProjectOrder(afterTask.getProjectOrder()+1);
-        projectsAfter.forEach(((p) -> p.setProjectOrder(p.getProjectOrder()+1)));
-        taskRepository.saveAll(projectsAfter);
+        incrementOrderOfTasksAfter(userId, afterTask);
         return taskRepository.save(taskToMove);
     }
 
     private Task findIdFromIdRequest(IdRequest request) {
         return hasId(request) ? taskRepository.findById(request.getId()).orElse(null) : null;
     }
-    private List<Task> getAllTasksAfterGivenTask(Integer userId, Task task) {
-        return hasParent(task) ? getAllSiblingsAfter(userId, task) : getAllTasksWithNoParentAfter(userId, task);
-    }
+
     private boolean hasId(IdRequest request) {
         return request.getId() != null;
     }
@@ -206,14 +200,6 @@ public class TaskService {
         return task.getParent() != null;
     }
 
-    private List<Task> getAllSiblingsAfter(Integer userId, Task task) {
-        return taskRepository
-                .findByOwnerIdAndParentIdAndProjectOrderGreaterThan(userId, task.getParent().getId(), task.getProjectOrder());
-    }
-
-    private List<Task> getAllTasksWithNoParentAfter(Integer userId, Task task) {
-        return hasProject(task) ? getAllFirstOrderTasksFromProjectAfter(userId, task) : getAllFirstOrderTasksFromInboxAfter(userId, task);
-    }
 
     public Task moveTaskAsFirstChild(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
@@ -267,14 +253,10 @@ public class TaskService {
         Task taskToAdd = buildTaskToAddFromRequest(request, userId);
         Task afterTask = taskRepository.findByIdAndOwnerId(afterId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent task!"));
-        List<Task> tasksAfter = getAllTasksAfterGivenTask(userId, afterTask);
-
         taskToAdd.setParent(afterTask.getParent());
         taskToAdd.setProject(afterTask.getProject());
-
         taskToAdd.setProjectOrder(afterTask.getProjectOrder()+1);
-        tasksAfter.forEach(((p) -> p.setProjectOrder(p.getProjectOrder()+1)));
-        taskRepository.saveAll(tasksAfter);
+        incrementOrderOfTasksAfter(userId, afterTask);
         return taskRepository.save(taskToAdd);
     }
 
@@ -282,50 +264,34 @@ public class TaskService {
         Task taskToAdd = buildTaskToAddFromRequest(request, userId);
         Task beforeTask = taskRepository.findByIdAndOwnerId(beforeId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent task!"));
-        List<Task> tasksAfter = getAllTasksAfterGivenTaskAndThisTask(userId, beforeTask);
-
         taskToAdd.setParent(beforeTask.getParent());
         taskToAdd.setProject(beforeTask.getProject());
-
         taskToAdd.setProjectOrder(beforeTask.getProjectOrder());
-        tasksAfter.forEach(((p) -> p.setProjectOrder(p.getProjectOrder()+1)));
-        taskRepository.saveAll(tasksAfter);
+        incrementOrderOfTasksBefore(userId, beforeTask);
         return taskRepository.save(taskToAdd);
-    }
-
-    private List<Task> getAllTasksAfterGivenTaskAndThisTask(Integer userId, Task task) {
-        return hasParent(task) ? getAllSiblingsAfterIncl(userId, task) : getAllTasksWithNoParentAfterIncl(userId, task);
-    }
-
-    private List<Task> getAllTasksWithNoParentAfterIncl(Integer userId, Task task) {
-        return hasProject(task) ? getAllFirstOrderTasksFromProjectAfterIncl(userId, task) : getAllFirstOrderTasksFromInboxAfterIncl(userId, task);
-    }
-
-    private List<Task> getAllFirstOrderTasksFromInboxAfterIncl(Integer userId, Task task) {
-        return taskRepository
-            .findByOwnerIdAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThanEqual(userId, task.getProjectOrder());
-    }
-
-    private List<Task> getAllFirstOrderTasksFromInboxAfter(Integer userId, Task task) {
-        return taskRepository
-                .findByOwnerIdAndProjectIsNullAndParentIsNullAndProjectOrderGreaterThan(userId, task.getProjectOrder());
-    }
-
-    private List<Task> getAllFirstOrderTasksFromProjectAfterIncl(Integer userId, Task task) {
-        return taskRepository
-                .findByOwnerIdAndProjectIdAndParentIsNullAndProjectOrderGreaterThanEqual(userId, task.getProject().getId(), task.getProjectOrder());
-    }
-    private List<Task> getAllFirstOrderTasksFromProjectAfter(Integer userId, Task task) {
-        return taskRepository
-                .findByOwnerIdAndProjectIdAndParentIsNullAndProjectOrderGreaterThan(userId, task.getProject().getId(), task.getProjectOrder());
     }
 
     private boolean hasProject(Task task) {
         return task.getProject() != null;
     }
 
-    private List<Task> getAllSiblingsAfterIncl(Integer userId, Task task) {
-        return taskRepository
-                .findByOwnerIdAndParentIdAndProjectOrderGreaterThanEqual(userId, task.getParent().getId(), task.getProjectOrder());
+    private void incrementOrderOfTasksAfter(Integer userId, Task task) {
+        if(hasParent(task)) {
+            taskRepository.incrementOrderByOwnerIdAndParentIdAndOrderGreaterThan(userId, task.getParent().getId(), task.getProjectOrder());
+        } else if(hasProject(task)) {
+            taskRepository.incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThan(userId, task.getProject().getId(), task.getProjectOrder());
+        } else {
+            taskRepository.incrementOrderByOwnerIdAndOrderGreaterThan(userId, task.getProjectOrder());
+        }
+    }
+
+    private void incrementOrderOfTasksBefore(Integer userId, Task task) {
+        if(hasParent(task)) {
+            taskRepository.incrementOrderByOwnerIdAndParentIdAndOrderGreaterThanEqual(userId, task.getParent().getId(), task.getProjectOrder());
+        } else if(hasProject(task)) {
+            taskRepository.incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThanEqual(userId, task.getProject().getId(), task.getProjectOrder());
+        } else {
+            taskRepository.incrementOrderByOwnerIdAndOrderGreaterThanEqual(userId, task.getProjectOrder());
+        }
     }
 }
