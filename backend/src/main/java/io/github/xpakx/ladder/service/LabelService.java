@@ -7,23 +7,14 @@ import io.github.xpakx.ladder.entity.dto.LabelRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Comparator;
-import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class LabelService {
     private final LabelRepository labelRepository;
     private final UserAccountRepository userRepository;
-
-    @Autowired
-    public LabelService(LabelRepository labelRepository, UserAccountRepository userRepository) {
-        this.labelRepository = labelRepository;
-        this.userRepository = userRepository;
-    }
 
     public Label addLabel(LabelRequest request, Integer userId) {
         Label labelToAdd = buildLabelToAddFromRequest(request, userId);

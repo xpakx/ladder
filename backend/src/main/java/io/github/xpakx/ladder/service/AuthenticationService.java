@@ -9,6 +9,7 @@ import io.github.xpakx.ladder.entity.dto.RegistrationRequest;
 import io.github.xpakx.ladder.error.JwtBadCredentialsException;
 import io.github.xpakx.ladder.error.UserDisabledException;
 import io.github.xpakx.ladder.security.JwtTokenUtil;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -22,21 +23,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserService userService;
     private final UserAccountRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public AuthenticationService(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
-                                 UserService userService, UserAccountRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public AuthenticationResponse generateAuthenticationToken(AuthenticationRequest authenticationRequest) {
         final UserDetails userDetails = userService.loadUserToLogin(authenticationRequest.getUsername());

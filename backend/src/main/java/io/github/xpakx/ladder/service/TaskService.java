@@ -9,7 +9,7 @@ import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,19 +18,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
-
-    @Autowired
-    public TaskService(TaskRepository taskRepository, ProjectRepository projectRepository, UserAccountRepository userRepository, LabelRepository labelRepository) {
-        this.taskRepository = taskRepository;
-        this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
-        this.labelRepository = labelRepository;
-    }
 
     @Transactional
     public void deleteTask(Integer taskId, Integer userId) {

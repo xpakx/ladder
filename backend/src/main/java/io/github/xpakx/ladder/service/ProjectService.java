@@ -9,7 +9,7 @@ import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,19 +18,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
-
-    @Autowired
-    public ProjectService(ProjectRepository projectRepository, TaskRepository taskRepository, UserAccountRepository userRepository, LabelRepository labelRepository) {
-        this.projectRepository = projectRepository;
-        this.taskRepository = taskRepository;
-        this.userRepository = userRepository;
-        this.labelRepository = labelRepository;
-    }
 
     public ProjectDetails getProjectById(Integer projectId, Integer userId) {
         return projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
