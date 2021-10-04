@@ -3,7 +3,10 @@ package io.github.xpakx.ladder.repository;
 import io.github.xpakx.ladder.entity.Project;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,9 +21,42 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     List<Project> getByOwnerId(Integer ownerId);
     void deleteByIdAndOwnerId(Integer Id, Integer ownerId);
 
-    List<Project> findByOwnerIdAndParentIsNullAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer generalOrder);
-    List<Project> findByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer parentId, Integer generalOrder);
-    List<Project> findByOwnerIdAndParentIsNullAndGeneralOrderGreaterThan(Integer ownerId, Integer generalOrder);
-    List<Project> findByOwnerIdAndParentIdAndGeneralOrderGreaterThan(Integer ownerId, Integer parentId, Integer generalOrder);
+
+    @Modifying
+    @Transactional
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent IS NULL AND p.generalOrder > :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(Integer ownerId, Integer generalOrder);
+
+    @Modifying
+    @Transactional
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent IS NULL AND p.generalOrder >= :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer generalOrder);
+
+    @Modifying
+    @Transactional
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent.id = :parentId AND p.generalOrder > :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThan(Integer ownerId, Integer parentId, Integer generalOrder);
+
+    @Modifying
+    @Transactional
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent.id = :parentId AND p.generalOrder >= :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer parentId, Integer generalOrder);
+
+    @Modifying
+    @Transactional
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent.id = :parentId")
+    void incrementGeneralOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId);
+
+    @Modifying
+    @Transactional
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent IS NULL")
+    void incrementGeneralOrderByOwnerId(Integer ownerId);
+
     List<Project> findByOwnerIdAndParentId(Integer ownerId, Integer parentId);
+
+    @Query("SELECT coalesce(max(p.generalOrder)) FROM Project p WHERE p.owner.id = :ownerId AND p.parent IS NULL")
+    Integer getMaxOrderByOwnerId(Integer ownerId);
+
+    @Query("SELECT coalesce(max(p.generalOrder)) FROM Project p WHERE p.owner.id = :ownerId AND p.parent.id = :parentId")
+    Integer getMaxOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId);
 }

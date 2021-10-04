@@ -140,21 +140,11 @@ public class ProjectService {
     }
 
     private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
-        return hasParent(request) ? getMaxProjectOrderForParent(request, userId) : getMaxProjectOrderIfNoParent(userId, request.getProjectId());
-    }
-
-    private Integer getMaxProjectOrderForParent(AddTaskRequest request, Integer userId) {
-        return taskRepository.findByOwnerIdAndParentId(userId, request.getParentId()).stream()
-                .max(Comparator.comparing(Task::getProjectOrder))
-                .map(Task::getProjectOrder)
-                .orElse(0);
-    }
-
-    private Integer getMaxProjectOrderIfNoParent(Integer userId, Integer projectId) {
-        return taskRepository.findByOwnerIdAndProjectIdAndParentIsNull(userId, projectId).stream()
-                .max(Comparator.comparing(Task::getProjectOrder))
-                .map(Task::getProjectOrder)
-                .orElse(0);
+        if(hasParent(request)) {
+            return projectRepository.getMaxOrderByOwnerIdAndParentId(userId, request.getParentId());
+        } else {
+            return projectRepository.getMaxOrderByOwnerId(userId);
+        }
     }
 
     private Task buildTaskToAddFromRequest(AddTaskRequest request, Integer userId, Project project) {
@@ -383,29 +373,38 @@ public class ProjectService {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
-        List<Project> projectsAfter = getAllProjectsAfterGivenProject(userId, proj);
-
         projectToAdd.setParent(proj.getParent());
-
         projectToAdd.setGeneralOrder(proj.getGeneralOrder()+1);
-        projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
-        projectRepository.saveAll(projectsAfter);
+        incrementGeneralOrderIfGreaterThan(userId, proj);
         return projectRepository.save(projectToAdd);
     }
 
-    private List<Project> getAllProjectsAfterGivenProject(Integer userId, Project proj) {
-        return hasParent(proj) ? getAllSiblingsAfter(userId, proj) : getAllProjectsWithNoParentAfter(userId, proj);
+    private void incrementGeneralOrderIfGreaterThan(Integer userId, Project proj) {
+        if(hasParent(proj)) {
+            projectRepository.incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThan(
+                    userId,
+                    proj.getParent().getId(),
+                    proj.getGeneralOrder());
+        } else {
+            projectRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
+                    userId,
+                    proj.getGeneralOrder());
+        }
     }
 
-    private List<Project> getAllProjectsWithNoParentAfter(Integer userId, Project proj) {
-        return projectRepository
-                .findByOwnerIdAndParentIsNullAndGeneralOrderGreaterThan(userId, proj.getGeneralOrder());
+    private void incrementGeneralOrderIfGreaterThanEquals(Integer userId, Project proj) {
+        if(hasParent(proj)) {
+            projectRepository.incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(
+                    userId,
+                    proj.getParent().getId(),
+                    proj.getGeneralOrder());
+        } else {
+            projectRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(
+                    userId,
+                    proj.getGeneralOrder());
+        }
     }
 
-    private List<Project> getAllSiblingsAfter(Integer userId, Project proj) {
-        return projectRepository
-                .findByOwnerIdAndParentIdAndGeneralOrderGreaterThan(userId, proj.getParent().getId(), proj.getGeneralOrder());
-    }
 
     private boolean hasParent(Project project) {
         return project.getParent() != null;
@@ -415,41 +414,19 @@ public class ProjectService {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent project!"));
-        List<Project> projectsAfter = getAllProjectsAfterGivenProjectAndThisProject(userId, proj);
-
         projectToAdd.setParent(proj.getParent());
-
         projectToAdd.setGeneralOrder(proj.getGeneralOrder());
-        projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
-        projectRepository.saveAll(projectsAfter);
+        incrementGeneralOrderIfGreaterThanEquals(userId, proj);
         return projectRepository.save(projectToAdd);
-    }
-
-    private List<Project> getAllProjectsAfterGivenProjectAndThisProject(Integer userId, Project proj) {
-        return hasParent(proj) ? getAllSiblingsAfterIncl(userId, proj) : getAllProjectsWithNoParentAfterIncl(userId, proj);
-    }
-
-    private List<Project> getAllProjectsWithNoParentAfterIncl(Integer userId, Project proj) {
-        return projectRepository
-                    .findByOwnerIdAndParentIsNullAndGeneralOrderGreaterThanEqual(userId, proj.getGeneralOrder());
-    }
-
-    private List<Project> getAllSiblingsAfterIncl(Integer userId, Project proj) {
-        return projectRepository
-                    .findByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(userId, proj.getParent().getId(), proj.getGeneralOrder());
     }
 
     public Project moveProjectAfter(IdRequest request, Integer userId, Integer projectToMoveId) {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
         Project afterProject = findIdFromIdRequest(request);
-        List<Project> projectsAfter = getAllProjectsAfterGivenProject(userId, afterProject);
-
         projectToMove.setParent(afterProject.getParent());
-
         projectToMove.setGeneralOrder(afterProject.getGeneralOrder()+1);
-        projectsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
-        projectRepository.saveAll(projectsAfter);
+        incrementGeneralOrderIfGreaterThan(userId, afterProject);
         return projectRepository.save(projectToMove);
     }
     
@@ -461,15 +438,21 @@ public class ProjectService {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
         Project parentProject = findIdFromIdRequest(request);
-        List<Project> children = request.getId() != null ? projectRepository.findByOwnerIdAndParentId(userId, request.getId()) :
-                projectRepository.findByOwnerIdAndParentIsNull(userId, Project.class);
-
         projectToMove.setParent(parentProject);
-
         projectToMove.setGeneralOrder(1);
-        children.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
-        projectRepository.saveAll(children);
+        incrementGeneralOrderOfAllChildren(request, userId);
         return projectRepository.save(projectToMove);
+    }
+
+    private void incrementGeneralOrderOfAllChildren(IdRequest request, Integer userId) {
+        if(request.getId() == null) {
+            projectRepository.incrementGeneralOrderByOwnerIdAndParentId(
+                    userId,
+                    request.getId());
+        } else {
+            projectRepository.incrementGeneralOrderByOwnerId(
+                    userId);
+        }
     }
 
     public Project moveProjectAsFirst(Integer userId, Integer projectToMoveId) {

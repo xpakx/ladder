@@ -1,12 +1,9 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Label;
-import io.github.xpakx.ladder.entity.Project;
-import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.entity.dto.LabelRequest;
-import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -30,6 +27,7 @@ public class LabelService {
 
     public Label addLabel(LabelRequest request, Integer userId) {
         Label labelToAdd = buildLabelToAddFromRequest(request, userId);
+        labelToAdd.setGeneralOrder(labelRepository.getMaxOrderByOwnerId(userId)+1);
         return labelRepository.save(labelToAdd);
     }
 
@@ -39,7 +37,6 @@ public class LabelService {
                 .owner(userRepository.getById(userId))
                 .color(request.getColor())
                 .favorite(request.isFavorite())
-                .generalOrder(getMaxOrder(userId))
                 .build();
     }
 
@@ -52,16 +49,8 @@ public class LabelService {
         return labelRepository.save(labelToUpdate);
     }
 
-    @Transactional
     public void deleteLabel(Integer labelId, Integer userId) {
         labelRepository.deleteByIdAndOwnerId(labelId, userId);
-    }
-
-    private Integer getMaxOrder(Integer userId) {
-        return labelRepository.findByOwnerId(userId, Label.class).stream()
-                .max(Comparator.comparing(Label::getGeneralOrder))
-                .map(Label::getGeneralOrder)
-                .orElse(0);
     }
 
     private Label findIdFromIdRequest(IdRequest request) {
@@ -72,25 +61,12 @@ public class LabelService {
         return request.getId() != null;
     }
 
-    private List<Label> getAllLabelsAfterGivenLabel(Integer userId, Label label) {
-        return labelRepository
-                .findByOwnerIdAndGeneralOrderGreaterThan(userId, label.getGeneralOrder());
-    }
-
-    private List<Label> getAllLabelsAfterGivenLabelAndThisLabel(Integer userId, Label label) {
-        return labelRepository
-                .findByOwnerIdAndGeneralOrderGreaterThanEqual(userId, label.getGeneralOrder());
-    }
-
     public Label moveLabelAfter(IdRequest request, Integer userId, Integer labelToMoveId) {
         Label labelToMove = labelRepository.findByIdAndOwnerId(labelToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent label!"));
         Label afterLabel = findIdFromIdRequest(request);
-        List<Label> labelsAfter = getAllLabelsAfterGivenLabel(userId, afterLabel);
-
         labelToMove.setGeneralOrder(afterLabel.getGeneralOrder() + 1);
-        labelsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder() + 1)));
-        labelRepository.saveAll(labelsAfter);
+        labelRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(userId, afterLabel.getGeneralOrder());
         return labelRepository.save(labelToMove);
     }
 
@@ -104,11 +80,8 @@ public class LabelService {
     public Label moveLabelAsFirst(Integer userId, Integer labelToMoveId) {
         Label labelToMove = labelRepository.findByIdAndOwnerId(labelToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent label!"));
-        List<Label> children = labelRepository.findByOwnerId(userId, Label.class);
-
         labelToMove.setGeneralOrder(1);
-        children.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
-        labelRepository.saveAll(children);
+        labelRepository.incrementGeneralOrderByOwnerId(userId);
         return labelRepository.save(labelToMove);
     }
 
@@ -116,12 +89,8 @@ public class LabelService {
         Label labelToAdd = buildLabelToAddFromRequest(request, userId);
         Label label = labelRepository.findByIdAndOwnerId(labelId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent label!"));
-        List<Label> labelsAfter = getAllLabelsAfterGivenLabel(userId, label);
-
-
         labelToAdd.setGeneralOrder(label.getGeneralOrder()+1);
-        labelsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
-        labelRepository.saveAll(labelsAfter);
+        labelRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(userId, label.getGeneralOrder());
         return labelRepository.save(labelToAdd);
     }
 
@@ -129,12 +98,8 @@ public class LabelService {
         Label labelToAdd = buildLabelToAddFromRequest(request, userId);
         Label label = labelRepository.findByIdAndOwnerId(labelId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent label!"));
-        List<Label> labelsAfter = getAllLabelsAfterGivenLabelAndThisLabel(userId, label);
-
-
         labelToAdd.setGeneralOrder(label.getGeneralOrder());
-        labelsAfter.forEach(((p) -> p.setGeneralOrder(p.getGeneralOrder()+1)));
-        labelRepository.saveAll(labelsAfter);
+        labelRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(userId, label.getGeneralOrder());
         return labelRepository.save(labelToAdd);
     }
 }
