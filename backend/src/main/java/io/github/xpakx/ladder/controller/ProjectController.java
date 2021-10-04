@@ -4,7 +4,7 @@ import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.ProjectService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,13 +14,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/{userId}/projects")
+@AllArgsConstructor
 public class ProjectController {
     private final ProjectService projectService;
-
-    @Autowired
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
-    }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/{projectId}")

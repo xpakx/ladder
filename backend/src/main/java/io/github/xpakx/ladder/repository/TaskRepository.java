@@ -1,6 +1,5 @@
 package io.github.xpakx.ladder.repository;
 
-import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +39,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query("SELECT coalesce(max(p.projectOrder), 0) FROM Task p WHERE p.owner.id = :ownerId AND p.project.id = :projectId AND p.parent.id = :parentId")
     Integer getMaxOrderByOwnerIdAndProjectIdAndParentId(Integer ownerId, Integer projectId, Integer parentId);
-    
+
     @Modifying
     @Transactional
     @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent.id = :parentId AND t.projectOrder > :projectOrder")
