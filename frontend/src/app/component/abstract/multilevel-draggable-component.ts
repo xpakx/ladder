@@ -107,8 +107,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     }
     
     protected amountOfDropzones(i: number, elem: R): number {
-        return elem.hasChildren || this.isNextElemDragged(i) ?
-          this.findFirstWithSmallerIndentAndReturnIndent(i + 1, elem.indent) : this.indentForPosition(i + 1);
+        return this.findFirstWithSmallerIndentAndReturnIndent(i + 1, elem.indent);
     }
 
     protected isNextElemDragged(i: number) {
@@ -121,12 +120,27 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     
     calculateAdditionalDropzones(i: number, elem: R): boolean {
         if(!elem.hasChildren) {
-         return elem.indent > this.indentForPosition(i+1);
+         return elem.indent > this.indentForPosition(i+1)
+        || this.hasNextUndetachedElemSmallerIndent(i, elem);
         } 
         if(!elem.collapsed) {
-          return false;
+            return this.hasNextUndetachedElemSmallerIndent(i, elem);
         }
         return this.findFirstWithSmallerIndentAndReturnIndent(i+1, elem.indent) < elem.indent;
+    }
+
+    private hasNextUndetachedElemSmallerIndent(i: number, elem: R) {
+        let nextUndetached = this.findFirstNonCollapsedAndReturn(i + 1);
+        return !nextUndetached || nextUndetached.indent < elem.indent;
+    }
+
+    findFirstNonCollapsedAndReturn(index: number): R | undefined {
+        for (let i = index; i < this.treeService.getAll().length; i++) {
+            if (this.isNotDetachedFromProjectList(this.treeService.getAll()[i])) {
+                return this.treeService.getAll()[i];
+            }
+        }
+        return undefined;
     }
     
     private findFirstWithSmallerIndentAndReturnIndent(index: number, indent: number): number {
@@ -139,7 +153,11 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     }
     
     private isCandidateForElemWithSmallerIndent(indent: number, elem: R) {
-        return indent >= elem.indent && !this.isDragged(elem.id) && !this.isParentDragged(elem.parentList); 
+        return indent >= elem.indent && this.isNotDetachedFromProjectList(elem); 
+    }
+
+    private isNotDetachedFromProjectList(elem: R) {
+        return !this.isDragged(elem.id) && !this.isParentDragged(elem.parentList)
     }
     
     private indentForPosition(i: number): number {
