@@ -3,7 +3,6 @@ import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } fr
 import { ActivatedRoute, Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { LabelDetails } from 'src/app/entity/label-details';
-import { ParentWithId } from 'src/app/entity/parent-with-id';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -20,7 +19,7 @@ import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.css']
 })
-export class ProjectComponent  extends MultilevelTaskComponent<ParentWithId, TaskTreeElem, Task, TaskService, TaskTreeService> 
+export class ProjectComponent  extends MultilevelTaskComponent<TaskTreeService> 
 implements OnInit, AfterViewInit {
   public invalid: boolean = false;
   public message: string = '';

@@ -1,22 +1,23 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { DndDropEvent } from "ngx-drag-drop";
-import { IndentableTreeElem } from "src/app/entity/indentable-tree-elem";
 import { ParentWithId } from "src/app/entity/parent-with-id";
 import { ProjectTreeElem } from "src/app/entity/project-tree-elem";
+import { Task } from "src/app/entity/task";
+import { TaskTreeElem } from "src/app/entity/task-tree-elem";
 import { MovableTaskTreeService } from "src/app/service/movable-task-tree-service";
-import { MultilevelMovableService } from "src/app/service/multilevel-movable-service";
+import { TaskService } from "src/app/service/task.service";
 import { MultilevelDraggableComponent } from "./multilevel-draggable-component";
 
-export class MultilevelTaskComponent<P extends ParentWithId, R extends IndentableTreeElem<P>, T, S extends MultilevelMovableService<T>, U extends MovableTaskTreeService<T, R>>
-extends MultilevelDraggableComponent<P, R, T, S, U>  {
+export class MultilevelTaskComponent<U extends MovableTaskTreeService<Task, TaskTreeElem>>
+extends MultilevelDraggableComponent<ParentWithId, TaskTreeElem, Task, TaskService, U>  {
     project: ProjectTreeElem | undefined;
     
-    constructor(protected treeService : U, protected service: S) { super(treeService, service) }
+    constructor(protected treeService : U, protected service: TaskService) { super(treeService, service) }
     
     onDropFirst(event: DndDropEvent) {
         let id = Number(event.data);
         this.service.moveAsFirst(id).subscribe(
-          (response: T, project: ProjectTreeElem | undefined = this.project) => {
+          (response: Task, project: ProjectTreeElem | undefined = this.project) => {
           this.treeService.moveTaskAsFirst(response, project);
         },
         (error: HttpErrorResponse) => {
@@ -24,5 +25,10 @@ extends MultilevelDraggableComponent<P, R, T, S, U>  {
         }
       );
     }    
+
+    getListForDropzones(i: number, elem: TaskTreeElem): TaskTreeElem[] {
+      let dropzones = elem.indent - this.amountOfDropzones(i, elem);
+      return elem.parentList.slice(-dropzones);
+  }
 }
   

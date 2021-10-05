@@ -31,7 +31,7 @@
             <li *ngIf="draggedId" [dndDropzone]="['task']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
 
             </li>
-            <ng-container *ngFor="let task of tasks">
+            <ng-container *ngFor="let task of tasks; let i = index">
                 <li *ngIf="shouldAddTaskAboveById(task.id)" class="task_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
                     <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
@@ -119,11 +119,23 @@
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
                     <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
                 </li>
-                <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item" [dndDropzone]="['task']">
+                <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item" [dndDropzone]="['task']"> <!-- [dndDisableDropIf]="true">-->
+                    <ng-container *ngIf="calculateAdditionalDropzones(i, task); else noAdditionalDropzones">
+                        <span class="indent" *ngFor="let e of [].constructor(getAmountOfNormalDropzones(i, task))"></span>
+                        <span class="indent drag-zone" *ngFor="let e of getListForDropzones(i, task)" [dndDropzone]="['task']" (dndDrop)="onDrop($event, e)"></span>
+                        <span class="indent drag-zone" [dndDropzone]="['task']" (dndDrop)="onDrop($event, task)"></span>
+                    </ng-container>
+                    <ng-template #noAdditionalDropzones>
+                        <span class="indent" *ngFor="let e of [].constructor(task.hasChildren && !task.collapsed ? task.indent+1 : task.indent)"></span>
+                        <span class="indent drag-zone" [dndDropzone]="['task']" (dndDrop)="onDrop($event, task)" *ngIf="!task.hasChildren || task.collapsed"></span>
+                    </ng-template>
+                    <span [dndDropzone]="['task']" (dndDrop)="onDrop($event, task, true)" class="drag-zone last-drag-zone"></span>
+                </li>
+                <!--<li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item" [dndDropzone]="['task']">
                     <span class="indent" *ngFor="let e of [].constructor(task.hasChildren && !task.collapsed ? task.indent+1 : task.indent)"></span>
                     <span class="indent drag-zone" [dndDropzone]="['task']" (dndDrop)="onDrop($event, task)" *ngIf="!task.hasChildren || task.collapsed"></span>
                     <span [dndDropzone]="['task']" (dndDrop)="onDrop($event, task, true)" class="drag-zone last-drag-zone"></span>
-                </li>
+                </li>-->
                 <li *ngIf="shouldAddTaskBelowById(task.id)" class="task_list_item">
                     <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
                     <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>

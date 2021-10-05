@@ -22,7 +22,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         return this.draggedId == id;
     }
 
-    onDrop(event: DndDropEvent, target: IndentableTreeElem<P> /*?*/, asChild: boolean = false) { //override
+    onDrop(event: DndDropEvent, target: IndentableTreeElem<P> /*?*/, asChild: boolean = false) { 
     let id = Number(event.data);
         if(!asChild)
         {
@@ -101,7 +101,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         return elems.find((a) => a.collapsed) ? true : false;
     }
 
-    getListForDropzones(i: number, elem: R) {
+    getListForDropzones(i: number, elem: R): IndentableTreeElem<P>[] {
         let dropzones = elem.indent - this.amountOfDropzones(i, elem);
         return elem.parentList.slice(-dropzones);
     }
