@@ -122,7 +122,7 @@
                 <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item" [dndDropzone]="['task']"> <!-- [dndDisableDropIf]="true">-->
                     <ng-container *ngIf="calculateAdditionalDropzones(i, task); else noAdditionalDropzones">
                         <span class="indent" *ngFor="let e of [].constructor(getAmountOfNormalDropzones(i, task))"></span>
-                        <span class="indent drag-zone" *ngFor="let e of getListForDropzones(i, task)" [dndDropzone]="['task']" (dndDrop)="onDrop($event, e)"></span>
+                        <span class="indent drag-zone" *ngFor="let e of getListForDropzones(i, task)" [dndDropzone]="['task']" (dndDrop)="onDrop($event, e)">{{e.id}}</span>
                         <span class="indent drag-zone" [dndDropzone]="['task']" (dndDrop)="onDrop($event, task)"></span>
                     </ng-container>
                     <ng-template #noAdditionalDropzones>

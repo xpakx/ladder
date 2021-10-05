@@ -24,7 +24,7 @@ extends MultilevelDraggableComponent<ParentWithId, TaskTreeElem, Task, TaskServi
         
         }
       );
-    }    
+    }   
 
     getListForDropzones(i: number, elem: TaskTreeElem): TaskTreeElem[] {
       let dropzones = elem.indent - this.amountOfDropzones(i, elem);

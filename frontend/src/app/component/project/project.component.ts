@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DndDropEvent } from 'ngx-drag-drop';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
@@ -128,31 +127,6 @@ implements OnInit, AfterViewInit {
       
       }
     );
-    }
-  }
-
-
-  onDrop(event: DndDropEvent, target: TaskTreeElem, asChild: boolean = false) {
-    let id = Number(event.data);
-    if(!asChild)
-    {
-      this.taskService.moveAfter({id: target.id}, id).subscribe(
-          (response: Task, indent: number = target.indent, afterId: number = target.id) => {
-          this.tree.moveTaskAfter(response, indent, afterId);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
-    } else {
-      this.taskService.moveAsChild({id: target.id}, id).subscribe(
-          (response: Task, indent: number = target.indent+1, afterId: number = target.id) => {
-          this.tree.moveTaskAsChild(response, indent, afterId);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
     }
   }
 

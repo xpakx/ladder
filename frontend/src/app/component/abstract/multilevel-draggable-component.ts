@@ -120,8 +120,8 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     
     calculateAdditionalDropzones(i: number, elem: R): boolean {
         if(!elem.hasChildren) {
-         return elem.indent > this.indentForPosition(i+1)
-        || this.hasNextUndetachedElemSmallerIndent(i, elem);
+            return elem.indent > this.indentForPosition(i+1)
+            || this.hasNextUndetachedElemSmallerIndent(i, elem);
         } 
         if(!elem.collapsed) {
             return this.hasNextUndetachedElemSmallerIndent(i, elem);
@@ -130,11 +130,11 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     }
 
     private hasNextUndetachedElemSmallerIndent(i: number, elem: R) {
-        let nextUndetached = this.findFirstNonCollapsedAndReturn(i + 1);
+        let nextUndetached = this.findFirstNonDetachedAndReturn(i + 1);
         return !nextUndetached || nextUndetached.indent < elem.indent;
     }
 
-    findFirstNonCollapsedAndReturn(index: number): R | undefined {
+    findFirstNonDetachedAndReturn(index: number): R | undefined {
         for (let i = index; i < this.treeService.getAll().length; i++) {
             if (this.isNotDetachedFromProjectList(this.treeService.getAll()[i])) {
                 return this.treeService.getAll()[i];
