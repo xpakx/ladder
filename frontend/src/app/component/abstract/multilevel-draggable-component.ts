@@ -107,14 +107,17 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     }
     
     protected amountOfDropzones(i: number, elem: R): number {
-        return elem.hasChildren ?
+        return elem.hasChildren || this.isNextElemDragged(i) ?
           this.findFirstWithSmallerIndentAndReturnIndent(i + 1, elem.indent) : this.indentForPosition(i + 1);
+    }
+
+    protected isNextElemDragged(i: number) {
+        return this.outOfBound(i+1) || this.isDragged(this.idForPosition(i+1))
     }
     
     getAmountOfNormalDropzones(i: number, elem: R): number {
         return this.amountOfDropzones(i, elem);
     }
-    
     
     calculateAdditionalDropzones(i: number, elem: R): boolean {
         if(!elem.hasChildren) {
@@ -128,11 +131,15 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     
     private findFirstWithSmallerIndentAndReturnIndent(index: number, indent: number): number {
         for (let i = index; i < this.treeService.getAll().length; i++) {
-          if (indent >= this.treeService.getAll()[i].indent) {
+          if (this.isCandidateForElemWithSmallerIndent(indent, this.treeService.getAll()[i])) {
             return this.treeService.getAll()[i].indent;
           }
         }
         return 0;
+    }
+    
+    private isCandidateForElemWithSmallerIndent(indent: number, elem: R) {
+        return indent >= elem.indent && !this.isDragged(elem.id) && !this.isParentDragged(elem.parentList); 
     }
     
     private indentForPosition(i: number): number {
@@ -142,6 +149,10 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
           return this.treeService.getAll()[i].indent;
         }
         
+    }
+
+    private idForPosition(i: number): number {
+        return this.treeService.getAll()[i].id;       
     }
     
     private outOfBound(i: number): boolean {
