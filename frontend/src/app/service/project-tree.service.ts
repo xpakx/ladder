@@ -4,11 +4,13 @@ import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { IndentableService } from './indentable-service';
+import { MultilevelMovableTreeService } from './multilevel-movable-tree-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> {
+export class ProjectTreeService extends IndentableService<ProjectWithNameAndId>
+implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
   public list: ProjectTreeElem[] = [];
 
   constructor() { super() }
@@ -71,7 +73,7 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
   }
 
   addNewProjectAfter(project: Project, indent: number, afterId: number) {
-    let afterProject = this.getProjectById(afterId);
+    let afterProject = this.getById(afterId);
     if(afterProject) {
       let proj : ProjectTreeElem = afterProject;
       project.order = proj.order+1;
@@ -85,12 +87,12 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
     }
   }
 
-  moveProjectAfter(project: Project, indent: number, afterId: number) {
-    let afterProject = this.getProjectById(afterId);
-    let movedProject = this.getProjectById(project.id);
+  moveAfter(project: Project, indent: number, afterId: number) {
+    let afterProject = this.getById(afterId);
+    let movedProject = this.getById(project.id);
     if(afterProject && movedProject) {
       let proj : ProjectTreeElem = afterProject;
-      let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getProjectById(movedProject.parent.id) : undefined;
+      let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
       let projects = this.list
         .filter((a) => a.parent == proj.parent)
         .filter((a) => a.order > proj.order);
@@ -112,12 +114,12 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
     }
   }
 
-  moveProjectAsChild(project: Project, indent: number, parentId: number) {
-    let parentProject = this.getProjectById(parentId);
-    let movedProject = this.getProjectById(project.id);
+  moveAsChild(project: Project, indent: number, parentId: number) {
+    let parentProject = this.getById(parentId);
+    let movedProject = this.getById(project.id);
     if(parentProject && movedProject) {
       let proj : ProjectTreeElem = parentProject;
-      let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getProjectById(movedProject.parent.id) : undefined;
+      let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
       let projects = this.list
         .filter((a) => a.parent == proj);
         for(let pro of projects) {
@@ -138,10 +140,10 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
     }
   }
 
-  moveProjectAsFirst(project: Project) {
-    let movedProject = this.getProjectById(project.id);
+  moveAsFirst(project: Project) {
+    let movedProject = this.getById(project.id);
     if(movedProject) {
-      let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getProjectById(movedProject.parent.id) : undefined;
+      let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
       let projects = this.list.filter((a) => !a.parent);
         for(let pro of projects) {
           pro.order = pro.order + 1;
@@ -161,7 +163,7 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
   }
 
   addNewProjectBefore(project: Project, indent: number, beforeId: number) {
-    let beforeProject = this.getProjectById(beforeId);
+    let beforeProject = this.getById(beforeId);
     if(beforeProject) {
       let proj : ProjectTreeElem = beforeProject;
       project.order = proj.order;
@@ -176,7 +178,7 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
   }
 
   updateProject(project: Project, id: number) {
-    let projectElem = this.getProjectById(id)
+    let projectElem = this.getById(id)
     if(projectElem) {
       projectElem.name = project.name;
       projectElem.color = project.color;
@@ -184,8 +186,12 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
     }
   }
 
-  getProjectById(projectId: number): ProjectTreeElem | undefined {
+  getById(projectId: number): ProjectTreeElem | undefined {
     return this.list.find((a) => a.id == projectId);
+  }
+
+  getAll(): ProjectTreeElem[] {
+    return this.list;
   }
 
   deleteProject(projectId: number): number[] {
@@ -206,7 +212,7 @@ export class ProjectTreeService extends IndentableService<ProjectWithNameAndId> 
   }
 
   changeFav(response: Project) {
-    let project = this.getProjectById(response.id);
+    let project = this.getById(response.id);
     if(project) {
       project.favorite = response.favorite;
     }

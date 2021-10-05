@@ -4,19 +4,23 @@ import { Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
+import { ProjectWithNameAndId } from 'src/app/entity/project-with-name-and-id';
 import { Task } from 'src/app/entity/task';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
+import { ProjectTreeService } from 'src/app/service/project-tree.service';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
+import { MultilevelDraggableComponent } from '../abstract/multilevel-draggable-component';
 
 @Component({
   selector: 'app-project-list',
   templateUrl: './project-list.component.html',
   styleUrls: ['./project-list.component.css']
 })
-export class ProjectListComponent implements OnInit, AfterViewInit {
+export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWithNameAndId, ProjectTreeElem, Project, ProjectService, ProjectTreeService>
+ implements OnInit, AfterViewInit {
   contextProjectMenu: ProjectTreeElem | undefined;
   showContextProjectMenu: boolean = false;
   contextProjectMenuJustOpened: boolean = false;
@@ -26,9 +30,12 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
 
   @Output() addProject = new EventEmitter<AddEvent<ProjectTreeElem>>();
 
-  constructor(public tree : TreeService, private projectService: ProjectService, 
+  constructor(public tree : TreeService, private projectService: ProjectService,
+    protected projectTreeService: ProjectTreeService, 
     private renderer: Renderer2, private router: Router, 
-    private taskService: TaskService, private deleteService: DeleteService) { }
+    private taskService: TaskService, private deleteService: DeleteService) {
+      super(projectTreeService, projectService);
+     }
 
   ngOnInit(): void {
   }
@@ -71,32 +78,6 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
 
   switchProjectCollapse() {
     this.tree.projectCollapsed = !this.tree.projectCollapsed;
-  }
-
-  collapseProject(projectId: number) {
-    let project = this.tree.getProjectById(projectId);
-    if(project) {
-      project.collapsed = !project.collapsed;
-      this.projectService.updateProjectCollapse(project.id, {flag: project.collapsed}).subscribe(
-        (response: Project) => {
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
-    }
-  }
-  
-  isProjectCollapsed(projectId: number): boolean {
-    let project = this.tree.getProjectById(projectId);
-    if(project) {
-      return project.collapsed ? true : false;
-    }
-	  return false;
-  }
-  
-  isParentCollapsed(projects: ProjectTreeElem[]): boolean {
-    return projects.find((a) => a.collapsed) ? true : false;
   }
 
   // Navigation
@@ -160,71 +141,6 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
 
   // Drag'n'drop
 
-  draggedId: number | undefined;
-
-  onDragStart(id: number) {
-	  this.draggedId = id;
-  }
-
-  onDragEnd() {
-	  this.draggedId = undefined;
-  }
-
-  isDragged(id: number): boolean {
-    return this.draggedId == id;
-  }
-
-  isParentDragged(projects: ProjectTreeElem[]): boolean {
-	  for(let project of projects) {
-      if(project.id == this.draggedId) {
-        return true;
-      }
-	  }
-	  return false;
-  }
-  
-  onDrop(event: DndDropEvent, target: ProjectTreeElem, asChild: boolean = false) {
-    let id = Number(event.data);
-    if(!asChild)
-    {
-      this.projectService.moveProjectAfter({id: target.id}, id).subscribe(
-          (response: Project, indent: number = target.indent, afterId: number = target.id) => {
-          this.tree.moveProjectAfter(response, indent, afterId);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
-    } else {
-      this.projectService.moveProjectAsChild({id: target.id}, id).subscribe(
-          (response: Project, indent: number = target.indent+1, afterId: number = target.id) => {
-          this.tree.moveProjectAsChild(response, indent, afterId);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
-    }
-  }
-
-  onDropFirst(event: DndDropEvent) {
-    let id = Number(event.data);
-    this.projectService.moveProjectToBeginning(id).subscribe(
-        (response: Project) => {
-        this.tree.moveProjectAsFirst(response);
-      },
-      (error: HttpErrorResponse) => {
-      
-      }
-    );
-  }
-
-  hideDropZone(project: ProjectTreeElem): boolean {
-    return this.isDragged(project.id) || 
-    this.isParentDragged(project.parentList) || 
-    this.isParentCollapsed(project.parentList);
-  }
-
   onDropTask(event: DndDropEvent, project: ProjectTreeElem) {
     let id = Number(event.data);
     this.taskService.updateTaskProject({id: project.id}, id).subscribe(
@@ -235,53 +151,5 @@ export class ProjectListComponent implements OnInit, AfterViewInit {
       
       }
     );
-  }
-
-
-  getListForDropzones(i: number, project: ProjectTreeElem) {
-    let dropzones = project.indent - this.amountOfDropzones(i, project);
-    return project.parentList.slice(-dropzones);
-  }
-
-  private amountOfDropzones(i: number, project: ProjectTreeElem): number {
-    return project.hasChildren ?
-      this.findFirstWithSmallerIndentAndReturnIndent(i + 1, project.indent) : this.indentForPosition(i + 1);
-  }
-
-  getAmountOfNormalDropzones(i: number, project: ProjectTreeElem): number {
-    return this.amountOfDropzones(i, project);
-  }
-
-
-  calculateAdditionalDropzones(i: number, project: ProjectTreeElem): boolean {
-    if(!project.hasChildren) {
-     return project.indent > this.indentForPosition(i+1);
-    } 
-    if(!project.collapsed) {
-      return false;
-    }
-    return this.findFirstWithSmallerIndentAndReturnIndent(i+1, project.indent) < project.indent;
-  }
-
-  private findFirstWithSmallerIndentAndReturnIndent(index: number, indent: number): number {
-    for (let i = index; i < this.tree.getProjects().length; i++) {
-      if (indent >= this.tree.getProjects()[i].indent) {
-        return this.tree.getProjects()[i].indent;
-      }
-    }
-    return 0;
-  }
-
-  private indentForPosition(i: number): number {
-    if(this.outOfBound(i)) {
-      return 0;
-    } else {
-      return this.tree.getProjects()[i].indent;
-    }
-    
-  }
-
-  private outOfBound(i: number): boolean {
-    return i >= this.tree.getProjects().length;
   }
 }

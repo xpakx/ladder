@@ -47,15 +47,15 @@ export class TreeService {
   }
 
   moveProjectAfter(project: Project, indent: number, afterId: number) {
-    this.projects.moveProjectAfter(project, indent, afterId);
+    this.projects.moveAfter(project, indent, afterId);
   }
 
   moveProjectAsChild(project: Project, indent: number, parentId: number) {
-    this.projects.moveProjectAsChild(project, indent, parentId);
+    this.projects.moveAsChild(project, indent, parentId);
   }
 
   moveProjectAsFirst(project: Project) {
-    this.projects.moveProjectAsFirst(project);
+    this.projects.moveAsFirst(project);
   }
 
   addNewProjectBefore(project: Project, indent: number, beforeId: number) {
@@ -67,7 +67,7 @@ export class TreeService {
   }
 
   getProjectById(projectId: number): ProjectTreeElem | undefined {
-    return this.projects.getProjectById(projectId);
+    return this.projects.getById(projectId);
   }
 
   deleteProject(projectId: number) {

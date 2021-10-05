@@ -12,11 +12,12 @@ import { ProjectDetails } from '../entity/project-details';
 import { ProjectRequest } from '../entity/project-request';
 import { Task } from '../entity/task';
 import { UserWithData } from '../entity/user-with-data';
+import { MultilevelMovableService } from './multilevel-movable-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectService {
+export class ProjectService implements MultilevelMovableService<Project>{
   private apiServerUrl = environment.apiServerUrl;
 
   constructor(private http: HttpClient) { }
@@ -76,7 +77,7 @@ export class ProjectService {
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/favorite`, request);
   }
 
-  public updateProjectCollapse(projectId: number, request: BooleanRequest):  Observable<Project> {
+  public updateCollapse(projectId: number, request: BooleanRequest):  Observable<Project> {
     let userId  = this.getUserId();
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collapse`, request);
   }
@@ -104,17 +105,17 @@ export class ProjectService {
     return localStorage.getItem("user_id");
   }
 
-  public moveProjectAfter(request: IdRequest, projectId: number):  Observable<Project> {
+  public moveAfter(request: IdRequest, projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/after`, request);
   }
 
-  public moveProjectAsChild(request: IdRequest, projectId: number):  Observable<Project> {
+  public moveAsChild(request: IdRequest, projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/asChild`, request);
   }
 
-  public moveProjectToBeginning(projectId: number):  Observable<Project> {
+  public moveAsFirst(projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/asFirst`, null);
   }
