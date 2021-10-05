@@ -6,11 +6,13 @@ import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { IndentableService } from './indentable-service';
+import { MovableTaskTreeService } from './movable-task-tree-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TaskTreeService extends IndentableService<ParentWithId> {
+export class TaskTreeService extends IndentableService<ParentWithId> 
+implements MovableTaskTreeService<Task, TaskTreeElem> {
   public list: TaskTreeElem[] = [];
 
   constructor() { super() }
@@ -99,8 +101,12 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     return this.getByDateUncompleted(new Date()).length;
   }
 
-  getTaskById(taskId: number): TaskTreeElem | undefined {
+  getById(taskId: number): TaskTreeElem | undefined {
     return this.list.find((a) => a.id == taskId);
+  }
+
+  getAll(): TaskTreeElem[] {
+    return this.list;
   }
 
   getTasksByProject(projectId: number): TaskTreeElem[] {
@@ -137,7 +143,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
   }
 
   updateTask(response: Task, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
-    let task = this.getTaskById(response.id);
+    let task = this.getById(response.id);
     if(task) {
       task.description = response.description;
       task.title = response.title;
@@ -149,18 +155,18 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
   }
 
   changeTaskCompletion(response: Task) {
-    let task = this.getTaskById(response.id);
+    let task = this.getById(response.id);
     if(task) {
       task.completed = response.completed;
     }
   }
 
-  moveTaskAfter(task: Task, indent: number, afterId: number) {
-    let afterTask = this.getTaskById(afterId);
-    let movedTask = this.getTaskById(task.id);
+  moveAfter(task: Task, indent: number, afterId: number) {
+    let afterTask = this.getById(afterId);
+    let movedTask = this.getById(task.id);
     if(afterTask && movedTask) {
       let tas : TaskTreeElem = afterTask;
-      let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getTaskById(movedTask.parent.id) : undefined;
+      let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getById(movedTask.parent.id) : undefined;
       let tasks = this.list
         .filter((a) => a.parent == tas.parent)
         .filter((a) => a.order > tas.order);
@@ -182,12 +188,12 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     }
   }
 
-  moveTaskAsChild(task: Task, indent: number, parentId: number) {
-    let parentTask = this.getTaskById(parentId);
-    let movedTask = this.getTaskById(task.id);
+  moveAsChild(task: Task, indent: number, parentId: number) {
+    let parentTask = this.getById(parentId);
+    let movedTask = this.getById(task.id);
     if(parentTask && movedTask) {
       let tas : TaskTreeElem = parentTask;
-      let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getTaskById(movedTask.parent.id) : undefined;
+      let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getById(movedTask.parent.id) : undefined;
       let tasks = this.list
         .filter((a) => a.parent == tas);
         for(let tsk of tasks) {
@@ -208,10 +214,14 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
     }
   }
 
+  moveAsFirst(task:Task) {
+    this.moveTaskAsFirst(task, undefined);
+  }
+
   moveTaskAsFirst(task: Task, project: ProjectTreeElem | undefined) {
-    let movedTask = this.getTaskById(task.id);
+    let movedTask = this.getById(task.id);
     if(movedTask) {
-      let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getTaskById(movedTask.parent.id) : undefined;
+      let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getById(movedTask.parent.id) : undefined;
       let tasks = this.list
         .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
         .filter((a) => !a.parent);
@@ -253,14 +263,14 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
   }
 
   updateTaskDate(task: Task) {
-    let taskToEdit =  this.getTaskById(task.id);
+    let taskToEdit =  this.getById(task.id);
     if(taskToEdit) {
       taskToEdit.due = task.due? new Date(task.due) : null;
     }
   }
 
   addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
-    let afterTask = this.getTaskById(afterId);
+    let afterTask = this.getById(afterId);
     if(afterTask) {
       let tsk : TaskTreeElem = afterTask;
       task.projectOrder = tsk.order+1;
@@ -276,7 +286,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
   }
 
   addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
-    let beforeTask = this.getTaskById(beforeId);
+    let beforeTask = this.getById(beforeId);
     if(beforeTask) {
       let tsk : TaskTreeElem = beforeTask;
       task.projectOrder = tsk.order;
@@ -292,7 +302,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
   }
 
   moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
-    let taskToMove = this.getTaskById(task.id);
+    let taskToMove = this.getById(task.id);
     if(taskToMove) {
       let tasks = project ? this.getTasksByProject(project.id) : this.getTasksFromInbox();
       taskToMove.project = project ? project : null;
@@ -304,7 +314,7 @@ export class TaskTreeService extends IndentableService<ParentWithId> {
   }
 
   updateTaskPriority(task: Task) {
-    let taskToUpdate = this.getTaskById(task.id);
+    let taskToUpdate = this.getById(task.id);
     if(taskToUpdate) {
       taskToUpdate.priority = task.priority;
     }

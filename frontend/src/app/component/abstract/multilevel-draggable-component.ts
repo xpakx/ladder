@@ -8,7 +8,7 @@ import { MultilevelMovableTreeService } from "src/app/service/multilevel-movable
 export class MultilevelDraggableComponent<P extends ParentWithId, R extends IndentableTreeElem<P>, T, S extends MultilevelMovableService<T>, U extends MultilevelMovableTreeService<T, R>>  {
     draggedId: number | undefined;
     
-    constructor(protected treeService : U, private service: S) { }
+    constructor(protected treeService : U, protected service: S) { }
   
     onDragStart(id: number) { 
         this.draggedId = id;
@@ -66,7 +66,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     }
 
 
-    collapseProject(elemId: number) {
+    collapseElem(elemId: number) {
         let elem = this.treeService.getById(elemId);
         if(elem) {
           elem.collapsed = !elem.collapsed;
@@ -89,7 +89,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         return false;
     }
       
-    isProjectCollapsed(elemId: number): boolean {
+    isElemCollapsed(elemId: number): boolean {
         let elem = this.treeService.getById(elemId);
         if(elem) {
           return elem.collapsed ? true : false;

@@ -8,11 +8,12 @@ import { DateRequest } from '../entity/date-request';
 import { IdRequest } from '../entity/id-request';
 import { PriorityRequest } from '../entity/priority-request';
 import { Task } from '../entity/task';
+import { MultilevelMovableService } from './multilevel-movable-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TaskService {
+export class TaskService implements MultilevelMovableService<Task> {
   private apiServerUrl = environment.apiServerUrl;
 
   constructor(private http: HttpClient) { }
@@ -31,22 +32,22 @@ export class TaskService {
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}`, request);
   }
 
-  public moveTaskAfter(request: IdRequest, taskId: number):  Observable<Task> {
+  public moveAfter(request: IdRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/after`, request);
   }
 
-  public moveTaskAsChild(request: IdRequest, taskId: number):  Observable<Task> {
+  public moveAsChild(request: IdRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asChild`, request);
   }
 
-  public moveTaskToBeginning(taskId: number):  Observable<Task> {
+  public moveAsFirst(taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asFirst`, null);
   }
 
-  public updateTaskCollapse(taskId: number, request: BooleanRequest):  Observable<Task> {
+  public updateCollapse(taskId: number, request: BooleanRequest):  Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/collapse`, request);
   }

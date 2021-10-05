@@ -3,21 +3,25 @@ import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } fr
 import { ActivatedRoute, Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { LabelDetails } from 'src/app/entity/label-details';
+import { ParentWithId } from 'src/app/entity/parent-with-id';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
+import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
+import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
 
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.css']
 })
-export class ProjectComponent implements OnInit, AfterViewInit {
+export class ProjectComponent  extends MultilevelTaskComponent<ParentWithId, TaskTreeElem, Task, TaskService, TaskTreeService> 
+implements OnInit, AfterViewInit {
   public invalid: boolean = false;
   public message: string = '';
   todayDate: Date | undefined;
@@ -26,12 +30,13 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   id!: number;
   taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
 
-  draggedId: number | undefined;
-
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService, private taskService: TaskService,
+    private taskTreeService: TaskTreeService,
     private renderer: Renderer2, private deleteService: DeleteService,
-    private redirService: RedirectionService) { }
+    private redirService: RedirectionService) {
+      super(taskTreeService, taskService);
+     }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
@@ -127,21 +132,12 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     }
   }
 
-  isParentCollapsed(tasks: TaskTreeElem[]): boolean {
-    return tasks.find((a) => a.collapsed) ? true : false;
-  }
-
-  hideDropZone(task: TaskTreeElem): boolean {
-    return this.isDragged(task.id) || 
-    this.isParentDragged(task.parentList) || 
-    this.isParentCollapsed(task.parentList);
-  }
 
   onDrop(event: DndDropEvent, target: TaskTreeElem, asChild: boolean = false) {
     let id = Number(event.data);
     if(!asChild)
     {
-      this.taskService.moveTaskAfter({id: target.id}, id).subscribe(
+      this.taskService.moveAfter({id: target.id}, id).subscribe(
           (response: Task, indent: number = target.indent, afterId: number = target.id) => {
           this.tree.moveTaskAfter(response, indent, afterId);
         },
@@ -150,7 +146,7 @@ export class ProjectComponent implements OnInit, AfterViewInit {
         }
       );
     } else {
-      this.taskService.moveTaskAsChild({id: target.id}, id).subscribe(
+      this.taskService.moveAsChild({id: target.id}, id).subscribe(
           (response: Task, indent: number = target.indent+1, afterId: number = target.id) => {
           this.tree.moveTaskAsChild(response, indent, afterId);
         },
@@ -159,61 +155,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
         }
       );
     }
-  }
-
-  onDropFirst(event: DndDropEvent) {
-    let id = Number(event.data);
-    this.taskService.moveTaskToBeginning(id).subscribe(
-      (response: Task, project: ProjectTreeElem | undefined = this.project) => {
-      this.tree.moveTaskAsFirst(response, project);
-    },
-    (error: HttpErrorResponse) => {
-    
-    }
-  );
-  }
-
-  onDragStart(id: number) {
-	  this.draggedId = id;
-  }
-
-  onDragEnd() {
-	  this.draggedId = undefined;
-  }
-
-  isDragged(id: number): boolean {
-    return this.draggedId == id;
-  }
-
-  isParentDragged(tasks: TaskTreeElem[]): boolean {
-	  for(let task of tasks) {
-      if(task.id == this.draggedId) {
-        return true;
-      }
-	  }
-	  return false;
-  }
-  
-  collapseTask(taskId: number) {
-    let task = this.tree.getTaskById(taskId);
-    if(task) {
-      task.collapsed = !task.collapsed;
-      this.taskService.updateTaskCollapse(task.id, {flag: task.collapsed}).subscribe(
-        (response: Task) => {
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
-    }
-  }
-  
-  isTaskCollapsed(taskId: number): boolean {
-    let task = this.tree.getTaskById(taskId);
-    if(task) {
-      return task.collapsed ? true : false;
-    }
-	  return false;
   }
 
   dateWithinWeek(date: Date): boolean {

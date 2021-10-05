@@ -114,7 +114,7 @@ export class TreeService {
   }
 
   getTaskById(taskId: number): TaskTreeElem | undefined {
-    return this.tasks.getTaskById(taskId);
+    return this.tasks.getById(taskId);
   }
 
   getTasksByProject(projectId: number): TaskTreeElem[] {
@@ -145,11 +145,11 @@ export class TreeService {
   }
 
   moveTaskAfter(task: Task, indent: number, afterId: number) {
-    this.tasks.moveTaskAfter(task, indent, afterId);
+    this.tasks.moveAfter(task, indent, afterId);
   }
 
   moveTaskAsChild(task: Task, indent: number, parentId: number) {
-    this.tasks.moveTaskAsChild(task, indent, parentId);
+    this.tasks.moveAsChild(task, indent, parentId);
   }
 
   moveTaskAsFirst(task: Task, project: ProjectTreeElem | undefined) {

@@ -26,8 +26,8 @@
                                 <i class="fa fa-ellipsis-v"></i>
                                 <i class="fa fa-ellipsis-v"></i>
                             </button>
-                            <button type="button" class="arrow" *ngIf="project.hasChildren" (click)="collapseProject(project.id)">
-                                <i class="fa fa-chevron-right" [class.rotated]="!isProjectCollapsed(project.id)"></i>
+                            <button type="button" class="arrow" *ngIf="project.hasChildren" (click)="collapseElem(project.id)">
+                                <i class="fa fa-chevron-right" [class.rotated]="!isElemCollapsed(project.id)"></i>
                             </button>
                         </span>
                         <button class="text" (click)="toProject(project.id)">
