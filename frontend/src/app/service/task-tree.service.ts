@@ -381,13 +381,13 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
 
   getNumOfUncompletedTasksByLabel(labelId: number): number {
     return this.list.filter((a) => 
-      a.labels.find((b) => b.id == labelId)
+      !a.completed && a.labels.find((b) => b.id == labelId)
     ).length;
   }
 
   getTasksByLabel(id: number): TaskTreeElem[] {
     return this.list.filter((a) => 
-      a.labels.find((b) => b.id == id)
+      !a.completed && a.labels.find((b) => b.id == id)
     );
   }
 }
