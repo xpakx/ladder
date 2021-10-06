@@ -33,8 +33,8 @@ implements OnInit, AfterViewInit {
     private taskTreeService: TaskTreeService,
     private renderer: Renderer2, private deleteService: DeleteService,
     private redirService: RedirectionService) {
-      super(taskTreeService, taskService);
-     }
+    super(taskTreeService, taskService);
+  }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
@@ -106,19 +106,19 @@ implements OnInit, AfterViewInit {
 
   shouldEditTaskById(taskId: number): boolean {
     return this.taskObjectContains(taskId) && this.taskData.isInEditMode();
- }
+  }
 
- taskObjectContains(taskId: number) {
+  taskObjectContains(taskId: number) {
    return taskId == this.taskData.object?.id;
- }
+  }
 
- shouldAddTaskBelowById(taskId: number): boolean {
+  shouldAddTaskBelowById(taskId: number): boolean {
    return this.taskObjectContains(taskId) && this.taskData.after;
- }
+  }
 
- shouldAddTaskAboveById(taskId: number): boolean {
+  shouldAddTaskAboveById(taskId: number): boolean {
    return this.taskObjectContains(taskId) && this.taskData.before;
- }
+  }
 
   completeTask(id: number) {
     let task = this.tree.getTaskById(id);

@@ -45,6 +45,11 @@ public class TaskService {
         taskToUpdate.setProjectOrder(request.getProjectOrder());
         taskToUpdate.setDue(request.getDue());
         //taskToUpdate.setParent(parent);
+        if(!haveSameProject(taskToUpdate, project)) {
+            List<Task> childrenWithUpdatedProject = updateChildrenProject(project, taskToUpdate, userId);
+            taskRepository.saveAll(childrenWithUpdatedProject);
+            taskToUpdate.setParent(null);
+        }
         taskToUpdate.setProject(project);
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setCompletedAt(request.getCompletedAt());
@@ -73,9 +78,49 @@ public class TaskService {
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+        if(!haveSameProject(taskToUpdate, project)) {
+            List<Task> childrenWithUpdatedProject = updateChildrenProject(project, taskToUpdate, userId);
+            taskRepository.saveAll(childrenWithUpdatedProject);
+        }
+        taskToUpdate.setParent(null);
         taskToUpdate.setProject(project);
         taskToUpdate.setProjectOrder(getMaxProjectOrder(request, userId)+1);
         return taskRepository.save(taskToUpdate);
+    }
+
+    private boolean haveSameProject(Task taskToUpdate, Project project) {
+        return (
+                (hasProject(taskToUpdate) && project != null && taskToUpdate.getProject().getId().equals(project.getId()))
+                ||
+                (!hasProject(taskToUpdate) && project == null)
+        );
+    }
+
+    private List<Task> updateChildrenProject(Project project, Task parent, Integer userId) {
+        List<Task> tasksForProject = getTasksForProjectOrInbox(parent, userId)
+                .stream().filter((a) -> a.getParent() != null)
+                .collect(Collectors.toList());
+        List<Task> children = getImminentChildren(List.of(parent), tasksForProject);
+        List<Task> toUpdate = new ArrayList<>();
+        while(children.size() > 0) {
+            children.forEach((a) -> a.setProject(project));
+            toUpdate.addAll(children);
+            children = getImminentChildren(children, tasksForProject);
+        }
+
+        return toUpdate;
+    }
+
+    private List<Task> getTasksForProjectOrInbox(Task parent, Integer userId) {
+        return parent.getProject() != null ? taskRepository.findByOwnerIdAndProjectId(userId, parent.getProject().getId()) :
+                taskRepository.findByOwnerIdAndProjectIsNull(userId);
+    }
+
+    private List<Task> getImminentChildren(List<Task> parentList, List<Task> tasksForProject) {
+        List<Integer> ids = parentList.stream().map(Task::getId).collect(Collectors.toList());
+        return tasksForProject.stream()
+                .filter((a) -> ids.contains(a.getParent().getId()))
+                .collect(Collectors.toList());
     }
 
     private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
