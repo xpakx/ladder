@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -8,42 +8,88 @@ import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
+import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { DraggableComponent } from '../abstract/draggable-component';
 
 @Component({
-  selector: 'app-daily-view',
-  templateUrl: './daily-view.component.html',
-  styleUrls: ['./daily-view.component.css']
+  selector: 'app-label',
+  templateUrl: './label.component.html',
+  styleUrls: ['./label.component.css']
 })
-export class DailyViewComponent extends DraggableComponent<TaskTreeElem, Task, TaskService, TaskTreeService>
-implements OnInit {
+export class LabelComponent implements OnInit {
   public invalid: boolean = false;
   public message: string = '';
   todayDate: Date = new Date();
+  label: LabelDetails | undefined;
+  id!: number;
 
   constructor(private router: Router, public tree: TreeService, 
     private taskService: TaskService, private taskTreeService: TaskTreeService,
-    private renderer: Renderer2, private deleteService: DeleteService) {
-    super(taskTreeService, taskService);
-   }
+    private renderer: Renderer2, private deleteService: DeleteService,
+    private route: ActivatedRoute, private redirService: RedirectionService) {}
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
+      this.redirService.setAddress("label/"+this.route.snapshot.params.id)
       this.router.navigate(["load"]);
     }
 
-    this.todayDate = new Date();
+    this.route.params.subscribe(routeParams => {
+      this.loadLabel(routeParams.id);
+    }); 
   }
 
   get tasks(): TaskTreeElem[] {
-    return this.tree.getByDate(this.todayDate);
+    return this.tree.getTasksByLabel(this.id);
+  }
+
+  loadLabel(id: number) {
+    this.id = id;
+    this.label = this.tree.getLabelById(id);
   }
 
   protected getElems(): TaskTreeElem[] {
     return this.tasks;
+  }
+
+  dateWithinWeek(date: Date): boolean {
+    let dateToCompare: Date = new Date();
+    dateToCompare.setDate(dateToCompare.getDate() + 9);
+    dateToCompare.setHours(0);
+    dateToCompare.setMinutes(0);
+    dateToCompare.setSeconds(0);
+    dateToCompare.setMilliseconds(0);
+    return date < dateToCompare && !this.isOverdue(date);
+  }
+
+  isOverdue(date: Date): boolean {
+    let dateToCompare: Date = new Date();
+    dateToCompare.setHours(0);
+    dateToCompare.setMinutes(0);
+    dateToCompare.setSeconds(0);
+    return date < dateToCompare;
+  }
+
+  sameDay(date1: Date, date2: Date): boolean {
+    return date1.getFullYear() == date2.getFullYear() && date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth();
+  }
+
+  isToday(date: Date): boolean {
+    let today = new Date();
+    return this.sameDay(today, date);
+  }
+
+  isTomorrow(date: Date): boolean {
+    let tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return this.sameDay(tomorrow, date);
+  }
+
+  thisYear(date: Date): boolean {
+    let today = new Date();
+    return today.getFullYear() == date.getFullYear();
   }
 
   showAddTaskForm: boolean = false;
@@ -294,5 +340,4 @@ getTaskLabels(task: TaskTreeElem): LabelDetails[] {
   }
   return labels;
 }
-
 }

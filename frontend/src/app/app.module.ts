@@ -25,6 +25,7 @@ import { LabelListComponent } from './component/label-list/label-list.component'
 import { DeleteDialogComponent } from './component/delete-dialog/delete-dialog.component';
 import { SidebarComponent } from './component/sidebar/sidebar.component';
 import { InboxComponent } from './component/inbox/inbox.component';
+import { LabelComponent } from './component/label/label.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -50,7 +51,8 @@ export function tokenGetter() {
     LabelListComponent,
     DeleteDialogComponent,
     SidebarComponent,
-    InboxComponent
+    InboxComponent,
+    LabelComponent
   ],
   imports: [
     BrowserModule,

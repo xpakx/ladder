@@ -160,6 +160,10 @@ export class TreeService {
     this.tasks.deleteTask(taskId);
   }
 
+  getTasksByLabel(id: number): TaskTreeElem[] {
+    return this.tasks.getTasksByLabel(id);
+  }
+
   updateTaskDate(task: Task) {
     this.tasks.updateTaskDate(task);
   }

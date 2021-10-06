@@ -384,4 +384,10 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       a.labels.find((b) => b.id == labelId)
     ).length;
   }
+
+  getTasksByLabel(id: number): TaskTreeElem[] {
+    return this.list.filter((a) => 
+      a.labels.find((b) => b.id == id)
+    );
+  }
 }
