@@ -12,7 +12,9 @@ export class MultilevelTaskComponent<U extends MovableTaskTreeService<Task, Task
 extends MultilevelDraggableComponent<ParentWithId, TaskTreeElem, Task, TaskService, U>  {
     project: ProjectTreeElem | undefined;
     
-    constructor(protected treeService : U, protected service: TaskService) { super(treeService, service) }
+    constructor(protected treeService : U, protected service: TaskService) { 
+      super(treeService, service) 
+    }
     
     onDropFirst(event: DndDropEvent) {
         let id = Number(event.data);

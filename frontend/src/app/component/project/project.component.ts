@@ -51,6 +51,10 @@ implements OnInit, AfterViewInit {
     return this.tree.getTasksByProject(this.id);
   }
 
+  protected getElems(): TaskTreeElem[] {
+    return this.tasks;
+  }
+
   loadProject(id: number) {
     this.id = id;
     this.project = this.tree.getProjectById(id);

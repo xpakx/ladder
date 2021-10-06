@@ -22,7 +22,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         return this.draggedId == id;
     }
 
-    onDrop(event: DndDropEvent, target: IndentableTreeElem<P> /*?*/, asChild: boolean = false) { 
+    onDrop(event: DndDropEvent, target: IndentableTreeElem<P>, asChild: boolean = false) { 
     let id = Number(event.data);
         if(!asChild)
         {
@@ -120,8 +120,14 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     
     calculateAdditionalDropzones(i: number, elem: R): boolean {
         if(!elem.hasChildren) {
-            return elem.indent > this.indentForPosition(i+1)
-            || this.hasNextUndetachedElemSmallerIndent(i, elem);
+            if(!this.isNextElemDragged(i))
+            {
+                console.log(elem.id + ": " + (elem.indent > this.indentForPosition(i+1)))
+                console.log("    " +  this.idForPosition(i+1))
+                return elem.indent > this.indentForPosition(i+1)
+            } else {
+                return this.hasNextUndetachedElemSmallerIndent(i, elem);
+            }
         } 
         if(!elem.collapsed) {
             return this.hasNextUndetachedElemSmallerIndent(i, elem);
@@ -135,18 +141,18 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     }
 
     findFirstNonDetachedAndReturn(index: number): R | undefined {
-        for (let i = index; i < this.treeService.getAll().length; i++) {
-            if (this.isNotDetachedFromProjectList(this.treeService.getAll()[i])) {
-                return this.treeService.getAll()[i];
+        for (let i = index; i < this.getElems().length; i++) {
+            if (this.isNotDetachedFromProjectList(this.getElems()[i])) {
+                return this.getElems()[i];
             }
         }
         return undefined;
     }
     
     private findFirstWithSmallerIndentAndReturnIndent(index: number, indent: number): number {
-        for (let i = index; i < this.treeService.getAll().length; i++) {
-          if (this.isCandidateForElemWithSmallerIndent(indent, this.treeService.getAll()[i])) {
-            return this.treeService.getAll()[i].indent;
+        for (let i = index; i < this.getElems().length; i++) {
+          if (this.isCandidateForElemWithSmallerIndent(indent, this.getElems()[i])) {
+            return this.getElems()[i].indent;
           }
         }
         return 0;
@@ -164,17 +170,21 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         if(this.outOfBound(i)) {
           return 0;
         } else {
-          return this.treeService.getAll()[i].indent;
+          return this.getElems()[i].indent;
         }
         
     }
 
     private idForPosition(i: number): number {
-        return this.treeService.getAll()[i].id;       
+        return this.getElems()[i].id;       
     }
     
     private outOfBound(i: number): boolean {
-        return i >= this.treeService.getAll().length;
+        return i >= this.getElems().length;
+    }
+
+    protected getElems(): R[] {
+        return this.treeService.getAll();
     }
 }
   
