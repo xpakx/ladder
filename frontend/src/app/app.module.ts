@@ -24,6 +24,7 @@ import { LabelChoiceDialogComponent } from './component/label-choice-dialog/labe
 import { LabelListComponent } from './component/label-list/label-list.component';
 import { DeleteDialogComponent } from './component/delete-dialog/delete-dialog.component';
 import { SidebarComponent } from './component/sidebar/sidebar.component';
+import { InboxComponent } from './component/inbox/inbox.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -48,7 +49,8 @@ export function tokenGetter() {
     LabelChoiceDialogComponent,
     LabelListComponent,
     DeleteDialogComponent,
-    SidebarComponent
+    SidebarComponent,
+    InboxComponent
   ],
   imports: [
     BrowserModule,

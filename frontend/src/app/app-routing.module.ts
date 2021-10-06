@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DailyViewComponent } from './component/daily-view/daily-view.component';
+import { InboxComponent } from './component/inbox/inbox.component';
 import { LoadProjectComponent } from './component/load-project/load-project.component';
 import { LoginComponent } from './component/login/login.component';
 import { ProjectComponent } from './component/project/project.component';
@@ -11,7 +12,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'load', component: LoadProjectComponent },
   { path: '', component: DailyViewComponent },
-  { path: 'inbox', component: DailyViewComponent }, // todo
+  { path: 'inbox', component: InboxComponent }, 
   { path: 'upcoming', component: DailyViewComponent }, // todo
   { path: 'project/:id', component: ProjectComponent }
 ];
