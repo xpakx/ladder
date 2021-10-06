@@ -3,7 +3,6 @@ import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/co
 import { Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { LabelDetails } from 'src/app/entity/label-details';
-import { ParentWithId } from 'src/app/entity/parent-with-id';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -62,7 +61,12 @@ implements OnInit {
   onDropFirst(event: DndDropEvent) {
     console.log("Should change daily order")
   }
-  
+
+  toProject() {
+    if(this.contextTaskMenu) {
+      this.router.navigate(['/project/'+this.contextTaskMenu.id]);
+    }
+  }
 // Task form
 openAddTaskForm() {
   this.closeEditTaskForm();
@@ -91,36 +95,12 @@ openEditTaskFromContextMenu() {
   this.closeContextTaskMenu();
 }
 
-openEditTaskAbove() {
-  if(this.contextTaskMenu) {
-    this.closeAddTaskForm();
-    this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, false, true);
-  }
-  this.closeContextTaskMenu();
-}
-
-openEditTaskBelow() {
-  if(this.contextTaskMenu) {
-    this.closeAddTaskForm();
-    this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, true, false);
-  }
-  this.closeContextTaskMenu();
-}
-
 shouldEditTaskById(taskId: number): boolean {
   return this.taskObjectContains(taskId) && this.taskData.isInEditMode();
 }
 
 taskObjectContains(taskId: number) {
  return taskId == this.taskData.object?.id;
-}
-
-shouldAddTaskBelowById(taskId: number): boolean {
- return this.taskObjectContains(taskId) && this.taskData.after;
-}
-
-shouldAddTaskAboveById(taskId: number): boolean {
- return this.taskObjectContains(taskId) && this.taskData.before;
 }
 
 completeTask(id: number) {
@@ -135,44 +115,6 @@ completeTask(id: number) {
     }
   );
   }
-}
-
-dateWithinWeek(date: Date): boolean {
-  let dateToCompare: Date = new Date();
-  dateToCompare.setDate(dateToCompare.getDate() + 9);
-  dateToCompare.setHours(0);
-  dateToCompare.setMinutes(0);
-  dateToCompare.setSeconds(0);
-  dateToCompare.setMilliseconds(0);
-  return date < dateToCompare && !this.isOverdue(date);
-}
-
-isOverdue(date: Date): boolean {
-  let dateToCompare: Date = new Date();
-  dateToCompare.setHours(0);
-  dateToCompare.setMinutes(0);
-  dateToCompare.setSeconds(0);
-  return date < dateToCompare;
-}
-
-sameDay(date1: Date, date2: Date): boolean {
-  return date1.getFullYear() == date2.getFullYear() && date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth();
-}
-
-isToday(date: Date): boolean {
-  let today = new Date();
-  return this.sameDay(today, date);
-}
-
-isTomorrow(date: Date): boolean {
-  let tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return this.sameDay(tomorrow, date);
-}
-
-thisYear(date: Date): boolean {
-  let today = new Date();
-  return today.getFullYear() == date.getFullYear();
 }
 
 contextTaskMenu: TaskTreeElem | undefined;
