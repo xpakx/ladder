@@ -168,7 +168,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
   }
 
 
-  moveAfter(task: Task, indent: number, afterId: number = 0) {
+  moveAfter(task: Task, afterId: number, indent: number = 0) {
     let afterTask = this.getById(afterId);
     let movedTask = this.getById(task.id);
     if(afterTask && movedTask) {
@@ -195,7 +195,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  moveAsChild(task: Task, indent: number, parentId: number) {
+  moveAsChild(task: Task, parentId: number, indent: number = 0) {
     let parentTask = this.getById(parentId);
     let movedTask = this.getById(task.id);
     if(parentTask && movedTask) {

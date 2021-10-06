@@ -122,8 +122,6 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         if(!elem.hasChildren) {
             if(!this.isNextElemDragged(i))
             {
-                console.log(elem.id + ": " + (elem.indent > this.indentForPosition(i+1)))
-                console.log("    " +  this.idForPosition(i+1))
                 return elem.indent > this.indentForPosition(i+1)
             } else {
                 return this.hasNextUndetachedElemSmallerIndent(i, elem);
