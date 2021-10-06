@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LabelDetails } from '../entity/label-details';
 import { ParentWithId } from '../entity/parent-with-id';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
+import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
@@ -147,6 +148,11 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     if(task) {
       task.description = response.description;
       task.title = response.title;
+      if(!this.hasSameProject(task, project)) {
+        this.updateChildrenProject(project, task);
+        task.parent = null;
+        task.indent = 0;
+      }
       task.project = project ? project : null;
       task.due = response.due ? new Date(response.due) : null;
       task.priority = response.priority;
@@ -305,12 +311,64 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let taskToMove = this.getById(task.id);
     if(taskToMove) {
       let tasks = project ? this.getTasksByProject(project.id) : this.getTasksFromInbox();
+      if(!this.hasSameProject(taskToMove, project)) {
+        this.updateChildrenProject(project, taskToMove);
+        this.updateParentChildren(taskToMove);
+      }
+      taskToMove.parent = null;
+      taskToMove.indent = 0;
       taskToMove.project = project ? project : null;
       taskToMove.order = tasks
         .map((a) => a.order)
         .reduce(((total, curr)=>Math.max(total, curr)), 0) + 1;
       this.sort();
     }
+  }
+
+  private updateParentChildren(task: TaskTreeElem) {
+    if(!task.parent) {return;}
+    let parent = this.getById(task.parent.id);
+    task.parent = null;
+    if(parent) {
+      this.recalculateHasChildren(parent);
+    }
+  }
+
+  private updateChildrenProject(project: ProjectTreeElem | undefined, parent: TaskTreeElem) {
+    let tasksForProject = this.getTasksForProjectOrInbox(parent)
+            .filter((a) => a.parent != null);
+    let children = this.getImminentChildren([parent], tasksForProject);
+    let toUpdate: TaskTreeElem[] = [];
+    while(children.length > 0) {
+        let newProject = project ? this.toProjectWithNameAndId(project) : null;
+        children.forEach((a) => this.updateTaskChildren(a, parent, newProject));
+        toUpdate = toUpdate.concat(children);
+        children = this.getImminentChildren(children, tasksForProject);
+    }
+  }
+
+  private updateTaskChildren(children: TaskTreeElem, parent: TaskTreeElem, project: ProjectWithNameAndId| null) {
+    children.project = project;
+    children.indent = children.indent - parent.indent;
+  }
+
+  private toProjectWithNameAndId(project: ProjectTreeElem): ProjectWithNameAndId {
+    return {name: project.name, id: project.id};
+  }
+
+  private getImminentChildren(parentList: TaskTreeElem[], tasksForProject: TaskTreeElem[]) {
+    let ids = parentList.map((a) => a.id);
+    return tasksForProject
+            .filter((a) => a.parent && ids.includes(a.parent.id));
+  }
+
+  private getTasksForProjectOrInbox(task: TaskTreeElem) {
+    return task.project ? this.getTasksByProject(task.project.id) :
+            this.getTasksFromInbox();
+  }
+
+  private hasSameProject(task: TaskTreeElem, project: ProjectTreeElem | undefined): boolean {
+      return (task.project && project && task.project.id == project.id) || (!task.project && !project);
   }
 
   updateTaskPriority(task: Task) {

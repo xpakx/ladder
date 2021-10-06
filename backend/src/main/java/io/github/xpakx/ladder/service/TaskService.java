@@ -107,7 +107,6 @@ public class TaskService {
             toUpdate.addAll(children);
             children = getImminentChildren(children, tasksForProject);
         }
-
         return toUpdate;
     }
 
