@@ -28,7 +28,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         {
             this.service.moveAfter({id: target.id}, id).subscribe(
                 (response: T, indent: number = target.indent, afterId: number = target.id) => {
-                    this.treeService.moveAfter(response, indent, afterId);
+                    this.treeService.moveAfter(response, afterId, indent);
                 },
                 (error: HttpErrorResponse) => {
                 
@@ -37,7 +37,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         } else {
             this.service.moveAsChild({id: target.id}, id).subscribe(
                 (response: T, indent: number = target.indent+1, afterId: number = target.id) => {
-                    this.treeService.moveAsChild(response, indent, afterId);
+                    this.treeService.moveAsChild(response, afterId, indent);
                 },
                 (error: HttpErrorResponse) => {
                 

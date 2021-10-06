@@ -1,6 +1,8 @@
-export interface MultilevelMovableTreeService<T, R> {
-    moveAfter(request: T, indent: number, afterId: number): void
-    moveAsChild(request: T, indent: number, afterId: number): void
+import { MovableTreeService } from "./movable-tree-service";
+
+export interface MultilevelMovableTreeService<T, R> extends MovableTreeService<T> {
+    moveAfter(request: T, afterId: number, indent?: number): void
+    moveAsChild(request: T, afterId: number, indent?: number): void
     moveAsFirst(request: T): void
     getById(id: number): R | undefined;
     getAll(): R[];

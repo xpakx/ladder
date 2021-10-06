@@ -167,7 +167,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  moveAfter(task: Task, indent: number, afterId: number) {
+
+  moveAfter(task: Task, indent: number, afterId: number = 0) {
     let afterTask = this.getById(afterId);
     let movedTask = this.getById(task.id);
     if(afterTask && movedTask) {

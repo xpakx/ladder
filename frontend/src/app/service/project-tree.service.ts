@@ -87,7 +87,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     }
   }
 
-  moveAfter(project: Project, indent: number, afterId: number) {
+  moveAfter(project: Project, afterId: number, indent: number = 0) {
     let afterProject = this.getById(afterId);
     let movedProject = this.getById(project.id);
     if(afterProject && movedProject) {
@@ -114,7 +114,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     }
   }
 
-  moveAsChild(project: Project, indent: number, parentId: number) {
+  moveAsChild(project: Project, parentId: number, indent: number = 0) {
     let parentProject = this.getById(parentId);
     let movedProject = this.getById(project.id);
     if(parentProject && movedProject) {
