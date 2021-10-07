@@ -289,7 +289,7 @@ public class TaskService {
     public Task addTaskAfter(AddTaskRequest request, Integer userId, Integer afterId) {
         Task afterTask = taskRepository.findByIdAndOwnerId(afterId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent task!"));
-        Task taskToAdd = buildTaskFromRequestAndParentAndOrder(request, afterTask.getProjectOrder()+1,
+        Task taskToAdd = buildTaskFromRequestWithSiblingAndOrder(request, afterTask.getProjectOrder()+1,
                 afterTask, userId);
         incrementOrderOfTasksAfter(userId, afterTask);
         return taskRepository.save(taskToAdd);
@@ -298,17 +298,17 @@ public class TaskService {
     public Task addTaskBefore(AddTaskRequest request, Integer userId, Integer beforeId) {
         Task beforeTask = taskRepository.findByIdAndOwnerId(beforeId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent task!"));
-        Task taskToAdd = buildTaskFromRequestAndParentAndOrder(request, beforeTask.getProjectOrder(),
+        Task taskToAdd = buildTaskFromRequestWithSiblingAndOrder(request, beforeTask.getProjectOrder(),
                 beforeTask, userId);
         incrementOrderOfTasksBefore(userId, beforeTask);
         return taskRepository.save(taskToAdd);
     }
 
-    private Task buildTaskFromRequestAndParentAndOrder(AddTaskRequest request, Integer order,
-                                                       Task parent, Integer userId) {
+    private Task buildTaskFromRequestWithSiblingAndOrder(AddTaskRequest request, Integer order,
+                                                         Task sibling, Integer userId) {
         Task taskToAdd = buildTaskToAddFromRequest(request, userId);
-        taskToAdd.setParent(parent.getParent());
-        taskToAdd.setProject(parent.getProject());
+        taskToAdd.setParent(sibling.getParent());
+        taskToAdd.setProject(sibling.getProject());
         taskToAdd.setProjectOrder(order);
         return taskToAdd;
     }
