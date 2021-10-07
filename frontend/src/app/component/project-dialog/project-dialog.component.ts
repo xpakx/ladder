@@ -28,7 +28,7 @@ export class ProjectDialogComponent implements OnInit {
     private projectService: ProjectService) { 
     this.addProjForm = this.fb.group({
       name: ['', Validators.required],
-      color: ['', Validators.required]
+      color: ['#888', Validators.required]
     });
   }
 
