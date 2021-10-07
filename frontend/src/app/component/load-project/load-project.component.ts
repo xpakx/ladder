@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FullProjectTree } from 'src/app/entity/full-project-tree';
 import { UserWithData } from 'src/app/entity/user-with-data';
 import { ProjectService } from 'src/app/service/project.service';
 import { RedirectionService } from 'src/app/service/redirection.service';

@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AddTaskRequest } from '../entity/add-task-request';
 import { BooleanRequest } from '../entity/boolean-request';
-import { FullProjectTree } from '../entity/full-project-tree';
 import { IdRequest } from '../entity/id-request';
 import { NameRequest } from '../entity/name-request';
 import { Project } from '../entity/project';
@@ -25,16 +24,6 @@ export class ProjectService implements MultilevelMovableService<Project>{
   public getProjectById(projectId: number):  Observable<ProjectDetails> {
     let userId  = this.getUserId();
     return this.http.get<ProjectDetails>(`${this.apiServerUrl}/${userId}/projects/${projectId}`);
-  }
-
-  public getProjectTreeById(projectId: number):  Observable<FullProjectTree> {
-    let userId  = this.getUserId();
-    return this.http.get<FullProjectTree>(`${this.apiServerUrl}/${userId}/projects/${projectId}/full`);
-  }
-
-  public getFullTree():  Observable<FullProjectTree[]> {
-    let userId  = this.getUserId();
-    return this.http.get<FullProjectTree[]>(`${this.apiServerUrl}/${userId}/projects/all`);
   }
 
   public getFullInfo():  Observable<UserWithData> {
