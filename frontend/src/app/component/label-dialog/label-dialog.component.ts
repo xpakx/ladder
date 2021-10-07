@@ -29,7 +29,7 @@ export class LabelDialogComponent implements OnInit {
     private labelService: LabelService) { 
     this.addLabelForm = this.fb.group({
       name: ['', Validators.required],
-      color: ['', Validators.required]
+      color: ['#888', Validators.required]
     });
   }
 
@@ -49,6 +49,26 @@ export class LabelDialogComponent implements OnInit {
         color: this.label.color
       });
     }
+  }
+
+  colors: string[] = ['#ADA', '#EDA', '#DDD', '#888', '#B8255F', '#25B87D',
+  '#B83325', '#B825A9', '#FF9933', '#3399FF', '#FFFF33', '#FF3333', '#7ECC49',
+  '#49CC56', '#BFCC49', '#9849CC'  ];
+  showColors = false;
+
+  toggleShowColors() {
+    this.showColors = !this.showColors;
+  }
+
+  get color(): string {
+    return this.addLabelForm.controls.color.value;
+  }
+
+  chooseColor(color: string) {
+    this.addLabelForm.setValue({
+      name: this.addLabelForm.controls.name.value,
+      color: color
+    });
   }
 
   closeLabelModal() {
