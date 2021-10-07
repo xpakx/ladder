@@ -16,7 +16,15 @@
 
             <div class="form-field">
                 <label for="projectColor">Color</label>
-                <input class="form-control mr-sm-2" placeholder="" id="color" formControlName="color">
+                <div class="color-picker">
+                  <button class="color-span" [style]="'color: ' + color" (click)="toggleShowColors()">
+                    <i class="fa fa-paint-brush"></i>
+                  </button>
+                  <input class="form-control mr-sm-2" placeholder="" id="color" formControlName="color">
+                </div>
+                <div class="colors" *ngIf="showColors">
+                  <button *ngFor="let col of colors" class="color-button" [style]="'background-color: '+ col" (click)="chooseColor(col)"></button>
+                </div>
             </div>
 
             <div class="form-field-inline">

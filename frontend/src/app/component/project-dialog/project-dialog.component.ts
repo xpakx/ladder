@@ -24,6 +24,19 @@ export class ProjectDialogComponent implements OnInit {
   before: boolean = false;
   editMode: boolean = false;
 
+  colors: string[] = ['#ADA', '#EDA', '#DDD', '#888', '#B8255F', '#25B87D',
+  '#B83325', '#B825A9', '#FF9933', '#3399FF', '#FFFF33', '#FF3333', '#7ECC49',
+  '#49CC56', '#BFCC49', '#9849CC'  ];
+  showColors = false;
+
+  toggleShowColors() {
+    this.showColors = !this.showColors;
+  }
+
+  get color(): string {
+    return this.addProjForm.controls.color.value;
+  }
+
   constructor(private fb: FormBuilder, public tree : TreeService, 
     private projectService: ProjectService) { 
     this.addProjForm = this.fb.group({
@@ -47,6 +60,13 @@ export class ProjectDialogComponent implements OnInit {
         color: this.project.color
       });
     }
+  }
+
+  chooseColor(color: string) {
+    this.addProjForm.setValue({
+      name: this.addProjForm.controls.name.value,
+      color: color
+    });
   }
 
   switchProjectFav() {
