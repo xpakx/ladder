@@ -287,25 +287,30 @@ public class TaskService {
     }
 
     public Task addTaskAfter(AddTaskRequest request, Integer userId, Integer afterId) {
-        Task taskToAdd = buildTaskToAddFromRequest(request, userId);
         Task afterTask = taskRepository.findByIdAndOwnerId(afterId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent task!"));
-        taskToAdd.setParent(afterTask.getParent());
-        taskToAdd.setProject(afterTask.getProject());
-        taskToAdd.setProjectOrder(afterTask.getProjectOrder()+1);
+        Task taskToAdd = buildTaskFromRequestAndParentAndOrder(request, afterTask.getProjectOrder()+1,
+                afterTask, userId);
         incrementOrderOfTasksAfter(userId, afterTask);
         return taskRepository.save(taskToAdd);
     }
 
     public Task addTaskBefore(AddTaskRequest request, Integer userId, Integer beforeId) {
-        Task taskToAdd = buildTaskToAddFromRequest(request, userId);
         Task beforeTask = taskRepository.findByIdAndOwnerId(beforeId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent task!"));
-        taskToAdd.setParent(beforeTask.getParent());
-        taskToAdd.setProject(beforeTask.getProject());
-        taskToAdd.setProjectOrder(beforeTask.getProjectOrder());
+        Task taskToAdd = buildTaskFromRequestAndParentAndOrder(request, beforeTask.getProjectOrder(),
+                beforeTask, userId);
         incrementOrderOfTasksBefore(userId, beforeTask);
         return taskRepository.save(taskToAdd);
+    }
+
+    private Task buildTaskFromRequestAndParentAndOrder(AddTaskRequest request, Integer order,
+                                                       Task parent, Integer userId) {
+        Task taskToAdd = buildTaskToAddFromRequest(request, userId);
+        taskToAdd.setParent(parent.getParent());
+        taskToAdd.setProject(parent.getProject());
+        taskToAdd.setProjectOrder(order);
+        return taskToAdd;
     }
 
     private boolean hasProject(Task task) {
