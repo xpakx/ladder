@@ -266,8 +266,8 @@ implements OnInit, AfterViewInit {
 
   closeSelectProjectModal(project: ProjectTreeElem | undefined) {
     this.showSelectProjectModal = false;
-    if(this.taskIdForProjectModal && project) {
-      this.taskService.updateTaskProject({id: project.id}, this.taskIdForProjectModal).subscribe(
+    if(this.taskIdForProjectModal) {
+      this.taskService.updateTaskProject({id: project? project.id : undefined}, this.taskIdForProjectModal).subscribe(
           (response: Task, proj: ProjectTreeElem | undefined = project) => {
           this.tree.moveTaskToProject(response, proj);
         },
