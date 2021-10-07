@@ -58,4 +58,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     @Query("SELECT coalesce(max(p.generalOrder), 0) FROM Project p WHERE p.owner.id = :ownerId AND p.parent.id = :parentId")
     Integer getMaxOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId);
+
+    @Query("SELECT p.owner.id FROM Project p WHERE p.id = :id")
+    Integer findOwnerIdById(Integer id);
 }

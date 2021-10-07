@@ -114,8 +114,15 @@ public class ProjectService {
         return projectRepository.save(projectToUpdate);
     }
 
+    public Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
+        if(userId != projectRepository.findOwnerIdById(projectId)) {
+            return Optional.empty();
+        }
+        return Optional.of(projectRepository.getById(projectId));
+    }
+
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
-        Project project = projectId != null ? projectRepository.findByIdAndOwnerId(projectId, userId)
+        Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
         Task taskToAdd = buildTaskToAddFromRequest(request, userId, project);
         taskToAdd.setProjectOrder(getMaxProjectOrder(request, userId)+1);
@@ -143,14 +150,28 @@ public class ProjectService {
                 .completed(false)
                 .collapsed(false)
                 .owner(userRepository.getById(userId))
-                .labels(transformLabelIdsToLabelReferences(request))
+                .labels(transformLabelIdsToLabelReferences(request, userId))
                 .build();
     }
 
-    private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request) {
-        return request.getLabelIds() != null ?
-                request.getLabelIds().stream().map(labelRepository::getById).collect(Collectors.toSet()) :
-                new HashSet<>();
+    private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request, Integer userId) {
+        if(labelsWithDiffOwner(request.getLabelIds(), userId)) {
+            throw new NotFoundException("Cannot add labels you don't own!");
+        }
+        return request.getLabelIds() != null ? request.getLabelIds().stream()
+                .map(labelRepository::getById)
+                .collect(Collectors.toSet()) : new HashSet<>();
+
+    }
+
+    private boolean labelsWithDiffOwner(List<Integer> labelIds, Integer userId) {
+        if(labelIds == null || labelIds.size() == 0) {
+            return false;
+        }
+        Long labelsWithDifferentOwner = labelRepository.findOwnerIdById(labelIds).stream()
+                .filter((a) -> !a.equals(userId))
+                .count();
+        return !labelsWithDifferentOwner.equals(0L);
     }
 
     private Task getParentFromAddTaskRequest(AddTaskRequest request) {

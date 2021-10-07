@@ -297,7 +297,7 @@ public class TaskService {
         Long labelsWithDifferentOwner = labelRepository.findOwnerIdById(labelIds).stream()
                         .filter((a) -> !a.equals(userId))
                         .count();
-        return labelsWithDifferentOwner.equals(0L);
+        return !labelsWithDifferentOwner.equals(0L);
     }
 
     public Task addTaskAfter(AddTaskRequest request, Integer userId, Integer afterId) {
