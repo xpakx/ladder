@@ -35,4 +35,7 @@ public interface LabelRepository extends JpaRepository<Label, Integer> {
 
     @Query("SELECT coalesce(max(l.generalOrder), 0) FROM Label l WHERE l.owner.id = :ownerId")
     Integer getMaxOrderByOwnerId(Integer ownerId);
+
+    @Query("SELECT l.owner.id FROM Label l WHERE l.id IN :ids")
+    List<Integer> findOwnerIdById(List<Integer> ids);
 }

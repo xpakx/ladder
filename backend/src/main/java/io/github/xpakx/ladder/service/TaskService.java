@@ -55,7 +55,7 @@ public class TaskService {
         taskToUpdate.setCompletedAt(request.getCompletedAt());
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setOwner(userRepository.getById(userId));
-        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request));
+        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request, userId));
         return taskRepository.save(taskToUpdate);
     }
 
@@ -276,14 +276,28 @@ public class TaskService {
                 .completed(false)
                 .collapsed(false)
                 .owner(userRepository.getById(userId))
-                .labels(transformLabelIdsToLabelReferences(request))
+                .labels(transformLabelIdsToLabelReferences(request, userId))
                 .build();
     }
 
-    private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request) {
-        return request.getLabelIds() != null ?
-                request.getLabelIds().stream().map(labelRepository::getById).collect(Collectors.toSet()) :
-                new HashSet<>();
+    private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request, Integer userId) {
+        if(labelsWithDiffOwner(request.getLabelIds(), userId)) {
+            throw new NotFoundException("Cannot add labels you don't own!");
+        }
+        return request.getLabelIds() != null ? request.getLabelIds().stream()
+                .map(labelRepository::getById)
+                .collect(Collectors.toSet()) : new HashSet<>();
+
+    }
+
+    private boolean labelsWithDiffOwner(List<Integer> labelIds, Integer userId) {
+        if(labelIds == null || labelIds.size() == 0) {
+            return false;
+        }
+        Long labelsWithDifferentOwner = labelRepository.findOwnerIdById(labelIds).stream()
+                        .filter((a) -> !a.equals(userId))
+                        .count();
+        return labelsWithDifferentOwner.equals(0L);
     }
 
     public Task addTaskAfter(AddTaskRequest request, Integer userId, Integer afterId) {
