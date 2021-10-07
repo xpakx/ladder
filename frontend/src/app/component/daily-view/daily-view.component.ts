@@ -63,8 +63,10 @@ implements OnInit {
   }
 
   toProject() {
-    if(this.contextTaskMenu) {
-      this.router.navigate(['/project/'+this.contextTaskMenu.id]);
+    if(this.contextTaskMenu && this.contextTaskMenu.project) {
+      this.router.navigate(['/project/'+this.contextTaskMenu.project.id]);
+    } else if(this.contextTaskMenu) {
+      this.router.navigate(['/inbox']);
     }
   }
 // Task form
@@ -211,8 +213,8 @@ taskIdForProjectModal: number | undefined;
 
 closeSelectProjectModal(project: ProjectTreeElem | undefined) {
   this.showSelectProjectModal = false;
-  if(this.taskIdForProjectModal && project) {
-    this.taskService.updateTaskProject({id: project.id}, this.taskIdForProjectModal).subscribe(
+  if(this.taskIdForProjectModal) {
+    this.taskService.updateTaskProject({id: project? project.id : undefined}, this.taskIdForProjectModal).subscribe(
         (response: Task, proj: ProjectTreeElem | undefined = project) => {
         this.tree.moveTaskToProject(response, proj);
       },
