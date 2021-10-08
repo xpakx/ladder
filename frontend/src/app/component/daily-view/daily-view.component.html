@@ -26,7 +26,6 @@
             <ng-container *ngFor="let task of tasks">
                 <li *ngIf="!shouldEditTaskById(task.id)" class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
                     [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="task-date">
-                    <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
                     <div class="task_list_item_main">
                         <div role="button" tabindex="0" class="task_list_item_body">
                             <div class="task_list_item__overflow_actions">
@@ -100,7 +99,6 @@
                     </div>
                 </li>
                 <li *ngIf="shouldEditTaskById(task.id)" class="task_list_item">
-                    <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
                     <app-task-form [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
                 </li>
                 <li *ngIf="draggedId" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, task)" class="drag-zone drag_list_item"></li>
