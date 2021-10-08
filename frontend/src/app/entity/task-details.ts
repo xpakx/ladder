@@ -12,6 +12,7 @@ export interface TaskDetails {
     completed: boolean;
     collapsed: boolean;
     projectOrder: number;
+    dailyViewOrder: number;
     labels: LabelDetails[];
     priority: number;
 }

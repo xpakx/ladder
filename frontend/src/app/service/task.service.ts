@@ -81,4 +81,14 @@ export class TaskService implements MultilevelMovableService<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/priority`, request);
   }
+
+  public moveAfterDaily(request: IdRequest, taskId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/after`, request);
+  }
+
+  public moveAsFirstDaily(taskId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/asFirst`, null);
+  }
 }

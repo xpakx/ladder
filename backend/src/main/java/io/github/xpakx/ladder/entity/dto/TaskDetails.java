@@ -13,6 +13,7 @@ public interface TaskDetails {
     boolean getCompleted();
     boolean getCollapsed();
     Integer getProjectOrder();
+    Integer getDailyViewOrder();
     Set<LabelDetails> getLabels();
     Integer getPriority();
 }

@@ -4,6 +4,7 @@ export interface Task {
     id: number;
     completed: boolean;
     projectOrder: number;
+    dailyViewOrder: number
     due: Date;
     priority: number;
 }

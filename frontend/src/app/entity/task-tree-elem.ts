@@ -12,6 +12,7 @@ export interface TaskTreeElem extends IndentableTreeElem<ParentWithId> {
     due: Date | null;
     completed: boolean;
     order: number;
+    dailyOrder: number;
 
     realOrder: number;
     hasChildren: boolean;

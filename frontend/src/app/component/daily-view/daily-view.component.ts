@@ -39,7 +39,7 @@ implements OnInit {
   }
 
   get tasks(): TaskTreeElem[] {
-    return this.tree.getByDate(this.todayDate);
+    return [...this.tree.getByDate(this.todayDate)].sort((a,b) => a.dailyOrder - b.dailyOrder);
   }
 
   protected getElems(): TaskTreeElem[] {
@@ -55,11 +55,28 @@ implements OnInit {
   }
 
   onDrop(event: DndDropEvent, target: TaskTreeElem) {
-    console.log("Should change daily order")
+    let id = Number(event.data);
+      
+      this.taskService.moveAfterDaily({id: target.id}, id).subscribe(
+          (response: Task, afterId: number = target.id) => {
+          this.taskTreeService.moveAfterDaily(response, afterId);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
   }
 
   onDropFirst(event: DndDropEvent) {
-    console.log("Should change daily order")
+    let id = Number(event.data);
+    this.taskService.moveAsFirstDaily(id).subscribe(
+        (response: Task) => {
+        this.taskTreeService.moveAsFirstDaily(response);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
   }
 
   toProject() {

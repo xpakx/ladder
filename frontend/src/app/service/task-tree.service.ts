@@ -35,6 +35,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       parent: task.parent,
       order: task.projectOrder,
       realOrder: task.projectOrder,
+      dailyOrder: task.dailyViewOrder,
       hasChildren: this.hasChildrenById(task.id, tasks),
       indent: indent,
       parentList: [],
@@ -132,7 +133,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       due: response.due ? new Date(response.due) : null,
       completed: false,
       order: response.projectOrder,
-      realOrder: response.projectOrder, //todo
+      realOrder: response.projectOrder,
+      dailyOrder: response.dailyViewOrder, //todo
       hasChildren: false, 
       indent: indent,
       parentList: [], 
@@ -389,5 +391,34 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return this.list.filter((a) => 
       !a.completed && a.labels.find((b) => b.id == id)
     );
+  }
+
+
+  moveAsFirstDaily(task: Task) {
+    let movedTask = this.getById(task.id);
+    if(movedTask) {
+      let tasks = this.getByDate(new Date);
+        
+      for(let pro of tasks) {
+        pro.dailyOrder = pro.dailyOrder + 1;
+      }
+      
+      movedTask.dailyOrder = 1;
+    }
+  }
+
+  moveAfterDaily(task: Task, afterId: number) {
+    let afterTask = this.getById(afterId);
+    let movedTask = this.getById(task.id);
+    if(afterTask && movedTask) {
+      let tas : TaskTreeElem = afterTask;
+      let tasks = this.getByDate(new Date)
+        .filter((a) => a.dailyOrder > tas.dailyOrder);
+        for(let tsk of tasks) {
+          tsk.dailyOrder = tsk.dailyOrder + 1;
+        }
+      
+      movedTask.dailyOrder = afterTask.dailyOrder+1;
+    }
   }
 }
