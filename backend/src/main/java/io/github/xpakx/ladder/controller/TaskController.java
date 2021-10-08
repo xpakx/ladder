@@ -103,4 +103,17 @@ public class TaskController {
                                                     @PathVariable Integer taskId) {
         return  new ResponseEntity<>(taskService.addTaskBefore(request, userId, taskId), HttpStatus.CREATED);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{taskId}/daily/move/asFirst")
+    public ResponseEntity<Task> moveTaskAsFirstDaily(@PathVariable Integer userId, @PathVariable Integer taskId) {
+        return  new ResponseEntity<>(taskService.moveTaskAsFirstInDailyView(userId, taskId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{taskId}/daily/move/after")
+    public ResponseEntity<Task> moveTaskAfterDaily(@RequestBody IdRequest request, @PathVariable Integer userId,
+                                              @PathVariable Integer taskId) {
+        return new ResponseEntity<>(taskService.moveTaskAfterInDailyView(request, userId, taskId), HttpStatus.OK);
+    }
 }

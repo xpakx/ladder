@@ -369,4 +369,34 @@ public class TaskService {
             taskRepository.incrementOrderByOwnerIdAndOrderGreaterThanEqual(userId, task.getProjectOrder());
         }
     }
+
+    public Task moveTaskAsFirstInDailyView(Integer userId, Integer taskToMoveId) {
+        Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
+        taskToMove.setDailyViewOrder(1);
+        taskRepository.incrementOrderByOwnerIdAndDate(userId, taskToMove.getDue());
+        return taskRepository.save(taskToMove);
+    }
+
+    public Task moveTaskAfterInDailyView(IdRequest request, Integer userId, Integer taskToMoveId) {
+        Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
+        Task afterTask = findIdFromIdRequest(request);
+        taskToMove.setDue(afterTask.getDue());
+        taskToMove.setDailyViewOrder(afterTask.getDailyViewOrder()+1);
+        incrementDailyOrderOfTasksAfter(userId, afterTask);
+        return taskRepository.save(taskToMove);
+    }
+
+    private void incrementDailyOrderOfTasksAfter(Integer userId, Task task) {
+        if(task.getDue() != null) {
+            taskRepository.incrementOrderByOwnerIdAndDateAndOrderGreaterThan(userId, task.getDue(), task.getDailyViewOrder());
+        }
+    }
+
+    private void incrementDailyOrderOfTasksBefore(Integer userId, Task task) {
+        if(task.getDue() != null) {
+            taskRepository.incrementOrderByOwnerIdAndDateAndOrderGreaterThanEqual(userId, task.getDue(), task.getDailyViewOrder());
+        }
+    }
 }

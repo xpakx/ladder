@@ -74,4 +74,20 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query("SELECT coalesce(max(t.dailyViewOrder), 0) FROM Task t WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0")
     Integer getMaxOrderByOwnerIdAndDate(Integer ownerId, LocalDateTime date);
+
+    @Modifying
+    @Transactional
+    @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1 WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0 AND t.dailyViewOrder > :dailyOrder")
+    void incrementOrderByOwnerIdAndDateAndOrderGreaterThan(Integer ownerId, LocalDateTime date, Integer dailyOrder);
+
+    @Modifying
+    @Transactional
+    @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1 WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0 AND t.dailyViewOrder >= :dailyOrder")
+    void incrementOrderByOwnerIdAndDateAndOrderGreaterThanEqual(Integer ownerId, LocalDateTime date, Integer dailyOrder);
+
+    @Modifying
+    @Transactional
+    @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1 WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0")
+    void incrementOrderByOwnerIdAndDate(Integer ownerId, LocalDateTime date);
+
 }
