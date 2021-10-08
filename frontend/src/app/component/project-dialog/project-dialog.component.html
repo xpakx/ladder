@@ -8,7 +8,7 @@
         <i class="fa fa-question fa-circle"></i>
       </div>
       <div class="modal-body">
-        <form class="form" [formGroup]="addProjForm">
+        <form class="form" [formGroup]="form">
             <div class="form-field">
                 <label for="projectName">Name</label>
                 <input class="form-control mr-sm-2" placeholder="" id="name" formControlName="name">
@@ -28,7 +28,7 @@
             </div>
 
             <div class="form-field-inline">
-                <div class="switch" [class.switch-checked]="projectFav" (click)="switchProjectFav()">
+                <div class="switch" [class.switch-checked]="favorite" (click)="switchFav()">
                     <span class="switch-handle"></span>
                 </div>
                 <label>
@@ -40,11 +40,11 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="modal-button" 
-                (click)="closeProjectModal()">
+                (click)="closeModal()">
           Cancel
         </button>
         <button type="button" class="modal-button modal-button-red" 
-                (click)="addProjectModal()" [disabled]="addProjForm.invalid">
+                (click)="addProjectModal()" [disabled]="form.invalid">
         {{editMode ? "Save" : "Add"}}
         </button>
       </div>

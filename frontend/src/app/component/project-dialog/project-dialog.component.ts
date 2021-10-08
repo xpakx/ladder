@@ -14,19 +14,19 @@ import { TreeService } from 'src/app/service/tree.service';
   styleUrls: ['./project-dialog.component.css']
 })
 export class ProjectDialogComponent implements OnInit {
-  addProjForm: FormGroup;
-  projectFav: boolean = false;
+  form: FormGroup;
+  favorite: boolean = false;
 
   @Output() closeEvent = new EventEmitter<boolean>();
   @Input() data: AddEvent<ProjectTreeElem> | undefined;
-  project: ProjectTreeElem | undefined;
+  elem: ProjectTreeElem | undefined;
   after: boolean = false;
   before: boolean = false;
   editMode: boolean = false;
 
   colors: string[] = ['#ADA', '#EDA', '#DDD', '#888', '#B8255F', '#25B87D',
   '#B83325', '#B825A9', '#FF9933', '#3399FF', '#FFFF33', '#FF3333', '#7ECC49',
-  '#49CC56', '#BFCC49', '#9849CC'  ];
+  '#49CC56', '#BFCC49', '#9849CC', '#158FAD', '#AD3315', '#1543AD', '#15AD80'];
   showColors = false;
 
   toggleShowColors() {
@@ -34,12 +34,12 @@ export class ProjectDialogComponent implements OnInit {
   }
 
   get color(): string {
-    return this.addProjForm.controls.color.value;
+    return this.form.controls.color.value;
   }
 
   constructor(private fb: FormBuilder, public tree : TreeService, 
     private projectService: ProjectService) { 
-    this.addProjForm = this.fb.group({
+    this.form = this.fb.group({
       name: ['', Validators.required],
       color: ['#888', Validators.required]
     });
@@ -47,52 +47,52 @@ export class ProjectDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if(this.data) {
-      this.project = this.data.object;
+      this.elem = this.data.object;
       this.after = this.data.after;
       this.before = this.data.before;
     }
-    if(this.project && !this.after && !this.before) {
+    if(this.elem && !this.after && !this.before) {
       this.editMode = true;
     }
-    if(this.editMode && this.project) {
-      this.addProjForm.setValue({
-        name: this.project.name,
-        color: this.project.color
+    if(this.editMode && this.elem) {
+      this.form.setValue({
+        name: this.elem.name,
+        color: this.elem.color
       });
     }
   }
 
   chooseColor(color: string) {
-    this.addProjForm.setValue({
-      name: this.addProjForm.controls.name.value,
+    this.form.setValue({
+      name: this.form.controls.name.value,
       color: color
     });
   }
 
-  switchProjectFav() {
-    this.projectFav = !this.projectFav;
+  switchFav() {
+    this.favorite = !this.favorite;
   }
 
-  closeProjectModal() {
+  closeModal() {
     this.closeEvent.emit(true);
   }
 
   addProjectModal() {
     let request: ProjectRequest = {
-      name: this.addProjForm.controls.name.value,
-      color: this.addProjForm.controls.color.value,
+      name: this.form.controls.name.value,
+      color: this.form.controls.color.value,
       parentId: null,
-      favorite: this.projectFav
+      favorite: this.favorite
     };
     
-    this.closeProjectModal();
+    this.closeModal();
     
-    if(this.project && this.after) {
-      this.addAfterProjectModal(request, this.project);
-    } else if(this.project && this.before) {
-      this.addBeforeProjectModal(request, this.project);
-    } else if(this.project) {
-      this.editProjectModal(request, this.project.id);
+    if(this.elem && this.after) {
+      this.addAfterProjectModal(request, this.elem);
+    } else if(this.elem && this.before) {
+      this.addBeforeProjectModal(request, this.elem);
+    } else if(this.elem) {
+      this.editProjectModal(request, this.elem.id);
     } else {
       this.addEndProjectModal(request)
     }

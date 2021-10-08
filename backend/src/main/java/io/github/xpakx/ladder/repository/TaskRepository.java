@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,4 +71,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     @Transactional
     @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project IS NULL AND t.projectOrder > :projectOrder")
     void incrementOrderByOwnerIdAndOrderGreaterThan(Integer ownerId, Integer projectOrder);
+
+    @Query("SELECT coalesce(max(t.dailyViewOrder), 0) FROM Task t WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0")
+    Integer getMaxOrderByOwnerIdAndDate(Integer ownerId, LocalDateTime date);
 }

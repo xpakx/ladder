@@ -8,4 +8,5 @@ public interface ProjectDetails {
     boolean getCollapsed();
     ProjectWithNameAndId getParent();
     Integer getGeneralOrder();
+    Integer getDailyViewOrder();
 }

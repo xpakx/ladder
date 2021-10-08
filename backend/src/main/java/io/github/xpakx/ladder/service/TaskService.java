@@ -44,6 +44,7 @@ public class TaskService {
         taskToUpdate.setDescription(request.getDescription());
         taskToUpdate.setProjectOrder(request.getProjectOrder());
         taskToUpdate.setDue(request.getDue());
+        taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
         //taskToUpdate.setParent(parent);
         if(!haveSameProject(taskToUpdate, project)) {
             List<Task> childrenWithUpdatedProject = updateChildrenProject(project, taskToUpdate, userId);
@@ -63,6 +64,7 @@ public class TaskService {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                         .orElseThrow(() -> new NotFoundException("No such task!"));
         taskToUpdate.setDue(request.getDate());
+        taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
         return taskRepository.save(taskToUpdate);
     }
 
@@ -273,11 +275,28 @@ public class TaskService {
                 .createdAt(LocalDateTime.now())
                 .due(request.getDue())
                 .priority(request.getPriority())
+                .dailyViewOrder(getMaxDailyOrder(request, userId)+1)
                 .completed(false)
                 .collapsed(false)
                 .owner(userRepository.getById(userId))
                 .labels(transformLabelIdsToLabelReferences(request, userId))
                 .build();
+    }
+
+    private Integer getMaxDailyOrder(AddTaskRequest request, Integer userId) {
+        return getMaxDailyOrder(request.getDue(), userId);
+    }
+
+    private Integer getMaxDailyOrder(DateRequest request, Integer userId) {
+        return getMaxDailyOrder(request.getDate(), userId);
+    }
+
+    private Integer getMaxDailyOrder(LocalDateTime date, Integer userId) {
+        if(date == null) {
+            return 0;
+        } else {
+            return taskRepository.getMaxOrderByOwnerIdAndDate(userId, date);
+        }
     }
 
     private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request, Integer userId) {

@@ -145,6 +145,7 @@ public class ProjectService {
                 .project(project)
                 .createdAt(LocalDateTime.now())
                 .due(request.getDue())
+                .dailyViewOrder(getMaxDailyOrder(request, userId)+1)
                 .parent(getParentFromAddTaskRequest(request))
                 .priority(request.getPriority())
                 .completed(false)
@@ -152,6 +153,18 @@ public class ProjectService {
                 .owner(userRepository.getById(userId))
                 .labels(transformLabelIdsToLabelReferences(request, userId))
                 .build();
+    }
+
+    private Integer getMaxDailyOrder(AddTaskRequest request, Integer userId) {
+        return getMaxDailyOrder(request.getDue(), userId);
+    }
+
+    private Integer getMaxDailyOrder(LocalDateTime date, Integer userId) {
+        if(date == null) {
+            return 0;
+        } else {
+            return taskRepository.getMaxOrderByOwnerIdAndDate(userId, date);
+        }
     }
 
     private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request, Integer userId) {

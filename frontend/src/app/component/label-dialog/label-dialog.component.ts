@@ -53,7 +53,7 @@ export class LabelDialogComponent implements OnInit {
 
   colors: string[] = ['#ADA', '#EDA', '#DDD', '#888', '#B8255F', '#25B87D',
   '#B83325', '#B825A9', '#FF9933', '#3399FF', '#FFFF33', '#FF3333', '#7ECC49',
-  '#49CC56', '#BFCC49', '#9849CC'  ];
+  '#49CC56', '#BFCC49', '#9849CC', '#158FAD', '#AD3315', '#1543AD', '#15AD80'];
   showColors = false;
 
   toggleShowColors() {
