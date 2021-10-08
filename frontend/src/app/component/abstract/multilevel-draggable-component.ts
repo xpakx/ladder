@@ -128,9 +128,17 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
             }
         } 
         if(!elem.collapsed) {
-            return this.hasNextUndetachedElemSmallerIndent(i, elem);
+            return this.hasNextUndetachedElemSmallerIndent(i, elem) || this.onlyOneDraggedChild(i, elem);
         }
         return this.findFirstWithSmallerIndentAndReturnIndent(i+1, elem.indent) < elem.indent;
+    }
+
+    public onlyOneDraggedChild(i: number, elem: R): boolean {
+        if(elem.hasChildren && this.indentForPosition(i+1) != this.indentForPosition(i+2) 
+        && this.isDragged(this.idForPosition(i+1))) {
+            return true;
+        }
+        return false;
     }
 
     private hasNextUndetachedElemSmallerIndent(i: number, elem: R) {
