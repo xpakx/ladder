@@ -93,4 +93,19 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @EntityGraph("task-with-labels")
     List<TaskDetails> findByIdIn(List<Integer> ids);
+
+    @Modifying
+    @Transactional
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent.id = :parentId")
+    void incrementGeneralOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId);
+
+    @Modifying
+    @Transactional
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project.id = :projectId")
+    void incrementGeneralOrderByOwnerIdAndProjectId(Integer ownerId, Integer projectId);
+
+    @Modifying
+    @Transactional
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project IS NULL")
+    void incrementGeneralOrderByOwnerId(Integer ownerId);
 }
