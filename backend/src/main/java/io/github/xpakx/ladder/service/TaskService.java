@@ -43,8 +43,10 @@ public class TaskService {
         taskToUpdate.setTitle(request.getTitle());
         taskToUpdate.setDescription(request.getDescription());
         taskToUpdate.setProjectOrder(request.getProjectOrder());
+        if(haveDifferentDueDate(request.getDue(), taskToUpdate.getDue())) {
+            taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
+        }
         taskToUpdate.setDue(request.getDue());
-        taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
         //taskToUpdate.setParent(parent);
         if(!haveSameProject(taskToUpdate, project)) {
             List<Task> childrenWithUpdatedProject = updateChildrenProject(project, taskToUpdate, userId);
@@ -60,11 +62,17 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
+    private boolean haveDifferentDueDate(LocalDateTime dueDate1, LocalDateTime dueDate2) {
+        return dueDate1.getYear() != dueDate2.getYear() || dueDate1.getDayOfYear() != dueDate2.getDayOfYear();
+    }
+
     public Task updateTaskDueDate(DateRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                         .orElseThrow(() -> new NotFoundException("No such task!"));
         taskToUpdate.setDue(request.getDate());
-        taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
+        if(haveDifferentDueDate(request.getDate(), taskToUpdate.getDue())) {
+            taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
+        }
         return taskRepository.save(taskToUpdate);
     }
 
