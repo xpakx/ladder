@@ -157,6 +157,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       }
       task.project = project ? project : null;
       task.due = response.due ? new Date(response.due) : null;
+      task.dailyOrder = response.dailyViewOrder;
       task.priority = response.priority;
       task.labels = labels
     }
@@ -275,6 +276,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let taskToEdit =  this.getById(task.id);
     if(taskToEdit) {
       taskToEdit.due = task.due? new Date(task.due) : null;
+      taskToEdit.dailyOrder = task.dailyViewOrder;
     }
   }
 
