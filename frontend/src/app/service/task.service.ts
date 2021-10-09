@@ -8,6 +8,7 @@ import { DateRequest } from '../entity/date-request';
 import { IdRequest } from '../entity/id-request';
 import { PriorityRequest } from '../entity/priority-request';
 import { Task } from '../entity/task';
+import { TaskDetails } from '../entity/task-details';
 import { MultilevelMovableService } from './multilevel-movable-service';
 
 @Injectable({
@@ -90,5 +91,10 @@ export class TaskService implements MultilevelMovableService<Task> {
   public moveAsFirstDaily(taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/asFirst`, null);
+  }
+
+  public duplicateTask(taskId: number):  Observable<TaskDetails[]> {
+    let userId  = this.getUserId();
+    return this.http.post<TaskDetails[]>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/duplicate`, null);
   }
 }

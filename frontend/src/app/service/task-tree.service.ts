@@ -423,4 +423,10 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       movedTask.dailyOrder = afterTask.dailyOrder+1;
     }
   }
+
+  addDuplicated(response: TaskDetails[]) {
+    let tasks = this.transformAll(response);
+    this.list = this.list.concat(tasks);
+    this.sort();
+  }
 }

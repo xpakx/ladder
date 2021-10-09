@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
+import { TaskDetails } from 'src/app/entity/task-details';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
@@ -347,5 +348,20 @@ implements OnInit, AfterViewInit {
       }
     }
     return labels;
+  }
+
+  duplicate() {
+    if(this.contextTaskMenu) {
+      this.taskService.duplicateTask(this.contextTaskMenu.id).subscribe(
+        (response: TaskDetails[]) => {
+        this.tree.duplicateTask(response);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+
+    this.closeContextTaskMenu();
   }
 }

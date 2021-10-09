@@ -6,6 +6,7 @@ import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { ProjectWithNameAndId } from 'src/app/entity/project-with-name-and-id';
 import { Task } from 'src/app/entity/task';
+import { TasksWithProjects } from 'src/app/entity/tasks-with-projects';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { ProjectTreeService } from 'src/app/service/project-tree.service';
@@ -127,8 +128,8 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
   duplicateProject() {
     if(this.contextProjectMenu) {
       this.projectService.duplicateProject(this.contextProjectMenu.id).subscribe(
-        (response: Project) => {
-        this.tree.addNewProject(response, 0);
+        (response: TasksWithProjects) => {
+        this.tree.duplicateProject(response);
       },
       (error: HttpErrorResponse) => {
        

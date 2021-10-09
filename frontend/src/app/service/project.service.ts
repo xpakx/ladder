@@ -10,6 +10,7 @@ import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectRequest } from '../entity/project-request';
 import { Task } from '../entity/task';
+import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { UserWithData } from '../entity/user-with-data';
 import { MultilevelMovableService } from './multilevel-movable-service';
 
@@ -76,9 +77,9 @@ export class ProjectService implements MultilevelMovableService<Project>{
     return this.http.delete<any>(`${this.apiServerUrl}/${userId}/projects/${projectId}`);
   }
 
-  public duplicateProject(projectId: number):  Observable<Project> {
+  public duplicateProject(projectId: number):  Observable<TasksWithProjects> {
     let userId  = this.getUserId();
-    return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/duplicate`, null);
+    return this.http.post<TasksWithProjects>(`${this.apiServerUrl}/${userId}/projects/${projectId}/duplicate`, null);
   }
 
   public addTask(request: AddTaskRequest, projectId: number | undefined):  Observable<Task> {

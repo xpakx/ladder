@@ -5,7 +5,9 @@ import { Project } from '../entity/project';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { Task } from '../entity/task';
+import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
+import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { UserWithData } from '../entity/user-with-data';
 import { LabelTreeService } from './label-tree.service';
 import { ProjectTreeService } from './project-tree.service';
@@ -230,5 +232,14 @@ export class TreeService {
 
   getNumOfUncompletedTasksByLabel(labelId: number): number {
     return this.tasks.getNumOfUncompletedTasksByLabel(labelId);
+  }
+
+  duplicateProject(response: TasksWithProjects) {
+    this.projects.addDuplicated(response.projects);
+    this.duplicateTask(response.tasks);
+  }
+
+  duplicateTask(response: TaskDetails[]) {
+    this.tasks.addDuplicated(response);
   }
 }
