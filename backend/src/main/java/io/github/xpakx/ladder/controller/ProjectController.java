@@ -107,7 +107,7 @@ public class ProjectController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{projectId}/duplicate")
-    public ResponseEntity<Project> duplicateProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
+    public ResponseEntity<TasksAndProjects> duplicateProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.duplicate(projectId, userId), HttpStatus.CREATED);
     }
 

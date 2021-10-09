@@ -184,7 +184,7 @@ public class TaskService {
         return toReturn;
     }
 
-    public Task duplicate(Integer taskId, Integer userId) {
+    public List<TaskDetails> duplicate(Integer taskId, Integer userId) {
         Task taskToDuplicate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
 
@@ -197,6 +197,8 @@ public class TaskService {
         Task duplicatedTask = duplicate(taskToDuplicate, taskToDuplicate.getParent());
 
         List<Task> toDuplicate = List.of(duplicatedTask);
+        List<Task> allDuplicated = new ArrayList<>();
+        allDuplicated.add(duplicatedTask);
         while(toDuplicate.size() > 0) {
             List<Task> newToDuplicate = new ArrayList<>();
             for (Task parent : toDuplicate) {
@@ -210,9 +212,13 @@ public class TaskService {
                 newToDuplicate.addAll(children);
             }
             toDuplicate = newToDuplicate;
+            allDuplicated.addAll(newToDuplicate);
         }
 
-        return taskRepository.save(duplicatedTask);
+        List<Integer> ids = taskRepository.saveAll(allDuplicated).stream()
+                .map(Task::getId)
+                .collect(Collectors.toList());
+        return taskRepository.findByIdIn(ids);
     }
 
     private Task duplicate(Task originalTask, Task parent) {

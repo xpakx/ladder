@@ -301,7 +301,7 @@ public class ProjectService {
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
     }
 
-    public Project duplicate(Integer projectId, Integer userId) {
+    public TasksAndProjects duplicate(Integer projectId, Integer userId) {
         Project projectToDuplicate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No project with id " + projectId));
 
@@ -321,22 +321,37 @@ public class ProjectService {
         Project duplicatedProject = duplicate(projectToDuplicate, projectToDuplicate.getParent());
 
         List<Project> toDuplicate = List.of(duplicatedProject);
+        List<Project> allDuplicatedProjects = new ArrayList<>();
+        allDuplicatedProjects.add(duplicatedProject);
+        List<Task> allDuplicatedTasks = new ArrayList<>();
         while(toDuplicate.size() > 0) {
             List<Project> newToDuplicate = new ArrayList<>();
             for (Project parent : toDuplicate) {
                 List<Project> children = projectByParent.getOrDefault(parent.getId(), new ArrayList<>());
-                parent.setTasks(duplicateTasks(parent, tasksByParent, tasksByProject));
+                List<Task> duplicatedTasks = duplicateTasks(parent, tasksByParent, tasksByProject);
+                //parent.setTasks(duplicatedTasks);
+                allDuplicatedTasks.addAll(duplicatedTasks);
                 parent.setId(null);
                 children = children.stream()
                         .map((a) -> duplicate(a, parent))
                         .collect(Collectors.toList());
-                parent.setChildren(children);
+                //parent.setChildren(children);
+                parent.setTasks(null);
                 newToDuplicate.addAll(children);
             }
             toDuplicate = newToDuplicate;
+            allDuplicatedProjects.addAll(newToDuplicate);
         }
-
-        return projectRepository.save(duplicatedProject);
+        List<Integer> projectIds = projectRepository.saveAll(allDuplicatedProjects).stream()
+                .map(Project::getId)
+                .collect(Collectors.toList());
+        List<Integer> taskIds = taskRepository.saveAll(allDuplicatedTasks).stream()
+                .map(Task::getId)
+                .collect(Collectors.toList());
+        TasksAndProjects result = new TasksAndProjects();
+        result.setTasks(taskRepository.findByIdIn(taskIds));
+        result.setProjects(projectRepository.findByIdIn(projectIds));
+        return result;
     }
 
     private List<Task> duplicateTasks(Project project, Map<Integer, List<Task>> tasksByParent,

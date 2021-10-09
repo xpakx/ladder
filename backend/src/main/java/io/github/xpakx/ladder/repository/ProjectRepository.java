@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -61,4 +62,6 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     @Query("SELECT p.owner.id FROM Project p WHERE p.id = :id")
     Integer findOwnerIdById(Integer id);
+
+    List<ProjectDetails> findByIdIn(List<Integer> id);
 }

@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Task;
+import io.github.xpakx.ladder.entity.dto.TaskDetails;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -90,4 +91,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1 WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0")
     void incrementOrderByOwnerIdAndDate(Integer ownerId, LocalDateTime date);
 
+    @EntityGraph("task-with-labels")
+    List<TaskDetails> findByIdIn(List<Integer> ids);
 }

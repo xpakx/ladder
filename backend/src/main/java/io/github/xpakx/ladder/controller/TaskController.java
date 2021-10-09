@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/{userId}/tasks")
 @AllArgsConstructor
@@ -60,7 +62,7 @@ public class TaskController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{taskId}/duplicate")
-    public ResponseEntity<Task> duplicateTask(@PathVariable Integer taskId, @PathVariable Integer userId) {
+    public ResponseEntity<List<TaskDetails>> duplicateTask(@PathVariable Integer taskId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(taskService.duplicate(taskId, userId), HttpStatus.CREATED);
     }
 
