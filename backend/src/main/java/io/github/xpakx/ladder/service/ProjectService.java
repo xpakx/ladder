@@ -131,9 +131,17 @@ public class ProjectService {
 
     private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
         if(hasParent(request)) {
-            return taskRepository.getMaxOrderByOwnerIdAndProjectIdAndParentId(userId, request.getProjectId(), request.getParentId());
+            if (request.getProjectId() != null) {
+                return taskRepository.getMaxOrderByOwnerIdAndProjectIdAndParentId(userId, request.getProjectId(), request.getParentId());
+            } else {
+                return taskRepository.getMaxOrderByOwnerIdAndParentId(userId, request.getParentId());
+            }
         } else {
-            return taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getProjectId());
+            if (request.getProjectId() != null) {
+                return taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getProjectId());
+            } else {
+                return taskRepository.getMaxOrderByOwnerId(userId);
+            }
         }
     }
 
