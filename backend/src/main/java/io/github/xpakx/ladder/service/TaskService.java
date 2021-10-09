@@ -63,6 +63,12 @@ public class TaskService {
     }
 
     private boolean haveDifferentDueDate(LocalDateTime dueDate1, LocalDateTime dueDate2) {
+        if(dueDate1 == null && dueDate2 == null) {
+            return false;
+        }
+        if(dueDate1 == null || dueDate2 == null) {
+            return true;
+        }
         return dueDate1.getYear() != dueDate2.getYear() || dueDate1.getDayOfYear() != dueDate2.getDayOfYear();
     }
 
