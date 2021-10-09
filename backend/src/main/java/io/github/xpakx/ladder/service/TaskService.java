@@ -75,10 +75,10 @@ public class TaskService {
     public Task updateTaskDueDate(DateRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                         .orElseThrow(() -> new NotFoundException("No such task!"));
-        taskToUpdate.setDue(request.getDate());
         if(haveDifferentDueDate(request.getDate(), taskToUpdate.getDue())) {
             taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
         }
+        taskToUpdate.setDue(request.getDate());
         return taskRepository.save(taskToUpdate);
     }
 
