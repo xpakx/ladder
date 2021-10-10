@@ -12,6 +12,7 @@ import io.github.xpakx.ladder.service.UserService;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -317,6 +318,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @Disabled
     void shouldUpdateTaskDueDate() {
         Integer taskId = addTaskAndReturnId();
         DateRequest request = getValidDateRequest();
