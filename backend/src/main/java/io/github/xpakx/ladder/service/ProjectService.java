@@ -10,6 +10,8 @@ import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,8 @@ public class ProjectService {
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
 
     public ProjectDetails getProjectById(Integer projectId, Integer userId) {
         return projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)

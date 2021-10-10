@@ -1,7 +1,7 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
+import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -73,14 +72,26 @@ class ProjectServiceTest {
 
     @Test
     void serviceShouldNotInteractWithReturningProject() {
-        ProjectDetails project = mock(ProjectDetails.class);
+        ProjectDetails projectReturned = mock(ProjectDetails.class);
         given(projectRepository.findProjectedByIdAndOwnerId(anyInt(), anyInt(), any(Class.class)))
-                .willReturn(Optional.of(project));
+                .willReturn(Optional.of(projectReturned));
         injectMocks();
 
         projectService.getProjectById(2, 5);
 
-        then(project)
+        then(projectReturned)
                 .shouldHaveNoInteractions();
+    }
+
+    @Test
+    void serviceShouldPassProjectReturnedFromRepoToController() {
+        ProjectDetails projectReturned = mock(ProjectDetails.class);
+        given(projectRepository.findProjectedByIdAndOwnerId(anyInt(), anyInt(), any(Class.class)))
+                .willReturn(Optional.of(projectReturned));
+        injectMocks();
+
+        ProjectDetails result = projectService.getProjectById(2, 5);
+
+        assertSame(projectReturned, result);
     }
 }
