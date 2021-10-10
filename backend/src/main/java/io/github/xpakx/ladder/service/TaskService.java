@@ -75,10 +75,10 @@ public class TaskService {
     public Task updateTaskDueDate(DateRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                         .orElseThrow(() -> new NotFoundException("No such task!"));
-        taskToUpdate.setDue(request.getDate());
         if(haveDifferentDueDate(request.getDate(), taskToUpdate.getDue())) {
             taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
         }
+        taskToUpdate.setDue(request.getDate());
         return taskRepository.save(taskToUpdate);
     }
 
@@ -264,15 +264,21 @@ public class TaskService {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
         Task parentTask = findIdFromIdRequest(request);
-        List<Task> children = request.getId() != null ? taskRepository.findByOwnerIdAndParentId(userId, request.getId()) :
-                taskRepository.findByOwnerIdAndParentIsNull(userId, Task.class);
-
         taskToMove.setParent(parentTask);
-
         taskToMove.setProjectOrder(1);
-        children.forEach(((p) -> p.setProjectOrder(p.getProjectOrder()+1)));
-        taskRepository.saveAll(children);
+        incrementTasksOrder(request, userId, taskToMove.getProject());
         return taskRepository.save(taskToMove);
+    }
+
+
+    private void incrementTasksOrder(IdRequest request, Integer userId, Project project) {
+        if(request.getId() != null) {
+            taskRepository.incrementGeneralOrderByOwnerIdAndParentId(userId, request.getId());
+        } else if(project != null) {
+            taskRepository.incrementGeneralOrderByOwnerIdAndProjectId(userId, project.getId());
+        } else {
+            taskRepository.incrementGeneralOrderByOwnerId(userId);
+        }
     }
 
     public Task updateTaskCollapsion(BooleanRequest request, Integer taskId, Integer userId) {
