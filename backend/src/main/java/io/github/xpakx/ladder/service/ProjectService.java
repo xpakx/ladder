@@ -115,7 +115,7 @@ public class ProjectService {
     }
 
     public Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
-        if(userId != projectRepository.findOwnerIdById(projectId)) {
+        if(!userId.equals(projectRepository.findOwnerIdById(projectId))) {
             return Optional.empty();
         }
         return Optional.of(projectRepository.getById(projectId));
@@ -462,22 +462,23 @@ public class ProjectService {
     public Project moveProjectAfter(IdRequest request, Integer userId, Integer projectToMoveId) {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
-        Project afterProject = findIdFromIdRequest(request);
+        Project afterProject = findIdFromIdRequest(request)
+                .orElseThrow(() -> new NotFoundException("Cannot insert anything after non-existent project!"));
         projectToMove.setParent(afterProject.getParent());
         projectToMove.setGeneralOrder(afterProject.getGeneralOrder()+1);
         incrementGeneralOrderIfGreaterThan(userId, afterProject);
         return projectRepository.save(projectToMove);
     }
     
-    private Project findIdFromIdRequest(IdRequest request) {
-        return hasId(request) ? projectRepository.findById(request.getId()).orElse(null) : null;
+    private Optional<Project> findIdFromIdRequest(IdRequest request) {
+        return hasId(request) ? projectRepository.findById(request.getId()) : Optional.empty();
     }
 
     public Project moveProjectAsFirstChild(IdRequest request, Integer userId, Integer projectToMoveId) {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
-        Project parentProject = findIdFromIdRequest(request);
-        projectToMove.setParent(parentProject);
+        Optional<Project> parentProject = findIdFromIdRequest(request);
+        projectToMove.setParent(parentProject.orElse(null));
         projectToMove.setGeneralOrder(1);
         incrementGeneralOrderOfAllChildren(request, userId);
         return projectRepository.save(projectToMove);
