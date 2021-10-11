@@ -68,7 +68,7 @@ public class ProjectService {
     private Project buildProjectToAddFromRequest(ProjectRequest request, Integer userId) {
         return Project.builder()
                 .name(request.getName())
-                .parent(getParentFromProjectRequest(request))
+                .parent(getParentFromProjectRequest(request, userId))
                 .favorite(request.isFavorite())
                 .color(request.getColor())
                 .collapsed(true)
@@ -76,8 +76,14 @@ public class ProjectService {
                 .build();
     }
 
-    private Project getParentFromProjectRequest(ProjectRequest request) {
-        return hasParent(request) ? projectRepository.getById(request.getParentId()) : null;
+    private Project getParentFromProjectRequest(ProjectRequest request, Integer userId) {
+        if(!hasParent(request)) {
+            return null;
+        }
+        if(!projectRepository.existsByIdAndOwnerId(request.getParentId(), userId)) {
+            throw new NotFoundException("Cannot add nonexistent project as task!");
+        }
+        return projectRepository.getById(request.getParentId());
     }
 
     /**
@@ -93,7 +99,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setName(request.getName());
         projectToUpdate.setColor(request.getColor());
-        projectToUpdate.setParent(getParentFromProjectRequest(request));
+        projectToUpdate.setParent(getParentFromProjectRequest(request, userId));
         projectToUpdate.setFavorite(request.isFavorite());
         return projectRepository.save(projectToUpdate);
     }

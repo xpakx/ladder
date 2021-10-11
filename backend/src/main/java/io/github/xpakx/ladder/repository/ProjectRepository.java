@@ -63,4 +63,6 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     Integer findOwnerIdById(Integer id);
 
     List<ProjectDetails> findByIdIn(List<Integer> id);
+
+    boolean existsByIdAndOwnerId(Integer id, Integer ownerId);
 }
