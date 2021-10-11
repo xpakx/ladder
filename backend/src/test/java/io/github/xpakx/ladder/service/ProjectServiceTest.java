@@ -100,13 +100,21 @@ class ProjectServiceTest {
 
     @Test
     void shouldSaveNewProject()  {
+        ProjectRequest request = getProjectRequestWithoutParent();
         injectMocks();
 
-        projectService.addProject(mock(ProjectRequest.class), 3);
+        projectService.addProject(request, 3);
 
         then(projectRepository)
                 .should(times(1))
                 .save(any(Project.class));
+    }
+
+    private ProjectRequest getProjectRequestWithoutParent() {
+        ProjectRequest request = mock(ProjectRequest.class);
+        given(request.getParentId())
+                .willReturn(null);
+        return request;
     }
 
     @Test
@@ -117,6 +125,8 @@ class ProjectServiceTest {
                 .willReturn(3);
         given(projectRepository.getMaxOrderByOwnerIdAndParentId(anyInt(), anyInt()))
                 .willReturn(MAX_ORDER);
+        given(projectRepository.existsByIdAndOwnerId(3, 3))
+                .willReturn(true);
         injectMocks();
 
         projectService.addProject(request, 3);
@@ -133,9 +143,7 @@ class ProjectServiceTest {
     @Test
     void createdObjectShouldHaveIncrementedOrderHasNoParent() {
         final int MAX_ORDER = 5;
-        ProjectRequest request = mock(ProjectRequest.class);
-        given(request.getParentId())
-                .willReturn(null);
+        ProjectRequest request = getProjectRequestWithoutParent();
         given(projectRepository.getMaxOrderByOwnerId(anyInt()))
                 .willReturn(MAX_ORDER);
         injectMocks();
@@ -154,9 +162,10 @@ class ProjectServiceTest {
     @Test
     void shouldGetProjectOwner() {
         final Integer OWNER_ID = 7;
+        ProjectRequest request = getProjectRequestWithoutParent();
         injectMocks();
 
-        projectService.addProject(mock(ProjectRequest.class), OWNER_ID);
+        projectService.addProject(request, OWNER_ID);
 
         then(userRepository)
                 .should(times(1))
@@ -169,9 +178,10 @@ class ProjectServiceTest {
         UserAccount userReference = mock(UserAccount.class);
         given(userRepository.getById(OWNER_ID))
                 .willReturn(userReference);
+        ProjectRequest request = getProjectRequestWithoutParent();
         injectMocks();
 
-        projectService.addProject(mock(ProjectRequest.class), 7);
+        projectService.addProject(request, 7);
 
         then(userReference)
                 .shouldHaveNoInteractions();
@@ -185,7 +195,7 @@ class ProjectServiceTest {
     @Test
     void shouldUseProjectNameFromRequest() {
         final String NAME = "Project 1";
-        ProjectRequest request = mock(ProjectRequest.class);
+        ProjectRequest request = getProjectRequestWithoutParent();
         given(request.getName())
                 .willReturn(NAME);
         injectMocks();
@@ -202,7 +212,7 @@ class ProjectServiceTest {
     @Test
     void shouldUseProjectFavFromRequest() {
         final boolean FAV = true;
-        ProjectRequest request = mock(ProjectRequest.class);
+        ProjectRequest request = getProjectRequestWithoutParent();
         given(request.isFavorite())
                 .willReturn(FAV);
         injectMocks();
@@ -219,7 +229,7 @@ class ProjectServiceTest {
     @Test
     void shouldUseProjectColorFromRequest() {
         final String COLOR = "#eeddaa";
-        ProjectRequest request = mock(ProjectRequest.class);
+        ProjectRequest request = getProjectRequestWithoutParent();
         given(request.getColor())
                 .willReturn(COLOR);
         injectMocks();
@@ -235,9 +245,10 @@ class ProjectServiceTest {
 
     @Test
     void createdProjectShouldBeCollapsed() {
+        ProjectRequest request = getProjectRequestWithoutParent();
         injectMocks();
 
-        projectService.addProject(mock(ProjectRequest.class), 4);
+        projectService.addProject(request, 4);
 
         ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
         then(projectRepository)
@@ -248,9 +259,7 @@ class ProjectServiceTest {
 
     @Test
     void projectParentShouldBeNull() {
-        ProjectRequest request = mock(ProjectRequest.class);
-        given(request.getParentId())
-                .willReturn(null);
+        ProjectRequest request = getProjectRequestWithoutParent();
         injectMocks();
 
         projectService.addProject(request, 4);
@@ -268,6 +277,8 @@ class ProjectServiceTest {
         ProjectRequest request = mock(ProjectRequest.class);
         given(request.getParentId())
                 .willReturn(PARENT_ID);
+        given(projectRepository.existsByIdAndOwnerId(PARENT_ID, 7))
+                .willReturn(true);
         injectMocks();
 
         projectService.addProject(request, 7);
@@ -286,6 +297,8 @@ class ProjectServiceTest {
         Project parentReference = mock(Project.class);
         given(projectRepository.getById(PARENT_ID))
                 .willReturn(parentReference);
+        given(projectRepository.existsByIdAndOwnerId(PARENT_ID, 7))
+                .willReturn(true);
         injectMocks();
 
         projectService.addProject(request, 7);
