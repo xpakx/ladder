@@ -32,8 +32,8 @@ public class ProjectService {
 
     /**
      * Getting object with project's data from repository.
-     * @param projectId Id of the project to get
-     * @param userId Id of an owner of the project
+     * @param projectId ID of the project to get
+     * @param userId ID of an owner of the project
      * @return Object with project's details
      */
     public ProjectDetails getProjectById(Integer projectId, Integer userId) {
@@ -44,7 +44,7 @@ public class ProjectService {
     /**
      * Adding new project to repository.
      * @param request Data to build new projects
-     * @param userId Id of an owner of the newly created project
+     * @param userId ID of an owner of the newly created project
      * @return Created project
      */
     @Transactional
@@ -91,8 +91,8 @@ public class ProjectService {
     /**
      * Updating project in repository.
      * @param request Data to update the project
-     * @param projectId Id of the project to update
-     * @param userId Id of an owner of the project
+     * @param projectId ID of the project to update
+     * @param userId ID of an owner of the project
      * @return Project with updated data
      */
     @Transactional
@@ -108,8 +108,8 @@ public class ProjectService {
 
     /**
      * Delete project from repository.
-     * @param projectId Id of the project to delete
-     * @param userId Id of an owner of the project
+     * @param projectId ID of the project to delete
+     * @param userId ID of an owner of the project
      */
     @Transactional
     public void deleteProject(Integer projectId, Integer userId) {
@@ -119,8 +119,8 @@ public class ProjectService {
     /**
      * Change project's name without editing any other field.
      * @param request request with new name
-     * @param projectId Id of the project do update
-     * @param userId Id of an owner of the project
+     * @param projectId ID of the project do update
+     * @param userId ID of an owner of the project
      * @return Updated project
      */
     public Project updateProjectName(NameRequest request, Integer projectId, Integer userId) {
@@ -133,8 +133,8 @@ public class ProjectService {
     /**
      * Change project's parent without editing any other field.
      * @param request Request with parent id
-     * @param projectId Id of the project to update
-     * @param userId Id of an owner of the project
+     * @param projectId ID of the project to update
+     * @param userId ID an owner of the project
      * @return Updated project
      */
     public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
@@ -155,8 +155,8 @@ public class ProjectService {
     /**
      * Change if project is favorite without editing any other field.
      * @param request Request with favorite flag
-     * @param projectId Id of the project to update
-     * @param userId Id of an owner of the project
+     * @param projectId ID of the project to update
+     * @param userId ID of an owner of the project
      * @return Updated project
      */
     public Project updateProjectFav(BooleanRequest request, Integer projectId, Integer userId) {

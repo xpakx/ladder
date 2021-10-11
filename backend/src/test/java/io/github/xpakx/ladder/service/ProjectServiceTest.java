@@ -2,6 +2,8 @@ package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.BooleanRequest;
+import io.github.xpakx.ladder.entity.dto.NameRequest;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
@@ -328,4 +330,160 @@ class ProjectServiceTest {
                 .findByIdAndOwnerId(eq(PROJECT_ID), eq(USER_ID));
     }
 
+    @Test
+    void shouldUseProjectNameFromUpdateRequest() {
+        final String NAME = "Project 1";
+        ProjectRequest request = getProjectRequestWithoutParent();
+        given(request.getName())
+                .willReturn(NAME);
+        Project projectInDb = mock(Project.class);
+        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
+                .willReturn(Optional.of(projectInDb));
+        injectMocks();
+
+        projectService.updateProject(request, 4, 5);
+
+        then(projectInDb)
+                .should(times(1))
+                .setName(eq(NAME));
+        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
+        then(projectRepository)
+                .should()
+                .save(projectCaptor.capture());
+        assertSame(projectInDb, projectCaptor.getValue());
+    }
+
+    @Test
+    void shouldUseProjectNameFromUpdateNameRequest() {
+        final String NAME = "Project 1";
+        NameRequest request = mock(NameRequest.class);
+        given(request.getName())
+                .willReturn(NAME);
+        Project projectInDb = mock(Project.class);
+        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
+                .willReturn(Optional.of(projectInDb));
+        injectMocks();
+
+        projectService.updateProjectName(request, 4, 5);
+
+        then(projectInDb)
+                .should(times(1))
+                .setName(eq(NAME));
+        then(projectInDb)
+                .shouldHaveNoMoreInteractions();;
+        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
+        then(projectRepository)
+                .should()
+                .save(projectCaptor.capture());
+        assertSame(projectInDb, projectCaptor.getValue());
+    }
+
+    @Test
+    void shouldUseProjectFavFromUpdateRequest() {
+        final boolean FAV = true;
+        ProjectRequest request = getProjectRequestWithoutParent();
+        given(request.isFavorite())
+                .willReturn(FAV);
+        Project projectInDb = mock(Project.class);
+        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
+                .willReturn(Optional.of(projectInDb));
+        injectMocks();
+
+        projectService.updateProject(request, 4, 5);
+
+        then(projectInDb)
+                .should(times(1))
+                .setFavorite(eq(FAV));
+        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
+        then(projectRepository)
+                .should()
+                .save(projectCaptor.capture());
+        assertSame(projectInDb, projectCaptor.getValue());
+    }
+
+    @Test
+    void shouldUseProjectFavFromUpdateFavRequest() {
+        final boolean FAV = true;
+        BooleanRequest request = mock(BooleanRequest.class);
+        given(request.isFlag())
+                .willReturn(FAV);
+        Project projectInDb = mock(Project.class);
+        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
+                .willReturn(Optional.of(projectInDb));
+        injectMocks();
+
+        projectService.updateProjectFav(request, 4, 5);
+
+        then(projectInDb)
+                .should(times(1))
+                .setFavorite(eq(FAV));
+        then(projectInDb)
+                .shouldHaveNoMoreInteractions();;
+        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
+        then(projectRepository)
+                .should()
+                .save(projectCaptor.capture());
+        assertSame(projectInDb, projectCaptor.getValue());
+    }
+
+    @Test
+    void shouldUseProjectColorFromUpdateRequest() {
+        final String COLOR = "#eeddaa";
+        ProjectRequest request = getProjectRequestWithoutParent();
+        given(request.getColor())
+                .willReturn(COLOR);
+        Project projectInDb = mock(Project.class);
+        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
+                .willReturn(Optional.of(projectInDb));
+        injectMocks();
+
+        projectService.updateProject(request, 4, 5);
+
+        then(projectInDb)
+                .should(times(1))
+                .setColor(eq(COLOR));
+        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
+        then(projectRepository)
+                .should()
+                .save(projectCaptor.capture());
+        assertSame(projectInDb, projectCaptor.getValue());
+    }
+
+    @Test
+    void shouldDeleteProjectByIdAndOwnerId() {
+        final int USER_ID = 5;
+        final int PROJECT_ID = 7;
+        injectMocks();
+
+        projectService.deleteProject(PROJECT_ID, USER_ID);
+
+        then(projectRepository)
+                .should(times(1))
+                .deleteByIdAndOwnerId(eq(PROJECT_ID), eq(USER_ID));
+    }
+
+    @Test
+    void shouldUseProjectCollapsion() {
+        final boolean COLLAPSE = true;
+        BooleanRequest request = mock(BooleanRequest.class);
+        given(request.isFlag())
+                .willReturn(COLLAPSE);
+        Project projectInDb = mock(Project.class);
+        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
+                .willReturn(Optional.of(projectInDb));
+        injectMocks();
+
+        projectService.updateProjectCollapsion(request, 4, 5);
+
+        then(projectInDb)
+                .should(times(1))
+                .setCollapsed(eq(COLLAPSE));
+        then(projectInDb)
+                .shouldHaveNoMoreInteractions();;
+        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
+        then(projectRepository)
+                .should()
+                .save(projectCaptor.capture());
+        assertSame(projectInDb, projectCaptor.getValue());
+    }
 }
