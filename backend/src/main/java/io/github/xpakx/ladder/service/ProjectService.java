@@ -44,7 +44,7 @@ public class ProjectService {
      * Adding new project to repository.
      * @param request Data to build new projects
      * @param userId Id of an owner of the newly created project
-     * @return Created objects
+     * @return Created project
      */
     public Project addProject(ProjectRequest request, Integer userId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
@@ -79,6 +79,13 @@ public class ProjectService {
         return hasParent(request) ? projectRepository.getById(request.getParentId()) : null;
     }
 
+    /**
+     * Updating project in repository.
+     * @param request Data to update the project
+     * @param projectId Id of the project to update
+     * @param userId Id of an owner of the project
+     * @return Project with updated data
+     */
     public Project updateProject(ProjectRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -89,6 +96,11 @@ public class ProjectService {
         return projectRepository.save(projectToUpdate);
     }
 
+    /**
+     * Delete project from repository.
+     * @param projectId Id of the project to delete
+     * @param userId Id of an owner of the project
+     */
     @Transactional
     public void deleteProject(Integer projectId, Integer userId) {
         projectRepository.deleteByIdAndOwnerId(projectId, userId);
