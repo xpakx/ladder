@@ -81,7 +81,8 @@ public class ProjectService {
         if(!hasParent(request)) {
             return null;
         }
-        if(!projectRepository.existsByIdAndOwnerId(request.getParentId(), userId)) {
+        Integer ownerId = projectRepository.findOwnerIdById(request.getParentId());
+        if(ownerId == null ||  !ownerId.equals(userId)) {
             throw new WrongOwnerException("Cannot add nonexistent project as task!");
         }
         return projectRepository.getById(request.getParentId());

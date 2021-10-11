@@ -125,8 +125,8 @@ class ProjectServiceTest {
                 .willReturn(3);
         given(projectRepository.getMaxOrderByOwnerIdAndParentId(anyInt(), anyInt()))
                 .willReturn(MAX_ORDER);
-        given(projectRepository.existsByIdAndOwnerId(3, 3))
-                .willReturn(true);
+        given(projectRepository.findOwnerIdById(3))
+                .willReturn(3);
         injectMocks();
 
         projectService.addProject(request, 3);
@@ -277,8 +277,8 @@ class ProjectServiceTest {
         ProjectRequest request = mock(ProjectRequest.class);
         given(request.getParentId())
                 .willReturn(PARENT_ID);
-        given(projectRepository.existsByIdAndOwnerId(PARENT_ID, 7))
-                .willReturn(true);
+        given(projectRepository.findOwnerIdById(PARENT_ID))
+                .willReturn(7);
         injectMocks();
 
         projectService.addProject(request, 7);
@@ -297,8 +297,8 @@ class ProjectServiceTest {
         Project parentReference = mock(Project.class);
         given(projectRepository.getById(PARENT_ID))
                 .willReturn(parentReference);
-        given(projectRepository.existsByIdAndOwnerId(PARENT_ID, 7))
-                .willReturn(true);
+        given(projectRepository.findOwnerIdById(PARENT_ID))
+                .willReturn(7);
         injectMocks();
 
         projectService.addProject(request, 7);
@@ -310,6 +310,22 @@ class ProjectServiceTest {
                 .should()
                 .save(projectCaptor.capture());
         assertSame(parentReference, projectCaptor.getValue().getParent());
+    }
+
+    @Test
+    void shouldGetProjectForUpdateWithProjectIdAndUserId() {
+        final Integer PROJECT_ID = 5;
+        final Integer USER_ID = 16;
+        ProjectRequest request = getProjectRequestWithoutParent();
+        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
+                .willReturn(Optional.of(mock(Project.class)));
+        injectMocks();
+
+        projectService.updateProject(request, PROJECT_ID, USER_ID);
+
+        then(projectRepository)
+                .should()
+                .findByIdAndOwnerId(eq(PROJECT_ID), eq(USER_ID));
     }
 
 }
