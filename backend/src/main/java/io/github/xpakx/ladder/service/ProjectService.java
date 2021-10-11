@@ -29,11 +29,23 @@ public class ProjectService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
 
+    /**
+     * Getting object with project's data from repository.
+     * @param projectId Id of the project to get
+     * @param userId Id of an owner of the project
+     * @return Object with project's details
+     */
     public ProjectDetails getProjectById(Integer projectId, Integer userId) {
         return projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
     }
 
+    /**
+     * Adding new project to repository.
+     * @param request Data to build new projects
+     * @param userId Id of an owner of the newly created project
+     * @return Created objects
+     */
     public Project addProject(ProjectRequest request, Integer userId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         projectToAdd.setGeneralOrder(getMaxGeneralOrder(request, userId)+1);
