@@ -115,6 +115,13 @@ public class ProjectService {
         projectRepository.deleteByIdAndOwnerId(projectId, userId);
     }
 
+    /**
+     * Change project's name without editing any other field.
+     * @param request request with new name
+     * @param projectId Id of the project do update
+     * @param userId Id of an owner of the project
+     * @return Updated project
+     */
     public Project updateProjectName(NameRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -122,6 +129,13 @@ public class ProjectService {
         return projectRepository.save(projectToUpdate);
     }
 
+    /**
+     * Change project's parent without editing any other field.
+     * @param request Request with parent id
+     * @param projectId Id of the project to update
+     * @param userId Id of an owner of the project
+     * @return Updated project
+     */
     public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -137,6 +151,13 @@ public class ProjectService {
         return request.getId() != null;
     }
 
+    /**
+     * Change if project is favorite without editing any other field.
+     * @param request Request with favorite flag
+     * @param projectId Id of the project to update
+     * @param userId Id of an owner of the project
+     * @return Updated project
+     */
     public Project updateProjectFav(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
