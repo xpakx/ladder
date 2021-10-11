@@ -169,8 +169,8 @@ public class ProjectService {
     /**
      * Change if project is collapsed without editing any other field.
      * @param request Request with collapse flag
-     * @param projectId Id of the project to update
-     * @param userId Id of an owner of the project
+     * @param projectId ID of the project to update
+     * @param userId ID of an owner of the project
      * @return Updated project
      */
     public Project updateProjectCollapsion(BooleanRequest request, Integer projectId, Integer userId) {
@@ -190,7 +190,7 @@ public class ProjectService {
     /**
      * Add new task to given project
      * @param request Request with data to build new project
-     * @param projectId Id of the project for task
+     * @param projectId ID of the project for task
      * @param userId If of an owner of the project and newly created task
      * @return Newly created task
      */
@@ -279,7 +279,7 @@ public class ProjectService {
     /**
      * Get tree with all subprojects and tasks of the given project
      * @param projectId Project id
-     * @param userId Id of an owner of the project
+     * @param userId ID of an owner of the project
      * @return Project tree
      */
     public FullProjectTree getFullProject(Integer projectId, Integer userId) {
@@ -359,7 +359,7 @@ public class ProjectService {
 
     /**
      * Get whole tree of all projects for given user
-     * @param userId If of an user
+     * @param userId If of a user
      * @return Projects tree
      */
     public List<FullProjectTree> getFullTree(Integer userId) {
@@ -387,8 +387,8 @@ public class ProjectService {
 
     /**
      * Duplicate given project, its subprojects and tasks
-     * @param projectId Id of the project to duplicate
-     * @param userId Id of an owner of the project
+     * @param projectId ID of the project to duplicate
+     * @param userId ID of an owner of the project
      * @return All created projects and tasks
      */
     public TasksAndProjects duplicate(Integer projectId, Integer userId) {
@@ -500,8 +500,8 @@ public class ProjectService {
     /**
      * Add new project with order after given project
      * @param request Request with data to build new project
-     * @param userId Id of an owner of projects
-     * @param projectId Id of the project which should be before newly created project
+     * @param userId ID of an owner of projects
+     * @param projectId ID of the project which should be before newly created project
      * @return Newly created project
      */
     public Project addProjectAfter(ProjectRequest request, Integer userId, Integer projectId) {
@@ -547,8 +547,8 @@ public class ProjectService {
     /**
      * Add new project with order before given project
      * @param request Request with data to build new project
-     * @param userId Id of an owner of projects
-     * @param projectId Id of the project which should be after newly created project
+     * @param userId ID of an owner of projects
+     * @param projectId ID of the project which should be after newly created project
      * @return Newly created project
      */
     public Project addProjectBefore(ProjectRequest request, Integer userId, Integer projectId) {
@@ -564,8 +564,8 @@ public class ProjectService {
     /**
      * Move project after given project
      * @param request Request with id of the project which should be before moved project
-     * @param userId Id of an owner of projects
-     * @param projectToMoveId Id of the project to move
+     * @param userId ID of an owner of projects
+     * @param projectToMoveId ID of the project to move
      * @return Moved project
      */
     public Project moveProjectAfter(IdRequest request, Integer userId, Integer projectToMoveId) {
@@ -585,9 +585,9 @@ public class ProjectService {
 
     /**
      * Move project as first child of given project.
-     * @param request Request with id of the project which should be parent of the moved project. If ID is null project is moved at first position.
-     * @param userId Id of an owner of projects
-     * @param projectToMoveId Id of the project to move
+     * @param request Request with id of the new parent for moved project. If ID is null project is moved at first position.
+     * @param userId ID of an owner of projects
+     * @param projectToMoveId ID of the project to move
      * @return Moved project
      */
     public Project moveProjectAsFirstChild(IdRequest request, Integer userId, Integer projectToMoveId) {
@@ -613,8 +613,8 @@ public class ProjectService {
 
     /**
      * Move project at first position
-     * @param userId Id of an owner of projects
-     * @param projectToMoveId Id of the project to move
+     * @param userId ID of an owner of projects
+     * @param projectToMoveId ID of the project to move
      * @return Moved project
      */
     public Project moveProjectAsFirst(Integer userId, Integer projectToMoveId) {
