@@ -46,6 +46,7 @@ public class ProjectService {
      * @param userId Id of an owner of the newly created project
      * @return Created project
      */
+    @Transactional
     public Project addProject(ProjectRequest request, Integer userId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         projectToAdd.setGeneralOrder(getMaxGeneralOrder(request, userId)+1);
@@ -86,6 +87,7 @@ public class ProjectService {
      * @param userId Id of an owner of the project
      * @return Project with updated data
      */
+    @Transactional
     public Project updateProject(ProjectRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
