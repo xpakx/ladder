@@ -5,6 +5,7 @@ import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
+import io.github.xpakx.ladder.error.WrongOwnerException;
 import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -81,7 +82,7 @@ public class ProjectService {
             return null;
         }
         if(!projectRepository.existsByIdAndOwnerId(request.getParentId(), userId)) {
-            throw new NotFoundException("Cannot add nonexistent project as task!");
+            throw new WrongOwnerException("Cannot add nonexistent project as task!");
         }
         return projectRepository.getById(request.getParentId());
     }
