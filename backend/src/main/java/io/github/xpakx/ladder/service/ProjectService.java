@@ -5,6 +5,7 @@ import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
+import io.github.xpakx.ladder.error.WrongOwnerException;
 import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -29,11 +30,24 @@ public class ProjectService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
 
+    /**
+     * Getting object with project's data from repository.
+     * @param projectId ID of the project to get
+     * @param userId ID of an owner of the project
+     * @return Object with project's details
+     */
     public ProjectDetails getProjectById(Integer projectId, Integer userId) {
         return projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
     }
 
+    /**
+     * Adding new project to repository.
+     * @param request Data to build new projects
+     * @param userId ID of an owner of the newly created project
+     * @return Created project
+     */
+    @Transactional
     public Project addProject(ProjectRequest request, Integer userId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         projectToAdd.setGeneralOrder(getMaxGeneralOrder(request, userId)+1);
@@ -55,7 +69,7 @@ public class ProjectService {
     private Project buildProjectToAddFromRequest(ProjectRequest request, Integer userId) {
         return Project.builder()
                 .name(request.getName())
-                .parent(getParentFromProjectRequest(request))
+                .parent(getParentFromProjectRequest(request, userId))
                 .favorite(request.isFavorite())
                 .color(request.getColor())
                 .collapsed(true)
@@ -63,25 +77,52 @@ public class ProjectService {
                 .build();
     }
 
-    private Project getParentFromProjectRequest(ProjectRequest request) {
-        return hasParent(request) ? projectRepository.getById(request.getParentId()) : null;
+    private Project getParentFromProjectRequest(ProjectRequest request, Integer userId) {
+        if(!hasParent(request)) {
+            return null;
+        }
+        Integer ownerId = projectRepository.findOwnerIdById(request.getParentId());
+        if(ownerId == null ||  !ownerId.equals(userId)) {
+            throw new WrongOwnerException("Cannot add nonexistent project as task!");
+        }
+        return projectRepository.getById(request.getParentId());
     }
 
+    /**
+     * Updating project in repository.
+     * @param request Data to update the project
+     * @param projectId ID of the project to update
+     * @param userId ID of an owner of the project
+     * @return Project with updated data
+     */
+    @Transactional
     public Project updateProject(ProjectRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setName(request.getName());
         projectToUpdate.setColor(request.getColor());
-        projectToUpdate.setParent(getParentFromProjectRequest(request));
+        projectToUpdate.setParent(getParentFromProjectRequest(request, userId));
         projectToUpdate.setFavorite(request.isFavorite());
         return projectRepository.save(projectToUpdate);
     }
 
+    /**
+     * Delete project from repository.
+     * @param projectId ID of the project to delete
+     * @param userId ID of an owner of the project
+     */
     @Transactional
     public void deleteProject(Integer projectId, Integer userId) {
         projectRepository.deleteByIdAndOwnerId(projectId, userId);
     }
 
+    /**
+     * Change project's name without editing any other field.
+     * @param request request with new name
+     * @param projectId ID of the project do update
+     * @param userId ID of an owner of the project
+     * @return Updated project
+     */
     public Project updateProjectName(NameRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -89,6 +130,13 @@ public class ProjectService {
         return projectRepository.save(projectToUpdate);
     }
 
+    /**
+     * Change project's parent without editing any other field.
+     * @param request Request with parent id
+     * @param projectId ID of the project to update
+     * @param userId ID an owner of the project
+     * @return Updated project
+     */
     public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -104,13 +152,27 @@ public class ProjectService {
         return request.getId() != null;
     }
 
+    /**
+     * Change if project is favorite without editing any other field.
+     * @param request Request with favorite flag
+     * @param projectId ID of the project to update
+     * @param userId ID of an owner of the project
+     * @return Updated project
+     */
     public Project updateProjectFav(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setFavorite(request.isFlag());
         return projectRepository.save(projectToUpdate);
     }
-    
+
+    /**
+     * Change if project is collapsed without editing any other field.
+     * @param request Request with collapse flag
+     * @param projectId ID of the project to update
+     * @param userId ID of an owner of the project
+     * @return Updated project
+     */
     public Project updateProjectCollapsion(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -118,13 +180,20 @@ public class ProjectService {
         return projectRepository.save(projectToUpdate);
     }
 
-    public Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
+    private Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
         if(!userId.equals(projectRepository.findOwnerIdById(projectId))) {
             return Optional.empty();
         }
         return Optional.of(projectRepository.getById(projectId));
     }
 
+    /**
+     * Add new task to given project
+     * @param request Request with data to build new project
+     * @param projectId ID of the project for task
+     * @param userId If of an owner of the project and newly created task
+     * @return Newly created task
+     */
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
         Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
@@ -207,6 +276,12 @@ public class ProjectService {
         return request.getParentId() != null;
     }
 
+    /**
+     * Get tree with all subprojects and tasks of the given project
+     * @param projectId Project id
+     * @param userId ID of an owner of the project
+     * @return Project tree
+     */
     public FullProjectTree getFullProject(Integer projectId, Integer userId) {
         ProjectMin project = projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectMin.class)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -282,6 +357,11 @@ public class ProjectService {
                         .collect(Collectors.toList());
     }
 
+    /**
+     * Get whole tree of all projects for given user
+     * @param userId If of a user
+     * @return Projects tree
+     */
     public List<FullProjectTree> getFullTree(Integer userId) {
         List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
         List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
@@ -305,6 +385,12 @@ public class ProjectService {
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
     }
 
+    /**
+     * Duplicate given project, its subprojects and tasks
+     * @param projectId ID of the project to duplicate
+     * @param userId ID of an owner of the project
+     * @return All created projects and tasks
+     */
     public TasksAndProjects duplicate(Integer projectId, Integer userId) {
         Project projectToDuplicate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No project with id " + projectId));
@@ -333,13 +419,11 @@ public class ProjectService {
             for (Project parent : toDuplicate) {
                 List<Project> children = projectByParent.getOrDefault(parent.getId(), new ArrayList<>());
                 List<Task> duplicatedTasks = duplicateTasks(parent, tasksByParent, tasksByProject);
-                //parent.setTasks(duplicatedTasks);
                 allDuplicatedTasks.addAll(duplicatedTasks);
                 parent.setId(null);
                 children = children.stream()
                         .map((a) -> duplicate(a, parent))
                         .collect(Collectors.toList());
-                //parent.setChildren(children);
                 parent.setTasks(null);
                 newToDuplicate.addAll(children);
             }
@@ -413,6 +497,13 @@ public class ProjectService {
                 .build();
     }
 
+    /**
+     * Add new project with order after given project
+     * @param request Request with data to build new project
+     * @param userId ID of an owner of projects
+     * @param projectId ID of the project which should be before newly created project
+     * @return Newly created project
+     */
     public Project addProjectAfter(ProjectRequest request, Integer userId, Integer projectId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
@@ -453,6 +544,13 @@ public class ProjectService {
         return project.getParent() != null;
     }
 
+    /**
+     * Add new project with order before given project
+     * @param request Request with data to build new project
+     * @param userId ID of an owner of projects
+     * @param projectId ID of the project which should be after newly created project
+     * @return Newly created project
+     */
     public Project addProjectBefore(ProjectRequest request, Integer userId, Integer projectId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
@@ -463,6 +561,13 @@ public class ProjectService {
         return projectRepository.save(projectToAdd);
     }
 
+    /**
+     * Move project after given project
+     * @param request Request with id of the project which should be before moved project
+     * @param userId ID of an owner of projects
+     * @param projectToMoveId ID of the project to move
+     * @return Moved project
+     */
     public Project moveProjectAfter(IdRequest request, Integer userId, Integer projectToMoveId) {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
@@ -478,6 +583,13 @@ public class ProjectService {
         return hasId(request) ? projectRepository.findById(request.getId()) : Optional.empty();
     }
 
+    /**
+     * Move project as first child of given project.
+     * @param request Request with id of the new parent for moved project. If ID is null project is moved at first position.
+     * @param userId ID of an owner of projects
+     * @param projectToMoveId ID of the project to move
+     * @return Moved project
+     */
     public Project moveProjectAsFirstChild(IdRequest request, Integer userId, Integer projectToMoveId) {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
@@ -499,6 +611,12 @@ public class ProjectService {
         }
     }
 
+    /**
+     * Move project at first position
+     * @param userId ID of an owner of projects
+     * @param projectToMoveId ID of the project to move
+     * @return Moved project
+     */
     public Project moveProjectAsFirst(Integer userId, Integer projectToMoveId) {
         IdRequest request = new IdRequest();
         request.setId(null);
