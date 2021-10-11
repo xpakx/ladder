@@ -243,7 +243,7 @@ class ProjectServiceTest {
         then(projectRepository)
                 .should()
                 .save(projectCaptor.capture());
-        assertEquals(true, projectCaptor.getValue().isCollapsed());
+        assertTrue(projectCaptor.getValue().isCollapsed());
     }
 
     @Test
