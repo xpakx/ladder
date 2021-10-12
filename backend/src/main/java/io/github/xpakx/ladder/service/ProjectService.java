@@ -405,8 +405,7 @@ public class ProjectService {
         List<Integer> taskIds = taskRepository.saveAll(tasks2).stream()
                 .map(Task::getId)
                 .collect(Collectors.toList());
-        TasksAndProjects result = constructResponseWithDuplicatedElements(projectIds, taskIds);
-        return result;
+        return constructResponseWithDuplicatedElements(projectIds, taskIds);
     }
 
     private TasksAndProjects constructResponseWithDuplicatedElements(List<Integer> projectIds, List<Integer> taskIds) {
