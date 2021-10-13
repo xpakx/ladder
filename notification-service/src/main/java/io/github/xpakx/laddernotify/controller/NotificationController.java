@@ -14,11 +14,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class NotificationController {
     private final NotificationService notificationService;
 
-    @GetMapping("/subscription")
-    public SseEmitter subscribe() {
-        SseEmitter sseEmitter = new SseEmitter(24 * 60 * 60 * 1000L);
-        notificationService.addEmitter(sseEmitter);
-        return sseEmitter;
+    @GetMapping("/subscription/{userId}")
+    public SseEmitter subscribe(@PathVariable Integer userId) {
+        return notificationService.subscribe(userId);
     }
 
     @PostMapping("/notification")

@@ -13,10 +13,12 @@ import java.util.List;
 public class NotificationService {
     List<SseEmitter> emitters = new ArrayList<>();
 
-    public void addEmitter(SseEmitter emitter) {
+    public SseEmitter subscribe(Integer userId) {
+        SseEmitter emitter = new SseEmitter(24 * 60 * 60 * 1000L);
         emitter.onCompletion(() -> emitters.remove(emitter));
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitters.add(emitter);
+        return emitter;
     }
 
     public void pushNotification(NotificationRequest request) {
