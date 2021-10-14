@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
+import io.github.xpakx.ladder.aspect.LogResponse;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
@@ -38,6 +39,7 @@ public class ProjectController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping
+    @LogResponse
     public ResponseEntity<Project> addProject(@RequestBody ProjectRequest request, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.addProject(request, userId), HttpStatus.CREATED);
     }
