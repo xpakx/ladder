@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -27,7 +28,6 @@ public class ProjectService {
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
-    private final NotificationService notificationService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
 
@@ -49,10 +49,10 @@ public class ProjectService {
      * @return Created project
      */
     @Transactional
+    @NotifyOnProjectChange
     public Project addProject(ProjectRequest request, Integer userId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         projectToAdd.setGeneralOrder(getMaxGeneralOrder(request, userId)+1);
-        notificationService.sendNotification(userId, projectToAdd.getModifiedAt());
         return projectRepository.save(projectToAdd);
     }
 
