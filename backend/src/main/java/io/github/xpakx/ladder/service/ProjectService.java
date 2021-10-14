@@ -1,5 +1,7 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
+import io.github.xpakx.ladder.aspect.NotifyOnProjectDeletion;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -28,8 +30,6 @@ public class ProjectService {
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
-
     /**
      * Getting object with project's data from repository.
      * @param projectId ID of the project to get
@@ -48,6 +48,7 @@ public class ProjectService {
      * @return Created project
      */
     @Transactional
+    @NotifyOnProjectChange
     public Project addProject(ProjectRequest request, Integer userId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         projectToAdd.setGeneralOrder(getMaxGeneralOrder(request, userId)+1);
@@ -67,11 +68,14 @@ public class ProjectService {
     }
 
     private Project buildProjectToAddFromRequest(ProjectRequest request, Integer userId) {
+        LocalDateTime now = LocalDateTime.now();
         return Project.builder()
                 .name(request.getName())
                 .parent(getParentFromProjectRequest(request, userId))
                 .favorite(request.isFavorite())
                 .color(request.getColor())
+                .createdAt(now)
+                .modifiedAt(now)
                 .collapsed(true)
                 .owner(userRepository.getById(userId))
                 .build();
@@ -96,6 +100,7 @@ public class ProjectService {
      * @return Project with updated data
      */
     @Transactional
+    @NotifyOnProjectChange
     public Project updateProject(ProjectRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -103,6 +108,7 @@ public class ProjectService {
         projectToUpdate.setColor(request.getColor());
         projectToUpdate.setParent(getParentFromProjectRequest(request, userId));
         projectToUpdate.setFavorite(request.isFavorite());
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -112,6 +118,7 @@ public class ProjectService {
      * @param userId ID of an owner of the project
      */
     @Transactional
+    @NotifyOnProjectDeletion
     public void deleteProject(Integer projectId, Integer userId) {
         projectRepository.deleteByIdAndOwnerId(projectId, userId);
     }
@@ -123,10 +130,12 @@ public class ProjectService {
      * @param userId ID of an owner of the project
      * @return Updated project
      */
+    @NotifyOnProjectChange
     public Project updateProjectName(NameRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setName(request.getName());
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -137,10 +146,12 @@ public class ProjectService {
      * @param userId ID an owner of the project
      * @return Updated project
      */
+    @NotifyOnProjectChange
     public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setParent( getIdFromIdRequest(request));
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -159,10 +170,12 @@ public class ProjectService {
      * @param userId ID of an owner of the project
      * @return Updated project
      */
+    @NotifyOnProjectChange
     public Project updateProjectFav(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setFavorite(request.isFlag());
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -173,10 +186,12 @@ public class ProjectService {
      * @param userId ID of an owner of the project
      * @return Updated project
      */
+    @NotifyOnProjectChange
     public Project updateProjectCollapsion(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setCollapsed(request.isFlag());
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -392,108 +407,101 @@ public class ProjectService {
      * @return All created projects and tasks
      */
     public TasksAndProjects duplicate(Integer projectId, Integer userId) {
-        Project projectToDuplicate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .orElseThrow(() -> new NotFoundException("No project with id " + projectId));
+        Map<Integer, Project> projectsById = generateProjectMapForUser(userId);
+        projectsById.values().stream().filter((a) -> a.getId().equals(projectId)).findAny()
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
+        List<Project> projects = generateProjectDuplicatesToSave(projectId, projectsById);
+        List<Task> tasks2 = generateTaskDuplicatesToSave(projectsById, projects);
+        projects.forEach((a) -> a.setId(null));
 
-        List<Project> projects = projectRepository.getByOwnerId(userId);
-        List<Task> tasks = taskRepository.getByOwnerIdAndProjectIsNotNull(userId);
-        Map<Integer, List<Task>> tasksByParent = tasks.stream()
-                .filter((a) -> a.getParent() != null)
-                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
-        Map<Integer, List<Task>> tasksByProject = tasks.stream()
-                .filter((a) -> a.getParent() == null)
-                .filter((a) -> a.getProject() != null)
-                .collect(Collectors.groupingBy((a) -> a.getProject().getId()));
-        Map<Integer, List<Project>> projectByParent = projects.stream()
-                .filter((a) -> a.getParent() != null)
-                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
-
-        Project duplicatedProject = duplicate(projectToDuplicate, projectToDuplicate.getParent());
-
-        List<Project> toDuplicate = List.of(duplicatedProject);
-        List<Project> allDuplicatedProjects = new ArrayList<>();
-        allDuplicatedProjects.add(duplicatedProject);
-        List<Task> allDuplicatedTasks = new ArrayList<>();
-        while(toDuplicate.size() > 0) {
-            List<Project> newToDuplicate = new ArrayList<>();
-            for (Project parent : toDuplicate) {
-                List<Project> children = projectByParent.getOrDefault(parent.getId(), new ArrayList<>());
-                List<Task> duplicatedTasks = duplicateTasks(parent, tasksByParent, tasksByProject);
-                allDuplicatedTasks.addAll(duplicatedTasks);
-                parent.setId(null);
-                children = children.stream()
-                        .map((a) -> duplicate(a, parent))
-                        .collect(Collectors.toList());
-                parent.setTasks(null);
-                newToDuplicate.addAll(children);
-            }
-            toDuplicate = newToDuplicate;
-            allDuplicatedProjects.addAll(newToDuplicate);
-        }
-        List<Integer> projectIds = projectRepository.saveAll(allDuplicatedProjects).stream()
+        List<Integer> projectIds = projectRepository.saveAll(projects).stream()
                 .map(Project::getId)
                 .collect(Collectors.toList());
-        List<Integer> taskIds = taskRepository.saveAll(allDuplicatedTasks).stream()
+        List<Integer> taskIds = taskRepository.saveAll(tasks2).stream()
                 .map(Task::getId)
                 .collect(Collectors.toList());
+        return constructResponseWithDuplicatedElements(projectIds, taskIds);
+    }
+
+    private TasksAndProjects constructResponseWithDuplicatedElements(List<Integer> projectIds, List<Integer> taskIds) {
         TasksAndProjects result = new TasksAndProjects();
         result.setTasks(taskRepository.findByIdIn(taskIds));
         result.setProjects(projectRepository.findByIdIn(projectIds));
         return result;
     }
 
-    private List<Task> duplicateTasks(Project project, Map<Integer, List<Task>> tasksByParent,
-                                      Map<Integer, List<Task>> tasksByProject) {
-        List<Task> toDuplicate = tasksByProject.getOrDefault(project.getId(), new ArrayList<>()).stream()
-                .map((a) -> duplicate(a, null, project))
+    private List<Project> generateProjectDuplicatesToSave(Integer projectId, Map<Integer, Project> projectsById) {
+        return projectsById.values().stream()
+                .filter((a) -> hasIdInParentTree(a, projectId))
                 .collect(Collectors.toList());
-        List<Task> result = new ArrayList<>();
-        while(toDuplicate.size() > 0) {
-            List<Task> newToDuplicate = new ArrayList<>();
-            for (Task parent : toDuplicate) {
-                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
-                parent.setId(null);
-
-                children = children.stream()
-                        .map((a) -> duplicate(a, parent, project))
-                        .collect(Collectors.toList());
-                parent.setChildren(children);
-                result.add(parent);
-                newToDuplicate.addAll(children);
-            }
-            toDuplicate = newToDuplicate;
-        }
-
-        return result;
     }
 
-    private Project duplicate(Project originalProject, Project parent) {
+    private Map<Integer, Project> generateProjectMapForUser(Integer userId) {
+        Map<Integer, Project> projectsById = projectRepository.getByOwnerId(userId).stream()
+                .collect(Collectors.toMap(Project::getId, this::duplicate));
+        projectsById.values()
+                .stream().filter((a) -> a.getParent() != null)
+                .forEach((a) -> a.setParent(projectsById.get(a.getParent().getId())));
+        return projectsById;
+    }
+
+    private List<Task> generateTaskDuplicatesToSave(Map<Integer, Project> projectsById, List<Project> duplicatedProjects) {
+        Map<Integer, Task> tasksById = taskRepository.findByProjectIdIn(
+                duplicatedProjects.stream().map(Project::getId).collect(Collectors.toList())
+        ).stream()
+                .collect(Collectors.toMap(Task::getId, this::duplicate));
+        tasksById.values()
+                .stream().filter((a) -> a.getProject() != null)
+                .forEach((a) -> a.setProject(projectsById.get(a.getProject().getId())));
+        tasksById.values()
+                .stream().filter((a) -> a.getParent() != null)
+                .forEach((a) -> a.setParent(tasksById.get(a.getParent().getId())));
+        List<Task> tasks = new ArrayList<>(tasksById.values());
+        tasks.forEach((a) -> a.setId(null));
+        return tasks;
+    }
+
+    private boolean hasIdInParentTree(Project a, Integer projectId) {
+        while(a != null) {
+            if(a.getId().equals(projectId)) {
+                return true;
+            }
+            a = a.getParent();
+        }
+        return false;
+    }
+
+    private Project duplicate(Project originalProject) {
+        LocalDateTime now = LocalDateTime.now();
         return Project.builder()
+                .id(originalProject.getId())
                 .name(originalProject.getName())
                 .favorite(false)
                 .color(originalProject.getColor())
                 .parent(originalProject.getParent())
                 .owner(originalProject.getOwner())
                 .id(originalProject.getId())
-                .parent(parent)
-                .tasks(originalProject.getTasks())
+                .tasks(null)
                 .generalOrder(originalProject.getGeneralOrder())
+                .createdAt(now)
+                .modifiedAt(now)
                 .build();
     }
 
-    private Task duplicate(Task originalTask, Task parent, Project project) {
+    private Task duplicate(Task originalTask) {
         return Task.builder()
+                .id(originalTask.getId())
                 .title(originalTask.getTitle())
                 .description(originalTask.getDescription())
                 .projectOrder(originalTask.getProjectOrder())
-                .project(project)
-                .parent(parent)
                 .createdAt(LocalDateTime.now())
-                .due(originalTask.getDue())
                 .priority(originalTask.getPriority())
                 .owner(originalTask.getOwner())
                 .completed(false)
                 .id(originalTask.getId())
+                .parent(originalTask.getParent())
+                .project(originalTask.getProject())
+                .labels(new HashSet<>(originalTask.getLabels()))
                 .build();
     }
 

@@ -1,0 +1,13 @@
+package io.github.xpakx.ladder.entity.dto;
+
+import lombok.Builder;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+public class NotificationRequest {
+    private Integer userId;
+    private LocalDateTime time;
+}

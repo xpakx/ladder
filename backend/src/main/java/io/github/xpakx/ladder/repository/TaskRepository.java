@@ -108,4 +108,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     @Transactional
     @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project IS NULL")
     void incrementGeneralOrderByOwnerId(Integer ownerId);
+
+    @EntityGraph("task-with-labels")
+    List<Task> findByProjectIdIn(List<Integer> ids);
 }

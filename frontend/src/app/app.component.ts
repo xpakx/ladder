@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
 import { AddEvent } from './entity/utils/add-event';
 import { DeleteService } from './service/delete.service';
+import { NotificationService } from './service/notification.service';
 import { TreeService } from './service/tree.service';
 
 @Component({
@@ -11,7 +12,7 @@ import { TreeService } from './service/tree.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'ladder';
   collapseFilters: boolean = true;
   hideMenu: boolean = false;
@@ -26,7 +27,11 @@ export class AppComponent {
   displayAddTask: boolean = false;
 
   constructor(public tree : TreeService, public deleteService: DeleteService,
-    private router: Router) {
+    private router: Router, private notifications: NotificationService) {
+  }
+
+  ngOnInit(): void {
+    this.notifications.subscribe();
   }
 
   //Project modal window

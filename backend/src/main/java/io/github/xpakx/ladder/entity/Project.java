@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -27,6 +28,9 @@ public class Project {
     private String color;
     private Integer generalOrder;
     private boolean collapsed;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     @JsonIgnore
     @ManyToOne
