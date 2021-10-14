@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
+import io.github.xpakx.ladder.aspect.NotifyOnProjectDeletion;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -101,6 +102,7 @@ public class ProjectService {
      * @return Project with updated data
      */
     @Transactional
+    @NotifyOnProjectChange
     public Project updateProject(ProjectRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -118,6 +120,7 @@ public class ProjectService {
      * @param userId ID of an owner of the project
      */
     @Transactional
+    @NotifyOnProjectDeletion
     public void deleteProject(Integer projectId, Integer userId) {
         projectRepository.deleteByIdAndOwnerId(projectId, userId);
     }
@@ -129,6 +132,7 @@ public class ProjectService {
      * @param userId ID of an owner of the project
      * @return Updated project
      */
+    @NotifyOnProjectChange
     public Project updateProjectName(NameRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -144,6 +148,7 @@ public class ProjectService {
      * @param userId ID an owner of the project
      * @return Updated project
      */
+    @NotifyOnProjectChange
     public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -167,6 +172,7 @@ public class ProjectService {
      * @param userId ID of an owner of the project
      * @return Updated project
      */
+    @NotifyOnProjectChange
     public Project updateProjectFav(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -182,6 +188,7 @@ public class ProjectService {
      * @param userId ID of an owner of the project
      * @return Updated project
      */
+    @NotifyOnProjectChange
     public Project updateProjectCollapsion(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
