@@ -27,6 +27,7 @@ public class ProjectService {
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
+    private final NotificationService notificationService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
 
@@ -51,6 +52,7 @@ public class ProjectService {
     public Project addProject(ProjectRequest request, Integer userId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         projectToAdd.setGeneralOrder(getMaxGeneralOrder(request, userId)+1);
+        notificationService.sendNotification(userId, projectToAdd.getModifiedAt());
         return projectRepository.save(projectToAdd);
     }
 
@@ -67,11 +69,14 @@ public class ProjectService {
     }
 
     private Project buildProjectToAddFromRequest(ProjectRequest request, Integer userId) {
+        LocalDateTime now = LocalDateTime.now();
         return Project.builder()
                 .name(request.getName())
                 .parent(getParentFromProjectRequest(request, userId))
                 .favorite(request.isFavorite())
                 .color(request.getColor())
+                .createdAt(now)
+                .modifiedAt(now)
                 .collapsed(true)
                 .owner(userRepository.getById(userId))
                 .build();
@@ -103,6 +108,7 @@ public class ProjectService {
         projectToUpdate.setColor(request.getColor());
         projectToUpdate.setParent(getParentFromProjectRequest(request, userId));
         projectToUpdate.setFavorite(request.isFavorite());
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -127,6 +133,7 @@ public class ProjectService {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setName(request.getName());
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -141,6 +148,7 @@ public class ProjectService {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setParent( getIdFromIdRequest(request));
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -163,6 +171,7 @@ public class ProjectService {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setFavorite(request.isFlag());
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -177,6 +186,7 @@ public class ProjectService {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setCollapsed(request.isFlag());
+        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
 
@@ -457,6 +467,7 @@ public class ProjectService {
     }
 
     private Project duplicate(Project originalProject) {
+        LocalDateTime now = LocalDateTime.now();
         return Project.builder()
                 .id(originalProject.getId())
                 .name(originalProject.getName())
@@ -467,6 +478,8 @@ public class ProjectService {
                 .id(originalProject.getId())
                 .tasks(null)
                 .generalOrder(originalProject.getGeneralOrder())
+                .createdAt(now)
+                .modifiedAt(now)
                 .build();
     }
 

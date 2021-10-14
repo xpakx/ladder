@@ -38,6 +38,8 @@ class ProjectServiceTest {
     private UserAccountRepository userRepository;
     @Mock
     private LabelRepository labelRepository;
+    @Mock
+    private NotificationService notificationService;
 
     private ProjectService projectService;
 
@@ -50,7 +52,7 @@ class ProjectServiceTest {
     }
 
     private void injectMocks() {
-        projectService = new ProjectService(projectRepository, taskRepository, userRepository, labelRepository);
+        projectService = new ProjectService(projectRepository, taskRepository, userRepository, labelRepository, notificationService);
     }
 
     @Test
