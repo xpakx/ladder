@@ -15,8 +15,12 @@ public class NotificationService {
 
     public SseEmitter subscribe(Integer userId) {
         SseEmitter emitter = new SseEmitter(24 * 60 * 60 * 1000L);
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onTimeout(() -> emitters.remove(emitter));
+        emitter.onCompletion(() -> {
+			emitters.remove(emitter);
+			});
+        emitter.onTimeout(() -> {
+			emitters.remove(emitter);
+			});
         emitters.add(emitter);
         return emitter;
     }
@@ -43,5 +47,6 @@ public class NotificationService {
                 .event()
                 .name(String.valueOf(username))
                 .data(payload));
+
     }
 }

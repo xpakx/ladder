@@ -30,8 +30,6 @@ public class ProjectService {
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
-
     /**
      * Getting object with project's data from repository.
      * @param projectId ID of the project to get
