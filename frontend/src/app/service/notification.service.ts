@@ -18,8 +18,12 @@ export class NotificationService {
         console.log(e);
     };
 
-    eventSource.addEventListener("message", event => {
-      console.log("Got an event" + event.data);
+    eventSource.addEventListener("message", (event) => {
+      this.onNotificationSent(event);
     }, false);
+  }
+
+  onNotificationSent(event: MessageEvent<any>) {
+    console.log("Got an event" + event.data);
   }
 }

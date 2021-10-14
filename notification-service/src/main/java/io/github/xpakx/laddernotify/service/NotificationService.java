@@ -4,6 +4,7 @@ import io.github.xpakx.laddernotify.entity.Notification;
 import io.github.xpakx.laddernotify.entity.NotificationRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,9 +19,7 @@ public class NotificationService {
         emitter.onCompletion(() -> {
 			emitters.remove(emitter);
 			});
-        emitter.onTimeout(() -> {
-			emitters.remove(emitter);
-			});
+        emitter.onTimeout(emitter::complete);
         emitters.add(emitter);
         return emitter;
     }
@@ -43,10 +42,7 @@ public class NotificationService {
     }
 
     private void sendNotification(Integer username, Notification payload, SseEmitter emitter) throws IOException {
-        emitter.send(SseEmitter
-                .event()
-                .name(String.valueOf(username))
-                .data(payload));
+        emitter.send(payload, MediaType.APPLICATION_JSON);
 
     }
 }
