@@ -10,8 +10,10 @@
       <div class="modal-body" *ngIf="parent">
         
 
-
-        {{parent.title}}
+        <div *ngIf="edit">
+            <app-task-form [data]="parentData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+        </div>
+        <div *ngIf="!edit" (click)="edit = true;">{{parent.title}}</div>
 
         <app-subtask-list [task]="parent"></app-subtask-list>
   
