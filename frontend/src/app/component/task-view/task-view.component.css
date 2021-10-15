@@ -1,0 +1,11 @@
+@import "../css/modal.css";
+@import "../css/project-view.css";
+
+.tasks_content {
+    overflow: auto;
+}
+
+.modal-content {
+    max-height: 960px;
+    min-height: 400px;
+}

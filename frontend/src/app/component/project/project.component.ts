@@ -19,7 +19,7 @@ import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.css']
 })
-export class ProjectComponent  extends MultilevelTaskComponent<TaskTreeService> 
+export class ProjectComponent extends MultilevelTaskComponent<TaskTreeService> 
 implements OnInit, AfterViewInit {
   public invalid: boolean = false;
   public message: string = '';
@@ -363,5 +363,15 @@ implements OnInit, AfterViewInit {
     }
 
     this.closeContextTaskMenu();
+  }
+
+  openTask?: TaskTreeElem;
+
+  openTaskView(task: TaskTreeElem) {
+    this.openTask = task;
+  }
+
+  closeTaskView() {
+    this.openTask = undefined;
   }
 }

@@ -26,6 +26,8 @@ import { DeleteDialogComponent } from './component/delete-dialog/delete-dialog.c
 import { SidebarComponent } from './component/sidebar/sidebar.component';
 import { InboxComponent } from './component/inbox/inbox.component';
 import { LabelComponent } from './component/label/label.component';
+import { TaskViewComponent } from './component/task-view/task-view.component';
+import { SubtaskListComponent } from './component/subtask-list/subtask-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -52,7 +54,9 @@ export function tokenGetter() {
     DeleteDialogComponent,
     SidebarComponent,
     InboxComponent,
-    LabelComponent
+    LabelComponent,
+    TaskViewComponent,
+    SubtaskListComponent
   ],
   imports: [
     BrowserModule,

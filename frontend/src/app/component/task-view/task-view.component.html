@@ -1,0 +1,22 @@
+<div class="modal"
+  tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">View task</h4>
+        <i class="fa fa-remove" (click)="closeModal()"></i>
+      </div>
+      <div class="modal-body" *ngIf="parent">
+        
+
+
+        {{parent.title}}
+
+        <app-subtask-list [task]="parent"></app-subtask-list>
+  
+      </div>
+      
+    </div>
+  </div>
+</div>
