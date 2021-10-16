@@ -1,5 +1,4 @@
 @import "../css/modal.css";
-@import "../css/project-view.css";
 
 .tasks_content {
     overflow: auto;
@@ -8,4 +7,117 @@
 .modal-body {
     max-height: 960px;
     min-height: 400px;
+}
+
+.overview {
+    display: flex;
+    padding-bottom: .5em;
+    flex-shrink: 0;
+    transition: opacity .15s cubic-bezier(.4,0,1,1);
+}
+
+.task_checkbox {
+    height: 24px;
+    width: 24px;
+    border: 2px solid #dcdcdc;
+    border-radius: 50%;
+    transition: .15s cubic-bezier(.4,0,1,1);
+    padding: 0;
+    margin-right: 5px;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.overview.completed  .task_checkbox {
+    background-color: grey;
+}
+
+.priority_0 {
+    border-color: grey;
+    color: grey;
+}
+
+.priority_1 {
+    background-color: rgba(36,111,224,.1);
+    border-color: #246fe0;
+    color: #246fe0;
+}
+
+.priority_2 {
+    background-color: rgba(235,137,9,.1);
+    border-color: #eb8909;
+    color: #eb8909;
+}
+
+.priority_3 {
+    background-color: rgba(209,69,59,.1);
+    border-color: #d1453b;
+    color: #d1453b;
+}
+
+.task_checkbox:hover {
+    background-color: #8c91962d;
+}
+
+.overview.completed .task_checkbox:hover {
+    background-color: grey;
+}
+
+.overview.completed  .task_checkbox.priority_1 {
+    background-color: rgb(36,111,224);
+}
+
+.overview.completed  .task_checkbox.priority_2 {
+    background-color: rgb(235,137,9);
+}
+
+.overview.completed  .task_checkbox.priority_3 {
+    background-color: rgb(209,69,59);
+}
+
+.overview.completed  .task_checkbox .task_checkbox_circle {
+    opacity: 1;
+    color: #fff;
+}
+
+.task_checkbox_circle {
+    opacity: 0;
+}
+
+.task_checkbox:hover .task_checkbox_circle {
+    opacity: 1;
+}
+
+.overview.completed .task_content {
+    color: grey;
+}
+
+.overview.completed .task_description {
+    color: grey;
+}
+
+.icon_check {
+    display: inline-flex;
+    justify-content: center;
+    vertical-align: -2px;
+}
+
+.icon_check i {
+    font-size: 20px;
+}
+
+.task_content {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 23px;
+}
+
+.task_description {
+    font-size: 13px;
+    line-height: 18px;
+    margin-top: 8px;
+    text-align: left;
+    word-break: break-word;
 }

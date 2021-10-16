@@ -13,8 +13,25 @@
         <div *ngIf="edit">
             <app-task-form [data]="parentData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
         </div>
-        <div *ngIf="!edit" (click)="edit = true;">
-          {{parent.title}}
+        <div *ngIf="!edit" class="overview" [class.completed]="parent.completed">
+                
+                <button type="button" role="checkbox" class="task_checkbox" [ngClass]="'priority_' + parent.priority" (click)="complete()">
+                    <div class="task_checkbox_circle">
+                        <span class="icon_check">
+                            <i class="fa fa-check"></i>
+                        </span>
+                    </div>
+                </button>
+                <div class="task_list_item_content" (click)="edit = true;">
+                    <div class="task_list_item__content_wrapper">
+                        <div class="markdown_content task_content">
+                            {{parent.title}}
+                        </div>
+                        <div class="markdown_content task_description" *ngIf="parent.description">
+                            {{parent.description}} 
+                        </div>
+                    </div>
+                </div>
         </div>
 
         <app-subtask-list [task]="parent"></app-subtask-list>
