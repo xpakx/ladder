@@ -5,7 +5,7 @@
     overflow: auto;
 }
 
-.modal-content {
+.modal-body {
     max-height: 960px;
     min-height: 400px;
 }
