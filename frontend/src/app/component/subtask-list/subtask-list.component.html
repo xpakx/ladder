@@ -88,7 +88,7 @@
                 <li *ngIf="draggedId" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, task)" class="drag-zone drag_list_item"></li>
             </ng-container>
 
-            <li>
+            <li *ngIf="parent">
                 <button type="button" class="plus_add_button" *ngIf="!showAddTaskForm" (click)="openAddTaskForm()">
                     <span class="icon_add">
                         <i class="fa fa-plus"></i>
@@ -96,7 +96,7 @@
                     Add task
                 </button>
 
-                <app-task-form *ngIf="showAddTaskForm" (closeEvent)="closeAddTaskForm()"></app-task-form>
+                <app-task-form *ngIf="showAddTaskForm" [data]="newTaskData" [project]="project" (closeEvent)="closeAddTaskForm()"></app-task-form>
 
             </li>
 

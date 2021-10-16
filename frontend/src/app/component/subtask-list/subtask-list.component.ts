@@ -39,10 +39,17 @@ export class SubtaskListComponent extends MultilevelTaskComponent<TaskTreeServic
     }
 
     this.todayDate = new Date();
+    if(this.parent && this.parent.project) {
+      this.project = this.tree.getProjectById(this.parent.project.id);
+    }
   }
 
   get tasks(): TaskTreeElem[] {
     return this.parent ? [...this.taskTreeService.getByParentId(this.parent.id)] : [];
+  }
+
+  get newTaskData(): AddEvent<TaskTreeElem> | undefined {
+    return new AddEvent<TaskTreeElem>(this.tasks[this.tasks.length-1], true);
   }
 
   protected getElems(): TaskTreeElem[] {
