@@ -158,3 +158,42 @@
     border-bottom: 1px solid #202020;
 }
 
+.taskFormExtraColor {
+	content: "";
+	display: inline-block;
+	width: 7px;
+	height: 7px;
+	background-color: currentColor;
+	border-radius: 50%;
+    margin-right: 8px;
+    margin-left: 4px;
+}
+
+.taskFormInbox {
+    margin-right: 8px;
+    margin-left: 4px;
+}
+
+.taskFormExtraButton {
+    display: flex;border: 1px solid #ddd;
+    border-radius: 5px;
+    align-items: center;
+    color: #555;
+    flex-shrink: 0;
+    font-size: 13px;
+    margin-right: 8px;
+}
+
+.taskFormExtraIcon {
+    margin-right: 8px;
+}
+
+.taskFormExtra {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.right-actions i {
+    color: grey;
+}

@@ -1,4 +1,4 @@
-<div class="modal"
+<div class="modal modal-background"
   tabindex="-1"
   role="dialog">
   <div class="modal-dialog" role="document">
@@ -36,10 +36,25 @@
             </div>
           </div>
           <div class="actions">
-            <button>
-              <i class="fa fa-calendar"></i>
-            </button>
-            <div>
+            <button type="button" class="taskFormExtraButton" (click)="openSelectDateModal()">
+              <div class="taskFormExtraIcon">
+                  <i class="fa fa-calendar"></i>
+              </div>
+
+              <span class="taskFormExtraText" *ngIf="!parent.due">Schedule</span>
+              <ng-container *ngIf="parent.due">
+                  <ng-container *ngIf="dateWithinWeek(parent.due)">
+                      <span class="taskFormExtraText" *ngIf="isToday(parent.due)">Today</span>
+                      <span class="taskFormExtraText" *ngIf="isTomorrow(parent.due)">Tomorrow</span>
+                      <span class="taskFormExtraText" *ngIf="!isToday(parent.due) && !isTomorrow(parent.due)">{{parent.due | date: 'EEEE'}}</span>
+                  </ng-container>
+                  <ng-container *ngIf="!dateWithinWeek(parent.due)">
+                      <span class="taskFormExtraText" *ngIf="thisYear(parent.due)">{{parent.due | date: 'dd MMM'}}</span>
+                      <span class="taskFormExtraText" *ngIf="!thisYear(parent.due)">{{parent.due| date: 'dd MMM yyyy'}}</span>
+                  </ng-container>
+              </ng-container>
+          </button>
+            <div class="right-actions">
               <button>
                 <i class="fa fa-list"></i>
               </button>
@@ -75,3 +90,6 @@
     </div>
   </div>
 </div>
+
+
+<app-date-dialog *ngIf="parent && showSelectDateModal" [taskDate]="parent.due ? parent.due : undefined" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
