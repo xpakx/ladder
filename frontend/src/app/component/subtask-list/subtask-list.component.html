@@ -1,45 +1,15 @@
-<div class="panel"  role="tabpanel" *ngIf="project">
-    <header class="view_header">
-        <div class="header_content">
-            <h1 class="editable">
-                <span class="simple_content" contenteditable="true">{{project.name}}</span>
-            </h1>
-            <div class="header_actions">
-                <button type="button" class="sort_button">
-                    <span class="icon_sort">
-                        <i class ="fa fa-comment-o"></i>
-                    </span>
-                    <span class="action_label">Comments</span>
-                </button>
-                <button type="button" class="sort_button">
-                    <span class="icon_sort">
-                        <i class ="fa fa-sort"></i>
-                    </span>
-                    <span class="action_label">Sort</span>
-                </button>
-                <button type="button" class="sort_button">
-                    <span class="icon_sort">
-                        <i class ="fa fa-ellipsis-h"></i>
-                    </span>
-                </button>
-            </div>
-        </div>
-    </header>
+<div class="panel"  role="tabpanel" >
 
-    <div class="tasks_content">
+
+    <div class="tasks_content" *ngIf="parent">
         <ul class="task_list_items">
-            <li *ngIf="draggedId" [dndDropzone]="['task']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
+
+            <li *ngIf="draggedId" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, parent, true)" class="drag-zone drag_list_item">
 
             </li>
-            <ng-container *ngFor="let task of tasks; let i = index">
-                <li *ngIf="shouldAddTaskAboveById(task.id)" class="task_list_item">
-                    <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                    <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
-                </li>
+            <ng-container *ngFor="let task of tasks">
                 <li *ngIf="!shouldEditTaskById(task.id)" class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
-                    [class.hiddenTask]="isParentCollapsed(task.parentList) || isParentDragged(task.parentList)"
-                    [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="task">
-                    <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
+                    [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="task-date">
                     <div class="task_list_item_main">
                         <div role="button" tabindex="0" class="task_list_item_body">
                             <div class="task_list_item__overflow_actions">
@@ -47,9 +17,6 @@
                                     <i class="fa fa-ellipsis-v"></i>
                                     <i class="fa fa-ellipsis-v"></i>
                                 </span>
-                                <button type="button" class="arrow" *ngIf="task.hasChildren"  (click)="collapseElem(task.id)">
-                                    <i class="fa fa-chevron-right" [class.rotated]="!isElemCollapsed(task.id)"></i>
-                                </button>
                             </div>
                             <button type="button" role="checkbox" class="task_checkbox" [ngClass]="'priority_' + task.priority" (click)="completeTask(task.id)">
                                 <div class="task_checkbox_circle">
@@ -60,7 +27,7 @@
                             </button>
                             <div class="task_list_item_content">
                                 <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
-                                    <div class="markdown_content task_content" (click)="openTaskView(task)">
+                                    <div class="markdown_content task_content">
                                         {{task.title}}
                                     </div>
                                     <div class="markdown_content task_description" *ngIf="task.description">
@@ -75,15 +42,7 @@
                                     <button *ngIf="task.due && !task.completed" type="button" class="due_date_controls">
                                         <span class="date">
                                             <i class="fa fa-calendar-o"></i>
-                                            <ng-container *ngIf="dateWithinWeek(task.due)">
-                                                <span *ngIf="isToday(task.due)">Today</span>
-                                                <span *ngIf="isTomorrow(task.due)">Tomorrow</span>
-                                                <span *ngIf="!isToday(task.due) && !isTomorrow(task.due)">{{task.due | date: 'EEEE'}}</span>
-                                            </ng-container>
-                                            <ng-container *ngIf="!dateWithinWeek(task.due)">
-                                                <span *ngIf="thisYear(task.due)">{{task.due | date: 'dd MMM'}}</span>
-                                                <span *ngIf="!thisYear(task.due)">{{task.due | date: 'dd MMM yyyy'}}</span>
-                                            </ng-container>
+                                            <span>Today</span>
                                         </span>
                                     </button>
                                     <span *ngFor="let label of getTaskLabels(task)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
@@ -93,7 +52,15 @@
                                     <span class="task_list_item__project" *ngIf="task.project">
                                         <a [href]="'/project/' + task.project.id + '#task-' + task.id">
                                             <span class="task_list_item__project__label">{{task.project.name}}</span>
-                                            <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                            <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + getProjectColor(task.project.id) + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                        </a>
+                                    </span>
+                                    <span class="task_list_item__project" *ngIf="!task.project">
+                                        <a >
+                                            <span class="task_list_item__project__label">Inbox</span>
+                                            <span class="project_icon" style="color: blue">
+                                                <i class="fa text-primary mr-2 fa-inbox"></i>
+                                            </span>
                                         </a>
                                     </span>
                                 </div>
@@ -116,28 +83,12 @@
                     </div>
                 </li>
                 <li *ngIf="shouldEditTaskById(task.id)" class="task_list_item">
-                    <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                    <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+                    <app-task-form [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
                 </li>
-                <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item" [dndDropzone]="['task']"> <!-- [dndDisableDropIf]="true">-->
-                    <ng-container *ngIf="calculateAdditionalDropzones(i, task); else noAdditionalDropzones">
-                        <span class="indent" *ngFor="let e of [].constructor(getAmountOfNormalDropzones(i, task))"></span>
-                        <span class="indent drag-zone" *ngFor="let e of getListForDropzones(i, task)" [dndDropzone]="['task']" (dndDrop)="onDrop($event, e)"></span>
-                        <span class="indent drag-zone" [dndDropzone]="['task']" (dndDrop)="onDrop($event, task)"></span>
-                    </ng-container>
-                    <ng-template #noAdditionalDropzones>
-                        <span class="indent" *ngFor="let e of [].constructor(task.hasChildren && !task.collapsed ? task.indent+1 : task.indent)"></span>
-                        <span class="indent drag-zone" [dndDropzone]="['task']" (dndDrop)="onDrop($event, task)" *ngIf="!task.hasChildren || task.collapsed"></span>
-                    </ng-template>
-                    <span [dndDropzone]="['task']" (dndDrop)="onDrop($event, task, true)" class="drag-zone last-drag-zone"></span>
-                </li>
-                <li *ngIf="shouldAddTaskBelowById(task.id)" class="task_list_item">
-                    <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                    <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
-                </li>
+                <li *ngIf="draggedId" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, task)" class="drag-zone drag_list_item"></li>
             </ng-container>
 
-            <li>
+            <li *ngIf="parent">
                 <button type="button" class="plus_add_button" *ngIf="!showAddTaskForm" (click)="openAddTaskForm()">
                     <span class="icon_add">
                         <i class="fa fa-plus"></i>
@@ -145,38 +96,31 @@
                     Add task
                 </button>
 
-                <app-task-form *ngIf="showAddTaskForm" [project]="project" (closeEvent)="closeAddTaskForm()"></app-task-form>
+                <app-task-form *ngIf="showAddTaskForm" [data]="newTaskData" [project]="project" (closeEvent)="closeAddTaskForm()"></app-task-form>
 
             </li>
+
         </ul>
     </div>
-    
+
 </div>
 
 <div class="ist-menu context" [class.hidden-context-menu]="!showContextTaskMenu" [ngStyle]="{'left.px': taskContextMenuX, 'top.px': taskContextMenuY}">
 	<ul class="context-menu-project" #taskContext>
-		<li class="context-menu-project-item">
-			<button (click)="openEditTaskAbove()">
-				<span class="menu_icon">
-					<i class="fa fa-arrow-up"></i>
-				</span>
-				<div class="menu_label">Add task above</div>
-			</button>
-		</li>
-        <li class="context-menu-project-item">
-			<button (click)="openEditTaskBelow()">
-				<span class="menu_icon">
-					<i class="fa fa-arrow-down"></i>
-				</span>
-				<div class="menu_label">Add task below</div>
-			</button>
-		</li>
         <li class="context-menu-project-item">
 			<button (click)="openEditTaskFromContextMenu()">
 				<span class="menu_icon">
 					<i class="fa fa-edit"></i>
 				</span>
 				<div class="menu_label">Edit task</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)=toProject()>
+				<span class="menu_icon">
+					<i class="fa fa-list"></i>
+				</span>
+				<div class="menu_label">Go to project</div>
 			</button>
 		</li>
         <li class="context-menu-project-item">
@@ -204,7 +148,7 @@
 			</button>
 		</li>
         <li class="context-menu-project-item">
-			<button (click)="duplicate()">
+			<button >
 				<span class="menu_icon">
 					<i class="fa fa-clone"></i>
 				</span>
@@ -225,5 +169,3 @@
 <app-date-dialog *ngIf="showSelectDateModal" [taskDate]="dateForDateModal" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
 <app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="projectForProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
 <app-priority-modal *ngIf="showSelectPriorityModal" [priority]="priorityForPriorityModal" (closeEvent)="closeSelectPriorityModal($event)" (cancelEvent)="cancelPrioritySelection()"></app-priority-modal>
-
-<app-task-view *ngIf="openTask" [task]="openTask" (closeEvent)="closeTaskView()"></app-task-view>

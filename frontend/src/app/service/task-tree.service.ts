@@ -429,4 +429,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     this.list = this.list.concat(tasks);
     this.sort();
   }
+
+  getByParentId(parentId: number): TaskTreeElem[] {
+    return this.list.filter((a) => a.parent && a.parent.id == parentId);
+  }
 }

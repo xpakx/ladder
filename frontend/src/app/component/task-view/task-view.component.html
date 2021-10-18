@@ -1,0 +1,97 @@
+<div class="modal modal-background"
+  tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">View task</h4>
+        <button (click)="closeModal()">
+          <i class="fa fa-remove"></i>
+        </button>
+      </div>
+      <div class="modal-body" *ngIf="parent">
+        
+
+        <div *ngIf="edit">
+            <app-task-form [data]="parentData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+        </div>
+        <div *ngIf="!edit">
+          <div class="overview" [class.completed]="parent.completed">
+            <button type="button" role="checkbox" class="task_checkbox" [ngClass]="'priority_' + parent.priority" (click)="complete()">
+                <div class="task_checkbox_circle">
+                    <span class="icon_check">
+                        <i class="fa fa-check"></i>
+                    </span>
+                </div>
+            </button>
+            <div class="task_list_item_content" (click)="edit = true;">
+                <div class="task_list_item__content_wrapper">
+                    <div class="markdown_content task_content">
+                        {{parent.title}}
+                    </div>
+                    <div class="markdown_content task_description" *ngIf="parent.description">
+                        {{parent.description}} 
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" class="taskFormExtraButton" (click)="openSelectDateModal()">
+              <div class="taskFormExtraIcon">
+                  <i class="fa fa-calendar"></i>
+              </div>
+
+              <span class="taskFormExtraText" *ngIf="!parent.due">Schedule</span>
+              <ng-container *ngIf="parent.due">
+                  <ng-container *ngIf="dateWithinWeek(parent.due)">
+                      <span class="taskFormExtraText" *ngIf="isToday(parent.due)">Today</span>
+                      <span class="taskFormExtraText" *ngIf="isTomorrow(parent.due)">Tomorrow</span>
+                      <span class="taskFormExtraText" *ngIf="!isToday(parent.due) && !isTomorrow(parent.due)">{{parent.due | date: 'EEEE'}}</span>
+                  </ng-container>
+                  <ng-container *ngIf="!dateWithinWeek(parent.due)">
+                      <span class="taskFormExtraText" *ngIf="thisYear(parent.due)">{{parent.due | date: 'dd MMM'}}</span>
+                      <span class="taskFormExtraText" *ngIf="!thisYear(parent.due)">{{parent.due| date: 'dd MMM yyyy'}}</span>
+                  </ng-container>
+              </ng-container>
+          </button>
+            <div class="right-actions">
+              <button (click)="openSelectProjectModal()">
+                <i class="fa fa-list"></i>
+              </button>
+              <button>
+                <i class="fa fa-tag"></i>
+              </button>
+              <button (click)="openSelectPriorityModal()" [class]="'button_priority_'+parent.priority">
+                <i class="fa fa-flag"></i>
+              </button>
+              <button>
+                <i class="fa fa-clock-o"></i>
+              </button>
+              <button (click)="askForDelete()">
+                <i class="fa fa-trash-o"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="tablist">
+          <button class="tablist_elem selected">Sub-tasks</button>
+          <button class="tablist_elem">Comments</button>
+          <button class="tablist_elem">Activity</button>
+        </div>
+
+
+        <app-subtask-list [task]="parent"></app-subtask-list>
+  
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<app-date-dialog *ngIf="parent && showSelectDateModal" [taskDate]="parent.due ? parent.due : undefined" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
+<app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="projectForProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
+<app-priority-modal *ngIf="parent && showSelectPriorityModal" [priority]="parent.priority" (closeEvent)="closeSelectPriorityModal($event)" (cancelEvent)="cancelPrioritySelection()"></app-priority-modal>
