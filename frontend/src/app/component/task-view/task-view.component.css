@@ -39,6 +39,7 @@
     color: grey;
 }
 
+
 .priority_1 {
     background-color: rgba(36,111,224,.1);
     border-color: #246fe0;
@@ -196,4 +197,20 @@
 
 .right-actions i {
     color: grey;
+}
+
+.button_priority_0 i {
+    color:grey;
+}
+
+.button_priority_1 i {
+    color: #246fe0;
+}
+
+.button_priority_2 i {
+    color: #eb8909;
+}
+
+.button_priority_3 i {
+    color: #d1453b;
 }

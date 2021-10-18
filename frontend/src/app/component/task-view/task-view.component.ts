@@ -147,4 +147,32 @@ export class TaskViewComponent implements OnInit {
       this.deleteService.openModalForTask(this.parent);
     }
   }
+
+  showSelectPriorityModal: boolean = false;
+  priorityForPriorityModal: number = 0;
+
+  closeSelectPriorityModal(priority: number) {
+    this.showSelectPriorityModal = false;
+    if(this.parent) {
+      this.taskService.updateTaskPriority({priority: priority}, this.parent.id).subscribe(
+          (response: Task) => {
+          this.tree.updateTaskPriority(response);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
+  }
+
+  cancelPrioritySelection() {
+    this.showSelectPriorityModal = false;
+  }
+
+  openSelectPriorityModal() {
+    if(this.parent) {
+      this.priorityForPriorityModal = this.parent.priority;
+      this.showSelectPriorityModal = true;
+    }
+  }
 }

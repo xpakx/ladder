@@ -61,7 +61,7 @@
               <button>
                 <i class="fa fa-tag"></i>
               </button>
-              <button>
+              <button (click)="openSelectPriorityModal()" [class]="'button_priority_'+parent.priority">
                 <i class="fa fa-flag"></i>
               </button>
               <button>
@@ -94,3 +94,4 @@
 
 <app-date-dialog *ngIf="parent && showSelectDateModal" [taskDate]="parent.due ? parent.due : undefined" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
 <app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="projectForProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
+<app-priority-modal *ngIf="parent && showSelectPriorityModal" [priority]="parent.priority" (closeEvent)="closeSelectPriorityModal($event)" (cancelEvent)="cancelPrioritySelection()"></app-priority-modal>
