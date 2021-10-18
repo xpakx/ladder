@@ -1,10 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
+import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
   selector: 'app-task-view',
@@ -17,7 +19,8 @@ export class TaskViewComponent implements OnInit {
   edit: boolean = false;
   parentData!: AddEvent<TaskTreeElem>;
 
-  constructor(private taskTree: TaskTreeService, private taskService: TaskService) { }
+  constructor(private taskTree: TaskTreeService, private taskService: TaskService,
+    private tree: TreeService) { }
 
   ngOnInit(): void {
     if(parent) {
@@ -108,4 +111,33 @@ export class TaskViewComponent implements OnInit {
   cancelDateSelection() {
     this.showSelectDateModal = false;
   }
+
+showSelectProjectModal: boolean = false;
+projectForProjectModal: ProjectTreeElem | undefined;
+
+closeSelectProjectModal(project: ProjectTreeElem | undefined) {
+  this.showSelectProjectModal = false;
+  if(this.parent) {
+    this.taskService.updateTaskProject({id: project? project.id : undefined}, this.parent.id).subscribe(
+        (response: Task, proj: ProjectTreeElem | undefined = project) => {
+        this.taskTree.moveTaskToProject(response, proj);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+  }
+}
+
+cancelProjectSelection() {
+  this.showSelectProjectModal = false;
+}
+
+openSelectProjectModal() {
+  if(this.parent) {
+    let project = this.parent.project ? this.tree.getProjectById(this.parent.project.id) : undefined;
+    this.projectForProjectModal = project;
+    this.showSelectProjectModal = true;
+  }
+}
 }

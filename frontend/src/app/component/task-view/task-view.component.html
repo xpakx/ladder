@@ -55,7 +55,7 @@
               </ng-container>
           </button>
             <div class="right-actions">
-              <button>
+              <button (click)="openSelectProjectModal()">
                 <i class="fa fa-list"></i>
               </button>
               <button>
@@ -93,3 +93,4 @@
 
 
 <app-date-dialog *ngIf="parent && showSelectDateModal" [taskDate]="parent.due ? parent.due : undefined" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
+<app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="projectForProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
