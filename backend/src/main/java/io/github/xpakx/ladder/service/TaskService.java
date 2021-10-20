@@ -363,6 +363,24 @@ public class TaskService {
         return taskRepository.save(taskToAdd);
     }
 
+    public Task addTaskAsChild(AddTaskRequest request, Integer userId, Integer parentId) {
+        Task parentTask = taskRepository.findByIdAndOwnerId(parentId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent task!"));
+        Task taskToAdd = buildTaskFromRequestWithParentAndOrder(request, parentTask, userId);
+        return taskRepository.save(taskToAdd);
+    }
+
+    private Task buildTaskFromRequestWithParentAndOrder(AddTaskRequest request,
+                                                         Task parent, Integer userId) {
+        Task taskToAdd = buildTaskToAddFromRequest(request, userId);
+        taskToAdd.setParent(parent);
+        taskToAdd.setProject(parent.getProject());
+        taskToAdd.setProjectOrder(
+                taskRepository.getMaxOrderByOwnerIdAndParentId(userId, parent.getId())
+        );
+        return taskToAdd;
+    }
+
     private Task buildTaskFromRequestWithSiblingAndOrder(AddTaskRequest request, Integer order,
                                                          Task sibling, Integer userId) {
         Task taskToAdd = buildTaskToAddFromRequest(request, userId);

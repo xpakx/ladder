@@ -29,6 +29,7 @@ export class TaskFormComponent implements OnInit {
   task: TaskTreeElem | undefined;
   after: boolean = false;
   before: boolean = false;
+  asChild: boolean = false;
 
   @Input() data: AddEvent<TaskTreeElem> | undefined;
 
@@ -40,11 +41,12 @@ export class TaskFormComponent implements OnInit {
       this.task = this.data.object;
       this.after = this.data.after;
       this.before = this.data.before;
+      this.asChild =  this.data.asChild;
     }
 
     this.taskForm = this.fb.group({
-      title: [this.task && !this.after && !this.before ? this.task.title : '', Validators.required],
-      description: [this.task && !this.after && !this.before  ? this.task.description : '', []]
+      title: [this.task && !this.after && !this.before && !this.asChild ? this.task.title : '', Validators.required],
+      description: [this.task && !this.after && !this.before && !this.asChild  ? this.task.description : '', []]
     });
     
     if(this.task && !this.after && !this.before ) {
@@ -160,7 +162,9 @@ export class TaskFormComponent implements OnInit {
   }
 
   makeRequestWithTask() {
-    if(this.before) {
+    if(this.asChild) {
+      this.addTaskAsChild();
+    } else if(this.before) {
       this.addTaskBefore();
     } else if(this.after) {
       this.addTaskAfter();
@@ -237,6 +241,32 @@ export class TaskFormComponent implements OnInit {
       }, this.task.id).subscribe(
         (response: Task, indent: number = indentBefore, taskId: number = idBfore, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
           this.tree.addNewTaskBefore(response, indent, taskId, project, labels);
+        },
+        (error: HttpErrorResponse) => {
+         
+        }
+      );
+    }
+  }
+
+  addTaskAsChild() {
+    if(this.task && this.taskForm && this.taskForm.valid) {
+      let indentChild = this.task.indent+1;
+      let idParent = this.task.id;
+      let lbls = this.labels.map((a) => a.id);
+      this.taskService.addTaskAsChild({
+        title: this.taskForm.controls.title.value,
+        description: this.taskForm.controls.description.value,
+        projectOrder: this.task.order,
+        parentId: this.task.id,
+        projectId: this.project ? this.project.id : null,
+        priority: this.priority,
+        due: this.taskDate ? this.taskDate : null,
+        completedAt: null,
+        labelIds: lbls
+      }, this.task.id).subscribe(
+        (response: Task, indent: number = indentChild, taskId: number = idParent, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
+          this.tree.addNewTaskAsChild(response, indent, taskId, project, labels);
         },
         (error: HttpErrorResponse) => {
          

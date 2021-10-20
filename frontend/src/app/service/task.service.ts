@@ -73,6 +73,11 @@ export class TaskService implements MultilevelMovableService<Task> {
     return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/before`, request);
   }
 
+  public addTaskAsChild(request: AddTaskRequest, taskId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/children`, request);
+  }
+
   updateTaskProject(request: IdRequest, taskId: number): Observable<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/project`, request);

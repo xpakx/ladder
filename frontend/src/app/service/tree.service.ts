@@ -178,6 +178,10 @@ export class TreeService {
     this.tasks.addNewTaskBefore(task, indent, beforeId, project, this.getLabelsFromIds(labelIds));
   }
 
+  addNewTaskAsChild(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+    this.tasks.addNewTaskAsChild(task, indent, afterId, project, this.getLabelsFromIds(labelIds));
+  }
+
   moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
     this.tasks.moveTaskToProject(task, project);
   }

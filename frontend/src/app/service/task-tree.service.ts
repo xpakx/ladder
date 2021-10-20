@@ -312,6 +312,15 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
+  addNewTaskAsChild(task: Task, indent: number, parentId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
+    let parent = this.getById(parentId);
+    if(parent) {
+      let tsk : TaskTreeElem = parent;
+      task.projectOrder = tsk.order;
+      this.addNewTask(task, project, indent, tsk, labels);
+    }
+  }
+
   moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
     let taskToMove = this.getById(task.id);
     if(taskToMove) {

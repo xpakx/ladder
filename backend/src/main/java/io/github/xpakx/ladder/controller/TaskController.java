@@ -100,6 +100,13 @@ public class TaskController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/{taskId}/children")
+    public ResponseEntity<Task> addTaskAsChild(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
+                                             @PathVariable Integer taskId) {
+        return  new ResponseEntity<>(taskService.addTaskAsChild(request, userId, taskId), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{taskId}/before")
     public ResponseEntity<Task> addTaskBefore(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
                                                     @PathVariable Integer taskId) {
