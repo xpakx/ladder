@@ -19,6 +19,7 @@ export class TaskViewComponent implements OnInit {
   @Output() closeEvent = new EventEmitter<boolean>();
   edit: boolean = false;
   parentData!: AddEvent<TaskTreeElem>;
+  menuChoice: number = 0;
 
   constructor(private taskTree: TaskTreeService, private taskService: TaskService,
     private tree: TreeService, private deleteService: DeleteService) { }
@@ -174,5 +175,9 @@ export class TaskViewComponent implements OnInit {
       this.priorityForPriorityModal = this.parent.priority;
       this.showSelectPriorityModal = true;
     }
+  }
+
+  chooseTab(i: number) {
+    this.menuChoice = i;
   }
 }

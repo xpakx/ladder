@@ -77,13 +77,20 @@
 
 
         <div class="tablist">
-          <button class="tablist_elem selected">Sub-tasks</button>
-          <button class="tablist_elem">Comments</button>
-          <button class="tablist_elem">Activity</button>
+          <button class="tablist_elem" [class.selected]="menuChoice == 0" (click)="chooseTab(0)">
+            Sub-tasks
+          </button>
+          <button class="tablist_elem" [class.selected]="menuChoice == 1" (click)="chooseTab(1)">
+            Comments
+          </button>
+          <button class="tablist_elem" [class.selected]="menuChoice == 2" (click)="chooseTab(2)">
+            Activity
+          </button>
         </div>
 
 
-        <app-subtask-list [task]="parent"></app-subtask-list>
+        <app-subtask-list [task]="parent" *ngIf="menuChoice == 0"></app-subtask-list>
+        <app-comment-list *ngIf="menuChoice == 1"></app-comment-list>
   
       </div>
       
