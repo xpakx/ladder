@@ -90,7 +90,7 @@
 
 
         <app-subtask-list [task]="parent" *ngIf="menuChoice == 0"></app-subtask-list>
-        <app-comment-list *ngIf="menuChoice == 1"></app-comment-list>
+        <app-comment-list [task]="parent" *ngIf="menuChoice == 1"></app-comment-list>
   
       </div>
       

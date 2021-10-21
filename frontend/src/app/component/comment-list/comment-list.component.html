@@ -1,8 +1,8 @@
 <div class="comment_list">
-    <div class="comment">
+    <div class="comment" *ngFor="let comment of comments">
         <div class="note_meta">
             <span class="user_name">Andrzej</span>
-            <span class="time">20 Oct 14:40</span>
+            <span class="time">{{comment.createdAt | date: 'dd MMM hh:mm'}}20 Oct 14:40</span>
             <div class="comments_actions">
                 <button class="menu_icon">
                     <i class="fa fa-trash-o"></i>
@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="note_content">
-            Ababababa
+            {{comment.content}}
         </div>
     </div>
 </div>
