@@ -232,4 +232,27 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     this.list = this.list.concat(projects);
     this.sort();
   }
+
+  sync(projects: ProjectDetails[]) {
+    for(let project of projects) {
+      let projectWithId = this.getById(project.id);
+      if(projectWithId) {
+        this.updateProjectDetails(projectWithId, project);
+      } else {
+        this.list.push(this.transform(project, projects));
+      }
+    }
+    this.sort();
+  }
+
+  updateProjectDetails(project: ProjectTreeElem, details: ProjectDetails) {
+      project.name = details.name;
+      project.color = details.color;
+      project.favorite = details.favorite;
+      project.order = details.generalOrder;
+      project.favorite = details.favorite;
+      project.collapsed = details.collapsed;
+      project.modifiedAt = details.modifiedAt;
+      project.parent = details.parent;
+  }
 }

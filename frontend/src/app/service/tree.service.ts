@@ -4,6 +4,7 @@ import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
+import { SyncData } from '../entity/sync-data';
 import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
@@ -249,5 +250,9 @@ export class TreeService {
 
   duplicateTask(response: TaskDetails[]) {
     this.tasks.addDuplicated(response);
+  }
+
+  sync(response: SyncData) {
+    this.projects.sync(response.projects);
   }
 }
