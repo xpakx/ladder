@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -179,5 +180,35 @@ export class TaskViewComponent implements OnInit {
 
   chooseTab(i: number) {
     this.menuChoice = i;
+  }
+
+  labelsForModal: LabelDetails[] = [];
+  showSelectLabelsMenu: boolean = false;
+
+  openSelectLabelsMenu() {
+    if(this.parent) {
+      this.labelsForModal = [...this.parent.labels];
+    }
+    this.showSelectLabelsMenu = true;
+  }
+
+  closeSelectLabelsMenu() {
+    this.showSelectLabelsMenu = false;
+  }
+
+  chooseLabel(labels: LabelDetails[]) {
+    this.closeSelectLabelsMenu();
+    if(this.parent) {
+      this.taskService.updateTaskLabels({
+        ids: labels.map((a) => a.id)
+      }, this.parent.id).subscribe(
+          (response: Task, labelsToUpdate = labels) => {
+          this.tree.updateTaskLabels(response, labelsToUpdate);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
   }
 }

@@ -190,6 +190,10 @@ export class TreeService {
     this.tasks.updateTaskPriority(task);
   }
 
+  updateTaskLabels(task: Task, labels: LabelDetails[]) {
+    this.tasks.updateTaskLabels(task, labels);
+  }
+
   getLabels() {
     return this.labels.labels;
   }

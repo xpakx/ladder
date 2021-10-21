@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { AddTaskRequest } from '../entity/add-task-request';
 import { BooleanRequest } from '../entity/boolean-request';
 import { DateRequest } from '../entity/date-request';
+import { IdCollectionRequest } from '../entity/id-collection-request';
 import { IdRequest } from '../entity/id-request';
 import { PriorityRequest } from '../entity/priority-request';
 import { Task } from '../entity/task';
@@ -101,5 +102,10 @@ export class TaskService implements MultilevelMovableService<Task> {
   public duplicateTask(taskId: number):  Observable<TaskDetails[]> {
     let userId  = this.getUserId();
     return this.http.post<TaskDetails[]>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/duplicate`, null);
+  }
+
+  updateTaskLabels(request: IdCollectionRequest, taskId: number): Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/labels`, request);
   }
 }

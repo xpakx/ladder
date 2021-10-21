@@ -392,6 +392,13 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
+  updateTaskLabels(task: Task, labels: LabelDetails[]) {
+    let taskToUpdate = this.getById(task.id);
+    if(taskToUpdate) {
+      taskToUpdate.labels = labels;
+    }
+  }
+
   getNumOfUncompletedTasksByLabel(labelId: number): number {
     return this.list.filter((a) => 
       !a.completed && a.labels.find((b) => b.id == labelId)
