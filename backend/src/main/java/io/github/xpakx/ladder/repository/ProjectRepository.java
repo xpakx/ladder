@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,5 +69,5 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     boolean existsByIdAndOwnerId(Integer id, Integer ownerId);
 
-    <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, DateRequest modifiedAt, Class<T> type);
+    <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
 }

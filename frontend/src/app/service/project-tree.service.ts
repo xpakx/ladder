@@ -39,7 +39,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       parentList: [],
       favorite: project.favorite,
       collapsed: project.collapsed,
-      modifiedAt: project.modifiedAt
+      modifiedAt: new Date(project.modifiedAt)
     }
   }
 
@@ -70,7 +70,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       parentList: [],
       favorite: project.favorite,
       collapsed: true,
-      modifiedAt: project.modifiedAt
+      modifiedAt: new Date(project.modifiedAt)
     });
     this.sort();
   }
@@ -252,7 +252,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       project.order = details.generalOrder;
       project.favorite = details.favorite;
       project.collapsed = details.collapsed;
-      project.modifiedAt = details.modifiedAt;
+      project.modifiedAt = new Date(details.modifiedAt);
       project.parent = details.parent;
   }
 }
