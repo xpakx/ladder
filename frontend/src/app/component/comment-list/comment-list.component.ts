@@ -51,6 +51,7 @@ export class CommentListComponent implements OnInit {
       (error: HttpErrorResponse) => {
       
       });
+      this.commentForm.reset;
     }
   }
 
@@ -58,7 +59,7 @@ export class CommentListComponent implements OnInit {
     if(this.task && this.commentForm) {
       this.commentService.deleteComment(id).subscribe(
         (response: any, commentId: number = id) => {
-          this.comments = this.comments.filter((a) => a.id == commentId);
+          this.comments = this.comments.filter((a) => a.id != commentId);
       },
       (error: HttpErrorResponse) => {
       
