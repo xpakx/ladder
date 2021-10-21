@@ -2,7 +2,7 @@
     <div class="comment" *ngFor="let comment of comments">
         <div class="note_meta">
             <span class="user_name">Andrzej</span>
-            <span class="time">{{comment.createdAt | date: 'dd MMM hh:mm'}}20 Oct 14:40</span>
+            <span class="time">{{comment.createdAt | date: 'dd MMM hh:mm'}}</span>
             <div class="comments_actions">
                 <button class="menu_icon">
                     <i class="fa fa-trash-o"></i>
@@ -18,12 +18,14 @@
 
 
 
-<div class="comments_textarea">
-    <textarea placeholder="Write a comment"></textarea>
+<div class="comments_textarea" *ngIf="commentForm">
+    <form [formGroup]="commentForm">
+        <textarea placeholder="Write a comment" formControlName="content"></textarea>
+    </form>
     <div class="files_view"></div>
     <div class="textarea_buttons">    
         <div class="comments_textarea_submit">
-            <button class="submit_button">
+            <button class="submit_button" (click)="sendComment()">
                 Add Comment
             </button>
         </div>
