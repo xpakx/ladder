@@ -38,7 +38,8 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       indent: indent,
       parentList: [],
       favorite: project.favorite,
-      collapsed: project.collapsed
+      collapsed: project.collapsed,
+      modifiedAt: project.modifiedAt
     }
   }
 
@@ -68,7 +69,8 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       indent: indent,
       parentList: [],
       favorite: project.favorite,
-      collapsed: true
+      collapsed: true,
+      modifiedAt: project.modifiedAt
     });
     this.sort();
   }
