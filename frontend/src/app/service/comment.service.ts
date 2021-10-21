@@ -28,4 +28,9 @@ export class CommentService {
     let userId  = this.getUserId();
     return this.http.post<TaskComment>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/comments`, request);
   }
+
+  public deleteComment(commentId: number): Observable<any> {
+    let userId  = this.getUserId();
+    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/tasks/comments/${commentId}`);
+  }
 }

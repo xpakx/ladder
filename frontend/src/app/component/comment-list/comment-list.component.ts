@@ -54,4 +54,16 @@ export class CommentListComponent implements OnInit {
     }
   }
 
+  deleteComment(id: number) {
+    if(this.task && this.commentForm) {
+      this.commentService.deleteComment(id).subscribe(
+        (response: any, commentId: number = id) => {
+          this.comments = this.comments.filter((a) => a.id == commentId);
+      },
+      (error: HttpErrorResponse) => {
+      
+      });
+    }
+  }
+
 }
