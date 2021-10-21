@@ -9,6 +9,8 @@ import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 @AllArgsConstructor
 public class MainService {
@@ -26,6 +28,15 @@ public class MainService {
         result.setProjects(projectRepository.findByOwnerId(userId, ProjectDetails.class));
         result.setTasks(taskRepository.findByOwnerId(userId, TaskDetails.class));
         result.setLabels(labelRepository.findByOwnerId(userId, LabelDetails.class));
+
+        return result;
+    }
+
+    public SyncData sync(DateRequest time, Integer userId) {
+        SyncData result = new SyncData();
+        result.setProjects(projectRepository.findByOwnerIdAndModifiedAtAfter(userId, time, ProjectDetails.class));
+        result.setTasks(new ArrayList<>());
+        result.setLabels(new ArrayList<>());
 
         return result;
     }

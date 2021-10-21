@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.dto.DateRequest;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -66,5 +67,5 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     boolean existsByIdAndOwnerId(Integer id, Integer ownerId);
 
-
+    <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, DateRequest modifiedAt, Class<T> type);
 }
