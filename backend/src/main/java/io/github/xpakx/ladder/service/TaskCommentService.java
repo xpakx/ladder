@@ -1,10 +1,7 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.entity.Project;
-import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.TaskComment;
 import io.github.xpakx.ladder.entity.dto.AddCommentRequest;
-import io.github.xpakx.ladder.entity.dto.AddTaskRequest;
 import io.github.xpakx.ladder.entity.dto.TaskCommentDetails;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.TaskCommentRepository;
@@ -48,7 +45,7 @@ public class TaskCommentService {
     }
 
     public void deleteComment(Integer commentId, Integer userId) {
-        TaskComment comment = commentRepository.getByIdAndUserId(commentId, userId)
+        TaskComment comment = commentRepository.getByIdAndOwnerId(commentId, userId)
                 .orElseThrow(() -> new NotFoundException("No such comment!"));
         commentRepository.delete(comment);
     }

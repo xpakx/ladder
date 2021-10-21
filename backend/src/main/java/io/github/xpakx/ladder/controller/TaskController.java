@@ -87,6 +87,12 @@ public class TaskController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{taskId}/labels")
+    public ResponseEntity<Task> updateTaskLabels(@RequestBody IdCollectionRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(taskService.updateTaskLabels(request, taskId, userId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{taskId}/move/asFirst")
     public ResponseEntity<Task> moveTaskAsFirst(@PathVariable Integer userId, @PathVariable Integer taskId) {
         return  new ResponseEntity<>(taskService.moveTaskAsFirst(userId, taskId), HttpStatus.OK);
@@ -97,6 +103,13 @@ public class TaskController {
     public ResponseEntity<Task> addTaskAfter(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
                                                    @PathVariable Integer taskId) {
         return  new ResponseEntity<>(taskService.addTaskAfter(request, userId, taskId), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/{taskId}/children")
+    public ResponseEntity<Task> addTaskAsChild(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
+                                             @PathVariable Integer taskId) {
+        return  new ResponseEntity<>(taskService.addTaskAsChild(request, userId, taskId), HttpStatus.CREATED);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")

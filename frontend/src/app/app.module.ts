@@ -28,6 +28,7 @@ import { InboxComponent } from './component/inbox/inbox.component';
 import { LabelComponent } from './component/label/label.component';
 import { TaskViewComponent } from './component/task-view/task-view.component';
 import { SubtaskListComponent } from './component/subtask-list/subtask-list.component';
+import { CommentListComponent } from './component/comment-list/comment-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -56,7 +57,8 @@ export function tokenGetter() {
     InboxComponent,
     LabelComponent,
     TaskViewComponent,
-    SubtaskListComponent
+    SubtaskListComponent,
+    CommentListComponent
   ],
   imports: [
     BrowserModule,

@@ -58,7 +58,7 @@ public class TaskService {
         taskToUpdate.setCompletedAt(request.getCompletedAt());
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setOwner(userRepository.getById(userId));
-        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request, userId));
+        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
         return taskRepository.save(taskToUpdate);
     }
 
@@ -288,6 +288,13 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
+    public Task updateTaskLabels(IdCollectionRequest request, Integer taskId, Integer userId) {
+        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
+                .orElseThrow(() -> new NotFoundException("No such task!"));
+        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getIds(), userId));
+        return taskRepository.save(taskToUpdate);
+    }
+
     public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {
         IdRequest request = new IdRequest();
         request.setId(null);
@@ -305,7 +312,7 @@ public class TaskService {
                 .completed(false)
                 .collapsed(false)
                 .owner(userRepository.getById(userId))
-                .labels(transformLabelIdsToLabelReferences(request, userId))
+                .labels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId))
                 .build();
     }
 
@@ -325,11 +332,11 @@ public class TaskService {
         }
     }
 
-    private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request, Integer userId) {
-        if(labelsWithDiffOwner(request.getLabelIds(), userId)) {
+    private Set<Label> transformLabelIdsToLabelReferences(List<Integer> labelIds, Integer userId) {
+        if(labelsWithDiffOwner(labelIds, userId)) {
             throw new NotFoundException("Cannot add labels you don't own!");
         }
-        return request.getLabelIds() != null ? request.getLabelIds().stream()
+        return labelIds != null ? labelIds.stream()
                 .map(labelRepository::getById)
                 .collect(Collectors.toSet()) : new HashSet<>();
 
@@ -361,6 +368,24 @@ public class TaskService {
                 beforeTask, userId);
         incrementOrderOfTasksBefore(userId, beforeTask);
         return taskRepository.save(taskToAdd);
+    }
+
+    public Task addTaskAsChild(AddTaskRequest request, Integer userId, Integer parentId) {
+        Task parentTask = taskRepository.findByIdAndOwnerId(parentId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent task!"));
+        Task taskToAdd = buildTaskFromRequestWithParentAndOrder(request, parentTask, userId);
+        return taskRepository.save(taskToAdd);
+    }
+
+    private Task buildTaskFromRequestWithParentAndOrder(AddTaskRequest request,
+                                                         Task parent, Integer userId) {
+        Task taskToAdd = buildTaskToAddFromRequest(request, userId);
+        taskToAdd.setParent(parent);
+        taskToAdd.setProject(parent.getProject());
+        taskToAdd.setProjectOrder(
+                taskRepository.getMaxOrderByOwnerIdAndParentId(userId, parent.getId())
+        );
+        return taskToAdd;
     }
 
     private Task buildTaskFromRequestWithSiblingAndOrder(AddTaskRequest request, Integer order,

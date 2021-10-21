@@ -4,4 +4,5 @@ export interface Project {
     color: string;
     order: number;
     favorite: boolean;
+    modifiedAt: Date;
 }

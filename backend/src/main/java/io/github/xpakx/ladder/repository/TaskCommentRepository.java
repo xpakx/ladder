@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface TaskCommentRepository extends JpaRepository<TaskComment, Integer> {
     Page<TaskCommentDetails> findByTaskId(Integer taskId, Pageable page);
 
-    Optional<TaskComment> getByIdAndUserId(Integer id, Integer userId);
+    Optional<TaskComment> getByIdAndOwnerId(Integer id, Integer ownerId);
 }

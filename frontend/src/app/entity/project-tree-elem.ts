@@ -12,4 +12,5 @@ export interface ProjectTreeElem extends IndentableTreeElem<ProjectWithNameAndId
     parentList: ProjectTreeElem[];
     favorite: boolean;
     collapsed: boolean;
+    modifiedAt: Date;
 }

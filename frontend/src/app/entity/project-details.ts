@@ -8,4 +8,5 @@ export interface ProjectDetails {
     generalOrder: number;
     favorite: boolean;
     collapsed: boolean;
+    modifiedAt: Date;
 }

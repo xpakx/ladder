@@ -19,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -370,6 +371,9 @@ class ProjectServiceTest {
                 .should(times(1))
                 .setName(eq(NAME));
         then(projectInDb)
+                .should(times(1))
+                .setModifiedAt(any(LocalDateTime.class));
+        then(projectInDb)
                 .shouldHaveNoMoreInteractions();;
         ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
         then(projectRepository)
@@ -417,6 +421,9 @@ class ProjectServiceTest {
         then(projectInDb)
                 .should(times(1))
                 .setFavorite(eq(FAV));
+        then(projectInDb)
+                .should(times(1))
+                .setModifiedAt(any(LocalDateTime.class));
         then(projectInDb)
                 .shouldHaveNoMoreInteractions();;
         ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
@@ -478,6 +485,9 @@ class ProjectServiceTest {
         then(projectInDb)
                 .should(times(1))
                 .setCollapsed(eq(COLLAPSE));
+        then(projectInDb)
+                .should(times(1))
+                .setModifiedAt(any(LocalDateTime.class));
         then(projectInDb)
                 .shouldHaveNoMoreInteractions();;
         ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);

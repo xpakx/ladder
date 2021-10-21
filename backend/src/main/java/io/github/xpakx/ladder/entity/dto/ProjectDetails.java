@@ -1,5 +1,7 @@
 package io.github.xpakx.ladder.entity.dto;
 
+import java.time.LocalDateTime;
+
 public interface ProjectDetails {
     Integer getId();
     String getName();
@@ -8,4 +10,5 @@ public interface ProjectDetails {
     boolean getCollapsed();
     ProjectWithNameAndId getParent();
     Integer getGeneralOrder();
+    LocalDateTime getModifiedAt();
 }

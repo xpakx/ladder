@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.dto.DateRequest;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +69,5 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     boolean existsByIdAndOwnerId(Integer id, Integer ownerId);
 
-
+    <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
 }

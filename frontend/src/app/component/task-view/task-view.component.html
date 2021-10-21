@@ -58,7 +58,7 @@
               <button (click)="openSelectProjectModal()">
                 <i class="fa fa-list"></i>
               </button>
-              <button>
+              <button (click)="openSelectLabelsMenu()">
                 <i class="fa fa-tag"></i>
               </button>
               <button (click)="openSelectPriorityModal()" [class]="'button_priority_'+parent.priority">
@@ -77,13 +77,20 @@
 
 
         <div class="tablist">
-          <button class="tablist_elem selected">Sub-tasks</button>
-          <button class="tablist_elem">Comments</button>
-          <button class="tablist_elem">Activity</button>
+          <button class="tablist_elem" [class.selected]="menuChoice == 0" (click)="chooseTab(0)">
+            Sub-tasks
+          </button>
+          <button class="tablist_elem" [class.selected]="menuChoice == 1" (click)="chooseTab(1)">
+            Comments
+          </button>
+          <button class="tablist_elem" [class.selected]="menuChoice == 2" (click)="chooseTab(2)">
+            Activity
+          </button>
         </div>
 
 
-        <app-subtask-list [task]="parent"></app-subtask-list>
+        <app-subtask-list [task]="parent" *ngIf="menuChoice == 0"></app-subtask-list>
+        <app-comment-list [task]="parent" *ngIf="menuChoice == 1"></app-comment-list>
   
       </div>
       
@@ -95,3 +102,4 @@
 <app-date-dialog *ngIf="parent && showSelectDateModal" [taskDate]="parent.due ? parent.due : undefined" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
 <app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="projectForProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
 <app-priority-modal *ngIf="parent && showSelectPriorityModal" [priority]="parent.priority" (closeEvent)="closeSelectPriorityModal($event)" (cancelEvent)="cancelPrioritySelection()"></app-priority-modal>
+<app-label-choice-dialog *ngIf="showSelectLabelsMenu" [labels]="labelsForModal" (closeEvent)="chooseLabel($event)" (cancelEvent)="closeSelectLabelsMenu()"></app-label-choice-dialog>

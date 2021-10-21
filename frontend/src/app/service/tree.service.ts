@@ -4,6 +4,7 @@ import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
+import { SyncData } from '../entity/sync-data';
 import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
@@ -178,12 +179,20 @@ export class TreeService {
     this.tasks.addNewTaskBefore(task, indent, beforeId, project, this.getLabelsFromIds(labelIds));
   }
 
+  addNewTaskAsChild(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+    this.tasks.addNewTaskAsChild(task, indent, afterId, project, this.getLabelsFromIds(labelIds));
+  }
+
   moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
     this.tasks.moveTaskToProject(task, project);
   }
 
   updateTaskPriority(task: Task) {
     this.tasks.updateTaskPriority(task);
+  }
+
+  updateTaskLabels(task: Task, labels: LabelDetails[]) {
+    this.tasks.updateTaskLabels(task, labels);
   }
 
   getLabels() {
@@ -241,5 +250,9 @@ export class TreeService {
 
   duplicateTask(response: TaskDetails[]) {
     this.tasks.addDuplicated(response);
+  }
+
+  sync(response: SyncData) {
+    this.projects.sync(response.projects);
   }
 }

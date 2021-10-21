@@ -1,6 +1,10 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { SyncData } from '../entity/sync-data';
+import { SyncService } from './sync.service';
+import { TreeService } from './tree.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +12,7 @@ import { environment } from 'src/environments/environment';
 export class NotificationService {
   private url = environment.notificationServerUrl;
 
-  constructor() { }
+  constructor(private tree: TreeService, private service: SyncService) { }
 
   subscribe() {
     let eventSource = new EventSource(`${this.url}/subscription/1`);
@@ -25,5 +29,34 @@ export class NotificationService {
 
   onNotificationSent(event: MessageEvent<any>) {
     console.log("Got an event" + event.data);
+    let timestamp = new Date(JSON.parse(event.data).time);
+
+    setTimeout(() => this.testSync(timestamp), 500);
+    
+  }
+
+  testSync(timestamp: Date) {
+    let maxDate: Date = new Date(0);
+    let dates: Date[] = this.tree.getProjects().map((a) => a.modifiedAt);
+    for(let date of dates) {
+      if(date > maxDate) {
+        maxDate = date;
+      }
+    }
+    if(maxDate < timestamp) {
+      console.log("Sync " + maxDate);
+      this.sync(maxDate);
+    } else {
+      console.log("Already synced " + maxDate);
+    }  
+  }
+
+  sync(time: Date) {
+    this.service.sync({'date': new Date(time)}).subscribe(
+      (response: SyncData) => {
+        this.tree.sync(response);
+      },
+      (error: HttpErrorResponse) => {}
+    );
   }
 }

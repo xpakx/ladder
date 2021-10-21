@@ -1,0 +1,94 @@
+.note_meta {
+    font-size: 11px;
+    color: #999;
+    padding: 0 0 2px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.user_name {
+    color: #202020;
+    font-weight: 700;
+    margin-right: 8px;
+    display: inline-block;
+    font-size: 14px;
+}
+
+.time {
+    font-size: 12px;
+    color: grey;
+    padding-top: 2px;
+}
+
+.note_content {
+    font-size: 14px;
+    page-break-inside: avoid;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.menu_icon {
+    position: relative;
+    margin-right: 10px;
+    display: inline-block;
+    opacity: 0;
+    transition: opacity .2s ease-in;
+    color: grey;
+}
+
+.comment:hover .menu_icon {
+    opacity: 1;
+}
+
+button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    margin: 0;
+}
+
+.comment {
+    margin-bottom: 10px;
+}
+
+.comments_textarea {
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 8px;
+    margin-bottom: 4px;
+    border-radius: 3px;
+}
+
+textarea {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.textarea_buttons {
+    border-top: 1px solid #eee;
+    padding-top: 5px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
+
+.submit_button {
+    background-color: #db4c3f;
+    color: #fff;
+    text-shadow: none;
+    border: 1px solid transparent;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 17px;
+    padding: 6px 12px 7px;
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+    border-radius: 3px;
+    text-decoration: none;
+    text-align: center;
+}
