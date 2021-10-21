@@ -3,7 +3,7 @@ package io.github.xpakx.ladder.entity.dto;
 import java.time.LocalDateTime;
 
 public interface TaskCommentDetails {
-    Integer getIs();
+    Integer getId();
     String getContent();
     LocalDateTime getCreatedAt();
     UserWithNameAndId getOwner();
