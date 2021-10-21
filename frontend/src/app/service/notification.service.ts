@@ -30,7 +30,12 @@ export class NotificationService {
   onNotificationSent(event: MessageEvent<any>) {
     console.log("Got an event" + event.data);
     let timestamp = new Date(JSON.parse(event.data).time);
-    console.log(timestamp);
+
+    setTimeout(() => this.testSync(timestamp), 500);
+    
+  }
+
+  testSync(timestamp: Date) {
     let maxDate: Date = new Date(0);
     let dates: Date[] = this.tree.getProjects().map((a) => a.modifiedAt);
     for(let date of dates) {
@@ -39,7 +44,7 @@ export class NotificationService {
       }
     }
     if(maxDate < timestamp) {
-      console.log("Sync");
+      console.log("Sync " + maxDate);
       this.sync(maxDate);
     } else {
       console.log("Already synced " + maxDate);
