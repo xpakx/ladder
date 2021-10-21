@@ -51,7 +51,7 @@ export class CommentListComponent implements OnInit {
       (error: HttpErrorResponse) => {
       
       });
-      this.commentForm.reset;
+      this.commentForm.reset();
     }
   }
 
