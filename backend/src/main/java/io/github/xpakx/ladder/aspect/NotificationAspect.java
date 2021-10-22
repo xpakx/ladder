@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.aspect;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,6 +16,10 @@ public class NotificationAspect {
 
     @AfterReturning(value="@annotation(NotifyOnProjectChange)", returning="response")
     public void notifyOnProjectChange(Project response) throws Throwable {
-        notificationService.sendNotification(response.getOwner().getId(), response.getModifiedAt());
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(response.getOwner().getId())
+                .time(response.getModifiedAt())
+                .build();
+        notificationService.sendNotification(notification);
     }
 }
