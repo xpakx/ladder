@@ -30,9 +30,20 @@ export class NotificationService {
   onNotificationSent(event: MessageEvent<any>) {
     console.log("Got an event" + event.data);
     let timestamp = new Date(JSON.parse(event.data).time);
+    let type: string = JSON.parse(event.data).type;
 
-    setTimeout(() => this.testSync(timestamp), 500);
-    
+    if(type == 'UPDATE') {
+      setTimeout(() => this.testSync(timestamp), 500);
+    } else if(type == 'DELETE_PROJ') {
+      setTimeout(() => this.delete(JSON.parse(event.data).id), 500);
+    }
+  }
+
+  delete(id: number) {
+    let proj = this.tree.getProjectById(id);
+    if(proj) {
+      this.tree.deleteProject(id);
+    }
   }
 
   testSync(timestamp: Date) {

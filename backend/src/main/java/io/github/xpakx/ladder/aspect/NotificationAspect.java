@@ -29,7 +29,7 @@ public class NotificationAspect {
         NotificationRequest notification = NotificationRequest.builder()
                 .userId(response.getOwner().getId())
                 .time(response.getModifiedAt())
-                .type("DELETE")
+                .type("DELETE_PROJ")
                 .id(response.getId())
                 .build();
         notificationService.sendNotification(notification);
