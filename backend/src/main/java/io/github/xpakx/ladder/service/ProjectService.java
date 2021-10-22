@@ -510,6 +510,8 @@ public class ProjectService {
      * @param projectId ID of the project which should be before newly created project
      * @return Newly created project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project addProjectAfter(ProjectRequest request, Integer userId, Integer projectId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
@@ -557,6 +559,8 @@ public class ProjectService {
      * @param projectId ID of the project which should be after newly created project
      * @return Newly created project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project addProjectBefore(ProjectRequest request, Integer userId, Integer projectId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
@@ -574,6 +578,8 @@ public class ProjectService {
      * @param projectToMoveId ID of the project to move
      * @return Moved project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project moveProjectAfter(IdRequest request, Integer userId, Integer projectToMoveId) {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
@@ -596,6 +602,8 @@ public class ProjectService {
      * @param projectToMoveId ID of the project to move
      * @return Moved project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project moveProjectAsFirstChild(IdRequest request, Integer userId, Integer projectToMoveId) {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
@@ -623,6 +631,8 @@ public class ProjectService {
      * @param projectToMoveId ID of the project to move
      * @return Moved project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project moveProjectAsFirst(Integer userId, Integer projectToMoveId) {
         IdRequest request = new IdRequest();
         request.setId(null);

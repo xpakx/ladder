@@ -3,9 +3,13 @@ package io.github.xpakx.ladder.aspect;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import lombok.AllArgsConstructor;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Aspect
 @Service
@@ -24,13 +28,13 @@ public class NotificationAspect {
         notificationService.sendNotification(notification);
     }
 
-    @AfterReturning(value="@annotation(NotifyOnProjectDeletion)", returning="response")
-    public void notifyOnProjectDeletion(Project response) throws Throwable {
+    @After(value="@annotation(NotifyOnProjectDeletion) && args(projectId, userId)", argNames = "projectId,userId")
+    public void notifyOnProjectDeletion(Integer projectId, Integer userId) throws Throwable {
         NotificationRequest notification = NotificationRequest.builder()
-                .userId(response.getOwner().getId())
-                .time(response.getModifiedAt())
+                .userId(userId)
+                .time(LocalDateTime.now())
                 .type("DELETE_PROJ")
-                .id(response.getId())
+                .id(projectId)
                 .build();
         notificationService.sendNotification(notification);
     }
