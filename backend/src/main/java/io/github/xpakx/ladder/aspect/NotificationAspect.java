@@ -19,6 +19,18 @@ public class NotificationAspect {
         NotificationRequest notification = NotificationRequest.builder()
                 .userId(response.getOwner().getId())
                 .time(response.getModifiedAt())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @AfterReturning(value="@annotation(NotifyOnProjectDeletion)", returning="response")
+    public void notifyOnProjectDeletion(Project response) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(response.getOwner().getId())
+                .time(response.getModifiedAt())
+                .type("DELETE")
+                .id(response.getId())
                 .build();
         notificationService.sendNotification(notification);
     }

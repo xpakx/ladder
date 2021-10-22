@@ -8,4 +8,6 @@ import java.time.LocalDateTime;
 public class NotificationRequest {
     private Integer userId;
     private LocalDateTime time;
+    private String type;
+    private Integer id;
 }
