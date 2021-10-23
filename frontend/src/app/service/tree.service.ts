@@ -254,5 +254,6 @@ export class TreeService {
 
   sync(response: SyncData) {
     this.projects.sync(response.projects);
+    this.labels.sync(response.labels);
   }
 }

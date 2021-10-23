@@ -35,14 +35,23 @@ export class NotificationService {
     if(type == 'UPDATE') {
       setTimeout(() => this.testSync(timestamp), 500);
     } else if(type == 'DELETE_PROJ') {
-      setTimeout(() => this.delete(JSON.parse(event.data).id), 500);
+      setTimeout(() => this.deleteProject(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_LABEL') {
+      setTimeout(() => this.deleteLabel(JSON.parse(event.data).id), 500);
     }
   }
 
-  delete(id: number) {
+  deleteProject(id: number) {
     let proj = this.tree.getProjectById(id);
     if(proj) {
       this.tree.deleteProject(id);
+    }
+  }
+
+  deleteLabel(id: number) {
+    let label = this.tree.getLabelById(id);
+    if(label) {
+      this.tree.deleteLabel(id);
     }
   }
 
