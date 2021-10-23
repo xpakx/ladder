@@ -36,9 +36,13 @@ public class MainService {
 
     public SyncData sync(DateRequest time, Integer userId) {
         SyncData result = new SyncData();
-        result.setProjects(projectRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), ProjectDetails.class));
+        result.setProjects(
+                projectRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), ProjectDetails.class)
+        );
         result.setTasks(new ArrayList<>());
-        result.setLabels(new ArrayList<>());
+        result.setLabels(
+                labelRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), LabelDetails.class)
+        );
 
         return result;
     }

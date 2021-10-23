@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.aspect;
 
+import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,27 @@ public class NotificationAspect {
                 .time(LocalDateTime.now())
                 .type("DELETE_PROJ")
                 .id(projectId)
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @AfterReturning(value="@annotation(NotifyOnLabelChange)", returning="response")
+    public void notifyOnLabelChange(Label response) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(response.getOwner().getId())
+                .time(response.getModifiedAt())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @After(value="@annotation(NotifyOnLabelDeletion) && args(labelId, userId)", argNames = "labelId,userId")
+    public void notifyOnLabelDeletion(Integer labelId, Integer userId) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(userId)
+                .time(LocalDateTime.now())
+                .type("DELETE_LABEL")
+                .id(labelId)
                 .build();
         notificationService.sendNotification(notification);
     }
