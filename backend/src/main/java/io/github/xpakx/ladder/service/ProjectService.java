@@ -517,6 +517,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
         projectToAdd.setParent(proj.getParent());
         projectToAdd.setGeneralOrder(proj.getGeneralOrder()+1);
+        projectToAdd.setModifiedAt(LocalDateTime.now());
         incrementGeneralOrderIfGreaterThan(userId, proj);
         return projectRepository.save(projectToAdd);
     }
@@ -574,6 +575,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent project!"));
         projectToAdd.setParent(proj.getParent());
         projectToAdd.setGeneralOrder(proj.getGeneralOrder());
+        projectToAdd.setModifiedAt(LocalDateTime.now());
         incrementGeneralOrderIfGreaterThanEquals(userId, proj);
         return projectRepository.save(projectToAdd);
     }
@@ -594,6 +596,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Cannot insert anything after non-existent project!"));
         projectToMove.setParent(afterProject.getParent());
         projectToMove.setGeneralOrder(afterProject.getGeneralOrder()+1);
+        projectToMove.setModifiedAt(LocalDateTime.now());
         incrementGeneralOrderIfGreaterThan(userId, afterProject);
         return projectRepository.save(projectToMove);
     }
@@ -617,6 +620,7 @@ public class ProjectService {
         Optional<Project> parentProject = findIdFromIdRequest(request);
         projectToMove.setParent(parentProject.orElse(null));
         projectToMove.setGeneralOrder(1);
+        projectToMove.setModifiedAt(LocalDateTime.now());
         incrementGeneralOrderOfAllChildren(request, userId);
         return projectRepository.save(projectToMove);
     }
