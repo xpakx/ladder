@@ -9,8 +9,6 @@ import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Service
@@ -36,9 +34,15 @@ public class MainService {
 
     public SyncData sync(DateRequest time, Integer userId) {
         SyncData result = new SyncData();
-        result.setProjects(projectRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), ProjectDetails.class));
-        result.setTasks(new ArrayList<>());
-        result.setLabels(new ArrayList<>());
+        result.setProjects(
+                projectRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), ProjectDetails.class)
+        );
+        result.setTasks(
+                taskRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), TaskDetails.class)
+        );
+        result.setLabels(
+                labelRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), LabelDetails.class)
+        );
 
         return result;
     }

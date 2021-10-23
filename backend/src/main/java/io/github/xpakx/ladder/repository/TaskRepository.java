@@ -45,70 +45,73 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent.id = :parentId AND t.projectOrder > :projectOrder")
-    void incrementOrderByOwnerIdAndParentIdAndOrderGreaterThan(Integer ownerId, Integer parentId, Integer projectOrder);
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND t.parent.id = :parentId AND t.projectOrder > :projectOrder")
+    void incrementOrderByOwnerIdAndParentIdAndOrderGreaterThan(Integer ownerId, Integer parentId, Integer projectOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project.id = :projectId AND t.projectOrder > :projectOrder")
-    void incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThan(Integer ownerId, Integer projectId, Integer projectOrder);
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project.id = :projectId AND t.projectOrder > :projectOrder")
+    void incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThan(Integer ownerId, Integer projectId, Integer projectOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project IS NULL AND t.projectOrder >= :projectOrder")
-    void incrementOrderByOwnerIdAndOrderGreaterThanEqual(Integer ownerId, Integer projectOrder);
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project IS NULL AND t.projectOrder >= :projectOrder")
+    void incrementOrderByOwnerIdAndOrderGreaterThanEqual(Integer ownerId, Integer projectOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent.id = :parentId AND t.projectOrder >= :projectOrder")
-    void incrementOrderByOwnerIdAndParentIdAndOrderGreaterThanEqual(Integer ownerId, Integer parentId, Integer projectOrder);
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND t.parent.id = :parentId AND t.projectOrder >= :projectOrder")
+    void incrementOrderByOwnerIdAndParentIdAndOrderGreaterThanEqual(Integer ownerId, Integer parentId, Integer projectOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project.id = :projectId AND t.projectOrder >= :projectOrder")
-    void incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThanEqual(Integer ownerId, Integer projectId, Integer projectOrder);
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project.id = :projectId AND t.projectOrder >= :projectOrder")
+    void incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThanEqual(Integer ownerId, Integer projectId, Integer projectOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project IS NULL AND t.projectOrder > :projectOrder")
-    void incrementOrderByOwnerIdAndOrderGreaterThan(Integer ownerId, Integer projectOrder);
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project IS NULL AND t.projectOrder > :projectOrder")
+    void incrementOrderByOwnerIdAndOrderGreaterThan(Integer ownerId, Integer projectOrder, LocalDateTime modifiedAt);
 
     @Query("SELECT coalesce(max(t.dailyViewOrder), 0) FROM Task t WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0")
     Integer getMaxOrderByOwnerIdAndDate(Integer ownerId, LocalDateTime date);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1 WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0 AND t.dailyViewOrder > :dailyOrder")
-    void incrementOrderByOwnerIdAndDateAndOrderGreaterThan(Integer ownerId, LocalDateTime date, Integer dailyOrder);
+    @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0 AND t.dailyViewOrder > :dailyOrder")
+    void incrementOrderByOwnerIdAndDateAndOrderGreaterThan(Integer ownerId, LocalDateTime date, Integer dailyOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1 WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0 AND t.dailyViewOrder >= :dailyOrder")
-    void incrementOrderByOwnerIdAndDateAndOrderGreaterThanEqual(Integer ownerId, LocalDateTime date, Integer dailyOrder);
+    @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0 AND t.dailyViewOrder >= :dailyOrder")
+    void incrementOrderByOwnerIdAndDateAndOrderGreaterThanEqual(Integer ownerId, LocalDateTime date, Integer dailyOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1 WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0")
-    void incrementOrderByOwnerIdAndDate(Integer ownerId, LocalDateTime date);
+    @Query("Update Task t SET t.dailyViewOrder = t.dailyViewOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND date_part('day', t.due - :date) = 0")
+    void incrementOrderByOwnerIdAndDate(Integer ownerId, LocalDateTime date, LocalDateTime modifiedAt);
 
     @EntityGraph("task-with-labels")
     List<TaskDetails> findByIdIn(List<Integer> ids);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent.id = :parentId")
-    void incrementGeneralOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId);
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND t.parent.id = :parentId")
+    void incrementGeneralOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project.id = :projectId")
-    void incrementGeneralOrderByOwnerIdAndProjectId(Integer ownerId, Integer projectId);
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project.id = :projectId")
+    void incrementGeneralOrderByOwnerIdAndProjectId(Integer ownerId, Integer projectId, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1 WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project IS NULL")
-    void incrementGeneralOrderByOwnerId(Integer ownerId);
+    @Query("Update Task t SET t.projectOrder = t.projectOrder + 1, t.modifiedAt = :modifiedAt WHERE t.owner.id = :ownerId AND t.parent IS NULL AND t.project IS NULL")
+    void incrementGeneralOrderByOwnerId(Integer ownerId, LocalDateTime modifiedAt);
 
     @EntityGraph("task-with-labels")
     List<Task> findByProjectIdIn(List<Integer> ids);
+
+    @EntityGraph("task-with-labels")
+    <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
 }

@@ -36,6 +36,7 @@ public class Task {
     private boolean completed;
     private boolean collapsed;
     private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     private Integer projectOrder;
     private Integer dailyViewOrder;

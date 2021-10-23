@@ -30,9 +30,38 @@ export class NotificationService {
   onNotificationSent(event: MessageEvent<any>) {
     console.log("Got an event" + event.data);
     let timestamp = new Date(JSON.parse(event.data).time);
+    let type: string = JSON.parse(event.data).type;
 
-    setTimeout(() => this.testSync(timestamp), 500);
-    
+    if(type == 'UPDATE') {
+      setTimeout(() => this.testSync(timestamp), 500);
+    } else if(type == 'DELETE_PROJ') {
+      setTimeout(() => this.deleteProject(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_LABEL') {
+      setTimeout(() => this.deleteLabel(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_TASK') {
+      setTimeout(() => this.deleteTask(JSON.parse(event.data).id), 500);
+    }
+  }
+
+  deleteProject(id: number) {
+    let proj = this.tree.getProjectById(id);
+    if(proj) {
+      this.tree.deleteProject(id);
+    }
+  }
+
+  deleteLabel(id: number) {
+    let label = this.tree.getLabelById(id);
+    if(label) {
+      this.tree.deleteLabel(id);
+    }
+  }
+
+  deleteTask(id: number) {
+    let task = this.tree.getTaskById(id);
+    if(task) {
+      this.tree.deleteTask(id);
+    }
   }
 
   testSync(timestamp: Date) {

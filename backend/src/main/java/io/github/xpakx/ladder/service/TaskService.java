@@ -1,5 +1,7 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
+import io.github.xpakx.ladder.aspect.NotifyOnTaskDeletion;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -26,6 +28,7 @@ public class TaskService {
     private final LabelRepository labelRepository;
 
     @Transactional
+    @NotifyOnTaskDeletion
     public void deleteTask(Integer taskId, Integer userId) {
         this.taskRepository.deleteByIdAndOwnerId(taskId, userId);
     }
@@ -35,6 +38,7 @@ public class TaskService {
                 .orElseThrow(() -> new NotFoundException("No such task!"));
     }
 
+    @NotifyOnTaskChange
     public Task updateTask(AddTaskRequest request, Integer taskId, Integer userId) {
         Project project = request.getProjectId() != null ? projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
@@ -59,6 +63,7 @@ public class TaskService {
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setOwner(userRepository.getById(userId));
         taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
     }
 
@@ -72,6 +77,7 @@ public class TaskService {
         return dueDate1.getYear() != dueDate2.getYear() || dueDate1.getDayOfYear() != dueDate2.getDayOfYear();
     }
 
+    @NotifyOnTaskChange
     public Task updateTaskDueDate(DateRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                         .orElseThrow(() -> new NotFoundException("No such task!"));
@@ -79,16 +85,20 @@ public class TaskService {
             taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
         }
         taskToUpdate.setDue(request.getDate());
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
     }
 
+    @NotifyOnTaskChange
     public Task updateTaskPriority(PriorityRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         taskToUpdate.setPriority(request.getPriority());
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
     }
 
+    @NotifyOnTaskChange
     public Task updateTaskProject(IdRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
@@ -101,6 +111,7 @@ public class TaskService {
         taskToUpdate.setParent(null);
         taskToUpdate.setProject(project);
         taskToUpdate.setProjectOrder(getMaxProjectOrder(request, userId)+1);
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
     }
 
@@ -146,6 +157,7 @@ public class TaskService {
         }
    }
 
+   @NotifyOnTaskChange
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.getByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
@@ -158,6 +170,7 @@ public class TaskService {
             taskToUpdate.setCompleted(false);
             taskToUpdate.setCompletedAt(null);
         }
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
     }
 
@@ -237,6 +250,7 @@ public class TaskService {
                 .build();
     }
 
+    @NotifyOnTaskChange
     public Task moveTaskAfter(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
@@ -244,6 +258,7 @@ public class TaskService {
         taskToMove.setParent(afterTask.getParent());
         taskToMove.setProjectOrder(afterTask.getProjectOrder()+1);
         incrementOrderOfTasksAfter(userId, afterTask);
+        taskToMove.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToMove);
     }
 
@@ -259,7 +274,7 @@ public class TaskService {
         return task.getParent() != null;
     }
 
-
+    @NotifyOnTaskChange
     public Task moveTaskAsFirstChild(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
@@ -267,34 +282,51 @@ public class TaskService {
         taskToMove.setParent(parentTask);
         taskToMove.setProjectOrder(1);
         incrementTasksOrder(request, userId, taskToMove.getProject());
+        taskToMove.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToMove);
     }
 
 
     private void incrementTasksOrder(IdRequest request, Integer userId, Project project) {
         if(request.getId() != null) {
-            taskRepository.incrementGeneralOrderByOwnerIdAndParentId(userId, request.getId());
+            taskRepository.incrementGeneralOrderByOwnerIdAndParentId(
+                    userId,
+                    request.getId(),
+                    LocalDateTime.now()
+            );
         } else if(project != null) {
-            taskRepository.incrementGeneralOrderByOwnerIdAndProjectId(userId, project.getId());
+            taskRepository.incrementGeneralOrderByOwnerIdAndProjectId(
+                    userId,
+                    project.getId(),
+                    LocalDateTime.now()
+            );
         } else {
-            taskRepository.incrementGeneralOrderByOwnerId(userId);
+            taskRepository.incrementGeneralOrderByOwnerId(
+                    userId,
+                    LocalDateTime.now()
+            );
         }
     }
 
+    @NotifyOnTaskChange
     public Task updateTaskCollapsion(BooleanRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         taskToUpdate.setCollapsed(request.isFlag());
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
     }
 
+    @NotifyOnTaskChange
     public Task updateTaskLabels(IdCollectionRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getIds(), userId));
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
     }
 
+    @NotifyOnTaskChange
     public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {
         IdRequest request = new IdRequest();
         request.setId(null);
@@ -352,28 +384,34 @@ public class TaskService {
         return !labelsWithDifferentOwner.equals(0L);
     }
 
+    @NotifyOnTaskChange
     public Task addTaskAfter(AddTaskRequest request, Integer userId, Integer afterId) {
         Task afterTask = taskRepository.findByIdAndOwnerId(afterId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent task!"));
         Task taskToAdd = buildTaskFromRequestWithSiblingAndOrder(request, afterTask.getProjectOrder()+1,
                 afterTask, userId);
         incrementOrderOfTasksAfter(userId, afterTask);
+        taskToAdd.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToAdd);
     }
 
+    @NotifyOnTaskChange
     public Task addTaskBefore(AddTaskRequest request, Integer userId, Integer beforeId) {
         Task beforeTask = taskRepository.findByIdAndOwnerId(beforeId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent task!"));
         Task taskToAdd = buildTaskFromRequestWithSiblingAndOrder(request, beforeTask.getProjectOrder(),
                 beforeTask, userId);
         incrementOrderOfTasksBefore(userId, beforeTask);
+        taskToAdd.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToAdd);
     }
 
+    @NotifyOnTaskChange
     public Task addTaskAsChild(AddTaskRequest request, Integer userId, Integer parentId) {
         Task parentTask = taskRepository.findByIdAndOwnerId(parentId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent task!"));
         Task taskToAdd = buildTaskFromRequestWithParentAndOrder(request, parentTask, userId);
+        taskToAdd.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToAdd);
     }
 
@@ -403,32 +441,67 @@ public class TaskService {
 
     private void incrementOrderOfTasksAfter(Integer userId, Task task) {
         if(hasParent(task)) {
-            taskRepository.incrementOrderByOwnerIdAndParentIdAndOrderGreaterThan(userId, task.getParent().getId(), task.getProjectOrder());
+            taskRepository.incrementOrderByOwnerIdAndParentIdAndOrderGreaterThan(
+                    userId,
+                    task.getParent().getId(),
+                    task.getProjectOrder(),
+                    LocalDateTime.now()
+            );
         } else if(hasProject(task)) {
-            taskRepository.incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThan(userId, task.getProject().getId(), task.getProjectOrder());
+            taskRepository.incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThan(
+                    userId,
+                    task.getProject().getId(),
+                    task.getProjectOrder(),
+                    LocalDateTime.now()
+            );
         } else {
-            taskRepository.incrementOrderByOwnerIdAndOrderGreaterThan(userId, task.getProjectOrder());
+            taskRepository.incrementOrderByOwnerIdAndOrderGreaterThan(
+                    userId,
+                    task.getProjectOrder(),
+                    LocalDateTime.now()
+            );
         }
     }
 
     private void incrementOrderOfTasksBefore(Integer userId, Task task) {
         if(hasParent(task)) {
-            taskRepository.incrementOrderByOwnerIdAndParentIdAndOrderGreaterThanEqual(userId, task.getParent().getId(), task.getProjectOrder());
+            taskRepository.incrementOrderByOwnerIdAndParentIdAndOrderGreaterThanEqual(
+                    userId,
+                    task.getParent().getId(),
+                    task.getProjectOrder(),
+                    LocalDateTime.now()
+            );
         } else if(hasProject(task)) {
-            taskRepository.incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThanEqual(userId, task.getProject().getId(), task.getProjectOrder());
+            taskRepository.incrementOrderByOwnerIdAndProjectIdAndOrderGreaterThanEqual(
+                    userId,
+                    task.getProject().getId(),
+                    task.getProjectOrder(),
+                    LocalDateTime.now()
+            );
         } else {
-            taskRepository.incrementOrderByOwnerIdAndOrderGreaterThanEqual(userId, task.getProjectOrder());
+            taskRepository.incrementOrderByOwnerIdAndOrderGreaterThanEqual(
+                    userId,
+                    task.getProjectOrder(),
+                    LocalDateTime.now()
+            );
         }
     }
 
+    @NotifyOnTaskChange
     public Task moveTaskAsFirstInDailyView(Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
         taskToMove.setDailyViewOrder(1);
-        taskRepository.incrementOrderByOwnerIdAndDate(userId, taskToMove.getDue());
+        taskRepository.incrementOrderByOwnerIdAndDate(
+                userId,
+                taskToMove.getDue(),
+                LocalDateTime.now()
+        );
+        taskToMove.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToMove);
     }
 
+    @NotifyOnTaskChange
     public Task moveTaskAfterInDailyView(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
@@ -436,18 +509,29 @@ public class TaskService {
         taskToMove.setDue(afterTask.getDue());
         taskToMove.setDailyViewOrder(afterTask.getDailyViewOrder()+1);
         incrementDailyOrderOfTasksAfter(userId, afterTask);
+        taskToMove.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToMove);
     }
 
     private void incrementDailyOrderOfTasksAfter(Integer userId, Task task) {
         if(task.getDue() != null) {
-            taskRepository.incrementOrderByOwnerIdAndDateAndOrderGreaterThan(userId, task.getDue(), task.getDailyViewOrder());
+            taskRepository.incrementOrderByOwnerIdAndDateAndOrderGreaterThan(
+                    userId,
+                    task.getDue(),
+                    task.getDailyViewOrder(),
+                    LocalDateTime.now()
+            );
         }
     }
 
     private void incrementDailyOrderOfTasksBefore(Integer userId, Task task) {
         if(task.getDue() != null) {
-            taskRepository.incrementOrderByOwnerIdAndDateAndOrderGreaterThanEqual(userId, task.getDue(), task.getDailyViewOrder());
+            taskRepository.incrementOrderByOwnerIdAndDateAndOrderGreaterThanEqual(
+                    userId,
+                    task.getDue(),
+                    task.getDailyViewOrder(),
+                    LocalDateTime.now()
+            );
         }
     }
 }

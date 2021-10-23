@@ -449,4 +449,82 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
   getByParentId(parentId: number): TaskTreeElem[] {
     return this.list.filter((a) => a.parent && a.parent.id == parentId);
   }
+
+  sync(tasks: TaskDetails[]) {
+    for(let task of tasks) {
+      let taskWithId = this.getById(task.id);
+      if(taskWithId) {
+        this.updateTaskDetails(taskWithId, task);
+      } else {
+        this.list.push(this.transformSync(task, tasks));
+      }
+    }
+    this.sort();
+  }
+
+  transformSync(task: TaskDetails, tasks: TaskDetails[]): TaskTreeElem {
+    let indent: number = this.getIndentSync(task.id, tasks);
+    return {
+      id: task.id,
+      title: task.title,
+      parent: task.parent,
+      order: task.projectOrder,
+      realOrder: task.projectOrder,
+      dailyOrder: task.dailyViewOrder,
+      hasChildren: this.hasChildrenByIdSync(task.id, tasks),
+      indent: indent,
+      parentList: [],
+      collapsed: task.collapsed,
+      description: task.description, 
+      project: task.project, 
+      due: task.due ? new Date(task.due) : null, 
+      completed: task.completed,
+      labels: task.labels,
+      priority: task.priority
+    }
+  }
+
+  private hasChildrenByIdSync(taskId: number, tasks: TaskDetails[]): boolean {
+    return this.hasChildrenById(taskId, tasks) || this.list.find((a) => a.parent?.id == taskId) != null;
+  }
+
+  private findParentByIdSync(taskId: number, tasks: TaskDetails[]): number | undefined {
+    let syncDataId = tasks.find((a) => a.id == taskId)?.parent?.id;
+    if(syncDataId) {return syncDataId;}
+    return this.list.find((a) => a.id == taskId)?.parent?.id;
+  }
+
+  private getIndentSync(taskId: number, tasks: TaskDetails[]): number {
+    let parentId: number | undefined = this.findParentByIdSync(taskId, tasks);
+    let counter = 0;
+    while(parentId != null) {
+      counter +=1;
+      parentId = this.findParentByIdSync(parentId, tasks);
+    }
+    return counter;
+  }
+
+  updateTaskDetails(task: TaskTreeElem, response: TaskDetails) {
+    task.description = response.description;
+    task.title = response.title;
+    if(!this.hasSameProjectSync(task, response.project)) {
+      task.parent = null;
+      task.indent = 0;
+    }
+    task.project = response.project;
+    task.priority = response.priority
+    task.parent = response.parent;
+    task.due = response.due ? new Date(response.due) : null;
+    task.completed = response.completed;
+    task.collapsed = response.collapsed;
+    task.dailyOrder = response.dailyViewOrder;
+    task.order = response.projectOrder;
+    task.priority = response.priority;
+    task.labels = task.labels; //edit
+    
+  }
+
+  private hasSameProjectSync(task: TaskTreeElem, project: ProjectWithNameAndId | null): boolean {
+    return (task.project && project && task.project.id == project.id) || (!task.project && !project);
+  }
 }

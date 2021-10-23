@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -21,6 +22,8 @@ public class Label {
     private String color;
     private Integer generalOrder;
     private boolean favorite;
+
+    private LocalDateTime modifiedAt;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "labels")

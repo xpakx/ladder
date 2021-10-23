@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnProjectDeletion;
+import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -104,7 +105,6 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setName(request.getName());
         projectToUpdate.setColor(request.getColor());
-        projectToUpdate.setParent(getParentFromProjectRequest(request, userId));
         projectToUpdate.setFavorite(request.isFavorite());
         projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
@@ -207,6 +207,7 @@ public class ProjectService {
      * @param userId If of an owner of the project and newly created task
      * @return Newly created task
      */
+    @NotifyOnTaskChange
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
         Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
@@ -232,12 +233,14 @@ public class ProjectService {
     }
 
     private Task buildTaskToAddFromRequest(AddTaskRequest request, Integer userId, Project project) {
+        LocalDateTime now = LocalDateTime.now();
         return Task.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .projectOrder(request.getProjectOrder())
                 .project(project)
-                .createdAt(LocalDateTime.now())
+                .createdAt(now)
+                .modifiedAt(now)
                 .due(request.getDue())
                 .dailyViewOrder(getMaxDailyOrder(request, userId)+1)
                 .parent(getParentFromAddTaskRequest(request))
@@ -510,12 +513,15 @@ public class ProjectService {
      * @param projectId ID of the project which should be before newly created project
      * @return Newly created project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project addProjectAfter(ProjectRequest request, Integer userId, Integer projectId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
         projectToAdd.setParent(proj.getParent());
         projectToAdd.setGeneralOrder(proj.getGeneralOrder()+1);
+        projectToAdd.setModifiedAt(LocalDateTime.now());
         incrementGeneralOrderIfGreaterThan(userId, proj);
         return projectRepository.save(projectToAdd);
     }
@@ -525,11 +531,15 @@ public class ProjectService {
             projectRepository.incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThan(
                     userId,
                     proj.getParent().getId(),
-                    proj.getGeneralOrder());
+                    proj.getGeneralOrder(),
+                    LocalDateTime.now()
+            );
         } else {
             projectRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
                     userId,
-                    proj.getGeneralOrder());
+                    proj.getGeneralOrder(),
+                    LocalDateTime.now()
+            );
         }
     }
 
@@ -538,11 +548,15 @@ public class ProjectService {
             projectRepository.incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(
                     userId,
                     proj.getParent().getId(),
-                    proj.getGeneralOrder());
+                    proj.getGeneralOrder(),
+                    LocalDateTime.now()
+            );
         } else {
             projectRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(
                     userId,
-                    proj.getGeneralOrder());
+                    proj.getGeneralOrder(),
+                    LocalDateTime.now()
+            );
         }
     }
 
@@ -557,12 +571,15 @@ public class ProjectService {
      * @param projectId ID of the project which should be after newly created project
      * @return Newly created project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project addProjectBefore(ProjectRequest request, Integer userId, Integer projectId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
         Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent project!"));
         projectToAdd.setParent(proj.getParent());
         projectToAdd.setGeneralOrder(proj.getGeneralOrder());
+        projectToAdd.setModifiedAt(LocalDateTime.now());
         incrementGeneralOrderIfGreaterThanEquals(userId, proj);
         return projectRepository.save(projectToAdd);
     }
@@ -574,6 +591,8 @@ public class ProjectService {
      * @param projectToMoveId ID of the project to move
      * @return Moved project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project moveProjectAfter(IdRequest request, Integer userId, Integer projectToMoveId) {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
@@ -581,6 +600,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Cannot insert anything after non-existent project!"));
         projectToMove.setParent(afterProject.getParent());
         projectToMove.setGeneralOrder(afterProject.getGeneralOrder()+1);
+        projectToMove.setModifiedAt(LocalDateTime.now());
         incrementGeneralOrderIfGreaterThan(userId, afterProject);
         return projectRepository.save(projectToMove);
     }
@@ -596,12 +616,15 @@ public class ProjectService {
      * @param projectToMoveId ID of the project to move
      * @return Moved project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project moveProjectAsFirstChild(IdRequest request, Integer userId, Integer projectToMoveId) {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
         Optional<Project> parentProject = findIdFromIdRequest(request);
         projectToMove.setParent(parentProject.orElse(null));
         projectToMove.setGeneralOrder(1);
+        projectToMove.setModifiedAt(LocalDateTime.now());
         incrementGeneralOrderOfAllChildren(request, userId);
         return projectRepository.save(projectToMove);
     }
@@ -610,10 +633,14 @@ public class ProjectService {
         if(request.getId() == null) {
             projectRepository.incrementGeneralOrderByOwnerIdAndParentId(
                     userId,
-                    request.getId());
+                    request.getId(),
+                    LocalDateTime.now()
+            );
         } else {
             projectRepository.incrementGeneralOrderByOwnerId(
-                    userId);
+                    userId,
+                    LocalDateTime.now()
+            );
         }
     }
 
@@ -623,6 +650,8 @@ public class ProjectService {
      * @param projectToMoveId ID of the project to move
      * @return Moved project
      */
+    @Transactional
+    @NotifyOnProjectChange
     public Project moveProjectAsFirst(Integer userId, Integer projectToMoveId) {
         IdRequest request = new IdRequest();
         request.setId(null);

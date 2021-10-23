@@ -27,11 +27,11 @@ public class NotificationService {
     public void pushNotification(NotificationRequest request) {
         List<SseEmitter> deadEmitters = new ArrayList<>();
 
-        Notification payload = new Notification(request.getTime());
+        Notification notification = new Notification(request.getTime(), request.getType(), request.getId());
 
         emitters.forEach(emitter -> {
             try {
-                sendNotification(request.getUserId(), payload, emitter);
+                sendNotification(request.getUserId(), notification, emitter);
 
             } catch (IOException e) {
                 deadEmitters.add(emitter);

@@ -16,4 +16,5 @@ public interface TaskDetails {
     Integer getDailyViewOrder();
     Set<LabelDetails> getLabels();
     Integer getPriority();
+    LocalDateTime getModifiedAt();
 }

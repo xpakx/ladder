@@ -9,4 +9,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Notification {
     private LocalDateTime time;
+    private String type;
+    private Integer id;
 }

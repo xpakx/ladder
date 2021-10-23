@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
-
 @Service
 public class NotificationService {
     private final RestTemplate template;
@@ -23,12 +21,8 @@ public class NotificationService {
         this.uri = uri;
     }
 
-    public void sendNotification(Integer userId, LocalDateTime time) {
+    public void sendNotification(NotificationRequest notification) {
         try {
-            NotificationRequest notification = NotificationRequest.builder()
-                    .userId(userId)
-                    .time(time)
-                    .build();
             ResponseEntity<?> r = template
                     .postForEntity(uri  + "/notification", notification, Object.class);
             LOG.info("Notification service response: {}", r.getStatusCode());

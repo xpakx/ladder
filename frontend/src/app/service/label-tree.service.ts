@@ -116,4 +116,19 @@ export class LabelTreeService implements MovableTreeService<Label> {
       this.sort();
     }
   }
+
+  sync(labels: LabelDetails[]) {
+    for(let label of labels) {
+      let labelWithId = this.getLabelById(label.id);
+      if(labelWithId) {
+        labelWithId.color = label.color;
+        labelWithId.favorite = label.favorite;
+        labelWithId.generalOrder = label.generalOrder;
+        labelWithId.name = label.name;
+      } else {
+        this.labels.push(label);
+      }
+    }
+    this.sort();
+  }
 }
