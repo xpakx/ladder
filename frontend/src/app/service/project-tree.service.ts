@@ -239,7 +239,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       if(projectWithId) {
         this.updateProjectDetails(projectWithId, project);
       } else {
-        this.list.push(this.transform(project, projects));
+        this.list.push(this.transformSync(project, projects));
       }
     }
     this.sort();
@@ -254,5 +254,42 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       project.collapsed = details.collapsed;
       project.modifiedAt = new Date(details.modifiedAt);
       project.parent = details.parent;
+  }
+
+  private transformSync(project: ProjectDetails, projects: ProjectDetails[]): ProjectTreeElem {
+    let indent: number = this.getIndentSync(project.id, projects);
+    return {
+      id: project.id,
+      name: project.name,
+      parent: project.parent,
+      color: project.color,
+      order: project.generalOrder,
+      realOrder: project.generalOrder,
+      hasChildren: this.hasChildrenByIdSync(project.id, projects),
+      indent: indent,
+      parentList: [],
+      favorite: project.favorite,
+      collapsed: project.collapsed,
+      modifiedAt: new Date(project.modifiedAt)
+    }
+  }
+
+  private hasChildrenByIdSync(projectId: number, projects: ProjectDetails[]): boolean {
+    return this.hasChildrenById(projectId, projects) || this.list.find((a) => a.parent?.id == projectId) != null;
+  }
+
+  private findParentByIdSync(projectId: number, projects: ProjectDetails[]): number | undefined {
+    let syncDataId = projects.find((a) => a.id == projectId)?.parent?.id;
+    if(syncDataId) {return syncDataId;}
+    return this.list.find((a) => a.id == projectId)?.parent?.id;
+  }
+  private getIndentSync(projectId: number, projects: ProjectDetails[]): number {
+    let parentId: number | undefined = this.findParentByIdSync(projectId, projects);
+    let counter = 0;
+    while(parentId != null) {
+      counter +=1;
+      parentId = this.findParentByIdSync(parentId, projects);
+    }
+    return counter;
   }
 }
