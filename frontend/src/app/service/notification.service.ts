@@ -38,6 +38,8 @@ export class NotificationService {
       setTimeout(() => this.deleteProject(JSON.parse(event.data).id), 500);
     } else if(type == 'DELETE_LABEL') {
       setTimeout(() => this.deleteLabel(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_TASK') {
+      setTimeout(() => this.deleteTask(JSON.parse(event.data).id), 500);
     }
   }
 
@@ -52,6 +54,13 @@ export class NotificationService {
     let label = this.tree.getLabelById(id);
     if(label) {
       this.tree.deleteLabel(id);
+    }
+  }
+
+  deleteTask(id: number) {
+    let task = this.tree.getTaskById(id);
+    if(task) {
+      this.tree.deleteTask(id);
     }
   }
 
