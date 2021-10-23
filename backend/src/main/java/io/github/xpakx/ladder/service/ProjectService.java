@@ -104,7 +104,6 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setName(request.getName());
         projectToUpdate.setColor(request.getColor());
-        //projectToUpdate.setParent(getParentFromProjectRequest(request, userId));
         projectToUpdate.setFavorite(request.isFavorite());
         projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
@@ -527,11 +526,15 @@ public class ProjectService {
             projectRepository.incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThan(
                     userId,
                     proj.getParent().getId(),
-                    proj.getGeneralOrder());
+                    proj.getGeneralOrder(),
+                    LocalDateTime.now()
+            );
         } else {
             projectRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
                     userId,
-                    proj.getGeneralOrder());
+                    proj.getGeneralOrder(),
+                    LocalDateTime.now()
+            );
         }
     }
 
@@ -540,11 +543,15 @@ public class ProjectService {
             projectRepository.incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(
                     userId,
                     proj.getParent().getId(),
-                    proj.getGeneralOrder());
+                    proj.getGeneralOrder(),
+                    LocalDateTime.now()
+            );
         } else {
             projectRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(
                     userId,
-                    proj.getGeneralOrder());
+                    proj.getGeneralOrder(),
+                    LocalDateTime.now()
+            );
         }
     }
 
@@ -618,10 +625,14 @@ public class ProjectService {
         if(request.getId() == null) {
             projectRepository.incrementGeneralOrderByOwnerIdAndParentId(
                     userId,
-                    request.getId());
+                    request.getId(),
+                    LocalDateTime.now()
+            );
         } else {
             projectRepository.incrementGeneralOrderByOwnerId(
-                    userId);
+                    userId,
+                    LocalDateTime.now()
+            );
         }
     }
 

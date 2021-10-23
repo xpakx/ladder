@@ -26,33 +26,33 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     @Modifying
     @Transactional
-    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent IS NULL AND p.generalOrder > :generalOrder")
-    void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(Integer ownerId, Integer generalOrder);
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1, p.modifiedAt = :modifiedAt WHERE p.owner.id = :ownerId AND p.parent IS NULL AND p.generalOrder > :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(Integer ownerId, Integer generalOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent IS NULL AND p.generalOrder >= :generalOrder")
-    void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer generalOrder);
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1, p.modifiedAt = :modifiedAt  WHERE p.owner.id = :ownerId AND p.parent IS NULL AND p.generalOrder >= :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer generalOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent.id = :parentId AND p.generalOrder > :generalOrder")
-    void incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThan(Integer ownerId, Integer parentId, Integer generalOrder);
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1, p.modifiedAt = :modifiedAt  WHERE p.owner.id = :ownerId AND p.parent.id = :parentId AND p.generalOrder > :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThan(Integer ownerId, Integer parentId, Integer generalOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent.id = :parentId AND p.generalOrder >= :generalOrder")
-    void incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer parentId, Integer generalOrder);
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1, p.modifiedAt = :modifiedAt  WHERE p.owner.id = :ownerId AND p.parent.id = :parentId AND p.generalOrder >= :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndParentIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer parentId, Integer generalOrder, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent.id = :parentId")
-    void incrementGeneralOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId);
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1, p.modifiedAt = :modifiedAt  WHERE p.owner.id = :ownerId AND p.parent.id = :parentId")
+    void incrementGeneralOrderByOwnerIdAndParentId(Integer ownerId, Integer parentId, LocalDateTime modifiedAt);
 
     @Modifying
     @Transactional
-    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1 WHERE p.owner.id = :ownerId AND p.parent IS NULL")
-    void incrementGeneralOrderByOwnerId(Integer ownerId);
+    @Query("Update Project p SET p.generalOrder = p.generalOrder + 1, p.modifiedAt = :modifiedAt  WHERE p.owner.id = :ownerId AND p.parent IS NULL")
+    void incrementGeneralOrderByOwnerId(Integer ownerId, LocalDateTime modifiedAt);
 
     List<Project> findByOwnerIdAndParentId(Integer ownerId, Integer parentId);
 
