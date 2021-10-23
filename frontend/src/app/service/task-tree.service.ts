@@ -520,7 +520,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     task.dailyOrder = response.dailyViewOrder;
     task.order = response.projectOrder;
     task.priority = response.priority;
-    task.labels = task.labels; //edit
+    task.labels = response.labels;
     
   }
 
