@@ -37,7 +37,9 @@ public class MainService {
         result.setProjects(
                 projectRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), ProjectDetails.class)
         );
-        result.setTasks(new ArrayList<>());
+        result.setTasks(
+                taskRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), TaskDetails.class)
+        );
         result.setLabels(
                 labelRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), LabelDetails.class)
         );

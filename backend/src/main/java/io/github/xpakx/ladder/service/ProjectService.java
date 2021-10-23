@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnProjectDeletion;
+import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -206,6 +207,7 @@ public class ProjectService {
      * @param userId If of an owner of the project and newly created task
      * @return Newly created task
      */
+    @NotifyOnTaskChange
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
         Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
@@ -231,12 +233,14 @@ public class ProjectService {
     }
 
     private Task buildTaskToAddFromRequest(AddTaskRequest request, Integer userId, Project project) {
+        LocalDateTime now = LocalDateTime.now();
         return Task.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .projectOrder(request.getProjectOrder())
                 .project(project)
-                .createdAt(LocalDateTime.now())
+                .createdAt(now)
+                .modifiedAt(now)
                 .due(request.getDue())
                 .dailyViewOrder(getMaxDailyOrder(request, userId)+1)
                 .parent(getParentFromAddTaskRequest(request))

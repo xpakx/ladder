@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.aspect;
 
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.After;
@@ -57,6 +58,27 @@ public class NotificationAspect {
                 .time(LocalDateTime.now())
                 .type("DELETE_LABEL")
                 .id(labelId)
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @AfterReturning(value="@annotation(NotifyOnTaskChange)", returning="response")
+    public void notifyOnTaskChange(Task response) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(response.getOwner().getId())
+                .time(response.getModifiedAt())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @After(value="@annotation(NotifyOnTaskDeletion) && args(taskId, userId)", argNames = "taskId,userId")
+    public void notifyOnTaskDeletion(Integer taskId, Integer userId) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(userId)
+                .time(LocalDateTime.now())
+                .type("DELETE_TASK")
+                .id(taskId)
                 .build();
         notificationService.sendNotification(notification);
     }
