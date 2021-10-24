@@ -183,13 +183,14 @@ public class TaskService {
 
         List<Task> toComplete = List.of(task);
         List<Task> toReturn = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
         while(toComplete.size() > 0) {
             List<Task> newToComplete = new ArrayList<>();
             for (Task parent : toComplete) {
                 List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
                 parent.setCompleted(true);
-                parent.setCompletedAt(LocalDateTime.now());
-                parent.setModifiedAt(LocalDateTime.now());
+                parent.setCompletedAt(now);
+                parent.setModifiedAt(now);
                 toReturn.add(parent);
                 newToComplete.addAll(children);
             }
