@@ -509,10 +509,6 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     task.title = response.title;
     let oldParent = task.parent ? this.getById(task.parent.id) : null;
     let newParent = response.parent ? this.getById(response.parent.id) : null;
-    if(!this.hasSameProjectSync(task, response.project)) {
-      task.parent = null;
-      task.indent = 0;
-    }
     task.project = response.project;
     task.priority = response.priority
     task.parent = response.parent;
@@ -523,15 +519,11 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     task.order = response.projectOrder;
     task.priority = response.priority;
     task.labels = response.labels;
-    task.indent = newParent ? newParent.indent : 0;
+    task.indent = newParent ? newParent.indent+1 : 0;
     this.recalculateChildrenIndent(task.id, task.indent+1);
     if(oldParent) {
       this.recalculateHasChildren(oldParent);
     }
     this.recalculateHasChildren(task);
-  }
-
-  private hasSameProjectSync(task: TaskTreeElem, project: ProjectWithNameAndId | null): boolean {
-    return (task.project && project && task.project.id == project.id) || (!task.project && !project);
   }
 }
