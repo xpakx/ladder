@@ -520,6 +520,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     task.priority = response.priority;
     task.labels = response.labels;
     task.indent = newParent ? newParent.indent+1 : 0;
+    task.parentList = [];
     this.recalculateChildrenIndent(task.id, task.indent+1);
     if(oldParent) {
       this.recalculateHasChildren(oldParent);
