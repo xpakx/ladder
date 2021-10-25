@@ -46,7 +46,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       completed: task.completed,
       labels: task.labels,
       priority: task.priority,
-      modifiedAt: task.modifiedAt
+      modifiedAt:  new Date(task.modifiedAt)
     }
   }
 
@@ -142,7 +142,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       collapsed: false,
       labels: labels,
       priority: response.priority,
-      modifiedAt: response.modifiedAt
+      modifiedAt:  new Date(response.modifiedAt)
     });
     this.sort();
   }
@@ -169,7 +169,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let task = this.getById(response.id);
     if(task) {
       task.completed = response.completed;
-      task.modifiedAt = response.modifiedAt;
+      task.modifiedAt =  new Date(response.modifiedAt);
     }
   }
 
@@ -190,7 +190,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       movedTask.indent = indent;
       movedTask.parent = afterTask.parent;
       movedTask.order = afterTask.order+1;
-      movedTask.modifiedAt = task.modifiedAt;
+      movedTask.modifiedAt =  new Date(task.modifiedAt);
 
       this.recalculateChildrenIndent(movedTask.id, indent+1);
       if(oldParent) {
@@ -217,7 +217,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       movedTask.indent = indent;
       movedTask.order = 1;
       movedTask.parent = parentTask;
-      movedTask.modifiedAt = task.modifiedAt;
+      movedTask.modifiedAt =  new Date(task.modifiedAt);
 
       this.recalculateChildrenIndent(movedTask.id, indent+1);
       if(oldParent) {
@@ -247,7 +247,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       movedTask.indent = 0;
       movedTask.order = 1;
       movedTask.parent = null;
-      movedTask.modifiedAt = task.modifiedAt;
+      movedTask.modifiedAt =  new Date(task.modifiedAt);
 
       this.recalculateChildrenIndent(movedTask.id, 2);
       if(oldParent) {
@@ -283,7 +283,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     if(taskToEdit) {
       taskToEdit.due = task.due? new Date(task.due) : null;
       taskToEdit.dailyOrder = task.dailyViewOrder;
-      taskToEdit.modifiedAt = task.modifiedAt;
+      taskToEdit.modifiedAt =  new Date(task.modifiedAt);
     }
   }
 
@@ -336,7 +336,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
         this.updateChildrenProject(project, taskToMove);
         this.updateParentChildren(taskToMove);
       }
-      taskToMove.modifiedAt = task.modifiedAt;
+      taskToMove.modifiedAt =  new Date(task.modifiedAt);
       taskToMove.parent = null;
       taskToMove.indent = 0;
       taskToMove.project = project ? project : null;
@@ -397,7 +397,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let taskToUpdate = this.getById(task.id);
     if(taskToUpdate) {
       taskToUpdate.priority = task.priority;
-      taskToUpdate.modifiedAt = task.modifiedAt;
+      taskToUpdate.modifiedAt =  new Date(task.modifiedAt);
     }
   }
 
@@ -405,7 +405,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let taskToUpdate = this.getById(task.id);
     if(taskToUpdate) {
       taskToUpdate.labels = labels;
-      taskToUpdate.modifiedAt = task.modifiedAt;
+      taskToUpdate.modifiedAt =  new Date(task.modifiedAt);
     }
   }
 
@@ -432,7 +432,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       }
       
       movedTask.dailyOrder = 1;
-      movedTask.modifiedAt = task.modifiedAt;
+      movedTask.modifiedAt =  new Date(task.modifiedAt);
     }
   }
 
@@ -448,7 +448,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
         }
       
       movedTask.dailyOrder = afterTask.dailyOrder+1;
-      movedTask.modifiedAt = task.modifiedAt;
+      movedTask.modifiedAt = new Date(task.modifiedAt);
     }
   }
 
