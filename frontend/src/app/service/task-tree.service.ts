@@ -524,19 +524,24 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     task.parentList = [];
     this.recalculateChildrenIndent(task.id, task.indent+1);
     if(oldParent) {
-      this.recalculateHasChildren(oldParent);
+      this.recalculateHasChildrenSync(oldParent, tasks);
     }
     this.recalculateHasChildrenSync(task, tasks);
   }
 
-  private recalculateHasChildrenSync(project: TaskTreeElem, tasks: TaskDetails[]) {
-      let children = this.list.filter((a) => a.parent && a.parent.id == project.id);
-      let childrenSyncData = tasks.filter((a) => a.parent && a.parent.id == project.id);
-      project.hasChildren = children.length > 0 || childrenSyncData.length > 0 ? true : false;
-      for(let parent of project.parentList) {
-          let parentChildren = this.list.filter((a) => a.parent && a.parent.id == parent.id);
-          let parentChildrenSyncData = tasks.filter((a) => a.parent && a.parent.id == project.id);
-          parent.hasChildren = parentChildren.length > 0 || parentChildrenSyncData.length > 0 ? true : false;
+  private howManyChildrenSync(parentId: number, tasks: TaskDetails[]) {
+    let syncChildren = tasks.filter((a) => a.parent && a.parent.id == parentId);
+    let ids = syncChildren.map((a) => a.id);
+    let children = this.list.filter((a) => a.parent && a.parent.id == parentId && !ids.includes(a.id));
+    return children.length + syncChildren.length;
+  }
+
+  private recalculateHasChildrenSync(task: TaskTreeElem, tasks: TaskDetails[]) {
+      let children = this.howManyChildrenSync(task.id, tasks);
+      task.hasChildren = children > 0 ? true : false;
+      for(let parent of task.parentList) {
+          let parentChildren = this.howManyChildrenSync(parent.id, tasks);
+          parent.hasChildren = parentChildren > 0 ? true : false;
       }
   }
 }
