@@ -3,7 +3,6 @@ import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
-import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { IndentableService } from './indentable-service';
 import { MultilevelMovableTreeService } from './multilevel-movable-tree-service';
 

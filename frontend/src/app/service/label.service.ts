@@ -5,7 +5,6 @@ import { environment } from 'src/environments/environment';
 import { BooleanRequest } from '../entity/boolean-request';
 import { IdRequest } from '../entity/id-request';
 import { Label } from '../entity/label';
-import { LabelDetails } from '../entity/label-details';
 import { LabelRequest } from '../entity/label-request';
 import { MovableService } from './movable-service';
 
