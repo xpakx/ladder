@@ -1,6 +1,5 @@
 package io.github.xpakx.ladder.aspect;
 
-import io.github.xpakx.ladder.service.ProjectService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
