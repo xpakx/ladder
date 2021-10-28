@@ -1242,8 +1242,50 @@ class ProjectControllerTest {
                 .statusCode(OK.value());
 
         List<Project> projects = projectRepository.findAll();
-        projects.forEach((a) -> System.out.println(a.getName() + " " + a.getGeneralOrder()));
         assertThat(projects, hasSize(4));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 1")),
+                hasProperty("generalOrder", is(2))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 2")),
+                hasProperty("generalOrder", is(3))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 3")),
+                hasProperty("generalOrder", is(1))
+        )));
+    }
+
+    @Test
+    void shouldRespondWith401ToMoveProjectAsFirstIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/move/asFirst", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldMoveProjectAsFirst() {
+        List<Integer> ids = add3ProjectsInOrderAndReturnListOfIds();
+
+        Integer projectId = ids.get(2);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/move/asFirst", userId, projectId)
+        .then()
+                .statusCode(OK.value());
+
+        List<Project> projects = projectRepository.findAll();
+        assertThat(projects, hasSize(3));
         assertThat(projects, hasItem(allOf(
                 hasProperty("name", is("Project 1")),
                 hasProperty("generalOrder", is(2))
