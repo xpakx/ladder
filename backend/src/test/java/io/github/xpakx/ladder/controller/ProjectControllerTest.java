@@ -18,8 +18,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -207,6 +209,59 @@ class ProjectControllerTest {
                 .map(Project::getId)
                 .findAny()
                 .orElse(-1);
+    }
+
+    private List<Integer> add3ProjectsInOrderAndReturnListOfIds() {
+        Project project1 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(1)
+                .name("Project 1")
+                .build();
+        Project project2 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(2)
+                .name("Project 2")
+                .build();
+        Project project3 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(3)
+                .name("Project 3")
+                .build();
+        return projectRepository.saveAll(List.of(project1, project2, project3)).stream()
+                .sorted(Comparator.comparingInt(Project::getGeneralOrder))
+                .map(Project::getId)
+                .collect(Collectors.toList());
+    }
+
+    private List<Integer> add3ProjectsWithParentInOrderAndReturnListOfIds() {
+        Project parent = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(1)
+                .name("Parent")
+                .build();
+        parent = projectRepository.save(parent);
+        Project project1 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(1)
+                .parent(parent)
+                .name("Project 1")
+                .build();
+        Project project2 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(2)
+                .parent(parent)
+                .name("Project 2")
+                .build();
+        Project project3 = Project.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(3)
+                .parent(parent)
+                .name("Project 3")
+                .build();
+        return projectRepository.saveAll(List.of(project1, project2, project3)).stream()
+                .sorted(Comparator.comparingInt(Project::getGeneralOrder))
+                .map(Project::getId)
+                .collect(Collectors.toList());
     }
 
 
@@ -516,37 +571,6 @@ class ProjectControllerTest {
                 .body("name", equalTo(request.getName()))
                 .body("color", equalTo(request.getColor()))
                 .body("favorite", equalTo(false));
-    }
-
-    @Test
-    void shouldChangeProjectParentWhileUpdating() {
-        Integer projectId = addProjectWithParentAndReturnId();
-        ProjectRequest request = getUpdateProjectWithParentRequest(
-                addProjectWith1TaskWith2SubtasksAndReturnId()
-        );
-        given()
-                .log()
-                .uri()
-                .auth()
-                .oauth2(tokenFor("user1"))
-                .contentType(ContentType.JSON)
-                .body(request)
-        .when()
-                .put(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
-        .then()
-                .statusCode(OK.value());
-
-        checkIfParentIsEdited(projectId, request.getParentId());
-    }
-
-    private void checkIfParentIsEdited(Integer projectId, Integer parentId) {
-        given()
-                .auth()
-                .oauth2(tokenFor("user1"))
-        .when()
-                .get(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
-        .then()
-                .body("parent.id", equalTo(parentId));
     }
 
     @Test
@@ -994,6 +1018,196 @@ class ProjectControllerTest {
         assertThat(projects, hasItem(allOf(
                 hasProperty("name", is("Project 3")),
                 hasProperty("generalOrder", is(3))
+        )));
+    }
+
+    @Test
+    void shouldChangeProjectParentWhileUpdating() {
+        Integer projectId = addProjectWithParentAndReturnId();
+        IdRequest request = getUpdateProjectWithParentIdRequest(
+                addProjectWith1TaskWith2SubtasksAndReturnId()
+        );
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/move/asChild", userId, projectId)
+        .then()
+                .statusCode(OK.value());
+
+        checkIfParentIsEdited(projectId, request.getId());
+    }
+
+    private IdRequest getUpdateProjectWithParentIdRequest(Integer parentId) {
+        IdRequest request = new IdRequest();
+        request.setId(parentId);
+        return request;
+    }
+
+    private void checkIfParentIsEdited(Integer projectId, Integer parentId) {
+        given()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}", userId, projectId)
+        .then()
+                .body("parent.id", equalTo(parentId));
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateProjectCollapseStatusIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/collapse", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateProjectCollapseStatusIfProjectNotFound() {
+        BooleanRequest request = getTrueBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/collapse", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldUpdateProjectCollapseStatus() {
+        Integer projectId = addNonFavoriteProject();
+        BooleanRequest request = getTrueBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/collapse", userId, projectId)
+        .then()
+                .statusCode(OK.value())
+                .body("collapsed", equalTo(true));
+    }
+
+    @Test
+    void shouldRespondWith401ToAddTaskToInboxIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/projects/inbox/tasks", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddTaskToInbox() {
+        Integer projectId = addProjectWithParentAndReturnId();
+        AddTaskRequest request = getValidAddTaskRequest(projectId);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects/inbox/tasks", userId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()));
+    }
+
+    @Test
+    void shouldRespondWith401ToMoveProjectAfterIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/move/after", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldMoveProjectAfter() {
+        List<Integer> ids = add3ProjectsInOrderAndReturnListOfIds();
+        IdRequest request = getValidIdRequest(ids.get(0));
+        Integer projectId = ids.get(2);
+
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/move/after", userId, projectId)
+        .then()
+                .statusCode(OK.value());
+
+
+        List<Project> projects = projectRepository.findAll();
+        assertThat(projects, hasSize(3));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 1")),
+                hasProperty("generalOrder", is(1))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 2")),
+                hasProperty("generalOrder", is(3))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 3")),
+                hasProperty("generalOrder", is(2))
+        )));
+    }
+
+    @Test
+    void shouldMoveProjectAfterWithParent() {
+        List<Integer> ids = add3ProjectsWithParentInOrderAndReturnListOfIds();
+        IdRequest request = getValidIdRequest(ids.get(0));
+        Integer projectId = ids.get(2);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/move/after", userId, projectId)
+                .then()
+                .statusCode(OK.value());
+
+        List<Project> projects = projectRepository.findAll();
+        assertThat(projects, hasSize(4));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 1")),
+                hasProperty("generalOrder", is(1))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 2")),
+                hasProperty("generalOrder", is(3))
+        )));
+        assertThat(projects, hasItem(allOf(
+                hasProperty("name", is("Project 3")),
+                hasProperty("generalOrder", is(2))
         )));
     }
 }

@@ -26,13 +26,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final JwtRequestFilter jwtRequestFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    @Value("${frontend.host}") private String frontend;
+    private final String frontend;
 
-    public WebSecurityConfiguration(UserService userService, JwtRequestFilter jwtRequestFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+    public WebSecurityConfiguration(UserService userService, JwtRequestFilter jwtRequestFilter,
+                                    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                                    @Value("${frontend.host}") String frontend) {
         super();
         this.userService = userService;
         this.jwtRequestFilter = jwtRequestFilter;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.frontend = frontend;
     }
 
     @Bean

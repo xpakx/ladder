@@ -598,10 +598,10 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
         Project afterProject = findIdFromIdRequest(request)
                 .orElseThrow(() -> new NotFoundException("Cannot insert anything after non-existent project!"));
+        incrementGeneralOrderIfGreaterThan(userId, afterProject);
         projectToMove.setParent(afterProject.getParent());
         projectToMove.setGeneralOrder(afterProject.getGeneralOrder()+1);
         projectToMove.setModifiedAt(LocalDateTime.now());
-        incrementGeneralOrderIfGreaterThan(userId, afterProject);
         return projectRepository.save(projectToMove);
     }
     
