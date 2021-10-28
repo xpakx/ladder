@@ -630,7 +630,7 @@ public class ProjectService {
     }
 
     private void incrementGeneralOrderOfAllChildren(IdRequest request, Integer userId) {
-        if(request.getId() == null) {
+        if(request.getId() != null) {
             projectRepository.incrementGeneralOrderByOwnerIdAndParentId(
                     userId,
                     request.getId(),
