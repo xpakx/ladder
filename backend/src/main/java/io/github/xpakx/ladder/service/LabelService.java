@@ -66,13 +66,13 @@ public class LabelService {
         Label labelToMove = labelRepository.findByIdAndOwnerId(labelToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent label!"));
         Label afterLabel = findIdFromIdRequest(request);
-        labelToMove.setGeneralOrder(afterLabel.getGeneralOrder() + 1);
-        labelToMove.setModifiedAt(LocalDateTime.now());
         labelRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
                 userId,
                 afterLabel.getGeneralOrder(),
                 LocalDateTime.now()
         );
+        labelToMove.setGeneralOrder(afterLabel.getGeneralOrder() + 1);
+        labelToMove.setModifiedAt(LocalDateTime.now());
         return labelRepository.save(labelToMove);
     }
 
@@ -89,12 +89,12 @@ public class LabelService {
     public Label moveLabelAsFirst(Integer userId, Integer labelToMoveId) {
         Label labelToMove = labelRepository.findByIdAndOwnerId(labelToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent label!"));
-        labelToMove.setGeneralOrder(1);
-        labelToMove.setModifiedAt(LocalDateTime.now());
         labelRepository.incrementGeneralOrderByOwnerId(
                 userId,
                 LocalDateTime.now()
         );
+        labelToMove.setGeneralOrder(1);
+        labelToMove.setModifiedAt(LocalDateTime.now());
         return labelRepository.save(labelToMove);
     }
 

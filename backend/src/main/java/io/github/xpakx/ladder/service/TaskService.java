@@ -157,7 +157,7 @@ public class TaskService {
         }
    }
 
-   @NotifyOnTaskChange
+    @NotifyOnTaskChange
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.getByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
@@ -169,8 +169,8 @@ public class TaskService {
         } else {
             taskToUpdate.setCompleted(false);
             taskToUpdate.setCompletedAt(null);
+            taskToUpdate.setModifiedAt(LocalDateTime.now());
         }
-        taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
     }
 
@@ -183,12 +183,14 @@ public class TaskService {
 
         List<Task> toComplete = List.of(task);
         List<Task> toReturn = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
         while(toComplete.size() > 0) {
             List<Task> newToComplete = new ArrayList<>();
             for (Task parent : toComplete) {
                 List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
                 parent.setCompleted(true);
-                parent.setCompletedAt(LocalDateTime.now());
+                parent.setCompletedAt(now);
+                parent.setModifiedAt(now);
                 toReturn.add(parent);
                 newToComplete.addAll(children);
             }

@@ -91,6 +91,9 @@
 
         <app-subtask-list [task]="parent" *ngIf="menuChoice == 0"></app-subtask-list>
         <app-comment-list [task]="parent" *ngIf="menuChoice == 1"></app-comment-list>
+        <div *ngIf="menuChoice == 2">
+          <div>Last modification: {{parent.modifiedAt | date: 'dd MMM yyyy'}}</div>
+        </div>
   
       </div>
       

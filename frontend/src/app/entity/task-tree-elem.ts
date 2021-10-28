@@ -21,4 +21,5 @@ export interface TaskTreeElem extends IndentableTreeElem<ParentWithId> {
     collapsed: boolean;
     labels: LabelDetails[];
     priority: number;
+    modifiedAt: Date;
 }

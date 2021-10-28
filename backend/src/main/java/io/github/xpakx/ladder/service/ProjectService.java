@@ -598,10 +598,10 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
         Project afterProject = findIdFromIdRequest(request)
                 .orElseThrow(() -> new NotFoundException("Cannot insert anything after non-existent project!"));
+        incrementGeneralOrderIfGreaterThan(userId, afterProject);
         projectToMove.setParent(afterProject.getParent());
         projectToMove.setGeneralOrder(afterProject.getGeneralOrder()+1);
         projectToMove.setModifiedAt(LocalDateTime.now());
-        incrementGeneralOrderIfGreaterThan(userId, afterProject);
         return projectRepository.save(projectToMove);
     }
     
@@ -622,15 +622,15 @@ public class ProjectService {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
         Optional<Project> parentProject = findIdFromIdRequest(request);
+        incrementGeneralOrderOfAllChildren(request, userId);
         projectToMove.setParent(parentProject.orElse(null));
         projectToMove.setGeneralOrder(1);
         projectToMove.setModifiedAt(LocalDateTime.now());
-        incrementGeneralOrderOfAllChildren(request, userId);
         return projectRepository.save(projectToMove);
     }
 
     private void incrementGeneralOrderOfAllChildren(IdRequest request, Integer userId) {
-        if(request.getId() == null) {
+        if(request.getId() != null) {
             projectRepository.incrementGeneralOrderByOwnerIdAndParentId(
                     userId,
                     request.getId(),

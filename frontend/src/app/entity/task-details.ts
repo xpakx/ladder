@@ -15,4 +15,5 @@ export interface TaskDetails {
     dailyViewOrder: number;
     labels: LabelDetails[];
     priority: number;
+    modifiedAt: Date;
 }

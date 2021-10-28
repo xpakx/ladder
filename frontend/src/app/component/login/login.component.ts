@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TokenResponse } from 'src/app/entity/token-response';
 import { AuthenticationService } from 'src/app/service/authentication.service';
-import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
   selector: 'app-login',

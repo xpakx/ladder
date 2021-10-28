@@ -3,7 +3,6 @@ import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
-import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { IndentableService } from './indentable-service';
 import { MultilevelMovableTreeService } from './multilevel-movable-tree-service';
 
@@ -237,7 +236,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     for(let project of projects) {
       let projectWithId = this.getById(project.id);
       if(projectWithId) {
-        this.updateProjectDetails(projectWithId, project);
+        this.updateProjectDetails(projectWithId, project, projects);
       } else {
         this.list.push(this.transformSync(project, projects));
       }
@@ -245,7 +244,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     this.sort();
   }
 
-  updateProjectDetails(project: ProjectTreeElem, details: ProjectDetails) {
+  updateProjectDetails(project: ProjectTreeElem, details: ProjectDetails, projects: ProjectDetails[]) {
       project.name = details.name;
       project.color = details.color;
       project.favorite = details.favorite;
@@ -254,6 +253,14 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       project.collapsed = details.collapsed;
       project.modifiedAt = new Date(details.modifiedAt);
       project.parent = details.parent;
+      let oldParent = project.parent ? this.getById(project.parent.id) : null;
+      let newParent = project.parent ? this.getById(project.parent.id) : null;
+      project.indent = newParent ? newParent.indent+1 : 0;
+      this.recalculateChildrenIndent(project.id, project.indent+1);
+      if(oldParent) {
+        this.recalculateHasChildrenSync(oldParent, projects);
+      }
+      this.recalculateHasChildrenSync(project, projects);
   }
 
   private transformSync(project: ProjectDetails, projects: ProjectDetails[]): ProjectTreeElem {
@@ -291,5 +298,21 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       parentId = this.findParentByIdSync(parentId, projects);
     }
     return counter;
+  }
+
+  private howManyChildrenSync(projectId: number, projects: ProjectDetails[]) {
+    let syncChildren = projects.filter((a) => a.parent && a.parent.id == projectId);
+    let ids = syncChildren.map((a) => a.id);
+    let children = this.list.filter((a) => a.parent && a.parent.id == projectId && !ids.includes(a.id));
+    return children.length + syncChildren.length;
+  }
+
+  private recalculateHasChildrenSync(project: ProjectTreeElem, projects: ProjectDetails[]) {
+      let children = this.howManyChildrenSync(project.id, projects);
+      project.hasChildren = children > 0 ? true : false;
+      for(let parent of project.parentList) {
+          let parentChildren = this.howManyChildrenSync(parent.id, projects);
+          parent.hasChildren = parentChildren > 0 ? true : false;
+      }
   }
 }

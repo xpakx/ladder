@@ -16,8 +16,8 @@ export abstract class IndentableService<T extends ParentWithId> {
         let proj = this.list.filter((a) => a.indent == 0);
         var offset = 0;
         for(let project of proj) {
-        project.parentList = [];
-        offset += this.countAllChildren(project, offset) +1;
+            project.parentList = [];
+            offset += this.countAllChildren(project, offset) +1;
         }
     }
     

@@ -9,8 +9,6 @@ import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-
 @Service
 @AllArgsConstructor
 public class MainService {

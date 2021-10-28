@@ -7,4 +7,5 @@ export interface Task {
     dailyViewOrder: number
     due: Date;
     priority: number;
+    modifiedAt: Date;
 }

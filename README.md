@@ -31,8 +31,8 @@ A clone of the Todoist web-app written in Java + Spring (backend) and Angular (f
 	- [x] Due dates
 	- [x] Priorities
 	- [x] Duplicating tasks
+	- [x] Detailed task view
 	- [ ] Enhance inline task editor with NLP
-	- [ ] Detailed task view
 - [x] Labels
 	- [x] Displaying label list
 	- [x] Creating labels
@@ -42,8 +42,10 @@ A clone of the Todoist web-app written in Java + Spring (backend) and Angular (f
 	- [x] Re-ordering labels with drag'n'drop
 	- [x] Viewing label' tasks
 	- [x] Assigning labels to tasks
-- [ ] Filters
 - [ ] Synchronization
+	- [x] Synchronizing data between clients
+	- [ ] Offline changes
+- [ ] Filters
 - [ ] Shared projects
 - [ ] Habits
 - [ ] Gamification
