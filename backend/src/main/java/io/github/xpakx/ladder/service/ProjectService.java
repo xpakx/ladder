@@ -622,10 +622,10 @@ public class ProjectService {
         Project projectToMove = projectRepository.findByIdAndOwnerId(projectToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent project!"));
         Optional<Project> parentProject = findIdFromIdRequest(request);
+        incrementGeneralOrderOfAllChildren(request, userId);
         projectToMove.setParent(parentProject.orElse(null));
         projectToMove.setGeneralOrder(1);
         projectToMove.setModifiedAt(LocalDateTime.now());
-        incrementGeneralOrderOfAllChildren(request, userId);
         return projectRepository.save(projectToMove);
     }
 
