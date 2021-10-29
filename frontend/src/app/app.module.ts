@@ -66,7 +66,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:8080', '192.168.1.204:8080'],
+        allowedDomains: ['localhost:8080', '192.168.50.118:8080'],
       }
     }),
     FormsModule,
