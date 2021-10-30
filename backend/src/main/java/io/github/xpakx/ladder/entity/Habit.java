@@ -19,9 +19,11 @@ public class Habit {
     private Integer id;
 
     private String title;
+    private String description;
     private LocalDateTime modifiedAt;
 
     private Integer priority;
+    private Integer generalOrder;
     private boolean positive;
 
     @JsonIgnore
