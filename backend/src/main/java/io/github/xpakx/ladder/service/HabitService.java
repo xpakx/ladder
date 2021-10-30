@@ -12,6 +12,7 @@ import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -49,5 +50,10 @@ public class HabitService {
             return Optional.empty();
         }
         return Optional.of(projectRepository.getById(projectId));
+    }
+
+    @Transactional
+    public void deleteHabit(Integer habitId, Integer userId) {
+        habitRepository.deleteByIdAndOwnerId(habitId, userId);
     }
 }

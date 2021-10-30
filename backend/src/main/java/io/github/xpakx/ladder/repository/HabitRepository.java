@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface HabitRepository extends JpaRepository<Habit, Integer> {
     @Query("SELECT coalesce(max(h.generalOrder), 0) FROM Habit h WHERE h.owner.id = :ownerId")
     Integer getMaxOrderByOwnerId(Integer userId);
+
+    void deleteByIdAndOwnerId(Integer id, Integer ownerId);
 }

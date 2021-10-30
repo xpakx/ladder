@@ -22,4 +22,11 @@ public class HabitController {
     public ResponseEntity<Habit> addHabitToProject(@RequestBody HabitRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(habitService.addHabit(request, userId, projectId), HttpStatus.CREATED);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @DeleteMapping("/habits/{habitId}")
+    public ResponseEntity<?> deleteLabel(@PathVariable Integer habitId, @PathVariable Integer userId) {
+        habitService.deleteHabit(habitId, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
