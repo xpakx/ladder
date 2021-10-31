@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Habit;
+import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.AddTaskRequest;
 import io.github.xpakx.ladder.entity.dto.HabitRequest;
@@ -28,5 +29,11 @@ public class HabitController {
     public ResponseEntity<?> deleteLabel(@PathVariable Integer habitId, @PathVariable Integer userId) {
         habitService.deleteHabit(habitId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{habitId}/move/asFirst")
+    public ResponseEntity<Habit> moveHabitAsFirst(@PathVariable Integer userId, @PathVariable Integer habitId) {
+        return  new ResponseEntity<>(habitService.moveHabitAsFirst(userId, habitId), HttpStatus.OK);
     }
 }

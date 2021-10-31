@@ -56,4 +56,16 @@ public class HabitService {
     public void deleteHabit(Integer habitId, Integer userId) {
         habitRepository.deleteByIdAndOwnerId(habitId, userId);
     }
+
+    public Habit moveHabitAsFirst(Integer userId, Integer habitToMoveId) {
+        Habit habitToMove = habitRepository.findByIdAndOwnerId(habitToMoveId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent habit!"));
+        habitRepository.incrementGeneralOrderByOwnerId(
+                userId,
+                LocalDateTime.now()
+        );
+        habitToMove.setGeneralOrder(1);
+        habitToMove.setModifiedAt(LocalDateTime.now());
+        return habitRepository.save(habitToMove);
+    }
 }

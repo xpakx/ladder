@@ -2,8 +2,13 @@ package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Habit;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface HabitRepository extends JpaRepository<Habit, Integer> {
@@ -11,4 +16,11 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
     Integer getMaxOrderByOwnerId(Integer userId);
 
     void deleteByIdAndOwnerId(Integer id, Integer ownerId);
+
+    @Modifying
+    @Transactional
+    @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId")
+    void incrementGeneralOrderByOwnerId(Integer ownerId, LocalDateTime modifiedAt);
+
+    Optional<Habit> findByIdAndOwnerId(Integer id, Integer ownerId);
 }
