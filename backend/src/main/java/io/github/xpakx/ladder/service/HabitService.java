@@ -1,10 +1,9 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Habit;
-import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.HabitRequest;
-import io.github.xpakx.ladder.entity.dto.LabelRequest;
+import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.HabitCompletionRepository;
 import io.github.xpakx.ladder.repository.HabitRepository;
@@ -68,4 +67,27 @@ public class HabitService {
         habitToMove.setModifiedAt(LocalDateTime.now());
         return habitRepository.save(habitToMove);
     }
+
+    public Habit moveHabitAfter(IdRequest request, Integer userId, Integer habitToMoveId) {
+        Habit habitToMove = habitRepository.findByIdAndOwnerId(habitToMoveId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent habit!"));
+        Habit afterHabit = findIdFromIdRequest(request);
+        habitRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
+                userId,
+                afterHabit.getGeneralOrder(),
+                LocalDateTime.now()
+        );
+        habitToMove.setGeneralOrder(afterHabit.getGeneralOrder() + 1);
+        habitToMove.setModifiedAt(LocalDateTime.now());
+        return habitRepository.save(habitToMove);
+    }
+
+    private Habit findIdFromIdRequest(IdRequest request) {
+        return hasId(request) ? habitRepository.findById(request.getId()).orElse(null) : null;
+    }
+
+    private boolean hasId(IdRequest request) {
+        return request.getId() != null;
+    }
+
 }

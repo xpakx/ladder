@@ -5,6 +5,7 @@ import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.AddTaskRequest;
 import io.github.xpakx.ladder.entity.dto.HabitRequest;
+import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.service.HabitService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,8 +33,15 @@ public class HabitController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{habitId}/move/asFirst")
+    @PutMapping("/habits/{habitId}/move/asFirst")
     public ResponseEntity<Habit> moveHabitAsFirst(@PathVariable Integer userId, @PathVariable Integer habitId) {
         return  new ResponseEntity<>(habitService.moveHabitAsFirst(userId, habitId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/habits/{habitId}/move/after")
+    public ResponseEntity<Habit> moveLabelAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
+                                                @PathVariable Integer habitId) {
+        return new ResponseEntity<>(habitService.moveHabitAfter(request, userId, habitId), HttpStatus.OK);
     }
 }

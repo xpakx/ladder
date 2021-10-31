@@ -23,4 +23,10 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
     void incrementGeneralOrderByOwnerId(Integer ownerId, LocalDateTime modifiedAt);
 
     Optional<Habit> findByIdAndOwnerId(Integer id, Integer ownerId);
+
+    @Modifying
+    @Transactional
+    @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId AND h.generalOrder > :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(Integer ownerId, Integer generalOrder, LocalDateTime modifiedAt);
+
 }
