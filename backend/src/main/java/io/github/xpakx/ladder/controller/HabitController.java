@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Habit;
+import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.HabitService;
 import lombok.AllArgsConstructor;
@@ -51,5 +52,11 @@ public class HabitController {
     @GetMapping("/habits/{habitId}")
     public ResponseEntity<HabitDetails> getTask(@PathVariable Integer habitId, @PathVariable Integer userId) {
         return new ResponseEntity<>(habitService.getHabitById(habitId, userId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{habitId}")
+    public ResponseEntity<Habit> updateHabit(@RequestBody HabitRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(habitService.updateHabit(request, habitId, userId), HttpStatus.OK);
     }
 }

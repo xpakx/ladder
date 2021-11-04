@@ -1,20 +1,21 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Habit;
+import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
-import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
-import io.github.xpakx.ladder.repository.HabitCompletionRepository;
-import io.github.xpakx.ladder.repository.HabitRepository;
-import io.github.xpakx.ladder.repository.ProjectRepository;
-import io.github.xpakx.ladder.repository.UserAccountRepository;
+import io.github.xpakx.ladder.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +24,7 @@ public class HabitService {
     private final HabitCompletionRepository habitCompletionRepository;
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final LabelRepository labelRepository;
 
     public Habit addHabit(HabitRequest request, Integer userId, Integer projectId) {
         Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
@@ -101,5 +103,42 @@ public class HabitService {
     public HabitDetails getHabitById(Integer habitId, Integer userId) {
         return habitRepository.findProjectedByIdAndOwnerId(habitId, userId, HabitDetails.class)
                 .orElseThrow(() -> new NotFoundException("No such habit!"));
+    }
+
+    public Habit updateHabit(HabitRequest request, Integer habitId, Integer userId) {
+        Project project = request.getProjectId() != null ? projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+        Habit habitToUpdate = habitRepository.findByIdAndOwnerId(habitId, userId)
+                .orElseThrow(() -> new NotFoundException("No such task!"));
+        habitToUpdate.setTitle(request.getTitle());
+        habitToUpdate.setDescription(request.getDescription());
+        habitToUpdate.setGeneralOrder(request.getGeneralOrder());
+        //habitToUpdate.setParent(parent);
+        habitToUpdate.setProject(project);
+        habitToUpdate.setPriority(request.getPriority());
+        habitToUpdate.setPriority(request.getPriority());
+        habitToUpdate.setOwner(userRepository.getById(userId));
+        habitToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
+        habitToUpdate.setModifiedAt(LocalDateTime.now());
+        return habitRepository.save(habitToUpdate);
+    }
+
+    private Set<Label> transformLabelIdsToLabelReferences(List<Integer> labelIds, Integer userId) {
+        if(labelsWithDiffOwner(labelIds, userId)) {
+            throw new NotFoundException("Cannot add labels you don't own!");
+        }
+        return labelIds != null ? labelIds.stream()
+                .map(labelRepository::getById)
+                .collect(Collectors.toSet()) : new HashSet<>();
+    }
+
+    private boolean labelsWithDiffOwner(List<Integer> labelIds, Integer userId) {
+        if(labelIds == null || labelIds.size() == 0) {
+            return false;
+        }
+        Long labelsWithDifferentOwner = labelRepository.findOwnerIdById(labelIds).stream()
+                .filter((a) -> !a.equals(userId))
+                .count();
+        return !labelsWithDifferentOwner.equals(0L);
     }
 }
