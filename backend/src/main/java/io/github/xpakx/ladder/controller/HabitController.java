@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Habit;
+import io.github.xpakx.ladder.entity.HabitCompletion;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.HabitService;
@@ -58,5 +59,11 @@ public class HabitController {
     @PutMapping("/{habitId}")
     public ResponseEntity<Habit> updateHabit(@RequestBody HabitRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(habitService.updateHabit(request, habitId, userId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/habits/{habitId}/complete")
+    public ResponseEntity<HabitCompletion> completeTask(@RequestBody BooleanRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(habitService.completeHabit(request, habitId, userId), HttpStatus.OK);
     }
 }

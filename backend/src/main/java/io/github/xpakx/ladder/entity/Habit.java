@@ -24,7 +24,8 @@ public class Habit {
 
     private Integer priority;
     private Integer generalOrder;
-    private boolean positive;
+    private boolean allowPositive;
+    private boolean allowNegative;
 
     @JsonIgnore
     @ManyToOne

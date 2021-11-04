@@ -18,6 +18,7 @@ public class HabitCompletion {
     private Integer id;
 
     private LocalDateTime date;
+    private boolean positive;
 
     @JsonIgnore
     @ManyToOne

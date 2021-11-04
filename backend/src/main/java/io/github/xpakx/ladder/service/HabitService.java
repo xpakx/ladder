@@ -1,10 +1,9 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.entity.Habit;
-import io.github.xpakx.ladder.entity.Label;
-import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
+import io.github.xpakx.ladder.error.WrongCompletionTypeException;
 import io.github.xpakx.ladder.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,7 @@ public class HabitService {
                 .description(request.getDescription())
                 .owner(userRepository.getById(userId))
                 .priority(request.getPriority())
-                .positive(request.isPositive())
+                .allowPositive(request.isPositive())
                 .project(project)
                 .modifiedAt(LocalDateTime.now())
                 .build();
@@ -140,5 +139,24 @@ public class HabitService {
                 .filter((a) -> !a.equals(userId))
                 .count();
         return !labelsWithDifferentOwner.equals(0L);
+    }
+
+    public HabitCompletion completeHabit(BooleanRequest request, Integer taskId, Integer userId) {
+        Habit habit = habitRepository.findByIdAndOwnerId(taskId, userId)
+                .orElseThrow(() -> new NotFoundException("No habit with id " + taskId));
+        if(isCompletionTypeAllowed(request, habit)) {
+            throw new WrongCompletionTypeException("Wrong type of completion!");
+        }
+        HabitCompletion habitCompletion = HabitCompletion.builder()
+                .habit(habit)
+                .date(LocalDateTime.now())
+                .positive(request.isFlag())
+                .build();
+        return habitCompletionRepository.save(habitCompletion);
+    }
+
+    private boolean isCompletionTypeAllowed(BooleanRequest request, Habit habit) {
+        return (!habit.isAllowNegative() && !request.isFlag()) ||
+                (!habit.isAllowPositive() && request.isFlag());
     }
 }
