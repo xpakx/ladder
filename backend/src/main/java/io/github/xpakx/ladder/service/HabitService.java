@@ -3,9 +3,7 @@ package io.github.xpakx.ladder.service;
 import io.github.xpakx.ladder.entity.Habit;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
-import io.github.xpakx.ladder.entity.dto.HabitRequest;
-import io.github.xpakx.ladder.entity.dto.IdRequest;
-import io.github.xpakx.ladder.entity.dto.PriorityRequest;
+import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.HabitCompletionRepository;
 import io.github.xpakx.ladder.repository.HabitRepository;
@@ -98,5 +96,10 @@ public class HabitService {
         habitToUpdate.setPriority(request.getPriority());
         habitToUpdate.setModifiedAt(LocalDateTime.now());
         return habitRepository.save(habitToUpdate);
+    }
+
+    public HabitDetails getHabitById(Integer habitId, Integer userId) {
+        return habitRepository.findProjectedByIdAndOwnerId(habitId, userId, HabitDetails.class)
+                .orElseThrow(() -> new NotFoundException("No such habit!"));
     }
 }
