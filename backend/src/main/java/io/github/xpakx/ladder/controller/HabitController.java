@@ -21,7 +21,7 @@ public class HabitController {
     private final HabitService habitService;
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("projects/{projectId}/tasks")
+    @PostMapping("projects/{projectId}/habits")
     public ResponseEntity<Habit> addHabitToProject(@RequestBody HabitRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(habitService.addHabit(request, userId, projectId), HttpStatus.CREATED);
     }
