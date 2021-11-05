@@ -116,7 +116,8 @@ public class HabitService {
         //habitToUpdate.setParent(parent);
         habitToUpdate.setProject(project);
         habitToUpdate.setPriority(request.getPriority());
-        habitToUpdate.setPriority(request.getPriority());
+        habitToUpdate.setAllowNegative(request.isAllowNegative());
+        habitToUpdate.setAllowPositive(request.isAllowPositive());
         habitToUpdate.setOwner(userRepository.getById(userId));
         habitToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
         habitToUpdate.setModifiedAt(LocalDateTime.now());
