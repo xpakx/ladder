@@ -56,7 +56,7 @@ public class HabitController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{habitId}")
+    @PutMapping("/habits/{habitId}")
     public ResponseEntity<Habit> updateHabit(@RequestBody HabitRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(habitService.updateHabit(request, habitId, userId), HttpStatus.OK);
     }

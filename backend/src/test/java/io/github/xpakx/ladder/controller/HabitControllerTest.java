@@ -20,8 +20,8 @@ import java.util.HashSet;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class HabitControllerTest {
@@ -117,6 +117,51 @@ class HabitControllerTest {
                 .post(baseUrl + "/{userId}/projects/{projectId}/habits", userId, projectId)
         .then()
                 .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()));
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateHabitIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateHabitIfLabelNotFound() {
+        HabitRequest request = getValidAddHabitRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldUpdateHabit() {
+        Integer habitId = addHabitAndReturnId();
+        HabitRequest request = getValidAddHabitRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}", userId, habitId)
+        .then()
+                .statusCode(OK.value())
                 .body("title", equalTo(request.getTitle()));
     }
 }
