@@ -38,7 +38,7 @@ public class HabitController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/habits/{habitId}/move/after")
-    public ResponseEntity<Habit> moveLabelAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
+    public ResponseEntity<Habit> moveHabitAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
                                                 @PathVariable Integer habitId) {
         return new ResponseEntity<>(habitService.moveHabitAfter(request, userId, habitId), HttpStatus.OK);
     }
@@ -51,7 +51,7 @@ public class HabitController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/habits/{habitId}")
-    public ResponseEntity<HabitDetails> getTask(@PathVariable Integer habitId, @PathVariable Integer userId) {
+    public ResponseEntity<HabitDetails> getHabit(@PathVariable Integer habitId, @PathVariable Integer userId) {
         return new ResponseEntity<>(habitService.getHabitById(habitId, userId), HttpStatus.OK);
     }
 
