@@ -1,0 +1,122 @@
+package io.github.xpakx.ladder.controller;
+
+import io.github.xpakx.ladder.entity.Habit;
+import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.HabitRequest;
+import io.github.xpakx.ladder.entity.dto.LabelRequest;
+import io.github.xpakx.ladder.repository.*;
+import io.github.xpakx.ladder.security.JwtTokenUtil;
+import io.github.xpakx.ladder.service.UserService;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+
+import java.util.HashSet;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class HabitControllerTest {
+    @LocalServerPort
+    private int port;
+
+    private String baseUrl;
+    private Integer userId;
+
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    UserService userService;
+    @Autowired
+    UserAccountRepository userRepository;
+    @Autowired
+    HabitRepository habitRepository;
+    @Autowired
+    HabitCompletionRepository habitCompletionRepository;
+    @Autowired
+    ProjectRepository projectRepository;
+
+    @BeforeEach
+    void setUp() {
+        baseUrl = "http://localhost".concat(":").concat(port + "");
+        UserAccount user = UserAccount.builder()
+                .username("user1")
+                .password("password")
+                .roles(new HashSet<>())
+                .build();
+        user = userRepository.save(user);
+        this.userId = user.getId();
+    }
+
+    @AfterEach
+    void tearDown() {
+        habitCompletionRepository.deleteAll();
+        habitRepository.deleteAll();
+        projectRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
+    private String tokenFor(String username) {
+        return jwtTokenUtil.generateToken(userService.loadUserToLogin(username));
+    }
+
+    private Integer addHabitAndReturnId() {
+        Habit habit = Habit.builder()
+                .owner(userRepository.getById(userId))
+                .title("Test Habit")
+                .build();
+        return habitRepository.save(habit).getId();
+    }
+
+    private Integer addProjectAndReturnId() {
+        Project project = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Test Project")
+                .build();
+        return projectRepository.save(project).getId();
+    }
+
+    @Test
+    void shouldRespondWith401ToAddHabitIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/habits", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    private HabitRequest getValidAddHabitRequest() {
+        HabitRequest request = new HabitRequest();
+        request.setTitle("Added Habit");
+        return request;
+    }
+
+    @Test
+    void shouldAddHabit() {
+        HabitRequest request = getValidAddHabitRequest();
+        Integer projectId = addProjectAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/habits", userId, projectId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()));
+    }
+}
