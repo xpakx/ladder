@@ -39,7 +39,8 @@ public class HabitService {
                 .description(request.getDescription())
                 .owner(userRepository.getById(userId))
                 .priority(request.getPriority())
-                .allowPositive(request.isPositive())
+                .allowPositive(request.isAllowPositive())
+                .allowNegative(request.isAllowNegative())
                 .project(project)
                 .modifiedAt(LocalDateTime.now())
                 .build();
