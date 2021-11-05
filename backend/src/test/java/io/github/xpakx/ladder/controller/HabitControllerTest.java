@@ -164,4 +164,29 @@ class HabitControllerTest {
                 .statusCode(OK.value())
                 .body("title", equalTo(request.getTitle()));
     }
+
+    @Test
+    void shouldRespondWith401ToDeleteHabitRequestIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .delete(baseUrl + "/{userId}/habits/{habitId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldDeleteHabit() {
+        Integer habitId = addHabitAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .delete(baseUrl + "/{userId}/habits/{habitId}", userId, habitId)
+        .then()
+                .statusCode(OK.value());
+    }
 }
