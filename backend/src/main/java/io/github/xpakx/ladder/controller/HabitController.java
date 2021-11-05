@@ -63,7 +63,7 @@ public class HabitController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/habits/{habitId}/complete")
-    public ResponseEntity<HabitCompletion> completeTask(@RequestBody BooleanRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
+    public ResponseEntity<HabitCompletion> completeHabit(@RequestBody BooleanRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(habitService.completeHabit(request, habitId, userId), HttpStatus.OK);
     }
 }

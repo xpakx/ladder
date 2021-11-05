@@ -6,6 +6,7 @@ import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.HabitRequest;
 import io.github.xpakx.ladder.entity.dto.IdRequest;
+import io.github.xpakx.ladder.entity.dto.PriorityRequest;
 import io.github.xpakx.ladder.repository.*;
 import io.github.xpakx.ladder.security.JwtTokenUtil;
 import io.github.xpakx.ladder.service.UserService;
@@ -311,5 +312,56 @@ class HabitControllerTest {
                 hasProperty("title", is("Habit 3")),
                 hasProperty("generalOrder", is(2))
         )));
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateHabitPriorityIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/priority", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    private PriorityRequest getValidPriorityRequest() {
+        PriorityRequest request = new PriorityRequest();
+        request.setPriority(3);
+        return request;
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateHabitPriorityIfTaskNotFound() {
+        PriorityRequest request = getValidPriorityRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/priority", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldUpdateHabitPriority() {
+        Integer habitId = addHabitAndReturnId();
+        PriorityRequest request = getValidPriorityRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/priority", userId, habitId)
+        .then()
+                .statusCode(OK.value())
+                .body("priority", equalTo(request.getPriority()));
     }
 }
