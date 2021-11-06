@@ -1,7 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Habit;
-import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.HabitRequest;
