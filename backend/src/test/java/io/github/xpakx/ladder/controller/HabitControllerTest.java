@@ -364,4 +364,44 @@ class HabitControllerTest {
                 .statusCode(OK.value())
                 .body("priority", equalTo(request.getPriority()));
     }
+
+    @Test
+    void shouldRespondWith401ToGetHabitDetailsIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .get(baseUrl + "/{userId}/habits/{habitId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToGetHabitDetailsIfTaskNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/habits/{habitId}", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldRespondWithHabitDetails() {
+        Integer habitId = addHabitAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/habits/{habitId}", userId, habitId)
+        .then()
+                .statusCode(OK.value())
+                .body("id", equalTo(habitId))
+                .body("title", equalTo("Test Habit"));
+    }
 }
