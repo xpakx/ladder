@@ -146,7 +146,7 @@ public class HabitService {
     public HabitCompletion completeHabit(BooleanRequest request, Integer taskId, Integer userId) {
         Habit habit = habitRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No habit with id " + taskId));
-        if(isCompletionTypeAllowed(request, habit)) {
+        if(!isCompletionTypeAllowed(request, habit)) {
             throw new WrongCompletionTypeException("Wrong type of completion!");
         }
         HabitCompletion habitCompletion = HabitCompletion.builder()
