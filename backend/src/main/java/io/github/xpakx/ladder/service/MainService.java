@@ -40,6 +40,9 @@ public class MainService {
         result.setLabels(
                 labelRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), LabelDetails.class)
         );
+        result.setHabits(
+                habitRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), HabitDetails.class)
+        );
 
         return result;
     }

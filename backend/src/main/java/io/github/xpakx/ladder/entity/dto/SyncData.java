@@ -11,4 +11,5 @@ public class SyncData {
     private List<ProjectDetails> projects;
     private List<TaskDetails> tasks;
     private List<LabelDetails> labels;
+    private List<HabitDetails> habits;
 }
