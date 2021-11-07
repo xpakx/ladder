@@ -450,7 +450,7 @@ class HabitControllerTest {
 
     @Test
     void shouldCompleteHabit() {
-        Integer habitId = addHabitAndReturnId();
+        Integer habitId = addPositiveHabitAndReturnId();
         BooleanRequest request = getBooleanRequest(true);
         given()
                 .log()
@@ -466,5 +466,25 @@ class HabitControllerTest {
 
         Integer completions = habitCompletionRepository.findAll().size();
         assertThat(completions, equalTo(1));
+    }
+
+    @Test
+    void shouldNotCompletePositiveHabitIfRequestIsNegative() {
+        Integer habitId = addPositiveHabitAndReturnId();
+        BooleanRequest request = getBooleanRequest(false);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/complete", userId, habitId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+
+        Integer completions = habitCompletionRepository.findAll().size();
+        assertThat(completions, equalTo(0));
     }
 }
