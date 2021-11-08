@@ -9,7 +9,12 @@ import { MovableTreeService } from './movable-tree-service';
 export class HabitTreeService implements MovableTreeService<Habit> {
   public habits: HabitDetails[] = [];
 
-  constructor() { }
+  constructor() {
+    this.habits = [
+      {id: 1, title: "test", description: 'aaa', generalOrder: 1},
+      {id: 2, title: "test2", description: '', generalOrder: 2}
+    ]
+   }
 
   load(habits: HabitDetails[] = []) {
     this.habits = habits;
