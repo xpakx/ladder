@@ -17,13 +17,22 @@
                                 <i class="fa fa-ellipsis-v"></i>
                             </span>
                         </div>
-                        <button type="button" role="checkbox" class="task_checkbox" >
-                            <div class="task_checkbox_circle">
-                                <span class="icon_check">
-                                    <i class="fa fa-check"></i>
-                                </span>
-                            </div>
-                        </button>
+                        <div class="habit_buttons">
+                            <button type="button" role="checkbox" class="habit_button positive" *ngIf="task.allowPositive">
+                                <div class="habit_circle">
+                                    <span class="icon_check">
+                                        <i class="fa fa-plus"></i>
+                                    </span>
+                                </div>
+                            </button>
+                            <button type="button" role="checkbox" class="habit_button negative"  *ngIf="task.allowNegative">
+                                <div class="habit_circle">
+                                    <span class="icon_check">
+                                        <i class="fa fa-minus"></i>
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
                         <div class="task_list_item_content">
                             <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
                                 <div class="markdown_content task_content">

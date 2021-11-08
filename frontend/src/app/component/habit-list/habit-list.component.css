@@ -1,1 +1,57 @@
-@import "../css/project-view.css"
+@import "../css/project-view.css";
+
+.habit_button {
+    height: 18px;
+    width: 18px;
+    border: 1px solid #dcdcdc;
+    border-radius: 50%;
+    transition: .15s cubic-bezier(.4,0,1,1);
+    padding: 0;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.habit_button.positive {
+    background-color:rgb(210, 240, 202);
+    border-color: green;
+    color: green;
+}
+
+.habit_button.negative {
+    background-color: rgba(209,69,59,.1);
+    border-color: #d1453b;
+    color: #d1453b;
+}
+
+.habit_button:hover {
+    background-color: #8c91962d;
+}
+
+.task_list_item.completed .habit_button:hover {
+    background-color: grey;
+}
+
+
+.task_list_item.completed  .habit_button .habit_circle {
+    opacity: 1;
+    color: #fff;
+}
+
+.habit_button:hover .habit_circle {
+    opacity: 1;
+}
+
+.icon_habit {
+    display: inline-flex;
+    justify-content: center;
+    vertical-align: 5px;
+}
+
+.icon_habit i {
+    font-size: 12px;
+}
+
+.habit_buttons {
+    display: flex;
+    flex-direction: column;
+}

@@ -6,4 +6,6 @@ export interface HabitDetails {
     id: number;
     generalOrder: number;
     project: ProjectWithNameAndId | null;
+    allowPositive: boolean;
+    allowNegative: boolean;
 }
