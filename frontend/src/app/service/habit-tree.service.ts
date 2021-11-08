@@ -11,8 +11,8 @@ export class HabitTreeService implements MovableTreeService<Habit> {
 
   constructor() {
     this.habits = [
-      {id: 1, title: "test", description: 'aaa', generalOrder: 1},
-      {id: 2, title: "test2", description: '', generalOrder: 2}
+      {id: 1, title: "test", description: 'aaa', generalOrder: 1, project: {id: 67, name: ''}},
+      {id: 2, title: "test2", description: '', generalOrder: 2, project: {id: 67, name: ''}}
     ]
    }
 
@@ -27,6 +27,12 @@ export class HabitTreeService implements MovableTreeService<Habit> {
 
   getHabits(): HabitDetails[] {
     return this.habits;
+  }
+
+  getHabitsByProject(projectId: number): HabitDetails[] {
+    return this.habits.filter((a) => 
+      a.project && a.project.id == projectId
+    );
   }
 
   getById(id: number): HabitDetails | undefined {

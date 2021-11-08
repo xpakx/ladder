@@ -1,7 +1,8 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, Input, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Habit } from 'src/app/entity/habit';
 import { HabitDetails } from 'src/app/entity/habit-details';
+import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { DeleteService } from 'src/app/service/delete.service';
 import { HabitTreeService } from 'src/app/service/habit-tree.service';
 import { HabitService } from 'src/app/service/habit.service';
@@ -16,6 +17,7 @@ import { DraggableComponent } from '../abstract/draggable-component';
 export class HabitListComponent 
 extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
  implements OnInit {
+  @Input("project") project: ProjectTreeElem | undefined;
 
   constructor(public tree : TreeService, private router: Router,
     private renderer: Renderer2, private habitService: HabitService, 
@@ -24,6 +26,14 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
      }
 
   ngOnInit(): void {
+  }
+
+  get habits(): HabitDetails[] {
+    return this.project ? this.treeService.getHabitsByProject(this.project.id) : [];
+  }
+
+  protected getElems(): HabitDetails[] {
+    return this.habits;
   }
 
 }

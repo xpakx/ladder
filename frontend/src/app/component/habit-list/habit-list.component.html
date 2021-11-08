@@ -3,7 +3,7 @@
         <li *ngIf="draggedId" [dndDropzone]="['habit']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
 
         </li>
-        <ng-container *ngFor="let task of treeService.getHabits()">
+        <ng-container *ngFor="let task of habits">
             <!--<li *ngIf="shouldAddTaskAboveById(task.id)" class="task_list_item">
                 <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
             </li>-->

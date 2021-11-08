@@ -37,7 +37,7 @@
 
 
     <app-task-list [project]='project' *ngIf="view == 0"></app-task-list>
-    <app-habit-list *ngIf="view == 1"></app-habit-list>
+    <app-habit-list [project]='project' *ngIf="view == 1"></app-habit-list>
 
 
 </div>
