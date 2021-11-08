@@ -3,12 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Habit } from '../entity/habit';
+import { IdRequest } from '../entity/id-request';
 import { PriorityRequest } from '../entity/priority-request';
+import { MovableService } from './movable-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HabitService {
+export class HabitService implements MovableService<Habit> {
   private apiServerUrl = environment.apiServerUrl;
 
   constructor(private http: HttpClient) { }
@@ -25,5 +27,15 @@ export class HabitService {
   updateHabitPriority(request: PriorityRequest, habitId: number): Observable<Habit> {
     let userId  = this.getUserId();
     return this.http.put<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/priority`, request);
+  }
+
+  public moveAfter(request: IdRequest, habitId: number):  Observable<Habit> {
+    let userId  = this.getUserId();
+    return this.http.put<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/move/after`, request);
+  }
+
+  public moveAsFirst(habitId: number):  Observable<Habit> {
+    let userId  = this.getUserId();
+    return this.http.put<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/move/asFirst`, null);
   }
 }
