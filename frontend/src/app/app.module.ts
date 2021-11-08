@@ -29,6 +29,7 @@ import { LabelComponent } from './component/label/label.component';
 import { TaskViewComponent } from './component/task-view/task-view.component';
 import { SubtaskListComponent } from './component/subtask-list/subtask-list.component';
 import { CommentListComponent } from './component/comment-list/comment-list.component';
+import { HabitListComponent } from './component/habit-list/habit-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -58,7 +59,8 @@ export function tokenGetter() {
     LabelComponent,
     TaskViewComponent,
     SubtaskListComponent,
-    CommentListComponent
+    CommentListComponent,
+    HabitListComponent
   ],
   imports: [
     BrowserModule,

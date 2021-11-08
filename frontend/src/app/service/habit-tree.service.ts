@@ -20,6 +20,10 @@ export class HabitTreeService implements MovableTreeService<Habit> {
     this.habits.sort((a, b) => a.generalOrder - b.generalOrder);
   }
 
+  getHabits(): HabitDetails[] {
+    return this.habits;
+  }
+
   getById(id: number): HabitDetails | undefined {
     return this.habits.find((a) => a.id == id);
   }

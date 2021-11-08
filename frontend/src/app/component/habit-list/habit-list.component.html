@@ -1,0 +1,91 @@
+<div class="tasks_content">
+    <ul class="task_list_items">
+        <li *ngIf="draggedId" [dndDropzone]="['habit']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
+
+        </li>
+        <ng-container *ngFor="let task of treeService.getHabits()">
+            <!--<li *ngIf="shouldAddTaskAboveById(task.id)" class="task_list_item">
+                <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+            </li>-->
+            <li class="task_list_item" [id] = "'task-' + task.id" 
+                [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="habit">
+                <div class="task_list_item_main">
+                    <div role="button" tabindex="0" class="task_list_item_body">
+                        <div class="task_list_item__overflow_actions">
+                            <span class="handle" dndHandle>
+                                <i class="fa fa-ellipsis-v"></i>
+                                <i class="fa fa-ellipsis-v"></i>
+                            </span>
+                        </div>
+                        <button type="button" role="checkbox" class="task_checkbox" >
+                            <div class="task_checkbox_circle">
+                                <span class="icon_check">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </div>
+                        </button>
+                        <div class="task_list_item_content">
+                            <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
+                                <div class="markdown_content task_content">
+                                    {{task.title}}
+                                </div>
+                                <div class="markdown_content task_description" *ngIf="task.description">
+                                    {{task.description}} 
+                                </div>
+                            </div>
+                            <div class="task_list_item__info_tags" data-layout="list">
+                                <!--<span *ngFor="let label of getTaskLabels(task)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
+                                    <span>{{label.name}}</span>
+                                </span>-->
+                                
+                                 <!--<span class="task_list_item__project" *ngIf="task.project">
+                                   <a [href]="'/project/' + task.project.id + '#task-' + task.id">
+                                        <span class="task_list_item__project__label">{{task.project.name}}</span>
+                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                    </a>
+                                </span>-->
+                            </div>
+                        </div>
+                        <div class="task_list_item__actions task_list_item__actions--active">
+                            <button type="button" >
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" >
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                            <a class="task_list_item__comments_link">
+                                <i class="fa fa-comment-o"></i>
+                            </a>
+                            <button type="button" >
+                                <i class="fa fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--<li *ngIf="shouldEditTaskById(task.id)" class="task_list_item">
+                <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+            </li>-->
+            <li *ngIf="draggedId" class="drag_list_item" [dndDropzone]="['habit']"> <!-- [dndDisableDropIf]="true">-->
+                
+                <span [dndDropzone]="['task']" (dndDrop)="onDrop($event, task)" class="drag-zone last-drag-zone"></span>
+            </li>
+            <!--<li *ngIf="shouldAddTaskBelowById(task.id)" class="task_list_item">
+                <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
+                <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+            </li>-->
+        </ng-container>
+
+        <li>
+            <button type="button" class="plus_add_button" >
+                <span class="icon_add">
+                    <i class="fa fa-plus"></i>
+                </span>
+                Add task
+            </button>
+
+            <!--<app-task-form *ngIf="showAddTaskForm" [project]="project" (closeEvent)="closeAddTaskForm()"></app-task-form>-->
+
+        </li>
+    </ul>
+</div>
