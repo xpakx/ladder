@@ -22,11 +22,10 @@ import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
 export class ProjectComponent implements OnInit {
   public invalid: boolean = false;
   public message: string = '';
-  todayDate: Date | undefined;
   project: ProjectTreeElem | undefined;
-  showAddTaskForm: boolean = false;
   id!: number;
-  taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
+
+  public view: number = 0;
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService,  private redirService: RedirectionService) {  }
@@ -45,5 +44,9 @@ export class ProjectComponent implements OnInit {
   loadProject(id: number) {
     this.id = id;
     this.project = this.tree.getProjectById(id);
+  }
+
+  chooseTab(num: number) {
+    this.view = num;
   }
 }

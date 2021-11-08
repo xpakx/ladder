@@ -26,7 +26,18 @@
         </div>
     </header>
 
-    <app-task-list [project]='project'></app-task-list>
+    <div class="tablist">
+        <button class="tablist_elem" [class.selected]="view == 0" (click)="chooseTab(0)">
+          Tasks
+        </button>
+        <button class="tablist_elem" [class.selected]="view == 1" (click)="chooseTab(1)">
+          Habits
+        </button>
+      </div>
+
+
+    <app-task-list [project]='project' *ngIf="view == 0"></app-task-list>
+    <app-habit-list *ngIf="view == 1"></app-habit-list>
 
 
 </div>
