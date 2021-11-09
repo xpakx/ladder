@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HabitDetails } from '../entity/habit-details';
 import { LabelDetails } from '../entity/label-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { TaskTreeElem } from '../entity/task-tree-elem';
@@ -86,6 +87,10 @@ export class DeleteService {
       
       }
     );
+  }
+
+  openModalForHabit(habit: HabitDetails) {
+    
   }
 
   closeModal() {

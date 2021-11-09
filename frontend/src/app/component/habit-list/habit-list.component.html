@@ -4,9 +4,9 @@
 
         </li>
         <ng-container *ngFor="let habit of habits">
-            <!--<li *ngIf="shouldAddTaskAboveById(task.id)" class="task_list_item">
-                <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
-            </li>-->
+            <li *ngIf="shouldAddHabitAboveById(habit.id)" class="task_list_item">
+                <app-habit-form [project]="project" [data]="habitData" (closeEvent)="closeEditHabitForm()" class="task_list_item_main"></app-habit-form>
+            </li>
             <li *ngIf="!shouldEditHabitById(habit.id)" class="task_list_item" [id] = "'habit-' + habit.id" 
                 [dndDraggable]="habit.id" (dndStart)="onDragStart(habit.id)" (dndEnd)="onDragEnd()" dndType="habit">
                 <div class="task_list_item_main">
@@ -59,13 +59,10 @@
                             <button type="button" (click)="openEditHabitForm(habit)">
                                 <i class="fa fa-edit"></i>
                             </button>
-                            <button type="button" >
-                                <i class="fa fa-calendar"></i>
-                            </button>
                             <a class="task_list_item__comments_link">
                                 <i class="fa fa-comment-o"></i>
                             </a>
-                            <button type="button" >
+                            <button type="button" (click)="openContextHabitMenu($event, habit.id)">
                                 <i class="fa fa-ellipsis-h"></i>
                             </button>
                         </div>
@@ -79,10 +76,9 @@
                 
                 <span [dndDropzone]="['habit']" (dndDrop)="onDrop($event, habit)" class="drag-zone last-drag-zone"></span>
             </li>
-            <!--<li *ngIf="shouldAddTaskBelowById(task.id)" class="task_list_item">
-                <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
-            </li>-->
+            <li *ngIf="shouldAddHabitBelowById(habit.id)" class="task_list_item">
+                <app-habit-form [project]="project" [data]="habitData" (closeEvent)="closeEditHabitForm()" class="task_list_item_main"></app-habit-form>
+            </li>
         </ng-container>
 
         <li>
@@ -97,4 +93,68 @@
 
         </li>
     </ul>
+</div>
+
+
+  
+
+<div class="ist-menu context" [class.hidden-context-menu]="!showContextHabitMenu" [ngStyle]="{'left.px': habitContextMenuX, 'top.px': habitContextMenuY}">
+	<ul class="context-menu-project" #taskContext>
+		<li class="context-menu-project-item">
+			<button (click)="openEditTaskAbove()">
+				<span class="menu_icon">
+					<i class="fa fa-arrow-up"></i>
+				</span>
+				<div class="menu_label">Add task above</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="openEditTaskBelow()">
+				<span class="menu_icon">
+					<i class="fa fa-arrow-down"></i>
+				</span>
+				<div class="menu_label">Add task below</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="openEditTaskFromContextMenu()">
+				<span class="menu_icon">
+					<i class="fa fa-edit"></i>
+				</span>
+				<div class="menu_label">Edit task</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="openSelectProjectModalFormContextMenu()">
+				<span class="menu_icon">
+					<i class="fa fa-arrow-right"></i>
+				</span>
+				<div class="menu_label">Move to project</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="openSelectPriorityModalFormContextMenu()">
+				<span class="menu_icon">
+					<i class="fa fa-flag-o"></i>
+				</span>
+				<div class="menu_label">Priority</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="duplicate()">
+				<span class="menu_icon">
+					<i class="fa fa-clone"></i>
+				</span>
+				<div class="menu_label">Duplicate</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)=askForDelete()>
+				<span class="menu_icon">
+					<i class="fa fa-trash-o"></i>
+				</span>
+				<div class="menu_label">Delete task</div>
+			</button>
+		</li>
+	</ul>
 </div>
