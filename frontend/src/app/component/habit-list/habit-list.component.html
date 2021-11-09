@@ -86,14 +86,14 @@
         </ng-container>
 
         <li>
-            <button type="button" class="plus_add_button" >
+            <button type="button" class="plus_add_button" (click)="openAddHabitForm()">
                 <span class="icon_add">
                     <i class="fa fa-plus"></i>
                 </span>
                 Add habit
             </button>
 
-            <!--<app-task-form *ngIf="showAddTaskForm" [project]="project" (closeEvent)="closeAddTaskForm()"></app-task-form>-->
+            <app-habit-form *ngIf="showAddHabitForm" [project]="project" (closeEvent)="closeAddHabitForm()"></app-habit-form>
 
         </li>
     </ul>

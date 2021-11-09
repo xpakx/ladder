@@ -8,4 +8,5 @@ export interface HabitDetails {
     project: ProjectWithNameAndId | null;
     allowPositive: boolean;
     allowNegative: boolean;
+    modifiedAt: Date;
 }

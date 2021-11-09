@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Habit } from '../entity/habit';
 import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
@@ -10,6 +11,7 @@ import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { UserWithData } from '../entity/user-with-data';
+import { HabitTreeService } from './habit-tree.service';
 import { LabelTreeService } from './label-tree.service';
 import { ProjectTreeService } from './project-tree.service';
 import { TaskTreeService } from './task-tree.service';
@@ -23,7 +25,7 @@ export class TreeService {
   public labelCollapsed: boolean = true;
   
   constructor(private projects: ProjectTreeService, private tasks: TaskTreeService,
-    private labels: LabelTreeService) { }
+    private labels: LabelTreeService, private habits: HabitTreeService) { }
 
   isLoaded(): boolean {
     return this.loaded;
@@ -127,6 +129,11 @@ export class TreeService {
   addNewTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
     let project = projectId ? this.getProjectById(projectId) : undefined;
     this.tasks.addNewTask(response, project, 0, null, this.getLabelsFromIds(labelIds));
+  }
+
+  addNewHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []) {
+    let project = projectId ? this.getProjectById(projectId) : undefined;
+    this.habits.addNewHabit(response, project, this.getLabelsFromIds(labelIds));
   }
 
   private getLabelsFromIds(labelIds: number[]): LabelDetails[] {

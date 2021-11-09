@@ -1,43 +1,39 @@
 import { Injectable } from '@angular/core';
 import { Habit } from '../entity/habit';
 import { HabitDetails } from '../entity/habit-details';
+import { LabelDetails } from '../entity/label-details';
+import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { MovableTreeService } from './movable-tree-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HabitTreeService implements MovableTreeService<Habit> {
-  public habits: HabitDetails[] = [];
+  public list: HabitDetails[] = [];
 
-  constructor() {
-    this.habits = [
-      {id: 1, title: "Positive habit", description: 'aaa', generalOrder: 1, project: {id: 67, name: ''}, allowNegative: false, allowPositive: true},
-      {id: 2, title: "Uberhabit", description: '', generalOrder: 2, project: {id: 67, name: ''}, allowNegative: true, allowPositive: true},
-      {id: 3, title: "Negative habit", description: '', generalOrder: 3, project: {id: 67, name: ''}, allowNegative: true, allowPositive: false}
-    ]
-   }
+  constructor() {}
 
   load(habits: HabitDetails[] = []) {
-    this.habits = habits;
+    this.list = habits;
     this.sort();
   }
 
   sort() {
-    this.habits.sort((a, b) => a.generalOrder - b.generalOrder);
+    this.list.sort((a, b) => a.generalOrder - b.generalOrder);
   }
 
   getHabits(): HabitDetails[] {
-    return this.habits;
+    return this.list;
   }
 
   getHabitsByProject(projectId: number): HabitDetails[] {
-    return this.habits.filter((a) => 
+    return this.list.filter((a) => 
       a.project && a.project.id == projectId
     );
   }
 
   getById(id: number): HabitDetails | undefined {
-    return this.habits.find((a) => a.id == id);
+    return this.list.find((a) => a.id == id);
   }
 
   moveAfter(habit: Habit, afterId: number) {
@@ -45,7 +41,7 @@ export class HabitTreeService implements MovableTreeService<Habit> {
     let movedLabel = this.getById(habit.id);
     if(afterLabel && movedLabel) {
       let lbl : HabitDetails = afterLabel;
-      let labels = this.habits
+      let labels = this.list
         .filter((a) => a.generalOrder > lbl.generalOrder);
         for(let lab of labels) {
           lab.generalOrder = lab.generalOrder + 1;
@@ -60,11 +56,25 @@ export class HabitTreeService implements MovableTreeService<Habit> {
   moveAsFirst(label: Habit) {
     let movedLabel = this.getById(label.id);
     if(movedLabel) {
-      for(let lbl of this.habits) {
+      for(let lbl of this.list) {
         lbl.generalOrder = lbl.generalOrder + 1;
       }
       movedLabel.generalOrder = 1;
       this.sort();
     }
+  }
+
+  addNewHabit(response: Habit, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
+    this.list.push({
+      id:response.id,
+      title: response.title,
+      description: response.description,
+      project: project ? project : null,
+      allowNegative: response.allowNegative,
+      allowPositive: response.allowPositive,
+      modifiedAt:  new Date(response.modifiedAt),
+      generalOrder: response.generalOrder
+    });
+    this.sort();
   }
 }

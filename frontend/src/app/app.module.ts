@@ -31,6 +31,7 @@ import { SubtaskListComponent } from './component/subtask-list/subtask-list.comp
 import { CommentListComponent } from './component/comment-list/comment-list.component';
 import { HabitListComponent } from './component/habit-list/habit-list.component';
 import { TaskListComponent } from './component/task-list/task-list.component';
+import { HabitFormComponent } from './component/habit-form/habit-form.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -62,7 +63,8 @@ export function tokenGetter() {
     SubtaskListComponent,
     CommentListComponent,
     HabitListComponent,
-    TaskListComponent
+    TaskListComponent,
+    HabitFormComponent
   ],
   imports: [
     BrowserModule,
