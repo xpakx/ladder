@@ -7,7 +7,7 @@
             <!--<li *ngIf="shouldAddTaskAboveById(task.id)" class="task_list_item">
                 <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
             </li>-->
-            <li class="task_list_item" [id] = "'habit-' + habit.id" 
+            <li *ngIf="!shouldEditHabitById(habit.id)" class="task_list_item" [id] = "'habit-' + habit.id" 
                 [dndDraggable]="habit.id" (dndStart)="onDragStart(habit.id)" (dndEnd)="onDragEnd()" dndType="habit">
                 <div class="task_list_item_main">
                     <div role="button" tabindex="0" class="task_list_item_body">
@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <div class="task_list_item__actions task_list_item__actions--active">
-                            <button type="button" >
+                            <button type="button" (click)="openEditHabitForm(habit)">
                                 <i class="fa fa-edit"></i>
                             </button>
                             <button type="button" >
@@ -72,9 +72,9 @@
                     </div>
                 </div>
             </li>
-            <!--<li *ngIf="shouldEditTaskById(task.id)" class="task_list_item">
-                <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
-            </li>-->
+            <li *ngIf="shouldEditHabitById(habit.id)" class="task_list_item">
+                <app-habit-form [project]="project" [data]="habitData" (closeEvent)="closeEditHabitForm()" class="task_list_item_main"></app-habit-form>
+            </li>
             <li *ngIf="draggedId" class="drag_list_item" [dndDropzone]="['habit']"> <!-- [dndDisableDropIf]="true">-->
                 
                 <span [dndDropzone]="['habit']" (dndDrop)="onDrop($event, habit)" class="drag-zone last-drag-zone"></span>
@@ -86,7 +86,7 @@
         </ng-container>
 
         <li>
-            <button type="button" class="plus_add_button" (click)="openAddHabitForm()">
+            <button type="button" class="plus_add_button" (click)="openAddHabitForm()" *ngIf="!showAddHabitForm" >
                 <span class="icon_add">
                     <i class="fa fa-plus"></i>
                 </span>

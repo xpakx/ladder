@@ -60,4 +60,12 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
     this.habitData = new AddEvent<HabitDetails>();
   }
 
+  shouldEditHabitById(habitId: number): boolean {
+    return this.habitObjectContains(habitId) && this.habitData.isInEditMode();
+  }
+
+  habitObjectContains(habitId: number) {
+    return habitId == this.habitData.object?.id;
+   }
+
 }

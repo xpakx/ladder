@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Habit } from 'src/app/entity/habit';
+import { HabitDetails } from 'src/app/entity/habit-details';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -24,14 +25,14 @@ export class HabitFormComponent implements OnInit {
   projectSelectForm: FormGroup | undefined;
   @Input() project: ProjectTreeElem | undefined;
 
-  task: TaskTreeElem | undefined;
+  habit: HabitDetails | undefined;
   after: boolean = false;
   before: boolean = false;
   asChild: boolean = false;
   allowPositive: boolean = true;
   allowNegative: boolean = false;
 
-  @Input() data: AddEvent<TaskTreeElem> | undefined;
+  @Input() data: AddEvent<HabitDetails> | undefined;
 
   constructor(public tree: TreeService, private service: ProjectService, 
     private fb: FormBuilder, private habitService: HabitService) {  }
@@ -42,21 +43,23 @@ export class HabitFormComponent implements OnInit {
 
   ngOnInit(): void {
     if(this.data) {
-      this.task = this.data.object;
+      this.habit = this.data.object;
       this.after = this.data.after;
       this.before = this.data.before;
       this.asChild =  this.data.asChild;
     }
 
     this.habitForm = this.fb.group({
-      title: [this.task && !this.after && !this.before && !this.asChild ? this.task.title : '', Validators.required],
-      description: [this.task && !this.after && !this.before && !this.asChild  ? this.task.description : '', []]
+      title: [this.habit && !this.after && !this.before && !this.asChild ? this.habit.title : '', Validators.required],
+      description: [this.habit && !this.after && !this.before && !this.asChild  ? this.habit.description : '', []]
     });
     
-    if(this.task && !this.after && !this.before ) {
-      this.priority = this.task.priority;
-      this.labels = this.task.labels;
-      this.project = this.task.project ? this.tree.getProjectById(this.task.project.id) : undefined;
+    if(this.habit && !this.after && !this.before ) {
+      //this.priority = this.habit.priority;
+      //this.labels = this.habit.labels;
+      this.allowPositive = this.habit.allowPositive;
+      this.allowNegative = this.habit.allowNegative;
+      this.project = this.habit.project ? this.tree.getProjectById(this.habit.project.id) : undefined;
 	  }
   }
 
@@ -80,7 +83,7 @@ export class HabitFormComponent implements OnInit {
   }
 
   save() {
-    if(this.task) {
+    if(this.habit) {
       this.makeRequestWithTask();
     } else {
       this.addHabit();
@@ -96,7 +99,8 @@ export class HabitFormComponent implements OnInit {
         title: this.habitForm.controls.title.value,
         description: this.habitForm.controls.description.value,
         allowPositive: this.allowPositive,
-        allowNegative: this.allowNegative
+        allowNegative: this.allowNegative,
+        projectId: this.project?.id
       }, this.project ? this.project.id : undefined).subscribe(
         (response: Habit, projectId: number | undefined = this.project?.id, labels: number[] = lbls) => {
           this.tree.addNewHabit(response, projectId, labels);
@@ -124,12 +128,28 @@ export class HabitFormComponent implements OnInit {
     } else if(this.after) {
       this.addTaskAfter();
     } else {
-      this.updateTask();
+      this.updateHabit();
     }
   }
 
-  updateTask() {
-    
+  updateHabit() {
+    if(this.habit && this.habitForm && this.habitForm.valid) {
+      let lbls = this.labels.map((a) => a.id);
+      this.habitService.updateHabit({
+        title: this.habitForm.controls.title.value,
+        description: this.habitForm.controls.description.value,
+        allowPositive: this.allowPositive,
+        allowNegative: this.allowNegative,
+        projectId: this.project?.id
+      }, this.habit.id).subscribe(
+        (response: Habit, projectId: number | undefined = this.project?.id, labels: number[] = lbls) => {
+          this.tree.updateHabit(response, projectId, labels);
+        },
+        (error: HttpErrorResponse) => {
+         
+        }
+      );
+    }
   }
 
   addTaskAfter() {

@@ -77,4 +77,17 @@ export class HabitTreeService implements MovableTreeService<Habit> {
     });
     this.sort();
   }
+
+  updateHabit(response: Habit, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
+    let habit = this.getById(response.id);
+    if(habit) {
+      habit.description = response.description;
+      habit.title = response.title;
+      habit.project = project ? project : null;
+      habit.allowNegative = response.allowNegative;
+      habit.allowPositive = response.allowPositive;
+      habit.modifiedAt = new Date(response.modifiedAt);
+      habit.generalOrder = response.generalOrder;
+    }
+  }
 }

@@ -3,4 +3,5 @@ export interface HabitRequest {
     description: string;
     allowPositive: boolean;
     allowNegative: boolean;
+    projectId: number | undefined;
 }

@@ -151,6 +151,11 @@ export class TreeService {
     this.tasks.updateTask(response, project, this.getLabelsFromIds(labelIds));
   }
 
+  updateHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []) {
+    let project = projectId ? this.getProjectById(projectId) : undefined;
+    this.habits.updateHabit(response, project, this.getLabelsFromIds(labelIds));
+  }
+
   changeTaskCompletion(response: Task) {
     this.tasks.changeTaskCompletion(response);
   }
