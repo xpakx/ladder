@@ -37,6 +37,7 @@ export class TreeService {
     this.projects.load(tree.projects);
     this.tasks.load(tree.tasks);
     this.labels.load(tree.labels);
+    this.habits.load(tree.habits);
   }
 
   getProjects() {
