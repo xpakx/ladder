@@ -105,7 +105,7 @@
 				<span class="menu_icon">
 					<i class="fa fa-arrow-up"></i>
 				</span>
-				<div class="menu_label">Add task above</div>
+				<div class="menu_label">Add habit above</div>
 			</button>
 		</li>
         <li class="context-menu-project-item">
@@ -113,7 +113,7 @@
 				<span class="menu_icon">
 					<i class="fa fa-arrow-down"></i>
 				</span>
-				<div class="menu_label">Add task below</div>
+				<div class="menu_label">Add habit below</div>
 			</button>
 		</li>
         <li class="context-menu-project-item">
@@ -121,7 +121,7 @@
 				<span class="menu_icon">
 					<i class="fa fa-edit"></i>
 				</span>
-				<div class="menu_label">Edit task</div>
+				<div class="menu_label">Edit habit</div>
 			</button>
 		</li>
         <li class="context-menu-project-item">
@@ -153,8 +153,11 @@
 				<span class="menu_icon">
 					<i class="fa fa-trash-o"></i>
 				</span>
-				<div class="menu_label">Delete task</div>
+				<div class="menu_label">Delete habit</div>
 			</button>
 		</li>
 	</ul>
 </div>
+
+<app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="projectForProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
+<app-priority-modal *ngIf="showSelectPriorityModal" [priority]="priorityForPriorityModal" (closeEvent)="closeSelectPriorityModal($event)" (cancelEvent)="cancelPrioritySelection()"></app-priority-modal>
