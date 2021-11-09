@@ -12,19 +12,27 @@
 }
 
 .habit_button.positive {
-    background-color:rgb(210, 240, 202);
-    border-color: green;
-    color: green;
+    background-color:#49cc56;
+    border-color: #49cc56;
+    color: #fff;
+}
+
+.habit_button.positive:hover {
+    color: #49cc56;
 }
 
 .habit_button.negative {
-    background-color: rgba(209,69,59,.1);
+    background-color: #d1453b;
     border-color: #d1453b;
+    color: #fff;
+}
+
+.habit_button.negative:hover {
     color: #d1453b;
 }
 
 .habit_button:hover {
-    background-color: #8c91962d;
+    background-color: #fff;
 }
 
 .task_list_item.completed .habit_button:hover {

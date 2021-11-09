@@ -3,12 +3,12 @@
         <li *ngIf="draggedId" [dndDropzone]="['habit']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
 
         </li>
-        <ng-container *ngFor="let task of habits">
+        <ng-container *ngFor="let habit of habits">
             <!--<li *ngIf="shouldAddTaskAboveById(task.id)" class="task_list_item">
                 <app-task-form [project]="project" [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
             </li>-->
-            <li class="task_list_item" [id] = "'task-' + task.id" 
-                [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="habit">
+            <li class="task_list_item" [id] = "'habit-' + habit.id" 
+                [dndDraggable]="habit.id" (dndStart)="onDragStart(habit.id)" (dndEnd)="onDragEnd()" dndType="habit">
                 <div class="task_list_item_main">
                     <div role="button" tabindex="0" class="task_list_item_body">
                         <div class="task_list_item__overflow_actions">
@@ -18,14 +18,14 @@
                             </span>
                         </div>
                         <div class="habit_buttons">
-                            <button type="button" role="checkbox" class="habit_button positive" *ngIf="task.allowPositive">
+                            <button type="button" role="checkbox" class="habit_button positive" *ngIf="habit.allowPositive">
                                 <div class="habit_circle">
                                     <span class="icon_check">
                                         <i class="fa fa-plus"></i>
                                     </span>
                                 </div>
                             </button>
-                            <button type="button" role="checkbox" class="habit_button negative"  *ngIf="task.allowNegative">
+                            <button type="button" role="checkbox" class="habit_button negative"  *ngIf="habit.allowNegative">
                                 <div class="habit_circle">
                                     <span class="icon_check">
                                         <i class="fa fa-minus"></i>
@@ -34,12 +34,12 @@
                             </button>
                         </div>
                         <div class="task_list_item_content">
-                            <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
+                            <div [id]="'habit-' + habit.id + '-content'" class="task_list_item__content_wrapper">
                                 <div class="markdown_content task_content">
-                                    {{task.title}}
+                                    {{habit.title}}
                                 </div>
-                                <div class="markdown_content task_description" *ngIf="task.description">
-                                    {{task.description}} 
+                                <div class="markdown_content task_description" *ngIf="habit.description">
+                                    {{habit.description}} 
                                 </div>
                             </div>
                             <div class="task_list_item__info_tags" data-layout="list">
@@ -77,7 +77,7 @@
             </li>-->
             <li *ngIf="draggedId" class="drag_list_item" [dndDropzone]="['habit']"> <!-- [dndDisableDropIf]="true">-->
                 
-                <span [dndDropzone]="['task']" (dndDrop)="onDrop($event, task)" class="drag-zone last-drag-zone"></span>
+                <span [dndDropzone]="['habit']" (dndDrop)="onDrop($event, habit)" class="drag-zone last-drag-zone"></span>
             </li>
             <!--<li *ngIf="shouldAddTaskBelowById(task.id)" class="task_list_item">
                 <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
@@ -90,7 +90,7 @@
                 <span class="icon_add">
                     <i class="fa fa-plus"></i>
                 </span>
-                Add task
+                Add habit
             </button>
 
             <!--<app-task-form *ngIf="showAddTaskForm" [project]="project" (closeEvent)="closeAddTaskForm()"></app-task-form>-->

@@ -11,8 +11,9 @@ export class HabitTreeService implements MovableTreeService<Habit> {
 
   constructor() {
     this.habits = [
-      {id: 1, title: "test", description: 'aaa', generalOrder: 1, project: {id: 67, name: ''}, allowNegative: false, allowPositive: true},
-      {id: 2, title: "test2", description: '', generalOrder: 2, project: {id: 67, name: ''}, allowNegative: true, allowPositive: true}
+      {id: 1, title: "Positive habit", description: 'aaa', generalOrder: 1, project: {id: 67, name: ''}, allowNegative: false, allowPositive: true},
+      {id: 2, title: "Uberhabit", description: '', generalOrder: 2, project: {id: 67, name: ''}, allowNegative: true, allowPositive: true},
+      {id: 3, title: "Negative habit", description: '', generalOrder: 3, project: {id: 67, name: ''}, allowNegative: true, allowPositive: false}
     ]
    }
 
