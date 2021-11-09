@@ -176,6 +176,10 @@ export class TreeService {
     this.tasks.deleteTask(taskId);
   }
 
+  deleteHabit(habitId: number) {
+    this.habits.deleteHabit(habitId);
+  }
+
   getTasksByLabel(id: number): TaskTreeElem[] {
     return this.tasks.getTasksByLabel(id);
   }

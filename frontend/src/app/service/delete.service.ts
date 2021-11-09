@@ -4,6 +4,7 @@ import { HabitDetails } from '../entity/habit-details';
 import { LabelDetails } from '../entity/label-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { TaskTreeElem } from '../entity/task-tree-elem';
+import { HabitService } from './habit.service';
 import { LabelService } from './label.service';
 import { ProjectService } from './project.service';
 import { TaskService } from './task.service';
@@ -16,13 +17,14 @@ export class DeleteService {
   private shouldDeleteLabel: boolean = false;
   private shouldDeleteProject: boolean = false;
   private shouldDeleteTask: boolean = false;
+  private shouldDeleteHabit: boolean = false;
 
   public showDeleteMonit: boolean = false;
   public name: string = "";
   public id: number = -1;
 
   constructor(private labelService: LabelService, private projectService: ProjectService,
-    private taskService: TaskService, private tree: TreeService) { }
+    private taskService: TaskService, private tree: TreeService, private habitService: HabitService) { }
 
   delete(deletedId: number) {
     if(this.shouldDeleteLabel) {
@@ -31,6 +33,8 @@ export class DeleteService {
       this.deleteProject(deletedId);
     } else if(this.shouldDeleteTask) {
       this.deleteTask(deletedId);
+    } else if(this.shouldDeleteHabit) {
+      this.deleteHabit(deletedId);
     }
 
     this.closeModal();    
@@ -90,7 +94,21 @@ export class DeleteService {
   }
 
   openModalForHabit(habit: HabitDetails) {
-    
+    this.name = habit.title;
+    this.id = habit.id;
+    this.showDeleteMonit = true;
+    this.shouldDeleteHabit = true;
+  }
+
+  private deleteHabit(deletedId: number) {
+    this.habitService.deleteHabit(deletedId).subscribe(
+        (response: any, taskId: number = deletedId) => {
+        this.tree.deleteHabit(taskId);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
   }
 
   closeModal() {

@@ -90,4 +90,8 @@ export class HabitTreeService implements MovableTreeService<Habit> {
       habit.generalOrder = response.generalOrder;
     }
   }
+
+  deleteHabit(habitId: number) {
+    this.list = this.list.filter((a) => a.id != habitId);
+  }
 }
