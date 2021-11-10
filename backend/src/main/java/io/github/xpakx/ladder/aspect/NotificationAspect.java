@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.aspect;
 
+import io.github.xpakx.ladder.entity.Habit;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -78,6 +79,27 @@ public class NotificationAspect {
                 .time(LocalDateTime.now())
                 .type("DELETE_TASK")
                 .id(taskId)
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @AfterReturning(value="@annotation(NotifyOnHabitChange)", returning="response")
+    public void notifyOnHabitChange(Habit response) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(response.getOwner().getId())
+                .time(response.getModifiedAt())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @After(value="@annotation(NotifyOnHabitDeletion) && args(habitId, userId)", argNames = "habitId,userId")
+    public void notifyOnHabitDeletion(Integer habitId, Integer userId) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(userId)
+                .time(LocalDateTime.now())
+                .type("DELETE_HABIT")
+                .id(habitId)
                 .build();
         notificationService.sendNotification(notification);
     }

@@ -1,5 +1,7 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnHabitChange;
+import io.github.xpakx.ladder.aspect.NotifyOnHabitDeletion;
 import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
@@ -25,6 +27,7 @@ public class HabitService {
     private final ProjectRepository projectRepository;
     private final LabelRepository labelRepository;
 
+    @NotifyOnHabitChange
     public Habit addHabit(HabitRequest request, Integer userId, Integer projectId) {
         Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
@@ -54,10 +57,12 @@ public class HabitService {
     }
 
     @Transactional
+    @NotifyOnHabitDeletion
     public void deleteHabit(Integer habitId, Integer userId) {
         habitRepository.deleteByIdAndOwnerId(habitId, userId);
     }
 
+    @NotifyOnHabitChange
     public Habit moveHabitAsFirst(Integer userId, Integer habitToMoveId) {
         Habit habitToMove = habitRepository.findByIdAndOwnerId(habitToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent habit!"));
@@ -82,6 +87,7 @@ public class HabitService {
         }
     }
 
+    @NotifyOnHabitChange
     public Habit moveHabitAfter(IdRequest request, Integer userId, Integer habitToMoveId) {
         Habit habitToMove = habitRepository.findByIdAndOwnerId(habitToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent habit!"));
@@ -134,6 +140,7 @@ public class HabitService {
         return request.getId() != null;
     }
 
+    @NotifyOnHabitChange
     public Habit updateHabitPriority(PriorityRequest request, Integer habitId, Integer userId) {
         Habit habitToUpdate = habitRepository.findByIdAndOwnerId(habitId, userId)
                 .orElseThrow(() -> new NotFoundException("No such habit!"));
@@ -147,6 +154,7 @@ public class HabitService {
                 .orElseThrow(() -> new NotFoundException("No such habit!"));
     }
 
+    @NotifyOnHabitChange
     public Habit updateHabit(HabitRequest request, Integer habitId, Integer userId) {
         Project project = request.getProjectId() != null ? projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
@@ -183,6 +191,7 @@ public class HabitService {
         return !labelsWithDifferentOwner.equals(0L);
     }
 
+    @NotifyOnHabitChange
     public HabitCompletion completeHabit(BooleanRequest request, Integer taskId, Integer userId) {
         Habit habit = habitRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No habit with id " + taskId));
@@ -202,6 +211,7 @@ public class HabitService {
                 (!habit.isAllowPositive() && request.isFlag());
     }
 
+    @NotifyOnHabitChange
     public Habit addHabitAfter(HabitRequest request, Integer userId, Integer habitId) {
         Habit habitToAdd = buildHabitToAddFromRequest(request, userId);
         Habit habit = habitRepository.findByIdAndOwnerId(habitId, userId)
@@ -213,6 +223,7 @@ public class HabitService {
         return habitRepository.save(habitToAdd);
     }
 
+    @NotifyOnHabitChange
     public Habit addHabitBefore(HabitRequest request, Integer userId, Integer labelId) {
         Habit habitToAdd = buildHabitToAddFromRequest(request, userId);
         Habit habit = habitRepository.findByIdAndOwnerId(labelId, userId)
@@ -224,6 +235,7 @@ public class HabitService {
         return habitRepository.save(habitToAdd);
     }
 
+    @NotifyOnHabitChange
     public Habit updateHabitProject(IdRequest request, Integer taskId, Integer userId) {
         Habit habitToUpdate = habitRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
@@ -244,6 +256,7 @@ public class HabitService {
         }
     }
 
+    @NotifyOnHabitChange
     public Habit duplicate(Integer taskId, Integer userId) {
         Habit habitToDuplicate = habitRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
