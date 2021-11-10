@@ -61,27 +61,69 @@ public class HabitService {
     public Habit moveHabitAsFirst(Integer userId, Integer habitToMoveId) {
         Habit habitToMove = habitRepository.findByIdAndOwnerId(habitToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent habit!"));
-        habitRepository.incrementGeneralOrderByOwnerId(
-                userId,
-                LocalDateTime.now()
-        );
+        incrementOrderForProject(userId, habitToMove.getProject());
         habitToMove.setGeneralOrder(1);
         habitToMove.setModifiedAt(LocalDateTime.now());
         return habitRepository.save(habitToMove);
+    }
+
+    private void incrementOrderForProject(Integer userId, Project project) {
+        if(project != null) {
+            habitRepository.incrementGeneralOrderByOwnerIdAndProjectId(
+                    userId,
+                    project.getId(),
+                    LocalDateTime.now()
+            );
+        } else {
+            habitRepository.incrementGeneralOrderByOwnerIdAndProjectIsNull(
+                    userId,
+                    LocalDateTime.now()
+            );
+        }
     }
 
     public Habit moveHabitAfter(IdRequest request, Integer userId, Integer habitToMoveId) {
         Habit habitToMove = habitRepository.findByIdAndOwnerId(habitToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent habit!"));
         Habit afterHabit = findIdFromIdRequest(request);
-        habitRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
-                userId,
-                afterHabit.getGeneralOrder(),
-                LocalDateTime.now()
-        );
+        incrementOrderForProjectGreaterThan(userId, afterHabit.getProject(), afterHabit.getGeneralOrder());
         habitToMove.setGeneralOrder(afterHabit.getGeneralOrder() + 1);
         habitToMove.setModifiedAt(LocalDateTime.now());
         return habitRepository.save(habitToMove);
+    }
+
+    private void incrementOrderForProjectGreaterThan(Integer userId, Project project, Integer generalOrder) {
+        if(project != null) {
+            habitRepository.incrementGeneralOrderByOwnerIdAndProjectIdAndGeneralOrderGreaterThan(
+                    userId,
+                    project.getId(),
+                    generalOrder,
+                    LocalDateTime.now()
+            );
+        } else {
+            habitRepository.incrementGeneralOrderByOwnerIdAndProjectIsNullAndGeneralOrderGreaterThan(
+                    userId,
+                    generalOrder,
+                    LocalDateTime.now()
+            );
+        }
+    }
+
+    private void incrementOrderForProjectGreaterThanEqual(Integer userId, Project project, Integer generalOrder) {
+        if(project != null) {
+            habitRepository.incrementGeneralOrderByOwnerIdAndProjectIdAndGeneralOrderGreaterThanEqual(
+                    userId,
+                    project.getId(),
+                    generalOrder,
+                    LocalDateTime.now()
+            );
+        } else {
+            habitRepository.incrementGeneralOrderByOwnerIdAndProjectIsNullAndGeneralOrderGreaterThanEqual(
+                    userId,
+                    generalOrder,
+                    LocalDateTime.now()
+            );
+        }
     }
 
     private Habit findIdFromIdRequest(IdRequest request) {
@@ -167,11 +209,7 @@ public class HabitService {
         habitToAdd.setGeneralOrder(habit.getGeneralOrder()+1);
         habitToAdd.setProject(habit.getProject());
         habitToAdd.setModifiedAt(LocalDateTime.now());
-        habitRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
-                userId,
-                habit.getGeneralOrder(),
-                LocalDateTime.now()
-        );
+        incrementOrderForProjectGreaterThan(userId, habit.getProject(), habit.getGeneralOrder());
         return habitRepository.save(habitToAdd);
     }
 
@@ -182,11 +220,7 @@ public class HabitService {
         habitToAdd.setGeneralOrder(habit.getGeneralOrder());
         habitToAdd.setProject(habit.getProject());
         habitToAdd.setModifiedAt(LocalDateTime.now());
-        habitRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(
-                userId,
-                habit.getGeneralOrder(),
-                LocalDateTime.now()
-        );
+        incrementOrderForProjectGreaterThanEqual(userId, habit.getProject(), habit.getGeneralOrder());
         return habitRepository.save(habitToAdd);
     }
 
@@ -224,6 +258,7 @@ public class HabitService {
                 .build();
         habitToAdd.setProject(habitToDuplicate.getProject());
         habitToAdd.setGeneralOrder(habitToDuplicate.getGeneralOrder()+1);
+        incrementOrderForProjectGreaterThan(userId, habitToDuplicate.getProject(), habitToDuplicate.getGeneralOrder());
         return habitRepository.save(habitToAdd);
     }
 }

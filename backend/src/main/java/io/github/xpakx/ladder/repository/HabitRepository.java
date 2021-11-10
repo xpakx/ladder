@@ -26,6 +26,16 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
     @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId")
     void incrementGeneralOrderByOwnerId(Integer ownerId, LocalDateTime modifiedAt);
 
+    @Modifying
+    @Transactional
+    @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId AND h.project.id = :projectId")
+    void incrementGeneralOrderByOwnerIdAndProjectId(Integer ownerId, Integer projectId, LocalDateTime modifiedAt);
+
+    @Modifying
+    @Transactional
+    @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId AND h.project IS NULL")
+    void incrementGeneralOrderByOwnerIdAndProjectIsNull(Integer ownerId, LocalDateTime modifiedAt);
+
     Optional<Habit> findByIdAndOwnerId(Integer id, Integer ownerId);
 
     @Modifying
@@ -35,10 +45,31 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
 
     @Modifying
     @Transactional
+    @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId AND h.generalOrder > :generalOrder AND h.project.id = :projectId")
+    void incrementGeneralOrderByOwnerIdAndProjectIdAndGeneralOrderGreaterThan(Integer ownerId, Integer projectId, Integer generalOrder, LocalDateTime modifiedAt);
+
+    @Modifying
+    @Transactional
+    @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId AND h.generalOrder > :generalOrder AND h.project IS NULL")
+    void incrementGeneralOrderByOwnerIdAndProjectIsNullAndGeneralOrderGreaterThan(Integer ownerId, Integer generalOrder, LocalDateTime modifiedAt);
+
+    @Modifying
+    @Transactional
     @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId AND h.generalOrder >= :generalOrder")
     void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer generalOrder, LocalDateTime modifiedAt);
+
+    @Modifying
+    @Transactional
+    @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId AND h.generalOrder >= :generalOrder AND h.project.id = :projectId")
+    void incrementGeneralOrderByOwnerIdAndProjectIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer projectId, Integer generalOrder, LocalDateTime modifiedAt);
+
+    @Modifying
+    @Transactional
+    @Query("Update Habit h SET h.generalOrder = h.generalOrder + 1, h.modifiedAt = :modifiedAt WHERE h.owner.id = :ownerId AND h.generalOrder >= :generalOrder AND h.project IS NULL")
+    void incrementGeneralOrderByOwnerIdAndProjectIsNullAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer generalOrder, LocalDateTime modifiedAt);
 
     <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);
     <T> List<T> findByOwnerId(Integer ownerId, Class<T> type);
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
+
 }
