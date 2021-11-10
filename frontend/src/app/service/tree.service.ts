@@ -274,4 +274,12 @@ export class TreeService {
     this.labels.sync(response.labels);
     this.tasks.sync(response.tasks);
   }
+
+  addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+    this.habits.addNewHabitAfter(habit, afterId, project, this.getLabelsFromIds(labelIds));
+  }
+
+  addNewHabitBefore(habit: Habit, beforeId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+    this.habits.addNewHabitBefore(habit, beforeId, project, this.getLabelsFromIds(labelIds));
+  }
 }

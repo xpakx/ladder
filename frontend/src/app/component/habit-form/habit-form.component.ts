@@ -153,11 +153,45 @@ export class HabitFormComponent implements OnInit {
   }
 
   addTaskAfter() {
-    
+    if(this.habit && this.habitForm && this.habitForm.valid) {
+      let idAfter = this.habit.id;
+      let lbls = this.labels.map((a) => a.id);
+      this.habitService.addHabitAfter({
+        title: this.habitForm.controls.title.value,
+        description: this.habitForm.controls.description.value,
+        allowPositive: this.allowPositive,
+        allowNegative: this.allowNegative,
+        projectId: this.project?.id
+      }, this.habit.id).subscribe(
+        (response: Habit, habitId: number = idAfter, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
+          this.tree.addNewHabitAfter(response, habitId, project, labels);
+        },
+        (error: HttpErrorResponse) => {
+         
+        }
+      );
+    }
   }
 
   addTaskBefore() {
-    
+    if(this.habit && this.habitForm && this.habitForm.valid) {
+      let idBefore = this.habit.id;
+      let lbls = this.labels.map((a) => a.id);
+      this.habitService.addHabitBefore({
+        title: this.habitForm.controls.title.value,
+        description: this.habitForm.controls.description.value,
+        allowPositive: this.allowPositive,
+        allowNegative: this.allowNegative,
+        projectId: this.project?.id
+      }, this.habit.id).subscribe(
+        (response: Habit, habitId: number = idBefore, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
+          this.tree.addNewHabitBefore(response, habitId, project, labels);
+        },
+        (error: HttpErrorResponse) => {
+         
+        }
+      );
+    }
   }
 
   addTaskAsChild() {

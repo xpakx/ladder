@@ -94,4 +94,34 @@ export class HabitTreeService implements MovableTreeService<Habit> {
   deleteHabit(habitId: number) {
     this.list = this.list.filter((a) => a.id != habitId);
   }
+
+  addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
+    let afterHabit = this.getById(afterId);
+    if(afterHabit) {
+      let hbt : HabitDetails = afterHabit;
+      habit.generalOrder = hbt.generalOrder+1;
+      let tasks = this.list
+        .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
+        .filter((a) => a.generalOrder > hbt.generalOrder);
+      for(let sibling of tasks) {
+        sibling.generalOrder = sibling.generalOrder + 1;
+      }
+      this.addNewHabit(habit, project, labels);
+    }
+  }
+
+  addNewHabitBefore(habit: Habit, beforeId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
+    let beforeHabit = this.getById(beforeId);
+    if(beforeHabit) {
+      let hbt : HabitDetails = beforeHabit;
+      habit.generalOrder = hbt.generalOrder;
+      let tasks = this.list
+        .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
+        .filter((a) => a.generalOrder >= hbt.generalOrder);
+      for(let sibling of tasks) {
+        sibling.generalOrder = sibling.generalOrder + 1;
+      }
+      this.addNewHabit(habit, project, labels);
+    }
+  }
 }
