@@ -14,6 +14,5 @@ public class HabitRequest {
     private boolean allowPositive;
     private boolean allowNegative;
     private Integer projectId;
-    private Integer generalOrder;
     private List<Integer> labelIds;
 }

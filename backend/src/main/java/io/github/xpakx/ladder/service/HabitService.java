@@ -112,8 +112,6 @@ public class HabitService {
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         habitToUpdate.setTitle(request.getTitle());
         habitToUpdate.setDescription(request.getDescription());
-        habitToUpdate.setGeneralOrder(request.getGeneralOrder());
-        //habitToUpdate.setParent(parent);
         habitToUpdate.setProject(project);
         habitToUpdate.setPriority(request.getPriority());
         habitToUpdate.setAllowNegative(request.isAllowNegative());
