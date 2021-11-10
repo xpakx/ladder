@@ -1,7 +1,6 @@
 package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Habit;
-import io.github.xpakx.ladder.entity.dto.HabitDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +15,9 @@ import java.util.Optional;
 public interface HabitRepository extends JpaRepository<Habit, Integer> {
     @Query("SELECT coalesce(max(h.generalOrder), 0) FROM Habit h WHERE h.owner.id = :ownerId")
     Integer getMaxOrderByOwnerId(Integer ownerId);
+
+    @Query("SELECT coalesce(max(h.generalOrder), 0) FROM Habit h WHERE h.owner.id = :ownerId AND h.project.id = :projectId" )
+    Integer getMaxOrderByOwnerIdAndProjectId(Integer ownerId, Integer projectId);
 
     void deleteByIdAndOwnerId(Integer id, Integer ownerId);
 

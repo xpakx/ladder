@@ -189,4 +189,24 @@ public class HabitService {
         );
         return habitRepository.save(habitToAdd);
     }
+
+    public Habit updateHabitProject(IdRequest request, Integer taskId, Integer userId) {
+        Habit habitToUpdate = habitRepository.findByIdAndOwnerId(taskId, userId)
+                .orElseThrow(() -> new NotFoundException("No such task!"));
+        Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+
+        habitToUpdate.setProject(project);
+        habitToUpdate.setGeneralOrder(getMaxProjectOrder(request, userId)+1);
+        habitToUpdate.setModifiedAt(LocalDateTime.now());
+        return habitRepository.save(habitToUpdate);
+    }
+
+    private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
+        if(hasId(request)) {
+            return habitRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getId());
+        } else {
+            return habitRepository.getMaxOrderByOwnerId(userId);
+        }
+    }
 }

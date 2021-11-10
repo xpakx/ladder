@@ -81,4 +81,10 @@ public class HabitController {
                                                 @PathVariable Integer habitId) {
         return  new ResponseEntity<>(habitService.addHabitBefore(request, userId, habitId), HttpStatus.CREATED);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/habits/{habitId}/project")
+    public ResponseEntity<Habit> updateHabitProject(@RequestBody IdRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(habitService.updateHabitProject(request, habitId, userId), HttpStatus.OK);
+    }
 }
