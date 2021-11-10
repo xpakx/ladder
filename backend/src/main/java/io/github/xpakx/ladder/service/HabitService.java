@@ -28,12 +28,13 @@ public class HabitService {
     public Habit addHabit(HabitRequest request, Integer userId, Integer projectId) {
         Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
-        Habit habitToAdd = buildLabelToAddFromRequest(request, userId, project);
+        Habit habitToAdd = buildHabitToAddFromRequest(request, userId);
+        habitToAdd.setProject(project);
         habitToAdd.setGeneralOrder(habitRepository.getMaxOrderByOwnerId(userId)+1);
         return habitRepository.save(habitToAdd);
     }
 
-    private Habit buildLabelToAddFromRequest(HabitRequest request, Integer userId, Project project) {
+    private Habit buildHabitToAddFromRequest(HabitRequest request, Integer userId) {
         return Habit.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -41,7 +42,6 @@ public class HabitService {
                 .priority(request.getPriority())
                 .allowPositive(request.isAllowPositive())
                 .allowNegative(request.isAllowNegative())
-                .project(project)
                 .modifiedAt(LocalDateTime.now())
                 .build();
     }
@@ -158,5 +158,35 @@ public class HabitService {
     private boolean isCompletionTypeNotAllowed(BooleanRequest request, Habit habit) {
         return (!habit.isAllowNegative() && !request.isFlag()) ||
                 (!habit.isAllowPositive() && request.isFlag());
+    }
+
+    public Habit addHabitAfter(HabitRequest request, Integer userId, Integer habitId) {
+        Habit habitToAdd = buildHabitToAddFromRequest(request, userId);
+        Habit habit = habitRepository.findByIdAndOwnerId(habitId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent habit!"));
+        habitToAdd.setGeneralOrder(habit.getGeneralOrder()+1);
+        habitToAdd.setProject(habit.getProject());
+        habitToAdd.setModifiedAt(LocalDateTime.now());
+        habitRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
+                userId,
+                habit.getGeneralOrder(),
+                LocalDateTime.now()
+        );
+        return habitRepository.save(habitToAdd);
+    }
+
+    public Habit addHabitBefore(HabitRequest request, Integer userId, Integer labelId) {
+        Habit habitToAdd = buildHabitToAddFromRequest(request, userId);
+        Habit habit = habitRepository.findByIdAndOwnerId(labelId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent habit!"));
+        habitToAdd.setGeneralOrder(habit.getGeneralOrder());
+        habitToAdd.setProject(habit.getProject());
+        habitToAdd.setModifiedAt(LocalDateTime.now());
+        habitRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(
+                userId,
+                habit.getGeneralOrder(),
+                LocalDateTime.now()
+        );
+        return habitRepository.save(habitToAdd);
     }
 }

@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Habit;
 import io.github.xpakx.ladder.entity.HabitCompletion;
+import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.HabitService;
@@ -65,5 +66,19 @@ public class HabitController {
     @PutMapping("/habits/{habitId}/complete")
     public ResponseEntity<HabitCompletion> completeHabit(@RequestBody BooleanRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(habitService.completeHabit(request, habitId, userId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/habits/{habitId}/after")
+    public ResponseEntity<Habit> addHabitAfter(@RequestBody HabitRequest request, @PathVariable Integer userId,
+                                               @PathVariable Integer habitId) {
+        return  new ResponseEntity<>(habitService.addHabitAfter(request, userId, habitId), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/habits/{habitId}/before")
+    public ResponseEntity<Habit> addHabitBefore(@RequestBody HabitRequest request, @PathVariable Integer userId,
+                                                @PathVariable Integer habitId) {
+        return  new ResponseEntity<>(habitService.addHabitBefore(request, userId, habitId), HttpStatus.CREATED);
     }
 }
