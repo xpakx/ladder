@@ -209,4 +209,21 @@ public class HabitService {
             return habitRepository.getMaxOrderByOwnerId(userId);
         }
     }
+
+    public Habit duplicate(Integer taskId, Integer userId) {
+        Habit habitToDuplicate = habitRepository.findByIdAndOwnerId(taskId, userId)
+                .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
+        Habit habitToAdd = Habit.builder()
+                .title(habitToDuplicate.getTitle())
+                .description(habitToDuplicate.getDescription())
+                .owner(userRepository.getById(userId))
+                .priority(habitToDuplicate.getPriority())
+                .allowPositive(habitToDuplicate.isAllowPositive())
+                .allowNegative(habitToDuplicate.isAllowNegative())
+                .modifiedAt(LocalDateTime.now())
+                .build();
+        habitToAdd.setProject(habitToDuplicate.getProject());
+        habitToAdd.setGeneralOrder(habitToDuplicate.getGeneralOrder()+1);
+        return habitRepository.save(habitToAdd);
+    }
 }

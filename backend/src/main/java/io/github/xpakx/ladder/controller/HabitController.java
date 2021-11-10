@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/{userId}")
 @AllArgsConstructor
@@ -86,5 +88,11 @@ public class HabitController {
     @PutMapping("/habits/{habitId}/project")
     public ResponseEntity<Habit> updateHabitProject(@RequestBody IdRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(habitService.updateHabitProject(request, habitId, userId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/habits/{habitId}/duplicate")
+    public ResponseEntity<Habit> duplicateTask(@PathVariable Integer habitId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(habitService.duplicate(habitId, userId), HttpStatus.CREATED);
     }
 }
