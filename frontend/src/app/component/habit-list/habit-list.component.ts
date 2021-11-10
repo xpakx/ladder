@@ -151,7 +151,14 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
   closeSelectProjectModal(project: ProjectTreeElem | undefined) {
     this.showSelectProjectModal = false;
     if(this.taskIdForProjectModal) {
-      //todo
+      this.habitService.updateHabitProject({id: project? project.id : undefined}, this.taskIdForProjectModal).subscribe(
+        (response: Habit, proj: ProjectTreeElem | undefined = project) => {
+        this.tree.moveHabitToProject(response, proj);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
     }
     this.projectForProjectModal = undefined;
     this.taskIdForProjectModal = undefined;

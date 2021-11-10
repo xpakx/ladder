@@ -63,4 +63,9 @@ export class HabitService implements MovableService<Habit> {
     let userId  = this.getUserId();
     return this.http.post<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/before`, request);
   }
+
+  updateHabitProject(request: IdRequest, habitId: number): Observable<Habit> {
+    let userId  = this.getUserId();
+    return this.http.put<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/project`, request);
+  }
 }

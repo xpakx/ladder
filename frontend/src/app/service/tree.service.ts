@@ -282,4 +282,8 @@ export class TreeService {
   addNewHabitBefore(habit: Habit, beforeId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
     this.habits.addNewHabitBefore(habit, beforeId, project, this.getLabelsFromIds(labelIds));
   }
+
+  moveHabitToProject(habit: Habit, project: ProjectTreeElem | undefined) {
+    this.habits.moveHabitToProject(habit, project);
+  }
 }

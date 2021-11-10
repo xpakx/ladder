@@ -124,4 +124,24 @@ export class HabitTreeService implements MovableTreeService<Habit> {
       this.addNewHabit(habit, project, labels);
     }
   }
+
+  getHabitsFromInbox(): HabitDetails[] {
+    return this.list.filter((a) => 
+      !a.project
+    );
+  }
+
+  moveHabitToProject(habit: Habit, project: ProjectTreeElem | undefined) {
+    let habitToMove = this.getById(habit.id);
+    if(habitToMove) {
+      let siblings = project ? this.getHabitsByProject(project.id) : this.getHabitsFromInbox();
+      
+      habitToMove.modifiedAt =  new Date(habit.modifiedAt);
+      habitToMove.project = project ? project : null;
+      habitToMove.generalOrder = siblings
+        .map((a) => a.generalOrder)
+        .reduce(((total, curr)=>Math.max(total, curr)), 0) + 1;
+      this.sort();
+    }
+  }
 }
