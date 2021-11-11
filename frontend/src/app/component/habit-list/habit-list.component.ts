@@ -235,7 +235,15 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
 
   duplicate() {
     if(this.contextHabitMenu) {
-      //todo
+      let id = this.contextHabitMenu.id;
+      this.habitService.duplicateHabit(this.contextHabitMenu.id).subscribe(
+        (response: Habit, afterId: number = id, project = this.project ) => {
+        this.tree.addNewHabitAfter(response, afterId, project, []);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+      );
     }
 
     this.closeContextHabitMenu();

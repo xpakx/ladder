@@ -25,7 +25,7 @@ export class HabitService implements MovableService<Habit> {
     return this.http.delete<any>(`${this.apiServerUrl}/${userId}/habits/${habitId}`);
   }
 
-  updateHabitPriority(request: PriorityRequest, habitId: number): Observable<Habit> {
+  public updateHabitPriority(request: PriorityRequest, habitId: number): Observable<Habit> {
     let userId  = this.getUserId();
     return this.http.put<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/priority`, request);
   }
@@ -49,7 +49,7 @@ export class HabitService implements MovableService<Habit> {
     }  
   }
 
-  updateHabit(request: HabitRequest, habitId: number): Observable<Habit> {
+  public updateHabit(request: HabitRequest, habitId: number): Observable<Habit> {
     let userId  = this.getUserId();
     return this.http.put<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}`, request);
   }
@@ -64,8 +64,13 @@ export class HabitService implements MovableService<Habit> {
     return this.http.post<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/before`, request);
   }
 
-  updateHabitProject(request: IdRequest, habitId: number): Observable<Habit> {
+  public updateHabitProject(request: IdRequest, habitId: number): Observable<Habit> {
     let userId  = this.getUserId();
     return this.http.put<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/project`, request);
+  }
+
+  public duplicateHabit(habitId: number): Observable<Habit> {
+    let userId  = this.getUserId();
+    return this.http.post<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/duplicate`, null);
   }
 }
