@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.entity.dto;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public interface HabitDetails {
     Integer getId();
@@ -12,4 +13,5 @@ public interface HabitDetails {
     boolean getAllowNegative();
     LocalDateTime getModifiedAt();
     Integer getPriority();
+    Set<LabelDetails> getLabels();
 }

@@ -5,4 +5,5 @@ export interface HabitRequest {
     allowNegative: boolean;
     projectId: number | undefined;
     priority: number;
+    labelIds: number[];
 }

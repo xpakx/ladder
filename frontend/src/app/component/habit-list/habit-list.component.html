@@ -43,9 +43,9 @@
                                 </div>
                             </div>
                             <div class="task_list_item__info_tags" data-layout="list">
-                                <!--<span *ngFor="let label of getTaskLabels(task)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
+                                <span *ngFor="let label of getHabitLabels(habit)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
                                     <span>{{label.name}}</span>
-                                </span>-->
+                                </span>
                                 
                                  <!--<span class="task_list_item__project" *ngIf="task.project">
                                    <a [href]="'/project/' + task.project.id + '#task-' + task.id">

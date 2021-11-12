@@ -222,14 +222,14 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
     this.closeContextHabitMenu();
   }
 
-  getTaskLabels(habit: HabitDetails): LabelDetails[] {
+  getHabitLabels(habit: HabitDetails): LabelDetails[] {
     let labels: LabelDetails[] = [];
-    /*for(let label of task.labels) {
+    for(let label of habit.labels) {
       let labelFromTree = this.tree.getLabelById(label.id);
       if(labelFromTree) {
         labels.push(labelFromTree);
       }
-    }*/
+    }
     return labels;
   }
 

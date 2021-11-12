@@ -1,3 +1,4 @@
+import { LabelDetails } from "./label-details";
 import { ProjectWithNameAndId } from "./project-with-name-and-id";
 
 export interface HabitDetails {
@@ -10,4 +11,5 @@ export interface HabitDetails {
     allowNegative: boolean;
     modifiedAt: Date;
     priority: number;
+    labels: LabelDetails[];
 }

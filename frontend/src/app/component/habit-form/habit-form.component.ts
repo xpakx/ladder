@@ -101,7 +101,8 @@ export class HabitFormComponent implements OnInit {
         allowPositive: this.allowPositive,
         allowNegative: this.allowNegative,
         projectId: this.project?.id,
-        priority: this.priority
+        priority: this.priority,
+        labelIds: lbls
       }, this.project ? this.project.id : undefined).subscribe(
         (response: Habit, projectId: number | undefined = this.project?.id, labels: number[] = lbls) => {
           this.tree.addNewHabit(response, projectId, labels);
@@ -142,7 +143,8 @@ export class HabitFormComponent implements OnInit {
         allowPositive: this.allowPositive,
         allowNegative: this.allowNegative,
         projectId: this.project?.id,
-        priority: this.priority
+        priority: this.priority,
+        labelIds: lbls
       }, this.habit.id).subscribe(
         (response: Habit, projectId: number | undefined = this.project?.id, labels: number[] = lbls) => {
           this.tree.updateHabit(response, projectId, labels);
@@ -164,7 +166,8 @@ export class HabitFormComponent implements OnInit {
         allowPositive: this.allowPositive,
         allowNegative: this.allowNegative,
         projectId: this.project?.id,
-        priority: this.priority
+        priority: this.priority,
+        labelIds: lbls
       }, this.habit.id).subscribe(
         (response: Habit, habitId: number = idAfter, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
           this.tree.addNewHabitAfter(response, habitId, project, labels);
@@ -186,7 +189,8 @@ export class HabitFormComponent implements OnInit {
         allowPositive: this.allowPositive,
         allowNegative: this.allowNegative,
         projectId: this.project?.id,
-        priority: this.priority
+        priority: this.priority,
+        labelIds: lbls
       }, this.habit.id).subscribe(
         (response: Habit, habitId: number = idBefore, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
           this.tree.addNewHabitBefore(response, habitId, project, labels);

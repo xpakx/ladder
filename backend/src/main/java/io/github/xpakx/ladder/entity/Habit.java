@@ -13,6 +13,10 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraph(name = "habit-with-labels",
+            attributeNodes = {@NamedAttributeNode("labels"),
+				              @NamedAttributeNode("project")}
+    )
 public class Habit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
