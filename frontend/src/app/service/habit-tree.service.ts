@@ -168,4 +168,12 @@ export class HabitTreeService implements MovableTreeService<Habit> {
     }
     this.sort();
   }
+
+  updateHabitPriority(habit: Habit) {
+    let habitToUpdate = this.getById(habit.id);
+    if(habitToUpdate) {
+      habitToUpdate.priority = habit.priority;
+      habitToUpdate.modifiedAt =  new Date(habit.modifiedAt);
+    }
+  }
 }

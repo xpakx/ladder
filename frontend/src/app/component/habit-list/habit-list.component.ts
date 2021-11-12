@@ -192,7 +192,7 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
     if(this.taskIdForPriorityModal) {
       this.habitService.updateHabitPriority({priority: priority}, this.taskIdForPriorityModal).subscribe(
           (response: Habit) => {
-          //this.tree.updateTaskPriority(response);
+          this.tree.updateHabitPriority(response);
         },
         (error: HttpErrorResponse) => {
         
@@ -209,9 +209,9 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
     this.taskIdForPriorityModal = undefined;
   }
 
-  openSelectPriorityModal(task: HabitDetails) {
-    this.taskIdForPriorityModal = task.id;
-    //this.priorityForPriorityModal = task.priority;
+  openSelectPriorityModal(habit: HabitDetails) {
+    this.taskIdForPriorityModal = habit.id;
+    this.priorityForPriorityModal = habit.priority;
     this.showSelectPriorityModal = true;
   }
 

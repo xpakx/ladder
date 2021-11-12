@@ -296,4 +296,8 @@ export class TreeService {
   getHabits() {
     return this.habits.list;
   }
+
+  updateHabitPriority(habit: Habit) {
+    this.habits.updateHabitPriority(habit);
+  }
 }
