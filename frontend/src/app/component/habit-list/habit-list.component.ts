@@ -249,4 +249,8 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
     this.closeContextHabitMenu();
   }
 
+  getProjectColor(id: number): string {
+    let project = this.tree.getProjectById(id)
+    return project ? project.color : ""
+  }
 }

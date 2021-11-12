@@ -47,12 +47,12 @@
                                     <span>{{label.name}}</span>
                                 </span>
                                 
-                                 <!--<span class="task_list_item__project" *ngIf="task.project">
-                                   <a [href]="'/project/' + task.project.id + '#task-' + task.id">
-                                        <span class="task_list_item__project__label">{{task.project.name}}</span>
-                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                <span class="task_list_item__project" *ngIf="habit.project">
+                                   <a [href]="'/project/' + habit.project.id + '#task-' + habit.id">
+                                        <span class="task_list_item__project__label">{{habit.project.name}}</span>
+                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + getProjectColor(habit.project.id) + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
                                     </a>
-                                </span>-->
+                                </span>
                             </div>
                         </div>
                         <div class="task_list_item__actions task_list_item__actions--active">
