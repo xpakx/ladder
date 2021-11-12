@@ -39,6 +39,8 @@ export class NotificationService {
       setTimeout(() => this.deleteLabel(JSON.parse(event.data).id), 500);
     } else if(type == 'DELETE_TASK') {
       setTimeout(() => this.deleteTask(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_HABIT') {
+      setTimeout(() => this.deleteHabit(JSON.parse(event.data).id), 500);
     }
   }
 
@@ -63,11 +65,21 @@ export class NotificationService {
     }
   }
 
+  deleteHabit(id: number) {
+    let habit = this.tree.getHabitById(id);
+    if(habit) {
+      this.tree.deleteHabit(id);
+    }
+  }
+
   testSync(timestamp: Date) {
     let maxDate: Date = new Date(0);
     let dates: Date[] = this.tree.getProjects().map((a) => a.modifiedAt);
     dates = dates.concat(
       this.tree.getTasks().map((a) => a.modifiedAt)
+    );
+    dates = dates.concat(
+      this.tree.getHabits().map((a) => a.modifiedAt)
     );
     for(let date of dates) {
       if(date > maxDate) {

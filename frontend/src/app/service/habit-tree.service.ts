@@ -144,4 +144,22 @@ export class HabitTreeService implements MovableTreeService<Habit> {
       this.sort();
     }
   }
+
+  sync(habits: HabitDetails[]) {
+    for(let habit of habits) {
+      let habitWithId = this.getById(habit.id);
+      if(habitWithId) {
+        habitWithId.title = habit.title;
+        habitWithId.description = habit.description;
+        habitWithId.generalOrder = habit.generalOrder;
+        habitWithId.project = habit.project;
+        habitWithId.allowPositive = habit.allowPositive;
+        habitWithId.allowNegative = habit.allowNegative;
+        habitWithId.modifiedAt = new Date(habit.modifiedAt);
+      } else {
+        this.list.push(habit);
+      }
+    }
+    this.sort();
+  }
 }
