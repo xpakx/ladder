@@ -56,7 +56,7 @@ export class HabitFormComponent implements OnInit {
     
     if(this.habit && !this.after && !this.before ) {
       this.priority = this.habit.priority;
-      //this.labels = this.habit.labels;
+      this.labels = this.habit.labels;
       this.allowPositive = this.habit.allowPositive;
       this.allowNegative = this.habit.allowNegative;
       this.project = this.habit.project ? this.tree.getProjectById(this.habit.project.id) : undefined;
