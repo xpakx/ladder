@@ -6,4 +6,5 @@ export interface Habit {
     allowNegative: boolean;
     modifiedAt: Date;
     generalOrder: number;
+    priority: number;
 }

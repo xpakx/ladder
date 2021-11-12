@@ -63,3 +63,15 @@
     display: flex;
     flex-direction: column;
 }
+
+.habit_buttons.habit_priority_1 .habit_button {
+    border-color: #246fe0;
+}
+
+.habit_buttons.habit_priority_2 .habit_button {
+    border-color: #eb8909;
+}
+
+.habit_buttons.habit_priority_3 .habit_button {
+    border-color: #7c0e06;
+}

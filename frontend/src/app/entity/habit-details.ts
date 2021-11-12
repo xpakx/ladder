@@ -9,4 +9,5 @@ export interface HabitDetails {
     allowPositive: boolean;
     allowNegative: boolean;
     modifiedAt: Date;
+    priority: number;
 }

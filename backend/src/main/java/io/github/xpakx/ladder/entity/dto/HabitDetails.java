@@ -11,4 +11,5 @@ public interface HabitDetails {
     boolean getAllowPositive();
     boolean getAllowNegative();
     LocalDateTime getModifiedAt();
+    Integer getPriority();
 }

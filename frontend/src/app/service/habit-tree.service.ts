@@ -73,7 +73,8 @@ export class HabitTreeService implements MovableTreeService<Habit> {
       allowNegative: response.allowNegative,
       allowPositive: response.allowPositive,
       modifiedAt:  new Date(response.modifiedAt),
-      generalOrder: response.generalOrder
+      generalOrder: response.generalOrder,
+      priority: response.priority
     });
     this.sort();
   }
@@ -88,6 +89,7 @@ export class HabitTreeService implements MovableTreeService<Habit> {
       habit.allowPositive = response.allowPositive;
       habit.modifiedAt = new Date(response.modifiedAt);
       habit.generalOrder = response.generalOrder;
+      habit.priority = response.priority;
     }
   }
 
@@ -156,6 +158,7 @@ export class HabitTreeService implements MovableTreeService<Habit> {
         habitWithId.allowPositive = habit.allowPositive;
         habitWithId.allowNegative = habit.allowNegative;
         habitWithId.modifiedAt = new Date(habit.modifiedAt);
+        habitWithId.priority = habit.priority;
       } else {
         this.list.push(habit);
       }

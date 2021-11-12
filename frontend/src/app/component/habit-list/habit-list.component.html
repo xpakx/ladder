@@ -17,7 +17,7 @@
                                 <i class="fa fa-ellipsis-v"></i>
                             </span>
                         </div>
-                        <div class="habit_buttons">
+                        <div class="habit_buttons" [ngClass]="'habit_priority_' + habit.priority" >
                             <button type="button" role="checkbox" class="habit_button positive" *ngIf="habit.allowPositive">
                                 <div class="habit_circle">
                                     <span class="icon_check">
