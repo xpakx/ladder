@@ -162,6 +162,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       task.dailyOrder = response.dailyViewOrder;
       task.priority = response.priority;
       task.labels = labels
+      task.modifiedAt = new Date(response.modifiedAt);
     }
   }
 

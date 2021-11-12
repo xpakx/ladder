@@ -1,0 +1,163 @@
+<div class="tasks_content">
+    <ul class="task_list_items">
+        <li *ngIf="draggedId" [dndDropzone]="['habit']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
+
+        </li>
+        <ng-container *ngFor="let habit of habits">
+            <li *ngIf="shouldAddHabitAboveById(habit.id)" class="task_list_item">
+                <app-habit-form [project]="project" [data]="habitData" (closeEvent)="closeEditHabitForm()" class="task_list_item_main"></app-habit-form>
+            </li>
+            <li *ngIf="!shouldEditHabitById(habit.id)" class="task_list_item" [id] = "'habit-' + habit.id" 
+                [dndDraggable]="habit.id" (dndStart)="onDragStart(habit.id)" (dndEnd)="onDragEnd()" dndType="habit">
+                <div class="task_list_item_main">
+                    <div role="button" tabindex="0" class="task_list_item_body">
+                        <div class="task_list_item__overflow_actions">
+                            <span class="handle" dndHandle>
+                                <i class="fa fa-ellipsis-v"></i>
+                                <i class="fa fa-ellipsis-v"></i>
+                            </span>
+                        </div>
+                        <div class="habit_buttons" [ngClass]="'habit_priority_' + habit.priority" >
+                            <button type="button" role="checkbox" class="habit_button positive" *ngIf="habit.allowPositive">
+                                <div class="habit_circle">
+                                    <span class="icon_check">
+                                        <i class="fa fa-plus"></i>
+                                    </span>
+                                </div>
+                            </button>
+                            <button type="button" role="checkbox" class="habit_button negative"  *ngIf="habit.allowNegative">
+                                <div class="habit_circle">
+                                    <span class="icon_check">
+                                        <i class="fa fa-minus"></i>
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="task_list_item_content">
+                            <div [id]="'habit-' + habit.id + '-content'" class="task_list_item__content_wrapper">
+                                <div class="markdown_content task_content">
+                                    {{habit.title}}
+                                </div>
+                                <div class="markdown_content task_description" *ngIf="habit.description">
+                                    {{habit.description}} 
+                                </div>
+                            </div>
+                            <div class="task_list_item__info_tags" data-layout="list">
+                                <span *ngFor="let label of getHabitLabels(habit)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
+                                    <span>{{label.name}}</span>
+                                </span>
+                                
+                                <span class="task_list_item__project" *ngIf="habit.project">
+                                   <a [href]="'/project/' + habit.project.id + '#task-' + habit.id">
+                                        <span class="task_list_item__project__label">{{habit.project.name}}</span>
+                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + getProjectColor(habit.project.id) + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="task_list_item__actions task_list_item__actions--active">
+                            <button type="button" (click)="openEditHabitForm(habit)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <a class="task_list_item__comments_link">
+                                <i class="fa fa-comment-o"></i>
+                            </a>
+                            <button type="button" (click)="openContextHabitMenu($event, habit.id)">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li *ngIf="shouldEditHabitById(habit.id)" class="task_list_item">
+                <app-habit-form [project]="project" [data]="habitData" (closeEvent)="closeEditHabitForm()" class="task_list_item_main"></app-habit-form>
+            </li>
+            <li *ngIf="draggedId" class="drag_list_item" [dndDropzone]="['habit']"> <!-- [dndDisableDropIf]="true">-->
+                
+                <span [dndDropzone]="['habit']" (dndDrop)="onDrop($event, habit)" class="drag-zone last-drag-zone"></span>
+            </li>
+            <li *ngIf="shouldAddHabitBelowById(habit.id)" class="task_list_item">
+                <app-habit-form [project]="project" [data]="habitData" (closeEvent)="closeEditHabitForm()" class="task_list_item_main"></app-habit-form>
+            </li>
+        </ng-container>
+
+        <li>
+            <button type="button" class="plus_add_button" (click)="openAddHabitForm()" *ngIf="!showAddHabitForm" >
+                <span class="icon_add">
+                    <i class="fa fa-plus"></i>
+                </span>
+                Add habit
+            </button>
+
+            <app-habit-form *ngIf="showAddHabitForm" [project]="project" (closeEvent)="closeAddHabitForm()"></app-habit-form>
+
+        </li>
+    </ul>
+</div>
+
+
+  
+
+<div class="ist-menu context" [class.hidden-context-menu]="!showContextHabitMenu" [ngStyle]="{'left.px': habitContextMenuX, 'top.px': habitContextMenuY}">
+	<ul class="context-menu-project" #taskContext>
+		<li class="context-menu-project-item">
+			<button (click)="openEditTaskAbove()">
+				<span class="menu_icon">
+					<i class="fa fa-arrow-up"></i>
+				</span>
+				<div class="menu_label">Add habit above</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="openEditTaskBelow()">
+				<span class="menu_icon">
+					<i class="fa fa-arrow-down"></i>
+				</span>
+				<div class="menu_label">Add habit below</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="openEditTaskFromContextMenu()">
+				<span class="menu_icon">
+					<i class="fa fa-edit"></i>
+				</span>
+				<div class="menu_label">Edit habit</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="openSelectProjectModalFormContextMenu()">
+				<span class="menu_icon">
+					<i class="fa fa-arrow-right"></i>
+				</span>
+				<div class="menu_label">Move to project</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="openSelectPriorityModalFormContextMenu()">
+				<span class="menu_icon">
+					<i class="fa fa-flag-o"></i>
+				</span>
+				<div class="menu_label">Priority</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)="duplicate()">
+				<span class="menu_icon">
+					<i class="fa fa-clone"></i>
+				</span>
+				<div class="menu_label">Duplicate</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item">
+			<button (click)=askForDelete()>
+				<span class="menu_icon">
+					<i class="fa fa-trash-o"></i>
+				</span>
+				<div class="menu_label">Delete habit</div>
+			</button>
+		</li>
+	</ul>
+</div>
+
+<app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="projectForProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
+<app-priority-modal *ngIf="showSelectPriorityModal" [priority]="priorityForPriorityModal" (closeEvent)="closeSelectPriorityModal($event)" (cancelEvent)="cancelPrioritySelection()"></app-priority-modal>

@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Habit } from '../entity/habit';
+import { HabitDetails } from '../entity/habit-details';
 import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
@@ -10,6 +12,7 @@ import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { UserWithData } from '../entity/user-with-data';
+import { HabitTreeService } from './habit-tree.service';
 import { LabelTreeService } from './label-tree.service';
 import { ProjectTreeService } from './project-tree.service';
 import { TaskTreeService } from './task-tree.service';
@@ -23,7 +26,7 @@ export class TreeService {
   public labelCollapsed: boolean = true;
   
   constructor(private projects: ProjectTreeService, private tasks: TaskTreeService,
-    private labels: LabelTreeService) { }
+    private labels: LabelTreeService, private habits: HabitTreeService) { }
 
   isLoaded(): boolean {
     return this.loaded;
@@ -35,6 +38,7 @@ export class TreeService {
     this.projects.load(tree.projects);
     this.tasks.load(tree.tasks);
     this.labels.load(tree.labels);
+    this.habits.load(tree.habits);
   }
 
   getProjects() {
@@ -129,6 +133,11 @@ export class TreeService {
     this.tasks.addNewTask(response, project, 0, null, this.getLabelsFromIds(labelIds));
   }
 
+  addNewHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []) {
+    let project = projectId ? this.getProjectById(projectId) : undefined;
+    this.habits.addNewHabit(response, project, this.getLabelsFromIds(labelIds));
+  }
+
   private getLabelsFromIds(labelIds: number[]): LabelDetails[] {
     let labels: LabelDetails[] = [];
     for (let id of labelIds) {
@@ -141,6 +150,11 @@ export class TreeService {
   updateTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
     let project = projectId ? this.getProjectById(projectId) : undefined;
     this.tasks.updateTask(response, project, this.getLabelsFromIds(labelIds));
+  }
+
+  updateHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []) {
+    let project = projectId ? this.getProjectById(projectId) : undefined;
+    this.habits.updateHabit(response, project, this.getLabelsFromIds(labelIds));
   }
 
   changeTaskCompletion(response: Task) {
@@ -161,6 +175,10 @@ export class TreeService {
 
   deleteTask(taskId: number) {
     this.tasks.deleteTask(taskId);
+  }
+
+  deleteHabit(habitId: number) {
+    this.habits.deleteHabit(habitId);
   }
 
   getTasksByLabel(id: number): TaskTreeElem[] {
@@ -256,5 +274,30 @@ export class TreeService {
     this.projects.sync(response.projects);
     this.labels.sync(response.labels);
     this.tasks.sync(response.tasks);
+    this.habits.sync(response.habits)
+  }
+
+  addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+    this.habits.addNewHabitAfter(habit, afterId, project, this.getLabelsFromIds(labelIds));
+  }
+
+  addNewHabitBefore(habit: Habit, beforeId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+    this.habits.addNewHabitBefore(habit, beforeId, project, this.getLabelsFromIds(labelIds));
+  }
+
+  moveHabitToProject(habit: Habit, project: ProjectTreeElem | undefined) {
+    this.habits.moveHabitToProject(habit, project);
+  }
+
+  getHabitById(habitId: number): HabitDetails | undefined {
+    return this.habits.getById(habitId);
+  }
+
+  getHabits() {
+    return this.habits.list;
+  }
+
+  updateHabitPriority(habit: Habit) {
+    this.habits.updateHabitPriority(habit);
   }
 }

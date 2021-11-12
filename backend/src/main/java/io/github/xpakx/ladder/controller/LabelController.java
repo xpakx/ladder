@@ -51,14 +51,14 @@ public class LabelController {
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{labelId}/after")
     public ResponseEntity<Label> addLabelAfter(@RequestBody LabelRequest request, @PathVariable Integer userId,
-                                             @PathVariable Integer labelId) {
+                                               @PathVariable Integer labelId) {
         return  new ResponseEntity<>(labelService.addLabelAfter(request, userId, labelId), HttpStatus.CREATED);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{labelId}/before")
     public ResponseEntity<Label> addLabelBefore(@RequestBody LabelRequest request, @PathVariable Integer userId,
-                                              @PathVariable Integer labelId) {
+                                                @PathVariable Integer labelId) {
         return  new ResponseEntity<>(labelService.addLabelBefore(request, userId, labelId), HttpStatus.CREATED);
     }
 

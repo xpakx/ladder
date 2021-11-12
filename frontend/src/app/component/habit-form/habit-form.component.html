@@ -1,0 +1,57 @@
+<div *ngIf="habitForm" class="taskFormContainer">
+    <form class="taskForm" [formGroup]="habitForm">
+        <div class="taskFormInputsHolder">
+            <input placeholder="Task name" formControlName="title">
+            <textarea placeholder="Description" formControlName="description"></textarea>
+        </div> 
+        <div class="taskFormExtra">
+            <div class="taskFormExtraFields">
+                <button type="button" class="taskFormExtraButton" (click)="openSelectProjectMenu()">
+                    <div *ngIf="project">
+                        <div class="taskFormExtraColor" [style]="'color: ' + project.color +';'"></div>
+                        <span class="taskFormExtraText">{{project.name}}</span>
+                    </div>
+                    <div *ngIf="!project">
+                        <span class="taskFormInbox">
+                            <i class="fa text-primary mr-2 fa-inbox"></i>
+                        </span>
+                        <span class="taskFormExtraText">Inbox</span>
+                    </div>
+                </button>
+            </div>
+            <div class="taskFormExtraActions">
+                <button type="button" class="itemAction allowPositive" [class.selected]="allowPositive" (click)="switchAllowPositive()">
+                    <i class="fa fa-plus-circle"></i>
+                </button>
+                <button type="button" class="itemAction allowNegative" [class.selected]="allowNegative" (click)="switchAllowNegative()">
+                    <i class="fa fa-minus-circle"></i>
+                </button>
+                <button type="button" class="itemAction" (click)="openSelectLabelsMenu()">
+                    <i class="fa fa-tag"></i>
+                </button>
+                <button type="button" class="itemAction" (click)="openSelectPriorityMenu()">
+                    <i class="fa fa-flag" [ngClass]="'priority_' + priority"></i>
+                </button>
+                <button type="button" class="itemAction">
+                    <i class="fa fa-clock-o"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="taskFormButtons">
+        <button type="button" class="taskFormButton taskFormButtonRed" [disabled]="!valid" (click)="save()">
+            {{habit ? "Save" : "Add habit"}}
+        </button> 
+        <button type="button" class="taskFormButton" (click)="closeForm()">
+            Cancel
+        </button>
+    </div> 
+</div>
+
+
+<!-- Modal window for selecting project -->
+
+<app-project-choice-dialog *ngIf="showSelectProjectMenu" [project]="project" (closeEvent)="chooseProject($event)" (cancelEvent)="closeSelectProjectMenu()"></app-project-choice-dialog>
+<app-label-choice-dialog *ngIf="showSelectLabelsMenu" [labels]="labels" (closeEvent)="chooseLabel($event)" (cancelEvent)="closeSelectLabelsMenu()"></app-label-choice-dialog>
+<app-priority-modal *ngIf="showSelectPriorityMenu" [priority]="priorityForModal" (closeEvent)="choosePriority($event)" (cancelEvent)="closeSelectPriorityMenu()"></app-priority-modal>

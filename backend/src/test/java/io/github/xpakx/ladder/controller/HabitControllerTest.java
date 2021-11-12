@@ -1,9 +1,9 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Habit;
-import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.HabitRequest;
 import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.entity.dto.PriorityRequest;
@@ -363,5 +363,128 @@ class HabitControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("priority", equalTo(request.getPriority()));
+    }
+
+    @Test
+    void shouldRespondWith401ToGetHabitDetailsIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .get(baseUrl + "/{userId}/habits/{habitId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToGetHabitDetailsIfTaskNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/habits/{habitId}", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldRespondWithHabitDetails() {
+        Integer habitId = addHabitAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/habits/{habitId}", userId, habitId)
+        .then()
+                .statusCode(OK.value())
+                .body("id", equalTo(habitId))
+                .body("title", equalTo("Test Habit"));
+    }
+
+    @Test
+    void shouldRespondWith401ToCompleteHabitIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/complete", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    private BooleanRequest getBooleanRequest(boolean value) {
+        BooleanRequest request = new BooleanRequest();
+        request.setFlag(value);
+        return request;
+    }
+
+    @Test
+    void shouldRespondWith404ToCompleteHabitIfTaskNotFound() {
+        BooleanRequest request = getBooleanRequest(true);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/complete", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private Integer addPositiveHabitAndReturnId() {
+        Habit habit = Habit.builder()
+                .owner(userRepository.getById(userId))
+                .title("Test Habit")
+                .allowPositive(true)
+                .allowNegative(false)
+                .build();
+        return habitRepository.save(habit).getId();
+    }
+
+    @Test
+    void shouldCompleteHabit() {
+        Integer habitId = addPositiveHabitAndReturnId();
+        BooleanRequest request = getBooleanRequest(true);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/complete", userId, habitId)
+        .then()
+                .statusCode(OK.value());
+
+        Integer completions = habitCompletionRepository.findAll().size();
+        assertThat(completions, equalTo(1));
+    }
+
+    @Test
+    void shouldNotCompletePositiveHabitIfRequestIsNegative() {
+        Integer habitId = addPositiveHabitAndReturnId();
+        BooleanRequest request = getBooleanRequest(false);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/complete", userId, habitId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+
+        Integer completions = habitCompletionRepository.findAll().size();
+        assertThat(completions, equalTo(0));
     }
 }

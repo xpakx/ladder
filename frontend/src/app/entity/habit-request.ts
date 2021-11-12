@@ -1,10 +1,9 @@
-export interface Habit {
-    id: number;
+export interface HabitRequest {
     title: string;
     description: string;
     allowPositive: boolean;
     allowNegative: boolean;
-    modifiedAt: Date;
-    generalOrder: number;
+    projectId: number | undefined;
     priority: number;
+    labelIds: number[];
 }
