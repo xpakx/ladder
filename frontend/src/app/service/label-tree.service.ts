@@ -38,6 +38,7 @@ export class LabelTreeService implements MovableTreeService<Label> {
       label.name = request.name;
       label.color = request.color;
       label.favorite = request.favorite;
+      label.modifiedAt = new Date(request.modifiedAt);
     } 
   }
 
@@ -59,6 +60,7 @@ export class LabelTreeService implements MovableTreeService<Label> {
     let label = this.getLabelById(response.id);
     if(label) {
       label.favorite = response.favorite;
+      label.modifiedAt = new Date(response.modifiedAt);
     }
   }
 
@@ -102,6 +104,7 @@ export class LabelTreeService implements MovableTreeService<Label> {
         }
       
       movedLabel.generalOrder = afterLabel.generalOrder+1;
+      movedLabel.modifiedAt = new Date(label.modifiedAt);
 
       this.sort();
     }
@@ -114,6 +117,7 @@ export class LabelTreeService implements MovableTreeService<Label> {
         lbl.generalOrder = lbl.generalOrder + 1;
       }
       movedLabel.generalOrder = 1;
+      movedLabel.modifiedAt = new Date(label.modifiedAt);
       this.sort();
     }
   }
@@ -126,6 +130,7 @@ export class LabelTreeService implements MovableTreeService<Label> {
         labelWithId.favorite = label.favorite;
         labelWithId.generalOrder = label.generalOrder;
         labelWithId.name = label.name;
+        labelWithId.modifiedAt = new Date(label.modifiedAt);
       } else {
         this.labels.push(label);
       }
