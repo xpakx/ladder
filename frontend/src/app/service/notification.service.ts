@@ -79,6 +79,9 @@ export class NotificationService {
       this.tree.getTasks().map((a) => a.modifiedAt)
     );
     dates = dates.concat(
+      this.tree.getLabels().map((a) => a.modifiedAt)
+    );
+    dates = dates.concat(
       this.tree.getHabits().map((a) => a.modifiedAt)
     );
     for(let date of dates) {

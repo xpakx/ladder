@@ -4,4 +4,5 @@ export interface Label {
     color: string;
     favorite: boolean;
     generalOrder: number;
+    modifiedAt: Date;
 }

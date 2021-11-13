@@ -26,7 +26,8 @@ export class LabelTreeService implements MovableTreeService<Label> {
       id: request.id,
       color: request.color,
       favorite: request.favorite,
-      generalOrder: request.generalOrder
+      generalOrder: request.generalOrder,
+      modifiedAt: new Date(request.modifiedAt)
     });
     this.sort();
   }
