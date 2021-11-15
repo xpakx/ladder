@@ -43,21 +43,20 @@
                                 </div>
                             </div>
                             <div class="task_list_item__info_tags" data-layout="list">
-                                <span *ngFor="let label of getHabitLabels(habit)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
-                                    <span>{{label.name}}</span>
-                                </span>
-                                <span>
-                                    <span *ngIf="habit.allowPositive">
+                                <span class="completions">
+                                    <span *ngIf="habit.allowPositive" class="positive">
                                         +{{ getPositive(habit.id)}} 
                                     </span>
                                     <span *ngIf="habit.allowPositive && habit.allowNegative">
                                         |
                                     </span>
-                                    <span *ngIf="habit.allowNegative">
+                                    <span *ngIf="habit.allowNegative" class="negative">
                                         -{{ getNegative(habit.id)}} 
                                     </span>
                                 </span>
-                                
+                                <span *ngFor="let label of getHabitLabels(habit)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
+                                    <span>{{label.name}}</span>
+                                </span>                                
                                 <span class="task_list_item__project" *ngIf="habit.project">
                                    <a [href]="'/project/' + habit.project.id + '#task-' + habit.id">
                                         <span class="task_list_item__project__label">{{habit.project.name}}</span>

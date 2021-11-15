@@ -75,3 +75,9 @@
 .habit_buttons.habit_priority_3 .habit_button {
     color: #c41104;
 }
+
+.completions {
+    font-size: 12px;
+    color: grey;
+    margin-right: 5px;
+}
