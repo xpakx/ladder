@@ -12,6 +12,7 @@ import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { UserWithData } from '../entity/user-with-data';
+import { HabitCompletionTreeService } from './habit-completion-tree.service';
 import { HabitTreeService } from './habit-tree.service';
 import { LabelTreeService } from './label-tree.service';
 import { ProjectTreeService } from './project-tree.service';
@@ -26,7 +27,8 @@ export class TreeService {
   public labelCollapsed: boolean = true;
   
   constructor(private projects: ProjectTreeService, private tasks: TaskTreeService,
-    private labels: LabelTreeService, private habits: HabitTreeService) { }
+    private labels: LabelTreeService, private habits: HabitTreeService, 
+    private completions: HabitCompletionTreeService) { }
 
   isLoaded(): boolean {
     return this.loaded;
@@ -39,6 +41,7 @@ export class TreeService {
     this.tasks.load(tree.tasks);
     this.labels.load(tree.labels);
     this.habits.load(tree.habits);
+    this.completions.load(tree.todayHabitCompletions);
   }
 
   getProjects() {
