@@ -8,6 +8,7 @@ import { LoadProjectComponent } from './component/load-project/load-project.comp
 import { LoginComponent } from './component/login/login.component';
 import { ProjectComponent } from './component/project/project.component';
 import { RegisterComponent } from './component/register/register.component';
+import { SearchResultComponent } from './component/search-result/search-result.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,7 +19,8 @@ const routes: Routes = [
   { path: 'upcoming', component: DailyViewComponent }, // todo
   { path: 'project/:id', component: ProjectComponent },
   { path: 'project/:id/habits', component: HabitListComponent },
-  { path: 'label/:id', component: LabelComponent }
+  { path: 'label/:id', component: LabelComponent },
+  { path: 'search', component: SearchResultComponent }
 ];
 
 @NgModule({

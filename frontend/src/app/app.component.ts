@@ -81,4 +81,8 @@ export class AppComponent implements OnInit {
     this.labelData = undefined;
   }
 
+  search() {
+    this.router.navigate(['/search'], { queryParams: {search: 'test'}});
+  }
+
 }
