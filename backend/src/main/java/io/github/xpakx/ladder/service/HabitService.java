@@ -191,7 +191,6 @@ public class HabitService {
         return !labelsWithDifferentOwner.equals(0L);
     }
 
-    @NotifyOnHabitChange
     public HabitCompletion completeHabit(BooleanRequest request, Integer taskId, Integer userId) {
         Habit habit = habitRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No habit with id " + taskId));
@@ -202,6 +201,7 @@ public class HabitService {
                 .habit(habit)
                 .date(LocalDateTime.now())
                 .positive(request.isFlag())
+                .owner(userRepository.getById(userId))
                 .build();
         return habitCompletionRepository.save(habitCompletion);
     }
