@@ -7,6 +7,7 @@ import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
+import { HabitCompletionTreeService } from 'src/app/service/habit-completion-tree.service';
 import { HabitTreeService } from 'src/app/service/habit-tree.service';
 import { HabitService } from 'src/app/service/habit.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -27,7 +28,8 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
 
   constructor(public tree : TreeService, private router: Router,
     private renderer: Renderer2, private habitService: HabitService, 
-    private deleteService: DeleteService, public treeService: HabitTreeService) {
+    private deleteService: DeleteService, public treeService: HabitTreeService,
+    public completions: HabitCompletionTreeService) {
       super(treeService, habitService);
      }
 
@@ -40,6 +42,14 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
 
   protected getElems(): HabitDetails[] {
     return this.habits;
+  }
+
+  public getPositive(habitId: number): number {
+    return this.completions.countPositiveByHabitId(habitId);
+  }
+
+  public getNegative(habitId: number): number {
+    return this.completions.countNegativeByHabitId(habitId);
   }
 
   // Habit form

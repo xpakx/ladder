@@ -12,4 +12,16 @@ export class HabitCompletionTreeService {
   load(completions: HabitCompletionDetails[] = []) {
     this.list = completions;
   }
+
+  countPositiveByHabitId(id: number) {
+    return this.list.filter((a) => 
+      a.habit.id == id && a.positive
+    ).length;
+  }
+
+  countNegativeByHabitId(id: number) {
+    return this.list.filter((a) => 
+      a.habit.id == id && !a.positive
+    ).length;
+  }
 }
