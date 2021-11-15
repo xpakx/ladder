@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HabitCompletion } from '../entity/habit-completion';
 import { HabitCompletionDetails } from '../entity/habit-completion-details';
 
 @Injectable({
@@ -23,5 +24,14 @@ export class HabitCompletionTreeService {
     return this.list.filter((a) => 
       a.habit.id == id && !a.positive
     ).length;
+  }
+
+  addCompletion(habitId: number, completion: HabitCompletion) {
+    this.list.push({
+      id: completion.id,
+      date: completion.date,
+      positive: completion.positive,
+      habit: {id: habitId}
+    });
   }
 }

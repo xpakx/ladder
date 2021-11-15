@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Habit } from '../entity/habit';
+import { HabitCompletion } from '../entity/habit-completion';
 import { HabitDetails } from '../entity/habit-details';
 import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
@@ -302,5 +303,9 @@ export class TreeService {
 
   updateHabitPriority(habit: Habit) {
     this.habits.updateHabitPriority(habit);
+  }
+
+  completeHabit(habitId: number, completion: HabitCompletion) {
+    this.completions.addCompletion(habitId, completion);
   }
 }

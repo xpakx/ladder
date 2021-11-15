@@ -18,14 +18,14 @@
                             </span>
                         </div>
                         <div class="habit_buttons" [ngClass]="'habit_priority_' + habit.priority" >
-                            <button type="button" role="checkbox" class="habit_button positive" *ngIf="habit.allowPositive">
+                            <button type="button" role="checkbox" class="habit_button positive" *ngIf="habit.allowPositive" (click)="completeHabit(habit.id, true)">
                                 <div class="habit_circle">
                                     <span class="icon_check">
                                         <i class="fa fa-plus"></i>
                                     </span>
                                 </div>
                             </button>
-                            <button type="button" role="checkbox" class="habit_button negative"  *ngIf="habit.allowNegative">
+                            <button type="button" role="checkbox" class="habit_button negative"  *ngIf="habit.allowNegative" (click)="completeHabit(habit.id, false)">
                                 <div class="habit_circle">
                                     <span class="icon_check">
                                         <i class="fa fa-minus"></i>

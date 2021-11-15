@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Habit } from 'src/app/entity/habit';
+import { HabitCompletion } from 'src/app/entity/habit-completion';
 import { HabitDetails } from 'src/app/entity/habit-details';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -262,5 +263,19 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
   getProjectColor(id: number): string {
     let project = this.tree.getProjectById(id)
     return project ? project.color : ""
+  }
+
+  completeHabit(id: number, positive: boolean) {
+    let habit = this.tree.getHabitById(id);
+    if(habit) {
+    this.habitService.completeHabit(id, {flag: positive}).subscribe(
+        (response: HabitCompletion) => {
+        this.tree.completeHabit(id, response);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+    }
   }
 }
