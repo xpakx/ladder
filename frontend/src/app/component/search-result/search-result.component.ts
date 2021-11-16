@@ -15,6 +15,7 @@ export class SearchResultComponent implements OnInit {
   priority: number | undefined;
   labels: LabelDetails[] = [];
   project: ProjectTreeElem | undefined;
+  date: Date | undefined;
 
   constructor(public tree: TreeService, private route: ActivatedRoute) { 
     this.route.queryParams.subscribe(params => {
@@ -27,7 +28,12 @@ export class SearchResultComponent implements OnInit {
       .filter((t) => t.title.includes(this.search))
       .filter((t) => !this.priority || t.priority == this.priority)
       .filter((t) => this.labels.length==0 || this.labels.every((a) => t.labels.find((b) => b.id == a.id)))
-      .filter((t) => !this.project || (t. project && t.project.id == this.project.id));
+      .filter((t) => !this.project || (t. project && t.project.id == this.project.id))
+      .filter((t) => !this.date || (t.due && this.sameDay(t.due, this.date)));
+  }
+
+  sameDay(date1: Date, date2: Date): boolean {
+    return date1.getFullYear() == date2.getFullYear() && date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth();
   }
 
   private prepareSearch(searchString: string) {
@@ -47,11 +53,9 @@ export class SearchResultComponent implements OnInit {
       let labelNames = labelMatches
         .map((l) => l.trim())
         .map((l) => l.substr(1));
-      console.log(labelNames)
       this.labels = this.tree.getLabels().filter((l) => 
         labelNames.filter((a) => l.name.includes(a)).length>0
       );
-      console.log(this.labels.map((a) => a.name))
       for(let match of labelMatches) {
         searchString = searchString.replace(match, '');
       }
@@ -67,6 +71,18 @@ export class SearchResultComponent implements OnInit {
       }
     }
 
+    const dateRegex = new RegExp(/(^|\s)(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/g);
+    const dateMatches = searchString.match(dateRegex);
+    if(dateMatches) {
+      let dateElem = dateMatches[0].includes('-') ? dateMatches[0].split('-') : dateMatches[0].split('/'); 
+      this.date = new Date(Number(dateElem[2]), Number(dateElem[1])-1, Number(dateElem[0]));
+      console.log(this.date)
+      for(let match of dateMatches) {
+        searchString = searchString.replace(match, '');
+      }
+    }
+
+    console.log(searchString)
     this.search = searchString.trim();
   }
 
