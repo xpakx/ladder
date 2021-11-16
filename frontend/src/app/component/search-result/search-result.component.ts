@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LabelDetails } from 'src/app/entity/label-details';
+import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { TreeService } from 'src/app/service/tree.service';
 
@@ -13,6 +14,7 @@ export class SearchResultComponent implements OnInit {
   search: string = "";
   priority: number | undefined;
   labels: LabelDetails[] = [];
+  project: ProjectTreeElem | undefined;
 
   constructor(public tree: TreeService, private route: ActivatedRoute) { 
     this.route.queryParams.subscribe(params => {
@@ -25,6 +27,7 @@ export class SearchResultComponent implements OnInit {
       .filter((t) => t.title.includes(this.search))
       .filter((t) => !this.priority || t.priority == this.priority)
       .filter((t) => this.labels.length==0 || this.labels.every((a) => t.labels.find((b) => b.id == a.id)))
+      .filter((t) => !this.project || (t. project && t.project.id == this.project.id));
   }
 
   private prepareSearch(searchString: string) {
@@ -38,7 +41,7 @@ export class SearchResultComponent implements OnInit {
       }
     }
 
-    const labelRegex = new RegExp(/(^|\s)\+[A-Za-z0-9]*/g);
+    const labelRegex = new RegExp(/(^|\s)#[A-Za-z0-9]*/g);
     const labelMatches = searchString.match(labelRegex);
     if(labelMatches) {
       let labelNames = labelMatches
@@ -50,6 +53,16 @@ export class SearchResultComponent implements OnInit {
       );
       console.log(this.labels.map((a) => a.name))
       for(let match of labelMatches) {
+        searchString = searchString.replace(match, '');
+      }
+    }
+
+    const projectRegex = new RegExp(/(^|\s)\+[A-Za-z0-9]*/g);
+    const projectMatches = searchString.match(projectRegex);
+    if(projectMatches) {
+      let projectId = Number(projectMatches[0].trim().substr(1));
+      this.project = this.tree.getProjectById(projectId);
+      for(let match of projectMatches) {
         searchString = searchString.replace(match, '');
       }
     }

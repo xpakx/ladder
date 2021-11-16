@@ -82,7 +82,7 @@ export class AppComponent implements OnInit {
   }
 
   search() {
-    this.router.navigate(['/search'], { queryParams: {search: 'test +test'}});
+    this.router.navigate(['/search'], { queryParams: {search: 'test +refact'}});
   }
 
 }
