@@ -260,3 +260,17 @@ button {
         visibility: hidden;
     }
 }
+
+form .search_button {
+    display: none;
+    width: 32px;
+    margin-left: -32px;
+}
+
+form:focus-within .search_button {
+    display: inline-block;
+}
+
+.form-inline {
+    display: flex;
+}

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
@@ -26,8 +27,13 @@ export class AppComponent implements OnInit {
 
   displayAddTask: boolean = false;
 
+  searchForm: FormGroup;
+
   constructor(public tree : TreeService, public deleteService: DeleteService,
-    private router: Router, private notifications: NotificationService) {
+    private router: Router, private notifications: NotificationService, private fb: FormBuilder) {
+      this.searchForm = this.fb.group({
+        search: ['']
+      });
   }
 
   ngOnInit(): void {
@@ -82,7 +88,7 @@ export class AppComponent implements OnInit {
   }
 
   search() {
-    this.router.navigate(['/search'], { queryParams: {search: '16-11-2021'}});
+    this.router.navigate(['/search'], { queryParams: {search: this.searchForm.controls.search.value}});
   }
 
 }
