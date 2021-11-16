@@ -1,4 +1,4 @@
 <h2>Tasks</h2>
 <div *ngFor="let task of tasks">
- {{ task.title }}
+ #{{task.id}} {{ task.title }}, Project: {{task.project ? task.project.name : "inbox"}}
 </div>
