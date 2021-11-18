@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Filter } from '../entity/filter';
 import { Habit } from '../entity/habit';
 import { HabitCompletion } from '../entity/habit-completion';
 import { HabitDetails } from '../entity/habit-details';
@@ -320,4 +321,21 @@ export class TreeService {
   getFilters() {
     return this.filters.list;
   }
+
+  addNewFilter(request: Filter) {
+    this.filters.addNewFilter(request);
+  }
+
+  updateFilter(request: Filter, filterId: number) {
+    this.filters.updateFilter(request, filterId);
+  }
+
+  addNewFilterBefore(filter: Filter, beforeId: number) {
+    this.filters.addNewFilterBefore(filter, beforeId);
+  }
+
+  addNewFilterAfter(filter: Filter, afterId: number) {
+    this.filters.addNewFilterAfter(filter, afterId);
+  }
+
 }
