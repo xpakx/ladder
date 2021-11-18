@@ -1,6 +1,8 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Filter;
+import io.github.xpakx.ladder.entity.Label;
+import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
 import io.github.xpakx.ladder.service.FilterService;
 import lombok.AllArgsConstructor;
@@ -32,5 +34,11 @@ public class FilterController {
     public ResponseEntity<?> deleteFilter(@PathVariable Integer filterId, @PathVariable Integer userId) {
         filterService.deleteFilter(filterId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{filterId}/favorite")
+    public ResponseEntity<Filter> updateLabelFav(@RequestBody BooleanRequest request, @PathVariable Integer filterId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(filterService.updateFilterFav(request, filterId, userId), HttpStatus.OK);
     }
 }

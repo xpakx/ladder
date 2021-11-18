@@ -1,6 +1,8 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Filter;
+import io.github.xpakx.ladder.entity.Label;
+import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.FilterRepository;
@@ -45,5 +47,13 @@ public class FilterService {
 
     public void deleteFilter(Integer filterId, Integer userId) {
         filterRepository.deleteByIdAndOwnerId(filterId, userId);
+    }
+
+    public Filter updateFilterFav(BooleanRequest request, Integer filterId, Integer userId) {
+        Filter filterToUpdate = filterRepository.findByIdAndOwnerId(filterId, userId)
+                .orElseThrow(() -> new NotFoundException("No such filter"));
+        filterToUpdate.setFavorite(request.isFlag());
+        filterToUpdate.setModifiedAt(LocalDateTime.now());
+        return filterRepository.save(filterToUpdate);
     }
 }
