@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Filter } from '../entity/filter';
 import { FilterDetails } from '../entity/filter-details';
+import { MovableTreeService } from './movable-tree-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FilterTreeService {
+export class FilterTreeService implements MovableTreeService<Filter> {
   public list: FilterDetails[] = [];
 
   constructor() { }
@@ -59,4 +60,61 @@ export class FilterTreeService {
     }
   }
 
+  addNewFilterBefore(filter: Filter, beforeId: number) {
+    let beforeFilter = this.getById(beforeId);
+    if(beforeFilter) {
+      let fltr : FilterDetails = beforeFilter;
+      filter.generalOrder = fltr.generalOrder;
+      let filters = this.list
+        .filter((a) => a.generalOrder >= fltr.generalOrder);
+        for(let filt of filters) {
+          filt.generalOrder = filt.generalOrder + 1;
+        }
+      this.addNewFilter(filter);
+    }
+  }
+
+  addNewFilterAfter(filter: Filter, afterId: number) {
+    let afterFilter = this.getById(afterId);
+    if(afterFilter) {
+      let fltr : FilterDetails = afterFilter;
+      filter.generalOrder = fltr.generalOrder + 1;
+      let filters = this.list
+        .filter((a) => a.generalOrder > fltr.generalOrder);
+        for(let filt of filters) {
+          filt.generalOrder = filt.generalOrder + 1;
+        }
+      this.addNewFilter(filter);
+    }
+  }
+
+  moveAfter(filter: Filter, afterId: number) {
+    let afterFilter = this.getById(afterId);
+    let movedFilter = this.getById(filter.id);
+    if(afterFilter && movedFilter) {
+      let fltr : FilterDetails = afterFilter;
+      let filters = this.list
+        .filter((a) => a.generalOrder > fltr.generalOrder);
+        for(let filt of filters) {
+          filt.generalOrder = filt.generalOrder + 1;
+        }
+      
+      movedFilter.generalOrder = afterFilter.generalOrder+1;
+      movedFilter.modifiedAt = new Date(filter.modifiedAt);
+
+      this.sort();
+    }
+  }
+
+  moveAsFirst(filter: Filter) {
+    let movedFilter = this.getById(filter.id);
+    if(movedFilter) {
+      for(let fltr of this.list) {
+        fltr.generalOrder = fltr.generalOrder + 1;
+      }
+      movedFilter.generalOrder = 1;
+      movedFilter.modifiedAt = new Date(filter.modifiedAt);
+      this.sort();
+    }
+  }
 }
