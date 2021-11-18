@@ -69,6 +69,7 @@ export class FilterDialogComponent implements OnInit {
   chooseColor(color: string) {
     this.addFilterForm.setValue({
       name: this.addFilterForm.controls.name.value,
+      searchString: this.addFilterForm.controls.searchString.value,
       color: color
     });
   }
