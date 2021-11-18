@@ -1,3 +1,4 @@
+import { FilterDetails } from "./filter-details";
 import { HabitCompletionDetails } from "./habit-completion-details";
 import { HabitDetails } from "./habit-details";
 import { LabelDetails } from "./label-details";
@@ -13,4 +14,5 @@ export interface UserWithData {
     labels: LabelDetails[];
     habits: HabitDetails[];
     todayHabitCompletions: HabitCompletionDetails[];
+    filters: FilterDetails[];
 }

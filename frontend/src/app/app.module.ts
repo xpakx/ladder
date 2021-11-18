@@ -33,6 +33,7 @@ import { HabitListComponent } from './component/habit-list/habit-list.component'
 import { TaskListComponent } from './component/task-list/task-list.component';
 import { HabitFormComponent } from './component/habit-form/habit-form.component';
 import { SearchResultComponent } from './component/search-result/search-result.component';
+import { FilterListComponent } from './component/filter-list/filter-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -66,7 +67,8 @@ export function tokenGetter() {
     HabitListComponent,
     TaskListComponent,
     HabitFormComponent,
-    SearchResultComponent
+    SearchResultComponent,
+    FilterListComponent
   ],
   imports: [
     BrowserModule,

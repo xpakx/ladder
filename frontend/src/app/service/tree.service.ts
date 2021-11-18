@@ -13,6 +13,7 @@ import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { UserWithData } from '../entity/user-with-data';
+import { FilterTreeService } from './filter-tree.service';
 import { HabitCompletionTreeService } from './habit-completion-tree.service';
 import { HabitTreeService } from './habit-tree.service';
 import { LabelTreeService } from './label-tree.service';
@@ -26,10 +27,11 @@ export class TreeService {
   public loaded: boolean = false;
   public projectCollapsed: boolean = true;
   public labelCollapsed: boolean = true;
+  public filterCollapsed: boolean = true;
   
   constructor(private projects: ProjectTreeService, private tasks: TaskTreeService,
     private labels: LabelTreeService, private habits: HabitTreeService, 
-    private completions: HabitCompletionTreeService) { }
+    private completions: HabitCompletionTreeService, private filters: FilterTreeService) { }
 
   isLoaded(): boolean {
     return this.loaded;
@@ -43,6 +45,7 @@ export class TreeService {
     this.labels.load(tree.labels);
     this.habits.load(tree.habits);
     this.completions.load(tree.todayHabitCompletions);
+    this.filters.load(tree.filters);
   }
 
   getProjects() {
@@ -312,5 +315,9 @@ export class TreeService {
 
   getCompletions() {
     return this.completions.list;
+  }
+
+  getFilters() {
+    return this.filters.list;
   }
 }

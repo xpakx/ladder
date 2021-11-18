@@ -1,0 +1,93 @@
+<div class="expansion_panel">
+    <div class="expansion_panel__header" style="top: 372px;">
+        <button type="button" class="expansion_panel__toggle" (click)="switchFilterCollapse()">
+            <div class="expansion_panel__toggle_icon">
+                <i class="fa mx-2 text-muted fa-chevron-right"  [class.rotated]="!tree.filterCollapsed"></i>
+            </div>
+            Filters
+        </button>
+        <div class="expansion_panel__actions">
+            <button type="button" class="adder_icon" (click)="openFilterModal()">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="projects" style="min-height: 0px;" [class.hidden]="tree.filterCollapsed">
+        <div class="projects_list_container">
+            <ul class="items generic_left_list projects_list">
+				<li *ngIf="draggedId" [dndDropzone]="['label']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item"></li>
+                <ng-container *ngFor="let label of tree.getFilters()">
+                    <li class="project_list_item" [dndDraggable]="label.id" (dndStart)="onDragStart(label.id)" (dndEnd)="onDragEnd()"  
+					dndType="label">
+                        <span class="left_actions">
+                            <button type="button" class="handle" dndHandle>
+                                <i class="fa fa-ellipsis-v"></i>
+                                <i class="fa fa-ellipsis-v"></i>
+                            </button>
+                        </span>
+                        <button class="text" (click)="toFilter(label.id)">
+                            <div class="label-color" [style]="'color: ' + label.color +';'">
+                                <i class="fa fa-tint"></i>
+                            </div>
+                            <span class="project-name">{{label.name}}</span>
+                            <!--<div class="counter_count">{{tree.getNumOfUncompletedTasksByLabel(label.id)}}</div>-->
+                        </button>
+                        
+                        <button type="button" #contextMenuButton class="icon_more" (click)="openContextMenu($event, label)">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </button>
+                    </li>
+
+					<li *ngIf="draggedId" [dndDropzone]="['label']" (dndDrop)="onDrop($event, label)" class="drag-zone drag_list_item"></li>
+                </ng-container>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<div class="ist-menu context" [class.hidden-context-menu]="!showContextMenu" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
+	<ul class="context-menu-project" #labelContext>
+		<li class="context-menu-project-item">
+			<button (click)="openFilterModalAbove()">
+				<span class="menu_icon">
+					<i class="fa fa-arrow-up"></i>
+				</span>
+				<div class="menu_label">Add filter above</div>
+			</button>
+		</li>
+		<li class="context-menu-project-item">
+			<button (click)="openFilterModalBelow()">
+				<span class="menu_icon">
+					<i class="fa fa-arrow-down"></i>
+				</span>
+				<div class="menu_label">Add filter below</div>
+			</button>
+		</li>
+		<li class="context-menu-project-item">
+			<button (click)="openFilterModalWithLabel()">
+				<span class="menu_icon">
+					<i class="fa fa-edit"></i>
+				</span>
+				<div class="menu_label">Edit filter</div>
+			</button>
+		</li>
+		<li class="context-menu-project-item" *ngIf="contextMenuFilter">
+			<button (click)="updateFilterFav()">
+				<span class="menu_icon">
+					<i class="fa fa-heart-o" *ngIf="!contextMenuFilter.favorite"></i>
+					<i class="fa fa-heart" *ngIf="contextMenuFilter.favorite"></i>
+				</span>
+				<div class="menu_label">Add to favorites</div>
+			</button>
+		</li>
+		<li class="context-menu-project-item">
+			<button (click)="askForDelete()">
+				<span class="menu_icon">
+					<i class="fa fa-trash-o"></i>
+				</span>
+				<div class="menu_label">Delete filter</div>
+			</button>
+		</li>
+	</ul>
+</div>
