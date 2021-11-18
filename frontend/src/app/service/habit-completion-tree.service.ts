@@ -29,13 +29,21 @@ export class HabitCompletionTreeService {
   addCompletion(habitId: number, completion: HabitCompletion) {
     this.list.push({
       id: completion.id,
-      date: completion.date,
+      date: new Date(completion.date),
       positive: completion.positive,
       habit: {id: habitId}
     });
   }
 
+  private containsId(completionId: number): boolean {
+    return this.list.find((a) => a.id == completionId) ? true : false;
+  }
+
   sync(completions: HabitCompletionDetails[]) {
-    this.list = this.list.concat(completions);
+    for(let completion of completions) {
+      if(this.containsId(completion.id)) {
+        this.list.push(completion);
+      }
+    }
   }
 }

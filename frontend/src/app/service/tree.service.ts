@@ -309,4 +309,8 @@ export class TreeService {
   completeHabit(habitId: number, completion: HabitCompletion) {
     this.completions.addCompletion(habitId, completion);
   }
+
+  getCompletions() {
+    return this.completions.list;
+  }
 }

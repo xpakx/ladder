@@ -84,6 +84,9 @@ export class NotificationService {
     dates = dates.concat(
       this.tree.getHabits().map((a) => a.modifiedAt)
     );
+    dates = dates.concat(
+      this.tree.getCompletions().map((a) => a.date)
+    );
     for(let date of dates) {
       if(date > maxDate) {
         maxDate = date;
