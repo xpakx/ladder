@@ -1,7 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Filter;
-import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
 import io.github.xpakx.ladder.service.FilterService;
 import lombok.AllArgsConstructor;
@@ -20,5 +19,11 @@ public class FilterController {
     @PostMapping
     public ResponseEntity<Filter> addFilter(@RequestBody FilterRequest request, @PathVariable Integer userId) {
         return  new ResponseEntity<>(filterService.addFilter(request, userId), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{filterId}")
+    public ResponseEntity<Filter> updateFilter(@RequestBody FilterRequest request, @PathVariable Integer userId, @PathVariable Integer filterId) {
+        return  new ResponseEntity<>(filterService.updateFilter(request, userId, filterId), HttpStatus.OK);
     }
 }

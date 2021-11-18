@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Filter;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
+import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.FilterRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
@@ -29,5 +30,16 @@ public class FilterService {
                 .searchString(request.getSearchString())
                 .modifiedAt(LocalDateTime.now())
                 .build();
+    }
+
+    public Filter updateFilter(FilterRequest request, Integer userId, Integer filterId) {
+        Filter filterToUpdate = filterRepository.findByIdAndOwnerId(filterId, userId)
+                .orElseThrow(() -> new NotFoundException("No such filter!"));
+        filterToUpdate.setName(request.getName());
+        filterToUpdate.setColor(request.getColor());
+        filterToUpdate.setFavorite(request.isFavorite());
+        filterToUpdate.setSearchString(request.getSearchString());
+        filterToUpdate.setModifiedAt(LocalDateTime.now());
+        return filterRepository.save(filterToUpdate);
     }
 }
