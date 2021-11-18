@@ -33,8 +33,8 @@ implements OnInit, AfterViewInit {
     this.addFilter.emit(new AddEvent<FilterDetails>());
   }
 
-  toFilter(id: number) {
-    this.router.navigate(['/filter/'+id]);
+  toFilter(searchString: string) {
+    this.router.navigate(['/search'], { queryParams: {search: searchString}});
   }
 
   switchFilterCollapse() {
