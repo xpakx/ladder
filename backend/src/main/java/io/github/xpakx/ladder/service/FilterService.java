@@ -42,4 +42,8 @@ public class FilterService {
         filterToUpdate.setModifiedAt(LocalDateTime.now());
         return filterRepository.save(filterToUpdate);
     }
+
+    public void deleteFilter(Integer filterId, Integer userId) {
+        filterRepository.deleteByIdAndOwnerId(filterId, userId);
+    }
 }

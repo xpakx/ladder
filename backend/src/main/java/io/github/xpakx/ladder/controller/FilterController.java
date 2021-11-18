@@ -26,4 +26,11 @@ public class FilterController {
     public ResponseEntity<Filter> updateFilter(@RequestBody FilterRequest request, @PathVariable Integer userId, @PathVariable Integer filterId) {
         return  new ResponseEntity<>(filterService.updateFilter(request, userId, filterId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @DeleteMapping("/{filterId}")
+    public ResponseEntity<?> deleteFilter(@PathVariable Integer filterId, @PathVariable Integer userId) {
+        filterService.deleteFilter(filterId, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
