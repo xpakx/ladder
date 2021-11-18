@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -17,7 +17,8 @@ export class SearchResultComponent implements OnInit {
   project: ProjectTreeElem | undefined;
   date: Date | undefined;
 
-  constructor(public tree: TreeService, private route: ActivatedRoute) { 
+  constructor(public tree: TreeService, private route: ActivatedRoute,
+    private router: Router) { 
     this.route.queryParams.subscribe(params => {
       this.prepareSearch(params['search']);
     });
@@ -88,6 +89,9 @@ export class SearchResultComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(!this.tree.isLoaded()) {
+      this.router.navigate(["load"]);
+    }   
   }
 
 }
