@@ -117,4 +117,21 @@ export class FilterTreeService implements MovableTreeService<Filter> {
       this.sort();
     }
   }
+
+  sync(filters: FilterDetails[]) {
+    for(let filter of filters) {
+      let filterWithId = this.getById(filter.id);
+      if(filterWithId) {
+        filterWithId.color = filter.color;
+        filterWithId.favorite = filter.favorite;
+        filterWithId.generalOrder = filter.generalOrder;
+        filterWithId.name = filter.name;
+        filterWithId.searchString = filter.searchString;
+        filterWithId.modifiedAt = new Date(filter.modifiedAt);
+      } else {
+        this.list.push(filter);
+      }
+    }
+    this.sort();
+  }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Filter } from '../entity/filter';
+import { FilterDetails } from '../entity/filter-details';
 import { Habit } from '../entity/habit';
 import { HabitCompletion } from '../entity/habit-completion';
 import { HabitDetails } from '../entity/habit-details';
@@ -284,6 +285,7 @@ export class TreeService {
     this.tasks.sync(response.tasks);
     this.habits.sync(response.habits);
     this.completions.sync(response.habitCompletions);
+    this.filters.sync(response.filters);
   }
 
   addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
@@ -338,4 +340,11 @@ export class TreeService {
     this.filters.addNewFilterAfter(filter, afterId);
   }
 
+  getFilterById(filterId: number): FilterDetails | undefined {
+    return this.filters.getById(filterId);
+  }
+
+  deleteFilter(filterId: number) {
+    this.filters.deleteFilter(filterId);
+  }
 }
