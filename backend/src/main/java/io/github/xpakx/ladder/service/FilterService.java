@@ -1,7 +1,6 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Filter;
-import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
@@ -27,6 +26,7 @@ public class FilterService {
     private Filter buildFilterToAddFromRequest(FilterRequest request, Integer userId) {
         return Filter.builder()
                 .name(request.getName())
+                .owner(userRepository.getById(userId))
                 .color(request.getColor())
                 .favorite(request.isFavorite())
                 .searchString(request.getSearchString())
