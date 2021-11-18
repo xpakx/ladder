@@ -39,6 +39,12 @@ export class SearchResultComponent implements OnInit {
 
   private prepareSearch(searchString: string) {
     console.log(searchString)
+
+    this.priority = undefined;
+    this.labels = [];
+    this.project = undefined;
+    this.date = undefined;
+    
     const priorityRegex = new RegExp(/(^|\s)p[0-3]/g);
     const priorityMatches = searchString.match(priorityRegex);
     if(priorityMatches) {

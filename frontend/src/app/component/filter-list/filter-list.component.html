@@ -16,8 +16,8 @@
         <div class="projects_list_container">
             <ul class="items generic_left_list projects_list">
 				<li *ngIf="draggedId" [dndDropzone]="['filter']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item"></li>
-                <ng-container *ngFor="let label of tree.getFilters()">
-                    <li class="project_list_item" [dndDraggable]="label.id" (dndStart)="onDragStart(label.id)" (dndEnd)="onDragEnd()"  
+                <ng-container *ngFor="let filter of tree.getFilters()">
+                    <li class="project_list_item" [dndDraggable]="filter.id" (dndStart)="onDragStart(filter.id)" (dndEnd)="onDragEnd()"  
 					dndType="filter">
                         <span class="left_actions">
                             <button type="button" class="handle" dndHandle>
@@ -25,20 +25,19 @@
                                 <i class="fa fa-ellipsis-v"></i>
                             </button>
                         </span>
-                        <button class="text" (click)="toFilter(label.searchString)">
-                            <div class="label-color" [style]="'color: ' + label.color +';'">
+                        <button class="text" (click)="toFilter(filter.searchString)">
+                            <div class="label-color" [style]="'color: ' + filter.color +';'">
                                 <i class="fa fa-tint"></i>
                             </div>
-                            <span class="project-name">{{label.name}}</span>
-                            <!--<div class="counter_count">{{tree.getNumOfUncompletedTasksByLabel(label.id)}}</div>-->
+                            <span class="project-name">{{filter.name}}</span>
                         </button>
                         
-                        <button type="button" #contextMenuButton class="icon_more" (click)="openContextMenu($event, label)">
+                        <button type="button" #contextMenuButton class="icon_more" (click)="openContextMenu($event, filter)">
                             <i class="fa fa-ellipsis-h"></i>
                         </button>
                     </li>
 
-					<li *ngIf="draggedId" [dndDropzone]="['filter']" (dndDrop)="onDrop($event, label)" class="drag-zone drag_list_item"></li>
+					<li *ngIf="draggedId" [dndDropzone]="['filter']" (dndDrop)="onDrop($event, filter)" class="drag-zone drag_list_item"></li>
                 </ng-container>
             </ul>
         </div>
