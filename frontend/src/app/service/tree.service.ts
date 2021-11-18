@@ -278,7 +278,8 @@ export class TreeService {
     this.projects.sync(response.projects);
     this.labels.sync(response.labels);
     this.tasks.sync(response.tasks);
-    this.habits.sync(response.habits)
+    this.habits.sync(response.habits);
+    this.completions.sync(response.habitCompletions);
   }
 
   addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {

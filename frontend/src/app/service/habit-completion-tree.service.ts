@@ -34,4 +34,8 @@ export class HabitCompletionTreeService {
       habit: {id: habitId}
     });
   }
+
+  sync(completions: HabitCompletionDetails[]) {
+    this.list = this.list.concat(completions);
+  }
 }
