@@ -16,4 +16,5 @@ public class UserWithData {
     private List<LabelDetails> labels;
     private List<HabitDetails> habits;
     private List<HabitCompletionDetails> todayHabitCompletions;
+    private List<FilterDetails> filters;
 }
