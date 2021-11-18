@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.aspect.NotifyOnHabitChange;
+import io.github.xpakx.ladder.aspect.NotifyOnHabitCompletion;
 import io.github.xpakx.ladder.aspect.NotifyOnHabitDeletion;
 import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.*;
@@ -191,6 +192,7 @@ public class HabitService {
         return !labelsWithDifferentOwner.equals(0L);
     }
 
+    @NotifyOnHabitCompletion
     public HabitCompletion completeHabit(BooleanRequest request, Integer taskId, Integer userId) {
         Habit habit = habitRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No habit with id " + taskId));
