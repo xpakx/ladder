@@ -82,6 +82,7 @@ export class SearchResultComponent implements OnInit {
       }
     }
 
+    console.log(this.labels.map((a) => a.name))
     console.log(searchString)
     this.search = searchString.trim();
   }

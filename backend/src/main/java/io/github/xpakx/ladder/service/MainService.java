@@ -52,6 +52,10 @@ public class MainService {
         result.setHabits(
                 habitRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), HabitDetails.class)
         );
+        result.setHabitCompletions(
+                habitCompletionRepository.findByOwnerIdAndDateAfter(userId, time.getDate(), HabitCompletionDetails.class))
+        ;
+
 
         return result;
     }
