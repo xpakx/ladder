@@ -1,5 +1,7 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnFilterChange;
+import io.github.xpakx.ladder.aspect.NotifyOnFilterDeletion;
 import io.github.xpakx.ladder.entity.Filter;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
@@ -17,6 +19,7 @@ public class FilterService {
     private final FilterRepository filterRepository;
     private final UserAccountRepository userRepository;
 
+    @NotifyOnFilterChange
     public Filter addFilter(FilterRequest request, Integer userId) {
         Filter filterToAdd = buildFilterToAddFromRequest(request, userId);
         filterToAdd.setGeneralOrder(filterRepository.getMaxOrderByOwnerId(userId)+1);
@@ -34,6 +37,7 @@ public class FilterService {
                 .build();
     }
 
+    @NotifyOnFilterChange
     public Filter updateFilter(FilterRequest request, Integer userId, Integer filterId) {
         Filter filterToUpdate = filterRepository.findByIdAndOwnerId(filterId, userId)
                 .orElseThrow(() -> new NotFoundException("No such filter!"));
@@ -45,10 +49,12 @@ public class FilterService {
         return filterRepository.save(filterToUpdate);
     }
 
+    @NotifyOnFilterDeletion
     public void deleteFilter(Integer filterId, Integer userId) {
         filterRepository.deleteByIdAndOwnerId(filterId, userId);
     }
 
+    @NotifyOnFilterChange
     public Filter updateFilterFav(BooleanRequest request, Integer filterId, Integer userId) {
         Filter filterToUpdate = filterRepository.findByIdAndOwnerId(filterId, userId)
                 .orElseThrow(() -> new NotFoundException("No such filter"));

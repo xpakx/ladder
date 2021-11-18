@@ -60,7 +60,7 @@ public class MainService {
         result.setFilters(
                 filterRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), FilterDetails.class)
         );
-        
+
         return result;
     }
 }

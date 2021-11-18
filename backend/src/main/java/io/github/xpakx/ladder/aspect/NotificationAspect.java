@@ -110,4 +110,25 @@ public class NotificationAspect {
                 .build();
         notificationService.sendNotification(notification);
     }
+
+    @AfterReturning(value="@annotation(NotifyOnFilterChange)", returning="response")
+    public void notifyOnFilterChange(Filter response) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(response.getOwner().getId())
+                .time(response.getModifiedAt())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @After(value="@annotation(NotifyOnFilterDeletion) && args(filterId, userId)", argNames = "filterId,userId")
+    public void notifyOnFilterDeletion(Integer filterId, Integer userId) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(userId)
+                .time(LocalDateTime.now())
+                .type("DELETE_FILTER")
+                .id(filterId)
+                .build();
+        notificationService.sendNotification(notification);
+    }
 }
