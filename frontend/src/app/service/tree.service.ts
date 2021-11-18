@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Filter } from '../entity/filter';
+import { FilterDetails } from '../entity/filter-details';
 import { Habit } from '../entity/habit';
+import { HabitCompletion } from '../entity/habit-completion';
 import { HabitDetails } from '../entity/habit-details';
 import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
@@ -12,6 +15,8 @@ import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { UserWithData } from '../entity/user-with-data';
+import { FilterTreeService } from './filter-tree.service';
+import { HabitCompletionTreeService } from './habit-completion-tree.service';
 import { HabitTreeService } from './habit-tree.service';
 import { LabelTreeService } from './label-tree.service';
 import { ProjectTreeService } from './project-tree.service';
@@ -24,9 +29,11 @@ export class TreeService {
   public loaded: boolean = false;
   public projectCollapsed: boolean = true;
   public labelCollapsed: boolean = true;
+  public filterCollapsed: boolean = true;
   
   constructor(private projects: ProjectTreeService, private tasks: TaskTreeService,
-    private labels: LabelTreeService, private habits: HabitTreeService) { }
+    private labels: LabelTreeService, private habits: HabitTreeService, 
+    private completions: HabitCompletionTreeService, private filters: FilterTreeService) { }
 
   isLoaded(): boolean {
     return this.loaded;
@@ -39,6 +46,8 @@ export class TreeService {
     this.tasks.load(tree.tasks);
     this.labels.load(tree.labels);
     this.habits.load(tree.habits);
+    this.completions.load(tree.todayHabitCompletions);
+    this.filters.load(tree.filters);
   }
 
   getProjects() {
@@ -274,7 +283,9 @@ export class TreeService {
     this.projects.sync(response.projects);
     this.labels.sync(response.labels);
     this.tasks.sync(response.tasks);
-    this.habits.sync(response.habits)
+    this.habits.sync(response.habits);
+    this.completions.sync(response.habitCompletions);
+    this.filters.sync(response.filters);
   }
 
   addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
@@ -299,5 +310,41 @@ export class TreeService {
 
   updateHabitPriority(habit: Habit) {
     this.habits.updateHabitPriority(habit);
+  }
+
+  completeHabit(habitId: number, completion: HabitCompletion) {
+    this.completions.addCompletion(habitId, completion);
+  }
+
+  getCompletions() {
+    return this.completions.list;
+  }
+
+  getFilters() {
+    return this.filters.list;
+  }
+
+  addNewFilter(request: Filter) {
+    this.filters.addNewFilter(request);
+  }
+
+  updateFilter(request: Filter, filterId: number) {
+    this.filters.updateFilter(request, filterId);
+  }
+
+  addNewFilterBefore(filter: Filter, beforeId: number) {
+    this.filters.addNewFilterBefore(filter, beforeId);
+  }
+
+  addNewFilterAfter(filter: Filter, afterId: number) {
+    this.filters.addNewFilterAfter(filter, afterId);
+  }
+
+  getFilterById(filterId: number): FilterDetails | undefined {
+    return this.filters.getById(filterId);
+  }
+
+  deleteFilter(filterId: number) {
+    this.filters.deleteFilter(filterId);
   }
 }

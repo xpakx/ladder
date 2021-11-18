@@ -2,11 +2,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Habit } from 'src/app/entity/habit';
+import { HabitCompletion } from 'src/app/entity/habit-completion';
 import { HabitDetails } from 'src/app/entity/habit-details';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
+import { HabitCompletionTreeService } from 'src/app/service/habit-completion-tree.service';
 import { HabitTreeService } from 'src/app/service/habit-tree.service';
 import { HabitService } from 'src/app/service/habit.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -27,7 +29,8 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
 
   constructor(public tree : TreeService, private router: Router,
     private renderer: Renderer2, private habitService: HabitService, 
-    private deleteService: DeleteService, public treeService: HabitTreeService) {
+    private deleteService: DeleteService, public treeService: HabitTreeService,
+    public completions: HabitCompletionTreeService) {
       super(treeService, habitService);
      }
 
@@ -40,6 +43,14 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
 
   protected getElems(): HabitDetails[] {
     return this.habits;
+  }
+
+  public getPositive(habitId: number): number {
+    return this.completions.countPositiveByHabitId(habitId);
+  }
+
+  public getNegative(habitId: number): number {
+    return this.completions.countNegativeByHabitId(habitId);
   }
 
   // Habit form
@@ -252,5 +263,19 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
   getProjectColor(id: number): string {
     let project = this.tree.getProjectById(id)
     return project ? project.color : ""
+  }
+
+  completeHabit(id: number, positive: boolean) {
+    let habit = this.tree.getHabitById(id);
+    if(habit) {
+    this.habitService.completeHabit(id, {flag: positive}).subscribe(
+        (response: HabitCompletion) => {
+        this.tree.completeHabit(id, response);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
+import { FilterDetails } from 'src/app/entity/filter-details';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
@@ -16,6 +17,7 @@ export class SidebarComponent implements OnInit {
 
   @Output() projectEvent = new EventEmitter<AddEvent<ProjectTreeElem>>();
   @Output() labelEvent = new EventEmitter<AddEvent<LabelDetails>>();
+  @Output() filterEvent = new EventEmitter<AddEvent<FilterDetails>>();
 
   constructor(private router: Router, public tree : TreeService) { }
 
@@ -50,4 +52,7 @@ export class SidebarComponent implements OnInit {
     this.labelEvent.emit(event);
   }
 
+  openFilterModal(event: AddEvent<FilterDetails>) {
+    this.filterEvent.emit(event);
+  }
 }

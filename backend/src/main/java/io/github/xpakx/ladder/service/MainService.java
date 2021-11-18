@@ -6,6 +6,8 @@ import io.github.xpakx.ladder.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @AllArgsConstructor
 public class MainService {
@@ -14,6 +16,8 @@ public class MainService {
     private final TaskRepository taskRepository;
     private final LabelRepository labelRepository;
     private final HabitRepository habitRepository;
+    private final FilterRepository filterRepository;
+    private final HabitCompletionRepository habitCompletionRepository;
 
     public UserWithData getAll(Integer userId) {
         UserWithData result = new UserWithData();
@@ -25,6 +29,13 @@ public class MainService {
         result.setTasks(taskRepository.findByOwnerId(userId, TaskDetails.class));
         result.setLabels(labelRepository.findByOwnerId(userId, LabelDetails.class));
         result.setHabits(habitRepository.findByOwnerId(userId, HabitDetails.class));
+        result.setFilters(filterRepository.findByOwnerId(userId, FilterDetails.class));
+
+        LocalDateTime today = LocalDateTime.now();
+        today = today.minusHours(today.getHour())
+                    .minusMinutes(today.getMinute())
+                    .minusSeconds(today.getSecond());
+        result.setTodayHabitCompletions(habitCompletionRepository.findByOwnerIdAndDateAfter(userId, today, HabitCompletionDetails.class));
 
         return result;
     }
@@ -42,6 +53,12 @@ public class MainService {
         );
         result.setHabits(
                 habitRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), HabitDetails.class)
+        );
+        result.setHabitCompletions(
+                habitCompletionRepository.findByOwnerIdAndDateAfter(userId, time.getDate(), HabitCompletionDetails.class)
+        );
+        result.setFilters(
+                filterRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), FilterDetails.class)
         );
 
         return result;

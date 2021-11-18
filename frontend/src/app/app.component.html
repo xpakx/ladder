@@ -15,8 +15,11 @@
 							<span class="search_icon">
 								<i class="fa text-white mr-2 fa-search"></i>
 							</span>
-							<form class="form-inline">
-								<input class="form-control mr-sm-2" type="search" placeholder="Find">
+							<form class="form-inline" [formGroup]="searchForm">
+								<input class="form-control mr-sm-2" type="search" placeholder="Find" formControlName="search">
+								<button class="search_button" (click)="search()">
+									<i class="fa text-white mr-2 fa-arrow-right"></i>
+								</button>
 							</form>
 						</li>
 					</ul>
@@ -46,7 +49,7 @@
 		<div class="row-container">
 			<div class="left-nav-container" [class.visibleLeftNav]="!hideMenu" [class.hiddenLeftNav]="hideMenu">
 				<div class="left-nav">
-						<app-sidebar (projectEvent)="openProjectModal($event)" (labelEvent)="openLabelModal($event)"></app-sidebar>
+						<app-sidebar (projectEvent)="openProjectModal($event)" (labelEvent)="openLabelModal($event)" (filterEvent)="openFilterModal($event)"></app-sidebar>
 				</div>
 			</div>
 			<div class="main-container">
@@ -62,6 +65,7 @@
 
 <app-project-dialog *ngIf="displayProjectModal" (closeEvent)="closeProjectModal()" [data]="projectData"> </app-project-dialog>
 <app-label-dialog *ngIf="displayLabelModal" (closeEvent)="closeLabelModal()" [data]="labelData"> </app-label-dialog>
+<app-filter-dialog *ngIf="displayFilterModal" (closeEvent)="closeFilterModal()" [data]="filterData"></app-filter-dialog>
 <app-task-dialog *ngIf="displayAddTask" (closeEvent)="closeAddTaskModal()"></app-task-dialog>
 
 <app-delete-dialog *ngIf="deleteService.showDeleteMonit" [name]="deleteService.name" [id]="deleteService.id" (closeEvent)="deleteService.closeModal()" (deleteEvent)="deleteService.delete($event)"></app-delete-dialog>

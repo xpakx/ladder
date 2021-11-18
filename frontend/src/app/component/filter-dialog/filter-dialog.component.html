@@ -1,0 +1,58 @@
+<div class="modal modal-background"
+  tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{editMode ? "Edit" : "Add"}} Filter</h4>
+        <i class="fa fa-question fa-circle"></i>
+      </div>
+      <div class="modal-body">
+        <form class="form" [formGroup]="addFilterForm">
+            <div class="form-field">
+                <label for="filterName">Name</label>
+                <input class="form-control mr-sm-2" placeholder="" id="name" formControlName="name">
+            </div>
+
+            <div class="form-field">
+                <label for="filterSearch">Filter criteria</label>
+                <input class="form-control mr-sm-2" placeholder="" id="search" formControlName="searchString">
+            </div>
+
+            <div class="form-field">
+              <label for="projectColor">Color</label>
+              <div class="color-picker">
+                <button class="color-span" [style]="'color: ' + color" (click)="toggleShowColors()">
+                  <i class="fa fa-paint-brush"></i>
+                </button>
+                <input class="form-control mr-sm-2" placeholder="" id="color" formControlName="color">
+              </div>
+              <div class="colors" *ngIf="showColors">
+                <button *ngFor="let col of colors" class="color-button" [style]="'background-color: '+ col" (click)="chooseColor(col)"></button>
+              </div>
+          </div>
+
+            <div class="form-field-inline">
+              <div class="switch" [class.switch-checked]="favorite" (click)="switchFav()">
+                  <span class="switch-handle"></span>
+              </div>
+              <label>
+                  Add to favorites
+              </label>
+          </div>
+        </form>
+  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-button" 
+                (click)="closeFilterModal()">
+          Cancel
+        </button>
+        <button type="button" class="modal-button modal-button-red" 
+                (click)="addFilterModal()" [disabled]="addFilterForm.invalid">
+        {{editMode ? "Save" : "Add"}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

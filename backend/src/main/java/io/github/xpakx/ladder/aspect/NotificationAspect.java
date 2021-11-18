@@ -1,9 +1,6 @@
 package io.github.xpakx.ladder.aspect;
 
-import io.github.xpakx.ladder.entity.Habit;
-import io.github.xpakx.ladder.entity.Label;
-import io.github.xpakx.ladder.entity.Project;
-import io.github.xpakx.ladder.entity.Task;
+import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.After;
@@ -100,6 +97,37 @@ public class NotificationAspect {
                 .time(LocalDateTime.now())
                 .type("DELETE_HABIT")
                 .id(habitId)
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @AfterReturning(value="@annotation(NotifyOnHabitCompletion)", returning="response")
+    public void notifyOnHabitCompletion(HabitCompletion response) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(response.getOwner().getId())
+                .time(response.getDate())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @AfterReturning(value="@annotation(NotifyOnFilterChange)", returning="response")
+    public void notifyOnFilterChange(Filter response) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(response.getOwner().getId())
+                .time(response.getModifiedAt())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+    }
+
+    @After(value="@annotation(NotifyOnFilterDeletion) && args(filterId, userId)", argNames = "filterId,userId")
+    public void notifyOnFilterDeletion(Integer filterId, Integer userId) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(userId)
+                .time(LocalDateTime.now())
+                .type("DELETE_FILTER")
+                .id(filterId)
                 .build();
         notificationService.sendNotification(notification);
     }

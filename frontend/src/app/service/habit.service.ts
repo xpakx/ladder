@@ -2,7 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { BooleanRequest } from '../entity/boolean-request';
 import { Habit } from '../entity/habit';
+import { HabitCompletion } from '../entity/habit-completion';
+import { HabitCompletionDetails } from '../entity/habit-completion-details';
 import { HabitRequest } from '../entity/habit-request';
 import { IdRequest } from '../entity/id-request';
 import { PriorityRequest } from '../entity/priority-request';
@@ -72,5 +75,10 @@ export class HabitService implements MovableService<Habit> {
   public duplicateHabit(habitId: number): Observable<Habit> {
     let userId  = this.getUserId();
     return this.http.post<Habit>(`${this.apiServerUrl}/${userId}/habits/${habitId}/duplicate`, null);
+  }
+
+  public completeHabit(habitId: number, request: BooleanRequest):  Observable<HabitCompletion> {
+    let userId  = this.getUserId();
+    return this.http.put<HabitCompletion>(`${this.apiServerUrl}/${userId}/habits/${habitId}/complete`, request);
   }
 }

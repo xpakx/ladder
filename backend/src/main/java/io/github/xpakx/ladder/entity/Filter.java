@@ -12,18 +12,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HabitCompletion {
+public class Filter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private LocalDateTime date;
-    private boolean positive;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "habit_id")
-    private Habit habit;
+    private String name;
+    private String searchString;
+    private LocalDateTime modifiedAt;
+    private String color;
+    private boolean favorite;
+    private Integer generalOrder;
 
     @JsonIgnore
     @ManyToOne

@@ -1,3 +1,5 @@
+import { FilterDetails } from "./filter-details";
+import { HabitCompletionDetails } from "./habit-completion-details";
 import { HabitDetails } from "./habit-details";
 import { LabelDetails } from "./label-details";
 import { ProjectDetails } from "./project-details";
@@ -8,4 +10,6 @@ export interface SyncData {
     tasks: TaskDetails[];
     labels: LabelDetails[];
     habits: HabitDetails[];
+    habitCompletions: HabitCompletionDetails[];
+    filters: FilterDetails[];
 }

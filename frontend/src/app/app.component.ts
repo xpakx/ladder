@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FilterDetails } from './entity/filter-details';
 import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
 import { AddEvent } from './entity/utils/add-event';
@@ -26,8 +28,13 @@ export class AppComponent implements OnInit {
 
   displayAddTask: boolean = false;
 
+  searchForm: FormGroup;
+
   constructor(public tree : TreeService, public deleteService: DeleteService,
-    private router: Router, private notifications: NotificationService) {
+    private router: Router, private notifications: NotificationService, private fb: FormBuilder) {
+      this.searchForm = this.fb.group({
+        search: ['']
+      });
   }
 
   ngOnInit(): void {
@@ -79,6 +86,23 @@ export class AppComponent implements OnInit {
   closeLabelModal() {
     this.displayLabelModal = false;
     this.labelData = undefined;
+  }
+
+  displayFilterModal: boolean = false;
+  filterData: AddEvent<FilterDetails> | undefined;
+
+  openFilterModal(event: AddEvent<FilterDetails>) {
+    this.displayFilterModal = true;
+    this.filterData = event;
+  }
+
+  closeFilterModal() {
+    this.displayFilterModal = false;
+    this.filterData = undefined;
+  }
+
+  search() {
+    this.router.navigate(['/search'], { queryParams: {search: this.searchForm.controls.search.value}});
   }
 
 }

@@ -41,6 +41,8 @@ export class NotificationService {
       setTimeout(() => this.deleteTask(JSON.parse(event.data).id), 500);
     } else if(type == 'DELETE_HABIT') {
       setTimeout(() => this.deleteHabit(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_FILTER') {
+      setTimeout(() => this.deleteFilter(JSON.parse(event.data).id), 500);
     }
   }
 
@@ -72,6 +74,13 @@ export class NotificationService {
     }
   }
 
+  deleteFilter(id: number) {
+    let filter = this.tree.getFilterById(id);
+    if(filter) {
+      this.tree.deleteFilter(id);
+    }
+  }
+
   testSync(timestamp: Date) {
     let maxDate: Date = new Date(0);
     let dates: Date[] = this.tree.getProjects().map((a) => a.modifiedAt);
@@ -79,7 +88,16 @@ export class NotificationService {
       this.tree.getTasks().map((a) => a.modifiedAt)
     );
     dates = dates.concat(
+      this.tree.getLabels().map((a) => a.modifiedAt)
+    );
+    dates = dates.concat(
       this.tree.getHabits().map((a) => a.modifiedAt)
+    );
+    dates = dates.concat(
+      this.tree.getCompletions().map((a) => a.date)
+    );
+    dates = dates.concat(
+      this.tree.getFilters().map((a) => a.modifiedAt)
     );
     for(let date of dates) {
       if(date > maxDate) {

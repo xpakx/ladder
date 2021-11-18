@@ -6,4 +6,5 @@ export interface LabelDetails extends EntityWithId {
     color: string;
     favorite: boolean;
     generalOrder: number;
+    modifiedAt: Date;
 }
