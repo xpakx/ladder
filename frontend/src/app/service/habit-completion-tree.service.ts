@@ -36,12 +36,13 @@ export class HabitCompletionTreeService {
   }
 
   private containsId(completionId: number): boolean {
-    return this.list.find((a) => a.id == completionId) ? true : false;
+    return (this.list.find((a) => a.id == completionId)) ? true : false;
   }
 
   sync(completions: HabitCompletionDetails[]) {
     for(let completion of completions) {
-      if(this.containsId(completion.id)) {
+      if(!this.containsId(completion.id)) {
+        completion.date = new Date(completion.date);
         this.list.push(completion);
       }
     }
