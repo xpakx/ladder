@@ -76,7 +76,7 @@ implements OnInit, AfterViewInit {
 
   askForDelete() {
     if(this.contextMenuFilter) {
-      this.deleteService.openModalForLabel(this.contextMenuFilter);
+      this.deleteService.openModalForFilter(this.contextMenuFilter);
     }
     this.closeContextMenu();
   }
