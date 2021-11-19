@@ -62,4 +62,17 @@ public class FilterService {
         filterToUpdate.setModifiedAt(LocalDateTime.now());
         return filterRepository.save(filterToUpdate);
     }
+
+    @NotifyOnFilterChange
+    public Filter moveFilterAsFirst(Integer userId, Integer filterToMoveId) {
+        Filter filterToMove = filterRepository.findByIdAndOwnerId(filterToMoveId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent label!"));
+        filterRepository.incrementGeneralOrderByOwnerId(
+                userId,
+                LocalDateTime.now()
+        );
+        filterToMove.setGeneralOrder(1);
+        filterToMove.setModifiedAt(LocalDateTime.now());
+        return filterRepository.save(filterToMove);
+    }
 }

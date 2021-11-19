@@ -40,4 +40,10 @@ public class FilterController {
     public ResponseEntity<Filter> updateLabelFav(@RequestBody BooleanRequest request, @PathVariable Integer filterId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(filterService.updateFilterFav(request, filterId, userId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{filterId}/move/asFirst")
+    public ResponseEntity<Filter> moveFilterAsFirst(@PathVariable Integer userId, @PathVariable Integer filterId) {
+        return  new ResponseEntity<>(filterService.moveFilterAsFirst(userId, filterId), HttpStatus.OK);
+    }
 }
