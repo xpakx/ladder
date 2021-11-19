@@ -66,7 +66,7 @@ public class FilterService {
     @NotifyOnFilterChange
     public Filter moveFilterAsFirst(Integer userId, Integer filterToMoveId) {
         Filter filterToMove = filterRepository.findByIdAndOwnerId(filterToMoveId, userId)
-                .orElseThrow(() -> new NotFoundException("Cannot move non-existent label!"));
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent filter!"));
         filterRepository.incrementGeneralOrderByOwnerId(
                 userId,
                 LocalDateTime.now()
@@ -74,5 +74,20 @@ public class FilterService {
         filterToMove.setGeneralOrder(1);
         filterToMove.setModifiedAt(LocalDateTime.now());
         return filterRepository.save(filterToMove);
+    }
+
+    @NotifyOnFilterChange
+    public Filter addFilterAfter(FilterRequest request, Integer userId, Integer filterId) {
+        Filter filterToAdd = buildFilterToAddFromRequest(request, userId);
+        Filter filter = filterRepository.findByIdAndOwnerId(filterId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent filter!"));
+        filterToAdd.setGeneralOrder(filter.getGeneralOrder()+1);
+        filterToAdd.setModifiedAt(LocalDateTime.now());
+        filterRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
+                userId,
+                filter.getGeneralOrder(),
+                LocalDateTime.now()
+        );
+        return filterRepository.save(filterToAdd);
     }
 }

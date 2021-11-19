@@ -46,4 +46,11 @@ public class FilterController {
     public ResponseEntity<Filter> moveFilterAsFirst(@PathVariable Integer userId, @PathVariable Integer filterId) {
         return  new ResponseEntity<>(filterService.moveFilterAsFirst(userId, filterId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/{filterId}/after")
+    public ResponseEntity<Filter> addFilterAfter(@RequestBody FilterRequest request, @PathVariable Integer userId,
+                                               @PathVariable Integer filterId) {
+        return  new ResponseEntity<>(filterService.addFilterAfter(request, userId, filterId), HttpStatus.CREATED);
+    }
 }
