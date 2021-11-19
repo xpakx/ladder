@@ -33,4 +33,9 @@ public interface FilterRepository extends JpaRepository<Filter, Integer> {
     @Query("Update Filter f SET f.generalOrder = f.generalOrder + 1, f.modifiedAt = :modifiedAt WHERE f.owner.id = :ownerId AND f.generalOrder > :generalOrder")
     void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(Integer ownerId, Integer generalOrder, LocalDateTime modifiedAt);
 
+    @Modifying
+    @Transactional
+    @Query("Update Filter f SET f.generalOrder = f.generalOrder + 1, f.modifiedAt = :modifiedAt WHERE f.owner.id = :ownerId AND f.generalOrder >= :generalOrder")
+    void incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(Integer ownerId, Integer generalOrder, LocalDateTime modifiedAt);
+
 }

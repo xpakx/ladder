@@ -53,4 +53,11 @@ public class FilterController {
                                                @PathVariable Integer filterId) {
         return  new ResponseEntity<>(filterService.addFilterAfter(request, userId, filterId), HttpStatus.CREATED);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PostMapping("/{filterId}/before")
+    public ResponseEntity<Filter> addFilterBefore(@RequestBody FilterRequest request, @PathVariable Integer userId,
+                                                @PathVariable Integer filterId) {
+        return  new ResponseEntity<>(filterService.addFilterBefore(request, userId, filterId), HttpStatus.CREATED);
+    }
 }

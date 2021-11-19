@@ -90,4 +90,19 @@ public class FilterService {
         );
         return filterRepository.save(filterToAdd);
     }
+
+    @NotifyOnFilterChange
+    public Filter addFilterBefore(FilterRequest request, Integer userId, Integer filterId) {
+        Filter filterToAdd = buildFilterToAddFromRequest(request, userId);
+        Filter filter = filterRepository.findByIdAndOwnerId(filterId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent filter!"));
+        filterToAdd.setGeneralOrder(filter.getGeneralOrder());
+        filterToAdd.setModifiedAt(LocalDateTime.now());
+        filterRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(
+                userId,
+                filter.getGeneralOrder(),
+                LocalDateTime.now()
+        );
+        return filterRepository.save(filterToAdd);
+    }
 }
