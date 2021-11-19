@@ -5,6 +5,7 @@ import io.github.xpakx.ladder.aspect.NotifyOnFilterDeletion;
 import io.github.xpakx.ladder.entity.Filter;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
+import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.FilterRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -104,5 +105,27 @@ public class FilterService {
                 LocalDateTime.now()
         );
         return filterRepository.save(filterToAdd);
+    }
+
+    public Filter moveFilterAfter(IdRequest request, Integer userId, Integer filterToMoveId) {
+        Filter filterToMove = filterRepository.findByIdAndOwnerId(filterToMoveId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent filter!"));
+        Filter afterFilter = findIdFromIdRequest(request);
+        filterRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
+                userId,
+                afterFilter.getGeneralOrder(),
+                LocalDateTime.now()
+        );
+        filterToMove.setGeneralOrder(afterFilter.getGeneralOrder() + 1);
+        filterToMove.setModifiedAt(LocalDateTime.now());
+        return filterRepository.save(filterToMove);
+    }
+
+    private Filter findIdFromIdRequest(IdRequest request) {
+        return hasId(request) ? filterRepository.findById(request.getId()).orElse(null) : null;
+    }
+
+    private boolean hasId(IdRequest request) {
+        return request.getId() != null;
     }
 }
