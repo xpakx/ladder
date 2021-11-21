@@ -206,7 +206,7 @@ class LabelControllerTest {
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
-                .put(baseUrl + "/{userId}/label/{labelId}/favorite", userId, 1)
+                .put(baseUrl + "/{userId}/labels/{labelId}/favorite", userId, 1)
         .then()
                 .statusCode(NOT_FOUND.value());
     }

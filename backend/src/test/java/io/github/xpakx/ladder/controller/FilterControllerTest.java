@@ -1,9 +1,10 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Filter;
+import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
-import io.github.xpakx.ladder.entity.dto.LabelRequest;
 import io.github.xpakx.ladder.repository.FilterRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -181,5 +182,66 @@ class FilterControllerTest {
                 .delete(baseUrl + "/{userId}/filters/{filterId}", userId, filterId)
         .then()
                 .statusCode(OK.value());
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateFilterFavoriteStatusIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}/favorite", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateFilterFavoriteStatusIfFilterNotFound() {
+        BooleanRequest request = getTrueBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}/favorite", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private BooleanRequest getTrueBooleanRequest() {
+        BooleanRequest request = new BooleanRequest();
+        request.setFlag(true);
+        return request;
+    }
+
+    private Integer addNonFavoriteFilter() {
+        Filter filter = Filter.builder()
+                .owner(userRepository.getById(userId))
+                .name("Test Label")
+                .favorite(false)
+                .build();
+        filter = filterRepository.save(filter);
+        return filter.getId();
+    }
+
+    @Test
+    void shouldUpdateFilterFavoriteStatus() {
+        Integer filterId = addNonFavoriteFilter();
+        BooleanRequest request = getTrueBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}/favorite", userId, filterId)
+        .then()
+                .statusCode(OK.value())
+                .body("favorite", equalTo(true));
     }
 }
