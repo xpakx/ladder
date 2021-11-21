@@ -18,10 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -243,5 +248,70 @@ class FilterControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("favorite", equalTo(true));
+    }
+
+    @Test
+    void shouldRespondWith401ToMoveFilterAsFirstIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}/move/asFirst", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldMoveFilterAsFirst() {
+        List<Integer> ids = add3FiltersInOrderAndReturnListOfIds();
+
+        Integer filterId = ids.get(2);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}/move/asFirst", userId, filterId)
+        .then()
+                .statusCode(OK.value());
+
+        List<Filter> filters = filterRepository.findAll();
+        assertThat(filters, hasSize(3));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Label 1")),
+                hasProperty("generalOrder", is(2))
+        )));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Label 2")),
+                hasProperty("generalOrder", is(3))
+        )));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Label 3")),
+                hasProperty("generalOrder", is(1))
+        )));
+    }
+
+    private List<Integer> add3FiltersInOrderAndReturnListOfIds() {
+        Filter filter1 = Filter.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(1)
+                .name("Label 1")
+                .build();
+        Filter filter2 = Filter.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(2)
+                .name("Label 2")
+                .build();
+        Filter filter3 = Filter.builder()
+                .owner(userRepository.getById(userId))
+                .generalOrder(3)
+                .name("Label 3")
+                .build();
+        return filterRepository.saveAll(List.of(filter1, filter2, filter3)).stream()
+                .sorted(Comparator.comparingInt(Filter::getGeneralOrder))
+                .map(Filter::getId)
+                .collect(Collectors.toList());
     }
 }
