@@ -5,6 +5,7 @@ import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
+import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.repository.FilterRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -313,5 +314,57 @@ class FilterControllerTest {
                 .sorted(Comparator.comparingInt(Filter::getGeneralOrder))
                 .map(Filter::getId)
                 .collect(Collectors.toList());
+    }
+
+    @Test
+    void shouldRespondWith401ToMoveFilterAfterIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}/move/after", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    private IdRequest getValidIdRequest(Integer id) {
+        IdRequest request = new IdRequest();
+        request.setId(id);
+        return request;
+    }
+
+    @Test
+    void shouldMoveFilterAfter() {
+        List<Integer> ids = add3FiltersInOrderAndReturnListOfIds();
+        IdRequest request = getValidIdRequest(ids.get(0));
+        Integer filterId = ids.get(2);
+
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}/move/after", userId, filterId)
+        .then()
+                .statusCode(OK.value());
+
+
+        List<Filter> filters = filterRepository.findAll();
+        assertThat(filters, hasSize(3));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Label 1")),
+                hasProperty("generalOrder", is(1))
+        )));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Label 2")),
+                hasProperty("generalOrder", is(3))
+        )));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Label 3")),
+                hasProperty("generalOrder", is(2))
+        )));
     }
 }
