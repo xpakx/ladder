@@ -21,8 +21,8 @@ import java.util.HashSet;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class FilterControllerTest {
@@ -108,6 +108,52 @@ class FilterControllerTest {
                 .post(baseUrl + "/{userId}/filters", userId)
         .then()
                 .statusCode(CREATED.value())
+                .body("name", equalTo(request.getName()))
+                .body("searchString", equalTo(request.getSearchString()));
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateFilterIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateFilterIfFilterNotFound() {
+        FilterRequest request = getValidAddFilterRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldUpdateLabel() {
+        Integer filterId = addFilterAndReturnId();
+        FilterRequest request = getValidAddFilterRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/filters/{filterId}", userId, filterId)
+        .then()
+                .statusCode(OK.value())
                 .body("name", equalTo(request.getName()))
                 .body("searchString", equalTo(request.getSearchString()));
     }
