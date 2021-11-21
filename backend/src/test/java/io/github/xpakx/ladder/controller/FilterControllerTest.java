@@ -157,4 +157,29 @@ class FilterControllerTest {
                 .body("name", equalTo(request.getName()))
                 .body("searchString", equalTo(request.getSearchString()));
     }
+
+    @Test
+    void shouldRespondWith401ToDeleteFilterRequestIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .delete(baseUrl + "/{userId}/filters/{filterId}", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldDeleteFilter() {
+        Integer filterId = addFilterAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .delete(baseUrl + "/{userId}/filters/{filterId}", userId, filterId)
+        .then()
+                .statusCode(OK.value());
+    }
 }
