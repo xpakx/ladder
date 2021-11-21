@@ -97,7 +97,7 @@ class FilterControllerTest {
 
     private FilterRequest getValidAddFilterRequest() {
         FilterRequest request = new FilterRequest();
-        request.setName("Added Filer");
+        request.setName("Added Filter");
         request.setSearchString("test");
         return request;
     }
@@ -282,15 +282,15 @@ class FilterControllerTest {
         List<Filter> filters = filterRepository.findAll();
         assertThat(filters, hasSize(3));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Label 1")),
+                hasProperty("name", is("Filter 1")),
                 hasProperty("generalOrder", is(2))
         )));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Label 2")),
+                hasProperty("name", is("Filter 2")),
                 hasProperty("generalOrder", is(3))
         )));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Label 3")),
+                hasProperty("name", is("Filter 3")),
                 hasProperty("generalOrder", is(1))
         )));
     }
@@ -299,17 +299,17 @@ class FilterControllerTest {
         Filter filter1 = Filter.builder()
                 .owner(userRepository.getById(userId))
                 .generalOrder(1)
-                .name("Label 1")
+                .name("Filter 1")
                 .build();
         Filter filter2 = Filter.builder()
                 .owner(userRepository.getById(userId))
                 .generalOrder(2)
-                .name("Label 2")
+                .name("Filter 2")
                 .build();
         Filter filter3 = Filter.builder()
                 .owner(userRepository.getById(userId))
                 .generalOrder(3)
-                .name("Label 3")
+                .name("Filter 3")
                 .build();
         return filterRepository.saveAll(List.of(filter1, filter2, filter3)).stream()
                 .sorted(Comparator.comparingInt(Filter::getGeneralOrder))
@@ -356,15 +356,15 @@ class FilterControllerTest {
         List<Filter> filters = filterRepository.findAll();
         assertThat(filters, hasSize(3));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Label 1")),
+                hasProperty("name", is("Filter 1")),
                 hasProperty("generalOrder", is(1))
         )));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Label 2")),
+                hasProperty("name", is("Filter 2")),
                 hasProperty("generalOrder", is(3))
         )));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Label 3")),
+                hasProperty("name", is("Filter 3")),
                 hasProperty("generalOrder", is(2))
         )));
     }
@@ -401,19 +401,69 @@ class FilterControllerTest {
         List<Filter> filters = filterRepository.findAll();
         assertThat(filters, hasSize(4));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Added Label")),
+                hasProperty("name", is("Added Filter")),
                 hasProperty("generalOrder", is(3))
         )));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Label 1")),
+                hasProperty("name", is("Filter 1")),
                 hasProperty("generalOrder", is(1))
         )));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Label 2")),
+                hasProperty("name", is("Filter 2")),
                 hasProperty("generalOrder", is(2))
         )));
         assertThat(filters, hasItem(allOf(
-                hasProperty("name", is("Label 3")),
+                hasProperty("name", is("Filter 3")),
+                hasProperty("generalOrder", is(4))
+        )));
+    }
+
+    @Test
+    void shouldRespondWith401ToAddFilterBeforeIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/filters/{filterId}/before", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddFilterBefore() {
+        FilterRequest request = getValidAddFilterRequest();
+        Integer filterId = add3FiltersInOrderAndReturnListOfIds().get(1);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/filters/{filterId}/before", userId, filterId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("name", equalTo(request.getName()))
+                .body("color", equalTo(request.getColor()))
+                .body("favorite", equalTo(false));
+
+        List<Filter> filters = filterRepository.findAll();
+        assertThat(filters, hasSize(4));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Added Filter")),
+                hasProperty("generalOrder", is(2))
+        )));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Filter 1")),
+                hasProperty("generalOrder", is(1))
+        )));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Filter 2")),
+                hasProperty("generalOrder", is(3))
+        )));
+        assertThat(filters, hasItem(allOf(
+                hasProperty("name", is("Filter 3")),
                 hasProperty("generalOrder", is(4))
         )));
     }
