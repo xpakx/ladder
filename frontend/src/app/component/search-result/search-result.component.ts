@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HabitDetails } from 'src/app/entity/habit-details';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -31,6 +32,14 @@ export class SearchResultComponent implements OnInit {
       .filter((t) => this.labels.length==0 || this.labels.every((a) => t.labels.find((b) => b.id == a.id)))
       .filter((t) => !this.project || (t. project && t.project.id == this.project.id))
       .filter((t) => !this.date || (t.due && this.sameDay(t.due, this.date)));
+  }
+
+  get habits(): HabitDetails[] {
+    return this.tree.getHabits()
+      .filter((t) => t.title.includes(this.search))
+      .filter((t) => !this.priority || t.priority == this.priority)
+      .filter((t) => this.labels.length==0 || this.labels.every((a) => t.labels.find((b) => b.id == a.id)))
+      .filter((t) => !this.project || (t. project && t.project.id == this.project.id));
   }
 
   sameDay(date1: Date, date2: Date): boolean {

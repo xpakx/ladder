@@ -2,3 +2,6 @@
 <div *ngFor="let task of tasks">
  #{{task.id}} {{ task.title }}, Project: {{task.project ? task.project.name : "inbox"}}
 </div>
+
+<h2>Habits</h2>
+<app-habit-list [habitList]='habits'></app-habit-list>
