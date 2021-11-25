@@ -114,4 +114,10 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @EntityGraph("task-with-labels")
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
+
+    @Query("SELECT * FROM Task t WHERE t.owner.id = :ownerId AND date_part('year', t.completedAt) = :year")
+    List<Task> getByOwnerIdAndYear(Integer ownerId, Integer year);
+
+    @Query("SELECT * FROM Task t WHERE t.owner.id = :ownerId AND t.project.id = :projectId AND date_part('year', t.completedAt) = :year")
+    List<Task> getByOwnerIdAndProjectIdAndYear(Integer ownerId, Integer projectId, Integer year);
 }
