@@ -18,10 +18,18 @@ public class StatsController {
     private final StatsService statsService;
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/project/{projectId}/year/{year}")
+    @GetMapping("/project/{projectId}/year/{year}/tasks")
     public ResponseEntity<HeatMap> getYearlyHeatMap(@PathVariable Integer userId,
                                                     @PathVariable Integer projectId,
                                                     @PathVariable Integer year) {
         return new ResponseEntity<>(statsService.getTaskHeatMapByYear(year, projectId, userId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping("/project/{projectId}/year/{year}/habits")
+    public ResponseEntity<HeatMap> getYearlyHabitHeatMap(@PathVariable Integer userId,
+                                                    @PathVariable Integer projectId,
+                                                    @PathVariable Integer year) {
+        return new ResponseEntity<>(statsService.getHabitHeatMapByYear(year, projectId, userId), HttpStatus.OK);
     }
 }
