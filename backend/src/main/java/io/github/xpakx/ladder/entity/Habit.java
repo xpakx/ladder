@@ -31,6 +31,7 @@ public class Habit {
     private Integer generalOrder;
     private boolean allowPositive;
     private boolean allowNegative;
+    private boolean archived;
 
     @JsonIgnore
     @ManyToOne
