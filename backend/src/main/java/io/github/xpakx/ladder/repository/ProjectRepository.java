@@ -20,6 +20,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     <T> List<T> findByOwnerIdAndParentIsNull(Integer ownerId, Class<T> type);
     <T> List<T> findByOwnerId(Integer ownerId, Class<T> type);
+    <T> List<T> findByOwnerIdAndArchived(Integer ownerId, boolean archived, Class<T> type);
     List<Project> getByOwnerId(Integer ownerId);
     void deleteByIdAndOwnerId(Integer Id, Integer ownerId);
 

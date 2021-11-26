@@ -28,6 +28,7 @@ public class Project {
     private String color;
     private Integer generalOrder;
     private boolean collapsed;
+    private boolean archived;
 
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

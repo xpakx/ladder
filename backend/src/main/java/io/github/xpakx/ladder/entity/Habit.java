@@ -54,5 +54,4 @@ public class Habit {
             fetch = FetchType.LAZY,
             cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
     private List<HabitCompletion> completions;
-
 }
