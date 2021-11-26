@@ -26,9 +26,9 @@ public class MainService {
                 .orElseThrow(() -> new NotFoundException("No user with id " + userId)).getUsername());
         result.setProjectCollapsed(true);
         result.setProjects(projectRepository.findByOwnerIdAndArchived(userId, false, ProjectDetails.class));
-        result.setTasks(taskRepository.findByOwnerId(userId, TaskDetails.class));
+        result.setTasks(taskRepository.findByOwnerIdAndArchived(userId, false, TaskDetails.class));
         result.setLabels(labelRepository.findByOwnerId(userId, LabelDetails.class));
-        result.setHabits(habitRepository.findByOwnerId(userId, HabitDetails.class));
+        result.setHabits(habitRepository.findByOwnerIdAndArchived(userId, false, HabitDetails.class));
         result.setFilters(filterRepository.findByOwnerId(userId, FilterDetails.class));
 
         LocalDateTime today = LocalDateTime.now();
