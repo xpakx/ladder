@@ -47,6 +47,10 @@ public class Project {
     private List<Task> tasks;
 
     @JsonIgnore
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Habit> habits;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_account_id")
     private UserAccount owner;
