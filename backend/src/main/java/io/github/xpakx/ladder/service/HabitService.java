@@ -47,6 +47,7 @@ public class HabitService {
                 .allowPositive(request.isAllowPositive())
                 .allowNegative(request.isAllowNegative())
                 .modifiedAt(LocalDateTime.now())
+                .archived(false)
                 .build();
     }
 
@@ -270,6 +271,7 @@ public class HabitService {
                 .allowPositive(habitToDuplicate.isAllowPositive())
                 .allowNegative(habitToDuplicate.isAllowNegative())
                 .modifiedAt(LocalDateTime.now())
+                .archived(false)
                 .build();
         habitToAdd.setProject(habitToDuplicate.getProject());
         habitToAdd.setGeneralOrder(habitToDuplicate.getGeneralOrder()+1);

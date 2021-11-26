@@ -76,6 +76,7 @@ public class ProjectService {
                 .createdAt(now)
                 .modifiedAt(now)
                 .collapsed(true)
+                .archived(false)
                 .owner(userRepository.getById(userId))
                 .build();
     }
@@ -247,6 +248,7 @@ public class ProjectService {
                 .priority(request.getPriority())
                 .completed(false)
                 .collapsed(false)
+                .archived(false)
                 .owner(userRepository.getById(userId))
                 .labels(transformLabelIdsToLabelReferences(request, userId))
                 .build();
@@ -486,6 +488,7 @@ public class ProjectService {
                 .generalOrder(originalProject.getGeneralOrder())
                 .createdAt(now)
                 .modifiedAt(now)
+                .archived(false)
                 .build();
     }
 
@@ -499,6 +502,7 @@ public class ProjectService {
                 .priority(originalTask.getPriority())
                 .owner(originalTask.getOwner())
                 .completed(false)
+                .archived(false)
                 .id(originalTask.getId())
                 .parent(originalTask.getParent())
                 .project(originalTask.getProject())

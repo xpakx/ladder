@@ -248,6 +248,7 @@ public class TaskService {
                 .priority(originalTask.getPriority())
                 .owner(originalTask.getOwner())
                 .completed(false)
+                .archived(false)
                 .parent(parent)
                 .build();
     }
@@ -345,6 +346,7 @@ public class TaskService {
                 .dailyViewOrder(getMaxDailyOrder(request, userId)+1)
                 .completed(false)
                 .collapsed(false)
+                .archived(false)
                 .owner(userRepository.getById(userId))
                 .labels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId))
                 .build();
