@@ -17,4 +17,7 @@ public interface HabitCompletionRepository extends JpaRepository<HabitCompletion
 
     @Query("SELECT t FROM HabitCompletion t LEFT JOIN t.habit h WHERE h.owner.id = :ownerId AND h.project.id = :projectId AND date_part('month', t.date) = :month")
     List<HabitCompletion> getByOwnerIdAndProjectIdAndMonth(Integer ownerId, Integer projectId, Integer month);
+
+    @Query("SELECT t FROM HabitCompletion t LEFT JOIN t.habit h WHERE h.owner.id = :ownerId AND h.id = :habitId AND date_part('year', t.date) = :year")
+    List<HabitCompletion> getByOwnerIdAndHabitIdAndYear(Integer ownerId, Integer habitId, Integer year);
 }
