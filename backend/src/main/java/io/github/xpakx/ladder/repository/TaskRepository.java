@@ -119,4 +119,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query("SELECT t FROM Task t WHERE t.owner.id = :ownerId AND t.project.id = :projectId AND date_part('year', t.completedAt) = :year")
     List<Task> getByOwnerIdAndProjectIdAndYear(Integer ownerId, Integer projectId, Integer year);
+
+    @Query("SELECT t FROM Task t WHERE t.owner.id = :ownerId AND t.project.id = :projectId AND date_part('month', t.completedAt) = :month")
+    List<Task> getByOwnerIdAndProjectIdAndMonth(Integer ownerId, Integer projectId, Integer month);
 }

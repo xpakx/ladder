@@ -30,6 +30,17 @@ public class StatsService {
         return new HeatMap(heatMapElems);
     }
 
+    public HeatMap getTaskHeatMapByMonth(Integer month, Integer projectId, Integer userId) {
+        List<Task> tasks = taskRepository.getByOwnerIdAndProjectIdAndMonth(userId, projectId, month);
+        Map<Integer, List<Task>> map =  tasks.stream()
+                .collect(Collectors.groupingBy((t) -> t.getCompletedAt().getDayOfYear()));
+        List<HeatMapElem> heatMapElems = map.keySet().stream()
+                .map((t) -> new HeatMapElem(map.get(t).get(0).getCompletedAt(), map.get(t).size()))
+                .collect(Collectors.toList());
+
+        return new HeatMap(heatMapElems);
+    }
+
     public HeatMap getHabitHeatMapByYear(Integer year, Integer projectId, Integer userId) {
         List<HabitCompletion> habits = habitCompletionRepository.getByOwnerIdAndProjectIdAndYear(userId, projectId, year);
         Map<Integer, List<HabitCompletion>> map =  habits.stream()
