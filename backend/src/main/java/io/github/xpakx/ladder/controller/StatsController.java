@@ -40,4 +40,12 @@ public class StatsController {
                                                     @PathVariable Integer year) {
         return new ResponseEntity<>(statsService.getHabitHeatMapByYear(year, projectId, userId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping("/project/{projectId}/month/{month}/habits")
+    public ResponseEntity<HeatMap> MonthlyHabitHeatMap(@PathVariable Integer userId,
+                                                         @PathVariable Integer projectId,
+                                                         @PathVariable Integer month) {
+        return new ResponseEntity<>(statsService.getHabitHeatMapByMonth(month, projectId, userId), HttpStatus.OK);
+    }
 }

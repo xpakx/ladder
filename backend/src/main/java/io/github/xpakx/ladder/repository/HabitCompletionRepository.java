@@ -1,7 +1,6 @@
 package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.HabitCompletion;
-import io.github.xpakx.ladder.entity.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,4 +14,7 @@ public interface HabitCompletionRepository extends JpaRepository<HabitCompletion
 
     @Query("SELECT t FROM HabitCompletion t LEFT JOIN t.habit h WHERE h.owner.id = :ownerId AND h.project.id = :projectId AND date_part('year', t.date) = :year")
     List<HabitCompletion> getByOwnerIdAndProjectIdAndYear(Integer ownerId, Integer projectId, Integer year);
+
+    @Query("SELECT t FROM HabitCompletion t LEFT JOIN t.habit h WHERE h.owner.id = :ownerId AND h.project.id = :projectId AND date_part('month', t.date) = :month")
+    List<HabitCompletion> getByOwnerIdAndProjectIdAndMonth(Integer ownerId, Integer projectId, Integer month);
 }

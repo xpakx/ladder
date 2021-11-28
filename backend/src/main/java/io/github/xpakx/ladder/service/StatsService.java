@@ -51,4 +51,15 @@ public class StatsService {
 
         return new HeatMap(heatMapElems);
     }
+
+    public HeatMap getHabitHeatMapByMonth(Integer month, Integer projectId, Integer userId) {
+        List<HabitCompletion> habits = habitCompletionRepository.getByOwnerIdAndProjectIdAndMonth(userId, projectId, month);
+        Map<Integer, List<HabitCompletion>> map =  habits.stream()
+                .collect(Collectors.groupingBy((t) -> t.getDate().getDayOfYear()));
+        List<HeatMapElem> heatMapElems = map.keySet().stream()
+                .map((t) -> new HeatMapElem(map.get(t).get(0).getDate(), map.get(t).size()))
+                .collect(Collectors.toList());
+
+        return new HeatMap(heatMapElems);
+    }
 }
