@@ -5,3 +5,9 @@
 
 <h2>Habits</h2>
 <app-habit-list [habitList]='habits'></app-habit-list>
+
+
+<h2>Labels</h2>
+<div *ngFor="let label of labels">
+ #{{label.id}} {{ label.name }}
+</div>
