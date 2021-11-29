@@ -47,6 +47,11 @@ export class SearchResultComponent implements OnInit {
       .filter((t) => t.name.includes(this.search));
   }
 
+  get projects(): ProjectTreeElem[] {
+    return this.tree.getProjects()
+      .filter((t) => t.name.includes(this.search));
+  }
+
   sameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() == date2.getFullYear() && date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth();
   }
