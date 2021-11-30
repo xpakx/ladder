@@ -48,6 +48,10 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
     }
   }
 
+  get list(): boolean {
+    return this.habitList.length > 0;
+  }
+
   protected getElems(): HabitDetails[] {
     return this.habits;
   }
