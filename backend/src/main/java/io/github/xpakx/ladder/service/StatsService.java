@@ -67,10 +67,10 @@ public class StatsService {
         List<HabitCompletion> habits = habitCompletionRepository.getByOwnerIdAndHabitIdAndYear(userId, projectId, year);
         Map<Integer, List<HabitCompletion>> map =  habits.stream()
                 .collect(Collectors.groupingBy((t) -> t.getDate().getDayOfYear()));
-        List<HeatMapElem> heatMapElems = map.keySet().stream()
+        List<HeatMapElem> heatMapElements = map.keySet().stream()
                 .map((t) -> new HeatMapElem(map.get(t).get(0).getDate(), map.get(t).size()))
                 .collect(Collectors.toList());
 
-        return new HeatMap(heatMapElems);
+        return new HeatMap(heatMapElements);
     }
 }
