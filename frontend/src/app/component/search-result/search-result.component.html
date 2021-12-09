@@ -18,7 +18,5 @@
 
 <ng-container *ngIf="projects.length> 0">
     <h2>Projects</h2>
-    <div *ngFor="let project of projects">
-    #{{project.id}} {{ project.name }}
-    </div>
+    <app-project-search-list [projectList]='projects'></app-project-search-list>
 </ng-container>

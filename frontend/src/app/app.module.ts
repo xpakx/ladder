@@ -36,6 +36,7 @@ import { SearchResultComponent } from './component/search-result/search-result.c
 import { FilterListComponent } from './component/filter-list/filter-list.component';
 import { FilterDialogComponent } from './component/filter-dialog/filter-dialog.component';
 import { LabelSearchListComponent } from './component/label-search-list/label-search-list.component';
+import { ProjectSearchListComponent } from './component/project-search-list/project-search-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -72,7 +73,8 @@ export function tokenGetter() {
     SearchResultComponent,
     FilterListComponent,
     FilterDialogComponent,
-    LabelSearchListComponent
+    LabelSearchListComponent,
+    ProjectSearchListComponent
   ],
   imports: [
     BrowserModule,
