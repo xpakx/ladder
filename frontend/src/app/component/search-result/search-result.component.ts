@@ -43,7 +43,7 @@ export class SearchResultComponent implements OnInit {
   }
 
   get labels(): LabelDetails[] {
-    if(this.priority || this.project || this.date || this.labels.length > 0) {
+    if(this.priority || this.project || this.date || this.searchLabels.length > 0) {
       return [];
     }
     return this.tree.getLabels()
@@ -51,7 +51,7 @@ export class SearchResultComponent implements OnInit {
   }
 
   get projects(): ProjectTreeElem[] {
-    if(this.priority || this.project || this.date || this.labels.length > 0) {
+    if(this.priority || this.project || this.date || this.searchLabels.length > 0) {
       return [];
     }
     return this.tree.getProjects()
