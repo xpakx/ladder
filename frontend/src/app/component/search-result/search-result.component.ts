@@ -43,6 +43,9 @@ export class SearchResultComponent implements OnInit {
   }
 
   get labels(): LabelDetails[] {
+    if(this.priority || this.project || this.date || this.labels.length > 0) {
+      return [];
+    }
     return this.tree.getLabels()
       .filter((t) => t.name.includes(this.search));
   }
