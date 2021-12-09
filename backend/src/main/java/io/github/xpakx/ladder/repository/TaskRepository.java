@@ -24,6 +24,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @EntityGraph("task-with-labels")
     <T> List<T> findByOwnerId(Integer userId, Class<T> type);
+    @EntityGraph("task-with-labels")
+    <T> List<T> findByOwnerIdAndArchived(Integer userId, boolean archived, Class<T> type);
     List<Task> findByOwnerIdAndProjectId(Integer userId, Integer projectId);
     List<Task> findByOwnerIdAndProjectIsNull(Integer userId);
 
@@ -114,4 +116,10 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @EntityGraph("task-with-labels")
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
+
+    @Query("SELECT t FROM Task t WHERE t.owner.id = :ownerId AND t.project.id = :projectId AND date_part('year', t.completedAt) = :year")
+    List<Task> getByOwnerIdAndProjectIdAndYear(Integer ownerId, Integer projectId, Integer year);
+
+    @Query("SELECT t FROM Task t WHERE t.owner.id = :ownerId AND t.project.id = :projectId AND date_part('month', t.completedAt) = :month")
+    List<Task> getByOwnerIdAndProjectIdAndMonth(Integer ownerId, Integer projectId, Integer month);
 }

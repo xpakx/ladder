@@ -1,0 +1,37 @@
+<div class="tasks_content">
+    <ul class="task_list_items">
+        <ng-container *ngFor="let project of projectList">
+        
+            <li class="task_list_item">
+                <div class="task_list_item_main">
+                    <div role="button" tabindex="0" class="task_list_item_body">
+                        <div class="habit_buttons" >
+                            <div class="project-color"  [style]="'color: ' + project.color +';'">
+                            </div>
+                        </div>
+                        <div class="task_list_item_content">
+                            <div class="task_list_item__content_wrapper">
+                                <div class="markdown_content task_content">
+                                    {{project.name}}
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="task_list_item__actions task_list_item__actions--active">
+                            <button type="button" >
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" >
+                                <i class="fa fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ng-container>
+
+    </ul>
+</div>
+
+
+  

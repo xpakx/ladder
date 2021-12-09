@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HabitDetails } from 'src/app/entity/habit-details';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -13,7 +14,7 @@ import { TreeService } from 'src/app/service/tree.service';
 export class SearchResultComponent implements OnInit {
   search: string = "";
   priority: number | undefined;
-  labels: LabelDetails[] = [];
+  searchLabels: LabelDetails[] = [];
   project: ProjectTreeElem | undefined;
   date: Date | undefined;
 
@@ -28,9 +29,33 @@ export class SearchResultComponent implements OnInit {
     return this.tree.getTasks()
       .filter((t) => t.title.includes(this.search))
       .filter((t) => !this.priority || t.priority == this.priority)
-      .filter((t) => this.labels.length==0 || this.labels.every((a) => t.labels.find((b) => b.id == a.id)))
+      .filter((t) => this.searchLabels.length==0 || this.searchLabels.every((a) => t.labels.find((b) => b.id == a.id)))
       .filter((t) => !this.project || (t. project && t.project.id == this.project.id))
       .filter((t) => !this.date || (t.due && this.sameDay(t.due, this.date)));
+  }
+
+  get habits(): HabitDetails[] {
+    return this.tree.getHabits()
+      .filter((t) => t.title.includes(this.search))
+      .filter((t) => !this.priority || t.priority == this.priority)
+      .filter((t) => this.searchLabels.length==0 || this.searchLabels.every((a) => t.labels.find((b) => b.id == a.id)))
+      .filter((t) => !this.project || (t. project && t.project.id == this.project.id));
+  }
+
+  get labels(): LabelDetails[] {
+    if(this.priority || this.project || this.date || this.searchLabels.length > 0) {
+      return [];
+    }
+    return this.tree.getLabels()
+      .filter((t) => t.name.includes(this.search));
+  }
+
+  get projects(): ProjectTreeElem[] {
+    if(this.priority || this.project || this.date || this.searchLabels.length > 0) {
+      return [];
+    }
+    return this.tree.getProjects()
+      .filter((t) => t.name.includes(this.search));
   }
 
   sameDay(date1: Date, date2: Date): boolean {
@@ -41,7 +66,7 @@ export class SearchResultComponent implements OnInit {
     console.log(searchString)
 
     this.priority = undefined;
-    this.labels = [];
+    this.searchLabels = [];
     this.project = undefined;
     this.date = undefined;
     
@@ -60,7 +85,7 @@ export class SearchResultComponent implements OnInit {
       let labelNames = labelMatches
         .map((l) => l.trim())
         .map((l) => l.substr(1));
-      this.labels = this.tree.getLabels().filter((l) => 
+      this.searchLabels = this.tree.getLabels().filter((l) => 
         labelNames.filter((a) => l.name.includes(a)).length>0
       );
       for(let match of labelMatches) {
@@ -89,7 +114,7 @@ export class SearchResultComponent implements OnInit {
       }
     }
 
-    console.log(this.labels.map((a) => a.name))
+    console.log(this.searchLabels.map((a) => a.name))
     console.log(searchString)
     this.search = searchString.trim();
   }

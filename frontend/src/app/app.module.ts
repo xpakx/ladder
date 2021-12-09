@@ -35,6 +35,8 @@ import { HabitFormComponent } from './component/habit-form/habit-form.component'
 import { SearchResultComponent } from './component/search-result/search-result.component';
 import { FilterListComponent } from './component/filter-list/filter-list.component';
 import { FilterDialogComponent } from './component/filter-dialog/filter-dialog.component';
+import { LabelSearchListComponent } from './component/label-search-list/label-search-list.component';
+import { ProjectSearchListComponent } from './component/project-search-list/project-search-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -70,7 +72,9 @@ export function tokenGetter() {
     HabitFormComponent,
     SearchResultComponent,
     FilterListComponent,
-    FilterDialogComponent
+    FilterDialogComponent,
+    LabelSearchListComponent,
+    ProjectSearchListComponent
   ],
   imports: [
     BrowserModule,

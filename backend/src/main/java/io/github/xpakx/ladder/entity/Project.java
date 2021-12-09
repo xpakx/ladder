@@ -28,6 +28,7 @@ public class Project {
     private String color;
     private Integer generalOrder;
     private boolean collapsed;
+    private boolean archived;
 
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
@@ -45,6 +46,10 @@ public class Project {
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
     @Where(clause = "parent_id is NULL")
     private List<Task> tasks;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Habit> habits;
 
     @JsonIgnore
     @ManyToOne

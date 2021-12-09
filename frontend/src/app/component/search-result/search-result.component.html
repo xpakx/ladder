@@ -1,4 +1,22 @@
-<h2>Tasks</h2>
-<div *ngFor="let task of tasks">
- #{{task.id}} {{ task.title }}, Project: {{task.project ? task.project.name : "inbox"}}
-</div>
+<ng-container *ngIf="tasks.length> 0">
+    <h2>Tasks</h2>
+    <div *ngFor="let task of tasks">
+    #{{task.id}} {{ task.title }}, Project: {{task.project ? task.project.name : "inbox"}}
+    </div>
+</ng-container>
+
+
+<ng-container *ngIf="habits.length> 0">
+    <h2>Habits</h2>
+    <app-habit-list [habitList]='habits'></app-habit-list>
+</ng-container>
+
+<ng-container *ngIf="labels.length> 0">
+    <h2>Labels</h2>
+    <app-label-search-list [labelList]='labels'></app-label-search-list>
+</ng-container>
+
+<ng-container *ngIf="projects.length> 0">
+    <h2>Projects</h2>
+    <app-project-search-list [projectList]='projects'></app-project-search-list>
+</ng-container>

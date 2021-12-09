@@ -35,6 +35,7 @@ public class Task {
     private LocalDateTime completedAt;
     private boolean completed;
     private boolean collapsed;
+    private boolean archived;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 

@@ -12,7 +12,7 @@
                 <div class="task_list_item_main">
                     <div role="button" tabindex="0" class="task_list_item_body">
                         <div class="task_list_item__overflow_actions">
-                            <span class="handle" dndHandle>
+                            <span class="handle" dndHandle *ngIf="!list">
                                 <i class="fa fa-ellipsis-v"></i>
                                 <i class="fa fa-ellipsis-v"></i>
                             </span>
@@ -91,7 +91,7 @@
             </li>
         </ng-container>
 
-        <li>
+        <li *ngIf="!list">
             <button type="button" class="plus_add_button" (click)="openAddHabitForm()" *ngIf="!showAddHabitForm" >
                 <span class="icon_add">
                     <i class="fa fa-plus"></i>
@@ -110,7 +110,7 @@
 
 <div class="ist-menu context" [class.hidden-context-menu]="!showContextHabitMenu" [ngStyle]="{'left.px': habitContextMenuX, 'top.px': habitContextMenuY}">
 	<ul class="context-menu-project" #taskContext>
-		<li class="context-menu-project-item">
+		<li class="context-menu-project-item" *ngIf="!list">
 			<button (click)="openEditTaskAbove()">
 				<span class="menu_icon">
 					<i class="fa fa-arrow-up"></i>
@@ -118,7 +118,7 @@
 				<div class="menu_label">Add habit above</div>
 			</button>
 		</li>
-        <li class="context-menu-project-item">
+        <li class="context-menu-project-item" *ngIf="!list">
 			<button (click)="openEditTaskBelow()">
 				<span class="menu_icon">
 					<i class="fa fa-arrow-down"></i>

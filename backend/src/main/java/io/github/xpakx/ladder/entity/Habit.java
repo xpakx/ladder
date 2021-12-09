@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,6 +31,7 @@ public class Habit {
     private Integer generalOrder;
     private boolean allowPositive;
     private boolean allowNegative;
+    private boolean archived;
 
     @JsonIgnore
     @ManyToOne
@@ -47,4 +49,10 @@ public class Habit {
             joinColumns={@JoinColumn(name="habit_id")},
             inverseJoinColumns={@JoinColumn(name="label_id")})
     private Set<Label> labels;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "habit",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    private List<HabitCompletion> completions;
 }

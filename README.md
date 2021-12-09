@@ -45,9 +45,9 @@ A clone of the Todoist web-app written in Java + Spring (backend) and Angular (f
 - [ ] Synchronization
 	- [x] Synchronizing data between clients
 	- [ ] Offline changes
-- [ ] Filters
+- [+] Filters
+- [+] Habits
 - [ ] Shared projects
-- [ ] Habits
 - [ ] Gamification
 - [ ] Tasks' stats
 - [ ] Keyboard shortcuts
