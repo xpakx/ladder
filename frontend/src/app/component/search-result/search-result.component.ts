@@ -51,6 +51,9 @@ export class SearchResultComponent implements OnInit {
   }
 
   get projects(): ProjectTreeElem[] {
+    if(this.priority || this.project || this.date || this.labels.length > 0) {
+      return [];
+    }
     return this.tree.getProjects()
       .filter((t) => t.name.includes(this.search));
   }
