@@ -1,0 +1,38 @@
+<div class="tasks_content">
+    <ul class="task_list_items">
+        <ng-container *ngFor="let label of labelList">
+        
+            <li class="task_list_item">
+                <div class="task_list_item_main">
+                    <div role="button" tabindex="0" class="task_list_item_body">
+                        <div class="habit_buttons" >
+                            <div class="label-color" [style]="'color: ' + label.color +';'">
+                                <i class="fa fa-flip-horizontal fa-tag"></i>
+                            </div>
+                        </div>
+                        <div class="task_list_item_content">
+                            <div class="task_list_item__content_wrapper">
+                                <div class="markdown_content task_content">
+                                    {{label.name}}
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="task_list_item__actions task_list_item__actions--active">
+                            <button type="button" >
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" >
+                                <i class="fa fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ng-container>
+
+    </ul>
+</div>
+
+
+  

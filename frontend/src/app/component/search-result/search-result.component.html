@@ -13,9 +13,7 @@
 
 <ng-container *ngIf="labels.length> 0">
     <h2>Labels</h2>
-    <div *ngFor="let label of labels">
-    #{{label.id}} {{ label.name }}
-    </div>
+    <app-label-search-list [labelList]='labels'></app-label-search-list>
 </ng-container>
 
 <ng-container *ngIf="projects.length> 0">
