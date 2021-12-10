@@ -24,6 +24,7 @@ export class SubtaskListComponent extends MultilevelTaskComponent<TaskTreeServic
   public message: string = '';
   todayDate: Date = new Date();
   @Input("task") parent?: TaskTreeElem;
+  @Input("taskList") taskList: TaskTreeElem[] = [];
 
   constructor(private router: Router, public tree: TreeService, 
     private taskService: TaskService, private taskTreeService: TaskTreeService,
@@ -43,7 +44,14 @@ export class SubtaskListComponent extends MultilevelTaskComponent<TaskTreeServic
   }
 
   get tasks(): TaskTreeElem[] {
+    if(this.taskList.length > 0) {
+      return this.taskList;
+    }
     return this.parent ? [...this.taskTreeService.getByParentId(this.parent.id)] : [];
+  }
+
+  get list(): boolean {
+    return this.taskList.length > 0;
   }
 
   get newTaskData(): AddEvent<TaskTreeElem> | undefined {

@@ -1,10 +1,10 @@
 <div class="panel"  role="tabpanel" >
 
 
-    <div class="tasks_content" *ngIf="parent">
+    <div class="tasks_content" *ngIf="parent || taskList">
         <ul class="task_list_items">
 
-            <li *ngIf="draggedId" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, parent, true)" class="drag-zone drag_list_item">
+            <li *ngIf="parent && draggedId" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, parent, true)" class="drag-zone drag_list_item">
 
             </li>
             <ng-container *ngFor="let task of tasks">

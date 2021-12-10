@@ -1,8 +1,6 @@
 <ng-container *ngIf="tasks.length> 0">
     <h2>Tasks</h2>
-    <div *ngFor="let task of tasks">
-    #{{task.id}} {{ task.title }}, Project: {{task.project ? task.project.name : "inbox"}}
-    </div>
+    <app-subtask-list [taskList]='tasks'></app-subtask-list>
 </ng-container>
 
 
