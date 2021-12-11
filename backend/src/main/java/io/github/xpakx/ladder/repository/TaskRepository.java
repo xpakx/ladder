@@ -112,7 +112,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     void incrementGeneralOrderByOwnerId(Integer ownerId, LocalDateTime modifiedAt);
 
     @EntityGraph("task-with-labels")
-    List<Task> findByProjectIdIn(List<Integer> ids);
+    List<Task> findByProjectIdInAndArchived(List<Integer> ids, boolean archived);
 
     @EntityGraph("task-with-labels")
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);

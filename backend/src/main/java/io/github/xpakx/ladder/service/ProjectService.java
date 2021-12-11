@@ -449,8 +449,9 @@ public class ProjectService {
     }
 
     private List<Task> generateTaskDuplicatesToSave(Map<Integer, Project> projectsById, List<Project> duplicatedProjects) {
-        Map<Integer, Task> tasksById = taskRepository.findByProjectIdIn(
-                duplicatedProjects.stream().map(Project::getId).collect(Collectors.toList())
+        Map<Integer, Task> tasksById = taskRepository.findByProjectIdInAndArchived(
+                duplicatedProjects.stream().map(Project::getId).collect(Collectors.toList()),
+                false
         ).stream()
                 .collect(Collectors.toMap(Task::getId, this::duplicate));
         tasksById.values()
@@ -660,5 +661,9 @@ public class ProjectService {
         IdRequest request = new IdRequest();
         request.setId(null);
         return moveProjectAsFirstChild(request, userId, projectToMoveId);
+    }
+
+    public Project archiveProject(BooleanRequest request, Integer projectId, Integer userId) {
+        return null;
     }
 }
