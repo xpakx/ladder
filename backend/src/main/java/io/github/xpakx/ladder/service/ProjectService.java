@@ -663,11 +663,17 @@ public class ProjectService {
         return moveProjectAsFirstChild(request, userId, projectToMoveId);
     }
 
+    @Transactional
     public Project archiveProject(BooleanRequest request, Integer projectId, Integer userId) {
         Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         project.setArchived(request.isFlag());
         project.setModifiedAt(LocalDateTime.now());
+
+        List<Task> tasks = request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
+                taskRepository.findByOwnerIdAndProjectId(userId, projectId);
+        tasks.forEach((a) -> a.setArchived(request.isFlag()));
+        taskRepository.saveAll(tasks);
         return projectRepository.save(project);
     }
 }
