@@ -674,6 +674,12 @@ public class ProjectService {
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId);
         tasks.forEach((a) -> a.setArchived(request.isFlag()));
         taskRepository.saveAll(tasks);
+
+        if(request.isFlag()) {
+            List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, projectId);
+            children.forEach((a) -> a.setParent(project.getParent()));
+            projectRepository.saveAll(children);
+        }
         return projectRepository.save(project);
     }
 }
