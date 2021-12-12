@@ -664,6 +664,10 @@ public class ProjectService {
     }
 
     public Project archiveProject(BooleanRequest request, Integer projectId, Integer userId) {
-        return null;
+        Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        project.setArchived(request.isFlag());
+        project.setModifiedAt(LocalDateTime.now());
+        return projectRepository.save(project);
     }
 }
