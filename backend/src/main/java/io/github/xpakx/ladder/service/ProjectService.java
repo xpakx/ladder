@@ -682,4 +682,8 @@ public class ProjectService {
         }
         return projectRepository.save(project);
     }
+
+    public List<ProjectDetails> getArchivedProjects(Integer userId) {
+        return projectRepository.findByOwnerIdAndArchived(userId, true, ProjectDetails.class);
+    }
 }

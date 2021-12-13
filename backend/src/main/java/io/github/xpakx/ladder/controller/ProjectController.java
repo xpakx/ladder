@@ -138,4 +138,10 @@ public class ProjectController {
     public ResponseEntity<Project> archiveProject(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.archiveProject(request, projectId, userId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping("/archived")
+    public ResponseEntity<List<ProjectDetails>> getArchivedProjects(@PathVariable Integer userId) {
+        return new ResponseEntity<>(projectService.getArchivedProjects(userId), HttpStatus.OK);
+    }
 }
