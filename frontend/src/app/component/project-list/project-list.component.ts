@@ -153,4 +153,19 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
       }
     );
   }
+
+  archiveProject() {
+    if(this.contextProjectMenu) {
+      this.projectService.archiveProject(this.contextProjectMenu.id, {flag:true}).subscribe(
+        (response: Project) => {
+        this.tree.deleteProject(response.id);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+
+    this.closeContextProjectMenu();
+  }
 }
