@@ -671,7 +671,12 @@ public class ProjectService {
         LocalDateTime now = LocalDateTime.now();
         project.setArchived(request.isFlag());
         project.setModifiedAt(now);
+        archiveTasks(request, projectId, userId, now);
+        detachProjectFromTree(request, projectId, userId, project, now);
+        return projectRepository.save(project);
+    }
 
+    private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now) {
         List<Task> tasks = request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId);
         tasks.forEach((a) -> {
@@ -679,7 +684,9 @@ public class ProjectService {
             a.setModifiedAt(now);
         });
         taskRepository.saveAll(tasks);
+    }
 
+    private void detachProjectFromTree(BooleanRequest request, Integer projectId, Integer userId, Project project, LocalDateTime now) {
         if(request.isFlag()) {
             List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, projectId);
             children.forEach((a) -> {
@@ -688,7 +695,6 @@ public class ProjectService {
             });
             projectRepository.saveAll(children);
         }
-        return projectRepository.save(project);
     }
 
     public List<ProjectDetails> getArchivedProjects(Integer userId) {
