@@ -664,20 +664,28 @@ public class ProjectService {
     }
 
     @Transactional
+    @NotifyOnProjectChange
     public Project archiveProject(BooleanRequest request, Integer projectId, Integer userId) {
         Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
+        LocalDateTime now = LocalDateTime.now();
         project.setArchived(request.isFlag());
-        project.setModifiedAt(LocalDateTime.now());
+        project.setModifiedAt(now);
 
         List<Task> tasks = request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId);
-        tasks.forEach((a) -> a.setArchived(request.isFlag()));
+        tasks.forEach((a) -> {
+            a.setArchived(request.isFlag());
+            a.setModifiedAt(now);
+        });
         taskRepository.saveAll(tasks);
 
         if(request.isFlag()) {
             List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, projectId);
-            children.forEach((a) -> a.setParent(project.getParent()));
+            children.forEach((a) -> {
+                a.setParent(project.getParent());
+                a.setModifiedAt(now);
+            });
             projectRepository.saveAll(children);
         }
         return projectRepository.save(project);
