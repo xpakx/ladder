@@ -700,4 +700,8 @@ public class ProjectService {
     public List<ProjectDetails> getArchivedProjects(Integer userId) {
         return projectRepository.findByOwnerIdAndArchived(userId, true, ProjectDetails.class);
     }
+
+    public List<TaskDetails> getArchivedTasks(Integer userId, Integer projectId) {
+        return taskRepository.getByOwnerIdAndProjectIdAndArchived(userId, projectId, true, TaskDetails.class);
+    }
 }
