@@ -93,6 +93,11 @@ export class TreeService {
     }
   }
 
+  archiveProject(projectId: number) {
+    this.projects.archiveProject(projectId);
+    this.tasks.deleteAllTasksFromProject(projectId);
+  }
+
   changeFav(response: Project) {
     this.projects.changeFav(response);
   }

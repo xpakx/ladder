@@ -202,6 +202,30 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     return ids;
   }
 
+  archiveProject(projectId: number) {
+    let children = this.getAllFirstOrderChildren(projectId);
+    let project = this.getById(projectId);
+    let order = project ? project.order : 0;
+    let parent = project ? project.parent : null;
+    this.list = this.list.filter((a) => a.id != projectId);
+    for(let child of children) {
+      child.order = order++;
+      child.parent = parent;
+    }
+
+    if(parent) {
+      this.recalculateChildrenIndent(parent.id, project ? project.indent : 0);
+    }
+      
+
+      this.sort();
+  }
+
+  protected getAllFirstOrderChildren(projectId: number): ProjectTreeElem[] {
+    return this.list
+    .filter((a) => a.parent && a.parent.id == projectId);
+  }
+
   protected getAllChildren(projectId: number): number[] {
     let children = this.list
     .filter((a) => a.parent && a.parent.id == projectId);
