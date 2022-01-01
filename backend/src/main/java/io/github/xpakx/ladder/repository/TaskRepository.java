@@ -26,7 +26,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     <T> List<T> findByOwnerId(Integer userId, Class<T> type);
     @EntityGraph("task-with-labels")
     <T> List<T> findByOwnerIdAndArchived(Integer userId, boolean archived, Class<T> type);
-    List<Task> findByOwnerIdAndProjectId(Integer userId, Integer projectId);
+    List<Task> findByOwnerIdAndProjectId(Integer ownerId, Integer projectId);
+    List<Task> findByOwnerIdAndProjectIdAndArchived(Integer ownerId, Integer projectId, boolean archived);
     List<Task> findByOwnerIdAndProjectIsNull(Integer userId);
 
     void deleteByIdAndOwnerId(Integer taskId, Integer ownerId);
@@ -112,7 +113,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     void incrementGeneralOrderByOwnerId(Integer ownerId, LocalDateTime modifiedAt);
 
     @EntityGraph("task-with-labels")
-    List<Task> findByProjectIdIn(List<Integer> ids);
+    List<Task> findByProjectIdInAndArchived(List<Integer> ids, boolean archived);
 
     @EntityGraph("task-with-labels")
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);

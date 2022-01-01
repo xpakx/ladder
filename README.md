@@ -16,7 +16,6 @@ A clone of the Todoist web-app written in Java + Spring (backend) and Angular (f
 	- [x] Re-ordering projects with drag'n'drop
 	- [x] Viewing projects' tasks
 	- [x] Duplicating projects
-	- [ ] Custom date picker
 	- [ ] Archiving projects
 	- [ ] Sections
 - [ ] Tasks
@@ -45,8 +44,16 @@ A clone of the Todoist web-app written in Java + Spring (backend) and Angular (f
 - [ ] Synchronization
 	- [x] Synchronizing data between clients
 	- [ ] Offline changes
-- [+] Filters
-- [+] Habits
+- [x] Filters
+	- [x] Search
+	- [x] Save searches as filters
+	- [x] Displaying filter list 
+	- [x] Editing filters
+	- [x] Deleting filters
+	- [x] Adding filters above/below another filter
+	- [x] Re-ordering filters with drag'n'drop
+	- [x] Viewing filters' search results
+- [x] Habits
 - [ ] Shared projects
 - [ ] Gamification
 - [ ] Tasks' stats

@@ -4,7 +4,17 @@
   <div class="modal-dialog modal-shadow" role="document">
     <div class="modal-content">
       <div class="modal-body">
-        <app-task-form (closeEvent)="closeAddTaskModal()"></app-task-form>
+        <div class="tablist">
+          <button class="tablist_elem" [class.selected]="view == 0" (click)="chooseTab(0)">
+            Task
+          </button>
+          <button class="tablist_elem" [class.selected]="view == 1" (click)="chooseTab(1)">
+            Habit
+          </button>
+      </div>
+
+        <app-task-form (closeEvent)="closeAddTaskModal()" *ngIf="view == 0"></app-task-form>
+        <app-habit-form (closeEvent)="closeAddTaskModal()" *ngIf="view == 1"></app-habit-form>
       </div>
     </div>
   </div>

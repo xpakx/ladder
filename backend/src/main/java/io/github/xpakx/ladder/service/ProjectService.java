@@ -449,8 +449,9 @@ public class ProjectService {
     }
 
     private List<Task> generateTaskDuplicatesToSave(Map<Integer, Project> projectsById, List<Project> duplicatedProjects) {
-        Map<Integer, Task> tasksById = taskRepository.findByProjectIdIn(
-                duplicatedProjects.stream().map(Project::getId).collect(Collectors.toList())
+        Map<Integer, Task> tasksById = taskRepository.findByProjectIdInAndArchived(
+                duplicatedProjects.stream().map(Project::getId).collect(Collectors.toList()),
+                false
         ).stream()
                 .collect(Collectors.toMap(Task::getId, this::duplicate));
         tasksById.values()
@@ -660,5 +661,43 @@ public class ProjectService {
         IdRequest request = new IdRequest();
         request.setId(null);
         return moveProjectAsFirstChild(request, userId, projectToMoveId);
+    }
+
+    @Transactional
+    @NotifyOnProjectChange
+    public Project archiveProject(BooleanRequest request, Integer projectId, Integer userId) {
+        Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        LocalDateTime now = LocalDateTime.now();
+        project.setArchived(request.isFlag());
+        project.setModifiedAt(now);
+        archiveTasks(request, projectId, userId, now);
+        detachProjectFromTree(request, projectId, userId, project, now);
+        return projectRepository.save(project);
+    }
+
+    private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now) {
+        List<Task> tasks = request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
+                taskRepository.findByOwnerIdAndProjectId(userId, projectId);
+        tasks.forEach((a) -> {
+            a.setArchived(request.isFlag());
+            a.setModifiedAt(now);
+        });
+        taskRepository.saveAll(tasks);
+    }
+
+    private void detachProjectFromTree(BooleanRequest request, Integer projectId, Integer userId, Project project, LocalDateTime now) {
+        if(request.isFlag()) {
+            List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, projectId);
+            children.forEach((a) -> {
+                a.setParent(project.getParent());
+                a.setModifiedAt(now);
+            });
+            projectRepository.saveAll(children);
+        }
+    }
+
+    public List<ProjectDetails> getArchivedProjects(Integer userId) {
+        return projectRepository.findByOwnerIdAndArchived(userId, true, ProjectDetails.class);
     }
 }

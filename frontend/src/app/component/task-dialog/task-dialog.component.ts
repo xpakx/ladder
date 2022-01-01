@@ -7,6 +7,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 })
 export class TaskDialogComponent implements OnInit {
   @Output() closeEvent = new EventEmitter<boolean>();
+  public view: number = 0;
 
   constructor() { }
 
@@ -17,4 +18,7 @@ export class TaskDialogComponent implements OnInit {
     this.closeEvent.emit(true);
   }
 
+  chooseTab(num: number) {
+    this.view = num;
+  }
 }
