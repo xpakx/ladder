@@ -689,10 +689,18 @@ public class ProjectService {
     private void detachProjectFromTree(BooleanRequest request, Integer projectId, Integer userId, Project project, LocalDateTime now) {
         if(request.isFlag()) {
             List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, projectId);
-            children.forEach((a) -> {
+            Integer order = 0;
+            if(project.getParent() == null) {
+                order = projectRepository.getMaxOrderByOwnerId(userId);
+            } else {
+                order = projectRepository.getMaxOrderByOwnerIdAndParentId(userId, project.getParent().getId());
+            }
+
+            for(Project a : children) {
                 a.setParent(project.getParent());
                 a.setModifiedAt(now);
-            });
+                a.setGeneralOrder(order++);
+            }
             projectRepository.saveAll(children);
         }
     }
