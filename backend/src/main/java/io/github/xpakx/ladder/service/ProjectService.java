@@ -689,12 +689,7 @@ public class ProjectService {
     private void detachProjectFromTree(BooleanRequest request, Integer projectId, Integer userId, Project project, LocalDateTime now) {
         if(request.isFlag()) {
             List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, projectId);
-            Integer order = 0;
-            if(project.getParent() == null) {
-                order = projectRepository.getMaxOrderByOwnerId(userId);
-            } else {
-                order = projectRepository.getMaxOrderByOwnerIdAndParentId(userId, project.getParent().getId());
-            }
+            Integer order = getMaxOrderForParent(userId, project);
 
             for(Project a : children) {
                 a.setParent(project.getParent());
@@ -703,6 +698,16 @@ public class ProjectService {
             }
             projectRepository.saveAll(children);
         }
+    }
+
+    private Integer getMaxOrderForParent(Integer userId, Project project) {
+        Integer order;
+        if(project.getParent() == null) {
+            order = projectRepository.getMaxOrderByOwnerId(userId);
+        } else {
+            order = projectRepository.getMaxOrderByOwnerIdAndParentId(userId, project.getParent().getId());
+        }
+        return order;
     }
 
     public List<ProjectDetails> getArchivedProjects(Integer userId) {
