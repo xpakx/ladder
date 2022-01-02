@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskDeletion;
 import io.github.xpakx.ladder.entity.Label;
@@ -537,5 +538,16 @@ public class TaskService {
                     LocalDateTime.now()
             );
         }
+    }
+
+    @Transactional
+    @NotifyOnProjectChange
+    public Task archiveTask(BooleanRequest request, Integer taskId, Integer userId) {
+        Task task = taskRepository.findByIdAndOwnerId(taskId, userId)
+                .orElseThrow(() -> new NotFoundException("No such task!"));
+        LocalDateTime now = LocalDateTime.now();
+        task.setArchived(request.isFlag());
+        task.setModifiedAt(now);
+        return taskRepository.save(task);
     }
 }
