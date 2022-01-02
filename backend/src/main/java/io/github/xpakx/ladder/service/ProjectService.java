@@ -671,14 +671,19 @@ public class ProjectService {
         LocalDateTime now = LocalDateTime.now();
         project.setArchived(request.isFlag());
         project.setModifiedAt(now);
-        archiveTasks(request, projectId, userId, now);
+        archiveTasks(request, projectId, userId, now, false);
         detachProjectFromTree(request, projectId, userId, project, now);
         return projectRepository.save(project);
     }
 
-    private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now) {
+    private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now, boolean onlyCompleted) {
         List<Task> tasks = request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId);
+        if(onlyCompleted) {
+            tasks = tasks.stream()
+                    .filter(Task::isCompleted)
+                    .collect(Collectors.toList());
+        }
         tasks.forEach((a) -> {
             a.setArchived(request.isFlag());
             a.setModifiedAt(now);
@@ -716,5 +721,15 @@ public class ProjectService {
 
     public List<TaskDetails> getArchivedTasks(Integer userId, Integer projectId) {
         return taskRepository.getByOwnerIdAndProjectIdAndArchived(userId, projectId, true, TaskDetails.class);
+    }
+
+    @Transactional
+    @NotifyOnProjectChange
+    public Project archiveCompletedTasks(BooleanRequest request, Integer projectId, Integer userId) {
+        Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        LocalDateTime now = LocalDateTime.now();
+        archiveTasks(request, projectId, userId, now, true);
+        return projectRepository.save(project);
     }
 }
