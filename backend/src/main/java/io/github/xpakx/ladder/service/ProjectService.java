@@ -680,9 +680,11 @@ public class ProjectService {
         List<Task> tasks = request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId);
         if(onlyCompleted) {
-            tasks = tasks.stream()
+            List<Task> tasksTemp = tasks.stream()
                     .filter(Task::isCompleted)
                     .collect(Collectors.toList());
+            tasksTemp.addAll(archiveChildren(userId, tasks, tasksTemp, now, request.isFlag()));
+            tasks = tasksTemp;
         }
         tasks.forEach((a) -> {
             a.setArchived(request.isFlag());
@@ -731,5 +733,26 @@ public class ProjectService {
         LocalDateTime now = LocalDateTime.now();
         archiveTasks(request, projectId, userId, now, true);
         return projectRepository.save(project);
+    }
+
+    private List<Task> archiveChildren(Integer userId, List<Task> projectTasks, List<Task> parentTasks, LocalDateTime now, boolean archived) {
+        Map<Integer, List<Task>> tasksByParent = projectTasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+
+        List<Task> toArchive = parentTasks;
+        List<Task> toReturn = new ArrayList<>();
+        while(toArchive.size() > 0) {
+            List<Task> newToArchive = new ArrayList<>();
+            for (Task parent : toArchive) {
+                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
+                parent.setArchived(archived);
+                parent.setModifiedAt(now);
+                toReturn.add(parent);
+                newToArchive.addAll(children);
+            }
+            toArchive = newToArchive;
+        }
+        return toReturn;
     }
 }
