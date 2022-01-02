@@ -216,9 +216,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     if(parent) {
       this.recalculateChildrenIndent(parent.id, project ? project.indent : 0);
     }
-      
-
-      this.sort();
+    this.sort();
   }
 
   protected getAllFirstOrderChildren(projectId: number): ProjectTreeElem[] {
