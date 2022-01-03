@@ -258,7 +258,18 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     for(let project of projects) {
       let projectWithId = this.getById(project.id);
       if(projectWithId) {
-        this.updateProjectDetails(projectWithId, project, projects);
+        if(project.archived) {
+          let children = this.getAllFirstOrderChildren(project.id);
+          let order = projectWithId.order;
+          let parent = projectWithId.parent ? projectWithId.parent : null;
+          this.list = this.list.filter((a) => a.id != project.id);
+          for(let child of children) {
+            child.order = order++;
+            child.parent = parent;
+          }
+        } else {
+          this.updateProjectDetails(projectWithId, project, projects);
+        }
       } else {
         this.list.push(this.transformSync(project, projects));
       }

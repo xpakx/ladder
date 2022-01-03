@@ -9,4 +9,5 @@ export interface ProjectDetails {
     favorite: boolean;
     collapsed: boolean;
     modifiedAt: Date;
+    archived: boolean;
 }
