@@ -352,4 +352,8 @@ export class TreeService {
   deleteFilter(filterId: number) {
     this.filters.deleteFilter(filterId);
   }
+
+  public getLastProjectArchivization(): Date | undefined {
+    return this.projects.getLastArchivization();
+  }
 }

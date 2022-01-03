@@ -12,12 +12,17 @@ import { MultilevelMovableTreeService } from './multilevel-movable-tree-service'
 export class ProjectTreeService extends IndentableService<ProjectWithNameAndId>
 implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
   public list: ProjectTreeElem[] = [];
+  private lastArchivization: Date | undefined;
 
   constructor() { super() }
 
   load(projects: ProjectDetails[]) {
     this.list = this.transformAll(projects);
     this.sort();
+  }
+
+  public getLastArchivization(): Date | undefined {
+    return this.lastArchivization;
   }
 
   private transformAll(projects: ProjectDetails[]):  ProjectTreeElem[] {
@@ -259,6 +264,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       let projectWithId = this.getById(project.id);
       if(projectWithId) {
         if(project.archived) {
+          this.lastArchivization = project.modifiedAt;
           let children = this.getAllFirstOrderChildren(project.id);
           let order = projectWithId.order;
           let parent = projectWithId.parent ? projectWithId.parent : null;
@@ -272,6 +278,8 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
         }
       } else if(!project.archived) {
         this.list.push(this.transformSync(project, projects));
+      } else {
+        this.lastArchivization = project.modifiedAt;
       }
     }
     this.sort();

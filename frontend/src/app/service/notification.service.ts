@@ -99,6 +99,10 @@ export class NotificationService {
     dates = dates.concat(
       this.tree.getFilters().map((a) => a.modifiedAt)
     );
+    let projectArchiv = this.tree.getLastProjectArchivization();
+    if(projectArchiv) {
+      dates.push(projectArchiv)
+    }
     for(let date of dates) {
       if(date > maxDate) {
         maxDate = date;
