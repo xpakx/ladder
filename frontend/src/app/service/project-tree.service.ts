@@ -270,7 +270,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
         } else {
           this.updateProjectDetails(projectWithId, project, projects);
         }
-      } else {
+      } else if(!project.archived) {
         this.list.push(this.transformSync(project, projects));
       }
     }
