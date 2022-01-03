@@ -93,9 +93,9 @@ export class TreeService {
     }
   }
 
-  archiveProject(projectId: number) {
-    this.projects.archiveProject(projectId);
-    this.tasks.deleteAllTasksFromProject(projectId);
+  archiveProject(project: Project) {
+    this.projects.archiveProject(project);
+    this.tasks.deleteAllTasksFromProject(project.id);
   }
 
   changeFav(response: Project) {

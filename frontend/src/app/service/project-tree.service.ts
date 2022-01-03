@@ -207,12 +207,12 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     return ids;
   }
 
-  archiveProject(projectId: number) {
-    let children = this.getAllFirstOrderChildren(projectId);
-    let project = this.getById(projectId);
+  archiveProject(response: Project) {
+    let children = this.getAllFirstOrderChildren(response.id);
+    let project = this.getById(response.id);
     let order = project ? project.order : 0;
     let parent = project ? project.parent : null;
-    this.list = this.list.filter((a) => a.id != projectId);
+    this.list = this.list.filter((a) => a.id != response.id);
     for(let child of children) {
       child.order = order++;
       child.parent = parent;
@@ -221,6 +221,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     if(parent) {
       this.recalculateChildrenIndent(parent.id, project ? project.indent : 0);
     }
+    this.lastArchivization = new Date(response.modifiedAt);
     this.sort();
   }
 
@@ -264,7 +265,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       let projectWithId = this.getById(project.id);
       if(projectWithId) {
         if(project.archived) {
-          this.lastArchivization = project.modifiedAt;
+          this.lastArchivization = new Date(project.modifiedAt);
           let children = this.getAllFirstOrderChildren(project.id);
           let order = projectWithId.order;
           let parent = projectWithId.parent ? projectWithId.parent : null;
@@ -279,7 +280,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       } else if(!project.archived) {
         this.list.push(this.transformSync(project, projects));
       } else {
-        this.lastArchivization = project.modifiedAt;
+        this.lastArchivization = new Date(project.modifiedAt);
       }
     }
     this.sort();
