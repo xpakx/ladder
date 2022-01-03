@@ -216,6 +216,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     for(let child of children) {
       child.order = order++;
       child.parent = parent;
+      child.indent = project? project.indent : 0;
     }
 
     if(parent) {
