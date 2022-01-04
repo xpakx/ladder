@@ -7,7 +7,7 @@
             Projects
         </button>
         <div class="expansion_panel__actions">
-			<button type="button" class="adder_icon" (click)="openProjectModal()">
+			<button type="button" class="adder_icon" (click)="toArchive()">
                 <i class="fa fa-archive"></i>
             </button>
             <button type="button" class="adder_icon" (click)="openProjectModal()">
@@ -105,7 +105,7 @@
 			</button>
 		</li>
         <li class="context-menu-project-item">
-			<button (click)="toArchive()">
+			<button (click)="archiveProject()">
 				<span class="menu_icon">
 					<i class="fa fa-archive"></i>
 				</span>
