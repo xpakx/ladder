@@ -87,6 +87,10 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
     this.router.navigate(['/project/'+id]);
   }
 
+  toArchive() {
+    this.router.navigate(['/archive/']);
+  }
+
   // Project context menu
 
   openContextProjectMenu(event: MouseEvent, projectId: number) {
