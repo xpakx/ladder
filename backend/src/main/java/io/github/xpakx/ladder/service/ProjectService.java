@@ -671,6 +671,12 @@ public class ProjectService {
         LocalDateTime now = LocalDateTime.now();
         project.setArchived(request.isFlag());
         project.setModifiedAt(now);
+        if(request.isFlag()) {
+            project.setGeneralOrder(0);
+            project.setParent(null);
+        } else {
+            project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
+        }
         archiveTasks(request, projectId, userId, now, false);
         detachProjectFromTree(request, projectId, userId, project, now);
         return projectRepository.save(project);
