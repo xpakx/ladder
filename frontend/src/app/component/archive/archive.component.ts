@@ -1,8 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectDetails } from 'src/app/entity/project-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { ProjectService } from 'src/app/service/project.service';
+import { RedirectionService } from 'src/app/service/redirection.service';
+import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
   selector: 'app-archive',
@@ -12,9 +15,15 @@ import { ProjectService } from 'src/app/service/project.service';
 export class ArchiveComponent implements OnInit {
   projects: ProjectTreeElem[] = [];
 
-  constructor(private projectService: ProjectService) { }
+  constructor(private projectService: ProjectService, private redirService: RedirectionService, 
+    private tree: TreeService, private  router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    if(!this.tree.isLoaded()) {
+      this.redirService.setAddress("archive/")
+      this.router.navigate(["load"]);
+    }
+
     this.projectService.getArchivedProjects().subscribe(
       (response: ProjectDetails[]) => {
         this.projects = this.transformResponse(response);
