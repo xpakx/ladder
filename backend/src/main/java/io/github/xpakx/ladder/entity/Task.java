@@ -67,6 +67,12 @@ public class Task {
     private Set<Label> labels;
 
     @JsonIgnore
+    @OneToMany(mappedBy = "task",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+    private List<TaskComment> comments;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_account_id")
     private UserAccount owner;

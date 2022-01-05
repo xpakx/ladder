@@ -1,0 +1,4 @@
+<ng-container *ngIf="projects.length> 0">
+    <h2>Archived Projects</h2>
+    <app-project-search-list [projectList]='projects' [archived]="true"></app-project-search-list>
+</ng-container>

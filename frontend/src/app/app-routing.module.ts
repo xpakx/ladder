@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ArchiveComponent } from './component/archive/archive.component';
 import { DailyViewComponent } from './component/daily-view/daily-view.component';
 import { HabitListComponent } from './component/habit-list/habit-list.component';
 import { InboxComponent } from './component/inbox/inbox.component';
@@ -20,7 +21,8 @@ const routes: Routes = [
   { path: 'project/:id', component: ProjectComponent },
   { path: 'project/:id/habits', component: HabitListComponent },
   { path: 'label/:id', component: LabelComponent },
-  { path: 'search', component: SearchResultComponent }
+  { path: 'search', component: SearchResultComponent },
+  { path: 'archive', component: ArchiveComponent }
 ];
 
 @NgModule({

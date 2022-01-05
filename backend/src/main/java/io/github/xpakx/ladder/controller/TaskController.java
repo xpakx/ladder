@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
+import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.TaskService;
@@ -130,5 +131,11 @@ public class TaskController {
     public ResponseEntity<Task> moveTaskAfterDaily(@RequestBody IdRequest request, @PathVariable Integer userId,
                                               @PathVariable Integer taskId) {
         return new ResponseEntity<>(taskService.moveTaskAfterInDailyView(request, userId, taskId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{taskId}/archive")
+    public ResponseEntity<Task> archiveProject(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(taskService.archiveTask(request, taskId, userId), HttpStatus.OK);
     }
 }

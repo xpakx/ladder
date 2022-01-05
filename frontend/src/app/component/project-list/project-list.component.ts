@@ -87,6 +87,10 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
     this.router.navigate(['/project/'+id]);
   }
 
+  toArchive() {
+    this.router.navigate(['/archive/']);
+  }
+
   // Project context menu
 
   openContextProjectMenu(event: MouseEvent, projectId: number) {
@@ -158,7 +162,7 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
     if(this.contextProjectMenu) {
       this.projectService.archiveProject(this.contextProjectMenu.id, {flag:true}).subscribe(
         (response: Project) => {
-        this.tree.archiveProject(response.id);
+        this.tree.archiveProject(response);
       },
       (error: HttpErrorResponse) => {
        

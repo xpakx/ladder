@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskDeletion;
 import io.github.xpakx.ladder.entity.Label;
@@ -537,5 +538,42 @@ public class TaskService {
                     LocalDateTime.now()
             );
         }
+    }
+
+    @Transactional
+    @NotifyOnProjectChange
+    public Task archiveTask(BooleanRequest request, Integer taskId, Integer userId) {
+        Task task = taskRepository.findByIdAndOwnerId(taskId, userId)
+                .orElseThrow(() -> new NotFoundException("No such task!"));
+        LocalDateTime now = LocalDateTime.now();
+        task.setArchived(request.isFlag());
+        task.setModifiedAt(now);
+        taskRepository.saveAll(
+                archiveChildren(userId, task, now, request.isFlag())
+        );
+        return taskRepository.save(task);
+    }
+
+    private List<Task> archiveChildren(Integer userId, Task task, LocalDateTime now, boolean archived) {
+        List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
+                task.getProject() != null ? task.getProject().getId() : null);
+        Map<Integer, List<Task>> tasksByParent = tasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+
+        List<Task> toArchive = List.of(task);
+        List<Task> toReturn = new ArrayList<>();
+        while(toArchive.size() > 0) {
+            List<Task> newToArchive = new ArrayList<>();
+            for (Task parent : toArchive) {
+                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
+                parent.setArchived(archived);
+                parent.setModifiedAt(now);
+                toReturn.add(parent);
+                newToArchive.addAll(children);
+            }
+            toArchive = newToArchive;
+        }
+        return toReturn;
     }
 }

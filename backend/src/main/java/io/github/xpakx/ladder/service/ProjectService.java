@@ -671,14 +671,27 @@ public class ProjectService {
         LocalDateTime now = LocalDateTime.now();
         project.setArchived(request.isFlag());
         project.setModifiedAt(now);
-        archiveTasks(request, projectId, userId, now);
+        if(request.isFlag()) {
+            project.setGeneralOrder(0);
+            project.setParent(null);
+        } else {
+            project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
+        }
+        archiveTasks(request, projectId, userId, now, false);
         detachProjectFromTree(request, projectId, userId, project, now);
         return projectRepository.save(project);
     }
 
-    private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now) {
+    private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now, boolean onlyCompleted) {
         List<Task> tasks = request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId);
+        if(onlyCompleted) {
+            List<Task> tasksTemp = tasks.stream()
+                    .filter(Task::isCompleted)
+                    .collect(Collectors.toList());
+            tasksTemp.addAll(archiveChildren(userId, tasks, tasksTemp, now, request.isFlag()));
+            tasks = tasksTemp;
+        }
         tasks.forEach((a) -> {
             a.setArchived(request.isFlag());
             a.setModifiedAt(now);
@@ -716,5 +729,36 @@ public class ProjectService {
 
     public List<TaskDetails> getArchivedTasks(Integer userId, Integer projectId) {
         return taskRepository.getByOwnerIdAndProjectIdAndArchived(userId, projectId, true, TaskDetails.class);
+    }
+
+    @Transactional
+    @NotifyOnProjectChange
+    public Project archiveCompletedTasks(BooleanRequest request, Integer projectId, Integer userId) {
+        Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        LocalDateTime now = LocalDateTime.now();
+        archiveTasks(request, projectId, userId, now, true);
+        return projectRepository.save(project);
+    }
+
+    private List<Task> archiveChildren(Integer userId, List<Task> projectTasks, List<Task> parentTasks, LocalDateTime now, boolean archived) {
+        Map<Integer, List<Task>> tasksByParent = projectTasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+
+        List<Task> toArchive = parentTasks;
+        List<Task> toReturn = new ArrayList<>();
+        while(toArchive.size() > 0) {
+            List<Task> newToArchive = new ArrayList<>();
+            for (Task parent : toArchive) {
+                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
+                parent.setArchived(archived);
+                parent.setModifiedAt(now);
+                toReturn.add(parent);
+                newToArchive.addAll(children);
+            }
+            toArchive = newToArchive;
+        }
+        return toReturn;
     }
 }

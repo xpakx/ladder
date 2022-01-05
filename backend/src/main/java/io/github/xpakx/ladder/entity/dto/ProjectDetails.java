@@ -8,6 +8,7 @@ public interface ProjectDetails {
     String getColor();
     boolean getFavorite();
     boolean getCollapsed();
+    boolean getArchived();
     ProjectWithNameAndId getParent();
     Integer getGeneralOrder();
     LocalDateTime getModifiedAt();

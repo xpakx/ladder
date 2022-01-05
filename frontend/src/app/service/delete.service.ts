@@ -21,6 +21,7 @@ export class DeleteService {
   private shouldDeleteTask: boolean = false;
   private shouldDeleteHabit: boolean = false;
   private shouldDeleteFilter: boolean = false;
+  private archived: boolean = false;
 
   public showDeleteMonit: boolean = false;
   public name: string = "";
@@ -71,14 +72,21 @@ export class DeleteService {
     this.shouldDeleteProject = true;
   }
 
+  openModalForArchivedProject(project: ProjectTreeElem) {
+     this.archived = true;
+     this.openModalForProject(project);
+  }
+
   private deleteProject(deletedId: number) {
+  
       this.projectService.deleteProject(deletedId).subscribe(
-        (response: any, projectId: number = deletedId) => {
-        this.tree.deleteProject(projectId);
+        (response: any, projectId: number = deletedId, archived: boolean = this.archived) => {
+        if(!archived) {this.tree.deleteProject(projectId)};
       },
       (error: HttpErrorResponse) => {
        
       });
+      this.archived = false;
   }
 
   openModalForTask(task: TaskTreeElem) {
