@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
+import { DeleteService } from 'src/app/service/delete.service';
 import { ProjectService } from 'src/app/service/project.service';
 import { TreeService } from 'src/app/service/tree.service';
 
@@ -14,7 +15,8 @@ export class ProjectSearchListComponent implements OnInit {
   @Input("projectList") projectList: ProjectTreeElem[] = [];
   @Input("archived") archived: boolean = false;
 
-  constructor(private renderer: Renderer2, private projectService: ProjectService, private tree: TreeService) { }
+  constructor(private renderer: Renderer2, private projectService: ProjectService, private tree: TreeService, 
+    private deleteService: DeleteService) { }
 
   ngOnInit(): void {
   }
@@ -64,6 +66,18 @@ export class ProjectSearchListComponent implements OnInit {
         }
       );
     }
+  }
+
+  askForDelete() {
+    if(this.contextProjectMenu) {
+      if(this.archived) {
+        this.deleteService.openModalForArchivedProject(this.contextProjectMenu);
+        this.projectList = this.projectList.filter((a) => a.id != this.contextProjectMenu?.id)
+      } else {
+        this.deleteService.openModalForProject(this.contextProjectMenu);
+      }
+    }
+    this.closeContextTaskMenu();
   }
 
 }

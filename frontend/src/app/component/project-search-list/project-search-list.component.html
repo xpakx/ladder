@@ -41,7 +41,15 @@
 				<span class="menu_icon">
 					<i class="fa fa-archive"></i>
 				</span>
-				<div class="menu_label">Restore</div>
+				<div class="menu_label">Restore project</div>
+			</button>
+		</li>
+        <li class="context-menu-project-item" *ngIf="archived">
+			<button (click)="askForDelete()">
+				<span class="menu_icon">
+					<i class="fa fa-trash"></i>
+				</span>
+				<div class="menu_label">Delete project</div>
 			</button>
 		</li>
 	</ul>
