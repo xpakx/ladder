@@ -360,4 +360,19 @@ implements OnInit, AfterViewInit {
     this.openTask = undefined;
   }
 
+  archiveTask() {
+    if(this.contextTaskMenu) {
+      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:true}).subscribe(
+        (response: Task) => {
+        this.tree.archiveTask(response);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+
+    this.closeContextTaskMenu();
+  }
+
 }

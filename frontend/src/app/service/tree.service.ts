@@ -356,4 +356,8 @@ export class TreeService {
   public getLastProjectArchivization(): Date | undefined {
     return this.projects.getLastArchivization();
   }
+
+  archiveTask(response: Task) {
+    this.tasks.deleteTask(response.id);
+  }
 }
