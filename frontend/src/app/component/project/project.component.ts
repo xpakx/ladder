@@ -86,7 +86,7 @@ export class ProjectComponent implements OnInit {
 
   archiveCompleted() {
     if(this.project) {
-      this.projectService.archiveProjectCompletedTasks(this.project.id, {flag: false}).subscribe(
+      this.projectService.archiveProjectCompletedTasks(this.project.id, {flag: true}).subscribe(
         (response: Project) => {
           this.tree.deleteCompletedTasks(response.id);
         },
