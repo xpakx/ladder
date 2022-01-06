@@ -115,6 +115,11 @@ export class ProjectService implements MultilevelMovableService<Project>{
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/archive`, request);
   }
 
+  public archiveProjectCompletedTasks(projectId: number, request: BooleanRequest):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks/completed/archive`, request);
+  }
+
   public getArchivedProjects():  Observable<ProjectDetails[]> {
     let userId  = this.getUserId();
     return this.http.get<ProjectDetails[]>(`${this.apiServerUrl}/${userId}/projects/archived`);

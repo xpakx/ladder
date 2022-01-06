@@ -360,4 +360,12 @@ export class TreeService {
   archiveTask(response: Task) {
     this.tasks.deleteTask(response.id);
   }
+
+  deleteCompletedTasks(projectId: number) {
+    let tasks = this.tasks.getTasksByProject(projectId)
+      .filter((a) => a.completed);
+    for(let task of tasks) {
+      this.tasks.deleteTask(task.id);
+    }
+  }
 }
