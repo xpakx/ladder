@@ -23,6 +23,7 @@ export class TaskListComponent extends MultilevelTaskComponent<TaskTreeService>
 implements OnInit, AfterViewInit {
   @Input("project") project: ProjectTreeElem | undefined;
   @Input("initTasks") initTasks: TaskTreeElem[] = [];
+  @Input("blocked") blocked: boolean = false;
   
   todayDate: Date | undefined;
   showAddTaskForm: boolean = false;
@@ -108,16 +109,18 @@ implements OnInit, AfterViewInit {
   }
 
   completeTask(id: number) {
-    let task = this.tree.getTaskById(id);
-    if(task) {
-    this.taskService.completeTask(id, {flag: !task.completed}).subscribe(
-        (response: Task) => {
-        this.tree.changeTaskCompletion(response);
-      },
-      (error: HttpErrorResponse) => {
-      
+    if(!this.blocked) {
+      let task = this.tree.getTaskById(id);
+      if(task) {
+      this.taskService.completeTask(id, {flag: !task.completed}).subscribe(
+          (response: Task) => {
+          this.tree.changeTaskCompletion(response);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
       }
-    );
     }
   }
 
