@@ -42,6 +42,7 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   loadProject(id: number) {
     this.id = id;
     this.project = this.tree.getProjectById(id);
+    this.archivedTasks = [];
   }
 
   chooseTab(num: number) {
