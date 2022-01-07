@@ -40,7 +40,7 @@ implements OnInit, AfterViewInit {
   }
 
   get tasks(): TaskTreeElem[] {
-    return this.project ? this.tree.getTasksByProject(this.project.id) : this.initTasks;
+    return (this.project && this.initTasks.length == 0) ? this.tree.getTasksByProject(this.project.id) : this.initTasks;
   }
 
   protected getElems(): TaskTreeElem[] {
