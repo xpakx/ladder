@@ -22,6 +22,7 @@ import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
 export class TaskListComponent extends MultilevelTaskComponent<TaskTreeService> 
 implements OnInit, AfterViewInit {
   @Input("project") project: ProjectTreeElem | undefined;
+  @Input("initTasks") initTasks: TaskTreeElem[] = [];
   
   todayDate: Date | undefined;
   showAddTaskForm: boolean = false;
@@ -39,7 +40,7 @@ implements OnInit, AfterViewInit {
   }
 
   get tasks(): TaskTreeElem[] {
-    return this.project ? this.tree.getTasksByProject(this.project.id) : [];
+    return this.project ? this.tree.getTasksByProject(this.project.id) : this.initTasks;
   }
 
   protected getElems(): TaskTreeElem[] {

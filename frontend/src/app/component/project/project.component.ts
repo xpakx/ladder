@@ -31,7 +31,8 @@ export class ProjectComponent implements OnInit {
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService,  private redirService: RedirectionService, 
-    private renderer: Renderer2, private projectService: ProjectService) {  }
+    private renderer: Renderer2, private projectService: ProjectService,
+    private taskService: TaskService) {  }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
@@ -89,6 +90,21 @@ export class ProjectComponent implements OnInit {
       this.projectService.archiveProjectCompletedTasks(this.project.id, {flag: true}).subscribe(
         (response: Project) => {
           this.tree.deleteCompletedTasks(response.id);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
+  }
+
+  archivedTasks: TaskTreeElem[] = [];
+
+  loadArchivedTasks() {
+    if(this.project) {
+      this.taskService.getArchivedTasks(this.project.id).subscribe(
+        (response: TaskDetails[]) => {
+          this.archivedTasks = this.tree.transformTasks(response);
         },
         (error: HttpErrorResponse) => {
         

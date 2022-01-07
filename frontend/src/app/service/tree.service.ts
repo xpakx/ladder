@@ -50,6 +50,10 @@ export class TreeService {
     this.filters.load(tree.filters);
   }
 
+  transformTasks(tasks: TaskDetails[]): TaskTreeElem[] {
+    return this.tasks.transformAndReturn(tasks);
+  }
+
   getProjects() {
     return this.projects.list;
   }

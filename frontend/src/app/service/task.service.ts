@@ -118,4 +118,9 @@ export class TaskService implements MultilevelMovableService<Task> {
     let userId  = this.getUserId();
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/archive`, request);
   }
+
+  public getArchivedTasks(projectId: number):  Observable<TaskDetails[]> {
+    let userId  = this.getUserId();
+    return this.http.get<TaskDetails[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks/archived`);
+  }
 }
