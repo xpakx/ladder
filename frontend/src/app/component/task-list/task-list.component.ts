@@ -184,11 +184,15 @@ implements OnInit, AfterViewInit {
   }
 
   openContextTaskMenu(event: MouseEvent, taskId: number) {
-	  this.contextTaskMenu = this.tree.getTaskById(taskId);
+	  this.contextTaskMenu = this.getTaskById(taskId);
     this.showContextTaskMenu = true;
     this.contextTaskMenuJustOpened = true;
     this.taskContextMenuX = event.clientX-250;
     this.taskContextMenuY = event.clientY;
+  }
+
+  getTaskById(taskId: number): TaskTreeElem | undefined {
+    return this.initTasks.length == 0 ? this.tree.getTaskById(taskId) : this.initTasks.find((a) => a.id = taskId);
   }
 
   closeContextTaskMenu() {
