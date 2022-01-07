@@ -601,6 +601,27 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
         offset += childNum+1;      
     } 
     return num;
-}
+  }
+
+  restoreTask(task: Task, tree: TaskTreeElem[]) {
+    let newTask = tree.find((a) => a.id = task.id);
+    if(newTask) {
+      newTask.parent = null; 
+      newTask.order = task.projectOrder;
+      newTask.dailyOrder = task.dailyViewOrder;
+      newTask.modifiedAt = task.modifiedAt;
+      this.list.push(newTask);
+      let children = [newTask];
+      while(children.length > 0) {
+        let ids = children.map((a) => a.id);
+        children = tree.filter((a) => ids.includes(a.id));
+        for(let child of children) {
+          child.modifiedAt = task.modifiedAt;
+          this.list.push(child);
+        }
+      }
+      this.sort();
+    }
+  }
 
 }

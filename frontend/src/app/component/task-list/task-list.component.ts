@@ -379,4 +379,18 @@ implements OnInit, AfterViewInit {
     this.closeContextTaskMenu();
   }
 
+  restoreTask() {
+    if(this.contextTaskMenu) {
+      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:false}).subscribe(
+        (response: Task, tasks: TaskTreeElem[] = this.initTasks) => {
+        this.tree.restoreTask(response ,tasks);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+
+    this.closeContextTaskMenu();
+  }
 }

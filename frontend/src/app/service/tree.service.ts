@@ -365,6 +365,10 @@ export class TreeService {
     this.tasks.deleteTask(response.id);
   }
 
+  restoreTask(response: Task, tree: TaskTreeElem[]) {
+    this.tasks.restoreTask(response, tree);
+  }
+
   deleteCompletedTasks(projectId: number) {
     let tasks = this.tasks.getTasksByProject(projectId)
       .filter((a) => a.completed);

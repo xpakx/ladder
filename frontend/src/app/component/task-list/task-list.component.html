@@ -195,6 +195,14 @@
                 </button>
             </li>
         </ng-container>
+        <li class="context-menu-project-item" *ngIf="blocked">
+            <button (click)="restoreTask()">
+                <span class="menu_icon">
+                    <i class="fa fa-archive"></i>
+                </span>
+                <div class="menu_label">Restore task</div>
+            </button>
+        </li>
         <li class="context-menu-project-item">
 			<button (click)=askForDelete()>
 				<span class="menu_icon">
