@@ -614,7 +614,7 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
       let children = [newTask];
       while(children.length > 0) {
         let ids = children.map((a) => a.id);
-        children = tree.filter((a) => ids.includes(a.id));
+        children = tree.filter((a) => a.parent && ids.includes(a.parent.id));
         for(let child of children) {
           child.modifiedAt = task.modifiedAt;
           this.list.push(child);
