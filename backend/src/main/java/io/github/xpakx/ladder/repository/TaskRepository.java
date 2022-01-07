@@ -28,6 +28,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     <T> List<T> findByOwnerIdAndArchived(Integer userId, boolean archived, Class<T> type);
     List<Task> findByOwnerIdAndProjectId(Integer ownerId, Integer projectId);
     List<Task> findByOwnerIdAndProjectIdAndArchived(Integer ownerId, Integer projectId, boolean archived);
+    @EntityGraph("task-with-labels")
     <T> List<T> getByOwnerIdAndProjectIdAndArchived(Integer ownerId, Integer projectId, boolean archived, Class<T> type);
     List<Task> findByOwnerIdAndProjectIsNull(Integer userId);
 
