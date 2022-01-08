@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { dashCaseToCamelCase } from '@angular/compiler/src/util';
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HabitDetails } from 'src/app/entity/habit-details';
 import { ProjectData } from 'src/app/entity/project-data';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { TaskDetails } from 'src/app/entity/task-details';
@@ -47,12 +48,14 @@ export class ProjectArchiveComponent implements OnInit {
   }
 
   tasks: TaskTreeElem[] = [];
+  habits: HabitDetails[] = [];
 
   loadArchivedTasks(id: number) {
       this.projectService.getArchivedProject(id).subscribe(
         (response: ProjectData) => {
           this.tasks = this.tree.transformTasks(response.tasks);
           this.project = this.tree.transformProject(response.project);
+          this.habits = response.habits;
         },
         (error: HttpErrorResponse) => {
         

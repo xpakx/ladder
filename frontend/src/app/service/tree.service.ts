@@ -7,6 +7,7 @@ import { HabitDetails } from '../entity/habit-details';
 import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
+import { ProjectData } from '../entity/project-data';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
@@ -300,6 +301,13 @@ export class TreeService {
     this.habits.sync(response.habits);
     this.completions.sync(response.habitCompletions);
     this.filters.sync(response.filters);
+  }
+
+  syncProject(response: ProjectData) {
+    this.projects.syncOne(response.project);
+    this.tasks.sync(response.tasks);
+    this.habits.sync(response.habits);
+    //this.completions.sync(response.habitCompletions);
   }
 
   addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {

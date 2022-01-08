@@ -304,6 +304,10 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     this.sort();
   }
 
+  syncOne(project: ProjectDetails) {
+    this.list.push(this.transformSync(project, []));
+  }
+
   updateProjectDetails(project: ProjectTreeElem, details: ProjectDetails, projects: ProjectDetails[]) {
       project.name = details.name;
       project.color = details.color;
