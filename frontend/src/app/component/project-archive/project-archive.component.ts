@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { dashCaseToCamelCase } from '@angular/compiler/src/util';
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -40,14 +41,14 @@ export class ProjectArchiveComponent implements OnInit {
 
   loadProject(id: number) {
     this.id = id;
+    this.project = {id: id, name: '', parent: null, color: '', order: 0, realOrder: 0, hasChildren: false, indent: 0, parentList: [], favorite: false, collapsed: false, modifiedAt: new Date()}
     this.loadArchivedTasks(id);
   }
 
   tasks: TaskTreeElem[] = [];
 
   loadArchivedTasks(id: number) {
-    if(this.project) {
-      this.taskService.getArchivedTasks(this.project.id).subscribe(
+      this.taskService.getArchivedTasks(id).subscribe(
         (response: TaskDetails[]) => {
           this.tasks = this.tree.transformTasks(response);
         },
@@ -55,7 +56,7 @@ export class ProjectArchiveComponent implements OnInit {
         
         }
       );
-    }
+    
   }
 
   chooseTab(num: number) {
