@@ -7,6 +7,7 @@ import { BooleanRequest } from '../entity/boolean-request';
 import { IdRequest } from '../entity/id-request';
 import { NameRequest } from '../entity/name-request';
 import { Project } from '../entity/project';
+import { ProjectData } from '../entity/project-data';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectRequest } from '../entity/project-request';
 import { Task } from '../entity/task';
@@ -123,5 +124,10 @@ export class ProjectService implements MultilevelMovableService<Project>{
   public getArchivedProjects():  Observable<ProjectDetails[]> {
     let userId  = this.getUserId();
     return this.http.get<ProjectDetails[]>(`${this.apiServerUrl}/${userId}/projects/archived`);
+  }
+
+  public getArchivedProject(projectId: number):  Observable<ProjectData> {
+    let userId  = this.getUserId();
+    return this.http.get<ProjectData>(`${this.apiServerUrl}/${userId}/projects/${projectId}/data/archived`);
   }
 }

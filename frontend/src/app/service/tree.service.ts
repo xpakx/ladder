@@ -7,6 +7,7 @@ import { HabitDetails } from '../entity/habit-details';
 import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
+import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { SyncData } from '../entity/sync-data';
@@ -52,6 +53,10 @@ export class TreeService {
 
   transformTasks(tasks: TaskDetails[]): TaskTreeElem[] {
     return this.tasks.transformAndReturn(tasks);
+  }
+
+  transformProject(project: ProjectDetails): ProjectTreeElem {
+    return this.projects.transformAndReturn(project);
   }
 
   getProjects() {

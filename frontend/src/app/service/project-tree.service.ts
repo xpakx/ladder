@@ -47,6 +47,23 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     }
   }
 
+  transformAndReturn(project: ProjectDetails): ProjectTreeElem {
+    return {
+      id: project.id,
+      name: project.name,
+      parent: project.parent,
+      color: project.color,
+      order: project.generalOrder,
+      realOrder: project.generalOrder,
+      hasChildren: false,
+      indent: 0,
+      parentList: [],
+      favorite: project.favorite,
+      collapsed: project.collapsed,
+      modifiedAt: new Date(project.modifiedAt)
+    }
+  }
+
   private hasChildrenById(projectId: number, projects: ProjectDetails[]): boolean {
     return projects.find((a) => a.parent?.id == projectId) != null;
   }
