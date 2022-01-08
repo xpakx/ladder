@@ -7,6 +7,8 @@ import { HabitDetails } from '../entity/habit-details';
 import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
 import { Project } from '../entity/project';
+import { ProjectData } from '../entity/project-data';
+import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { SyncData } from '../entity/sync-data';
@@ -48,6 +50,14 @@ export class TreeService {
     this.habits.load(tree.habits);
     this.completions.load(tree.todayHabitCompletions);
     this.filters.load(tree.filters);
+  }
+
+  transformTasks(tasks: TaskDetails[]): TaskTreeElem[] {
+    return this.tasks.transformAndReturn(tasks);
+  }
+
+  transformProject(project: ProjectDetails): ProjectTreeElem {
+    return this.projects.transformAndReturn(project);
   }
 
   getProjects() {
@@ -293,6 +303,13 @@ export class TreeService {
     this.filters.sync(response.filters);
   }
 
+  syncProject(response: ProjectData) {
+    this.projects.syncOne(response.project);
+    this.tasks.sync(response.tasks);
+    this.habits.sync(response.habits);
+    //this.completions.sync(response.habitCompletions);
+  }
+
   addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
     this.habits.addNewHabitAfter(habit, afterId, project, this.getLabelsFromIds(labelIds));
   }
@@ -355,5 +372,21 @@ export class TreeService {
 
   public getLastProjectArchivization(): Date | undefined {
     return this.projects.getLastArchivization();
+  }
+
+  archiveTask(response: Task) {
+    this.tasks.deleteTask(response.id);
+  }
+
+  restoreTask(response: Task, tree: TaskTreeElem[]) {
+    this.tasks.restoreTask(response, tree);
+  }
+
+  deleteCompletedTasks(projectId: number) {
+    let tasks = this.tasks.getTasksByProject(projectId)
+      .filter((a) => a.completed);
+    for(let task of tasks) {
+      this.tasks.deleteTask(task.id);
+    }
   }
 }

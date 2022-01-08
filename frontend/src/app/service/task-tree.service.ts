@@ -558,4 +558,70 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
           parent.hasChildren = parentChildren > 0 ? true : false;
       }
   }
+
+  transformAndReturn(tasks: TaskDetails[]): TaskTreeElem[]  {
+    let list = tasks.map((a) => this.transform(a, tasks));
+    this.sortToReturn(list);
+    return list;
+  }
+
+  protected sortToReturn(tasks: TaskTreeElem[]) {
+    tasks.sort((a, b) => a.order - b.order);
+    this.calculateRealOrderToReturn(tasks);
+    tasks.sort((a, b) => a.realOrder - b.realOrder);
+}
+
+private calculateRealOrderToReturn(tasks: TaskTreeElem[]) {
+    let tsks = tasks.filter((a) => a.indent == 0);
+    var offset = 0;
+    for(let task of tsks) {
+        task.parentList = [];
+        offset += this.countAllChildrenToReturn(task, offset, tasks) +1;
+    }
+}
+
+private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: TaskTreeElem[], parent?: TaskTreeElem ): number {
+    task.realOrder = offset;
+    offset += 1;
+    
+    if(parent) {
+        task.parentList = [...parent.parentList];
+        task.parentList.push(parent);
+    }
+
+    if(!task.hasChildren) {
+        return 0;
+    }
+
+    let children = this.list.filter((a) => a.parent?.id == task.id);
+    var num = 0;
+    for(let proj of children) {
+        let childNum = this.countAllChildrenToReturn(proj, offset, tasks, task);
+        num += childNum+1;
+        offset += childNum+1;      
+    } 
+    return num;
+  }
+
+  restoreTask(task: Task, tree: TaskTreeElem[]) {
+    let newTask = tree.find((a) => a.id = task.id);
+    if(newTask) {
+      newTask.parent = null; 
+      newTask.order = task.projectOrder;
+      newTask.dailyOrder = task.dailyViewOrder;
+      newTask.modifiedAt = task.modifiedAt;
+      this.list.push(newTask);
+      let children = [newTask];
+      while(children.length > 0) {
+        let ids = children.map((a) => a.id);
+        children = tree.filter((a) => a.parent && ids.includes(a.parent.id));
+        for(let child of children) {
+          child.modifiedAt = task.modifiedAt;
+          this.list.push(child);
+        }
+      }
+      this.sort();
+    }
+  }
+
 }

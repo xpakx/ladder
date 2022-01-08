@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Habit;
+import io.github.xpakx.ladder.entity.dto.HabitDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -77,5 +78,8 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
     <T> List<T> findByOwnerIdAndArchived(Integer ownerId, boolean archived, Class<T> type);
     @EntityGraph("habit-with-labels")
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
-
+    @EntityGraph("habit-with-labels")
+    <T> List<T> findByOwnerIdAndProjectId(Integer ownerId, Integer projectId, Class<T> type);
+    @EntityGraph("habit-with-labels")
+    <T> List<T> findByOwnerIdAndProjectIdAndArchived(Integer ownerId, Integer projectId, boolean archived, Class<T> type);
 }

@@ -9,10 +9,7 @@ import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.error.WrongOwnerException;
-import io.github.xpakx.ladder.repository.LabelRepository;
-import io.github.xpakx.ladder.repository.ProjectRepository;
-import io.github.xpakx.ladder.repository.TaskRepository;
-import io.github.xpakx.ladder.repository.UserAccountRepository;
+import io.github.xpakx.ladder.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +25,7 @@ public class ProjectService {
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
+    private final HabitRepository habitRepository;
 
     /**
      * Getting object with project's data from repository.
@@ -689,7 +687,7 @@ public class ProjectService {
             List<Task> tasksTemp = tasks.stream()
                     .filter(Task::isCompleted)
                     .collect(Collectors.toList());
-            tasksTemp.addAll(archiveChildren(userId, tasks, tasksTemp, now, request.isFlag()));
+            tasksTemp.addAll(archiveChildren(tasks, tasksTemp, now, request.isFlag()));
             tasks = tasksTemp;
         }
         tasks.forEach((a) -> {
@@ -741,7 +739,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    private List<Task> archiveChildren(Integer userId, List<Task> projectTasks, List<Task> parentTasks, LocalDateTime now, boolean archived) {
+    private List<Task> archiveChildren(List<Task> projectTasks, List<Task> parentTasks, LocalDateTime now, boolean archived) {
         Map<Integer, List<Task>> tasksByParent = projectTasks.stream()
                 .filter((a) -> a.getParent() != null)
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
@@ -760,5 +758,35 @@ public class ProjectService {
             toArchive = newToArchive;
         }
         return toReturn;
+    }
+
+    public ProjectData getProjectData(Integer projectId, Integer userId) {
+        ProjectData result = new ProjectData();
+        result.setProject(
+                projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
+                        .orElseThrow(() -> new NotFoundException("No such project!"))
+        );
+        result.setTasks(
+                taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false, TaskDetails.class)
+        );
+        result.setHabits(
+                habitRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false, HabitDetails.class)
+        );
+        return result;
+    }
+
+    public ProjectData getProjectDataWithArchived(Integer projectId, Integer userId) {
+        ProjectData result = new ProjectData();
+        result.setProject(
+                projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
+                        .orElseThrow(() -> new NotFoundException("No such project!"))
+        );
+        result.setTasks(
+                taskRepository.findByOwnerIdAndProjectId(userId, projectId, TaskDetails.class)
+        );
+        result.setHabits(
+                habitRepository.findByOwnerIdAndProjectId(userId, projectId, HabitDetails.class)
+        );
+        return result;
     }
 }

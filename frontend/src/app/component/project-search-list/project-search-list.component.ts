@@ -1,6 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Project } from 'src/app/entity/project';
+import { ProjectData } from 'src/app/entity/project-data';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { DeleteService } from 'src/app/service/delete.service';
 import { ProjectService } from 'src/app/service/project.service';
@@ -16,7 +18,7 @@ export class ProjectSearchListComponent implements OnInit {
   @Input("archived") archived: boolean = false;
 
   constructor(private renderer: Renderer2, private projectService: ProjectService, private tree: TreeService, 
-    private deleteService: DeleteService) { }
+    private deleteService: DeleteService, private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -59,13 +61,25 @@ export class ProjectSearchListComponent implements OnInit {
     if(this.contextProjectMenu) {
       this.projectService.archiveProject(this.contextProjectMenu.id, {flag: false}).subscribe(
         (response: Project) => {
-          this.tree.addNewProject(response, 0);
+          //this.tree.addNewProject(response, 0);
+          this.getRestoredData(response.id);
         },
         (error: HttpErrorResponse) => {
         
         }
       );
     }
+  }
+
+  private getRestoredData(id: number) {
+    this.projectService.getProjectData(id).subscribe(
+      (response: ProjectData) => {
+        this.tree.syncProject(response);
+
+      },
+      (error: HttpErrorResponse) => {
+      }
+    );
   }
 
   askForDelete() {
@@ -80,4 +94,11 @@ export class ProjectSearchListComponent implements OnInit {
     this.closeContextTaskMenu();
   }
 
+  toProject(id: number) {
+    if(!this.archived) {
+      this.router.navigate(['/project/'+id]);
+    } else {
+      this.router.navigate(['archive/project/'+id]);
+    }
+  }
 }

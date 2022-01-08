@@ -22,6 +22,8 @@ import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
 export class TaskListComponent extends MultilevelTaskComponent<TaskTreeService> 
 implements OnInit, AfterViewInit {
   @Input("project") project: ProjectTreeElem | undefined;
+  @Input("initTasks") initTasks: TaskTreeElem[] = [];
+  @Input("blocked") blocked: boolean = false;
   
   todayDate: Date | undefined;
   showAddTaskForm: boolean = false;
@@ -39,7 +41,7 @@ implements OnInit, AfterViewInit {
   }
 
   get tasks(): TaskTreeElem[] {
-    return this.project ? this.tree.getTasksByProject(this.project.id) : [];
+    return (this.project && this.initTasks.length == 0) ? this.tree.getTasksByProject(this.project.id) : this.initTasks;
   }
 
   protected getElems(): TaskTreeElem[] {
@@ -107,16 +109,18 @@ implements OnInit, AfterViewInit {
   }
 
   completeTask(id: number) {
-    let task = this.tree.getTaskById(id);
-    if(task) {
-    this.taskService.completeTask(id, {flag: !task.completed}).subscribe(
-        (response: Task) => {
-        this.tree.changeTaskCompletion(response);
-      },
-      (error: HttpErrorResponse) => {
-      
+    if(!this.blocked) {
+      let task = this.tree.getTaskById(id);
+      if(task) {
+      this.taskService.completeTask(id, {flag: !task.completed}).subscribe(
+          (response: Task) => {
+          this.tree.changeTaskCompletion(response);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
       }
-    );
     }
   }
 
@@ -180,11 +184,15 @@ implements OnInit, AfterViewInit {
   }
 
   openContextTaskMenu(event: MouseEvent, taskId: number) {
-	  this.contextTaskMenu = this.tree.getTaskById(taskId);
+	  this.contextTaskMenu = this.getTaskById(taskId);
     this.showContextTaskMenu = true;
     this.contextTaskMenuJustOpened = true;
     this.taskContextMenuX = event.clientX-250;
     this.taskContextMenuY = event.clientY;
+  }
+
+  getTaskById(taskId: number): TaskTreeElem | undefined {
+    return this.initTasks.length == 0 ? this.tree.getTaskById(taskId) : this.initTasks.find((a) => a.id = taskId);
   }
 
   closeContextTaskMenu() {
@@ -360,4 +368,33 @@ implements OnInit, AfterViewInit {
     this.openTask = undefined;
   }
 
+  archiveTask() {
+    if(this.contextTaskMenu) {
+      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:true}).subscribe(
+        (response: Task) => {
+        this.tree.archiveTask(response);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+
+    this.closeContextTaskMenu();
+  }
+
+  restoreTask() {
+    if(this.contextTaskMenu) {
+      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:false}).subscribe(
+        (response: Task, tasks: TaskTreeElem[] = this.initTasks) => {
+        this.tree.restoreTask(response ,tasks);
+      },
+      (error: HttpErrorResponse) => {
+       
+      }
+    );
+    }
+
+    this.closeContextTaskMenu();
+  }
 }

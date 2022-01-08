@@ -1,7 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { dashCaseToCamelCase } from '@angular/compiler/src/util';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Project } from 'src/app/entity/project';
+import { HabitDetails } from 'src/app/entity/habit-details';
+import { ProjectData } from 'src/app/entity/project-data';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { TaskDetails } from 'src/app/entity/task-details';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -11,11 +13,11 @@ import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
-  selector: 'app-project',
-  templateUrl: './project.component.html',
-  styleUrls: ['./project.component.css']
+  selector: 'app-project-archive',
+  templateUrl: './project-archive.component.html',
+  styleUrls: ['./project-archive.component.css']
 })
-export class ProjectComponent implements OnInit, AfterViewInit {
+export class ProjectArchiveComponent implements OnInit {
   public invalid: boolean = false;
   public message: string = '';
   project: ProjectTreeElem | undefined;
@@ -30,7 +32,7 @@ export class ProjectComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
-      this.redirService.setAddress("project/"+this.route.snapshot.params.id)
+      this.redirService.setAddress("archive/project/"+this.route.snapshot.params.id)
       this.router.navigate(["load"]);
     }
 
@@ -41,8 +43,25 @@ export class ProjectComponent implements OnInit, AfterViewInit {
 
   loadProject(id: number) {
     this.id = id;
-    this.project = this.tree.getProjectById(id);
-    this.archivedTasks = [];
+    this.project = {id: id, name: '', parent: null, color: '', order: 0, realOrder: 0, hasChildren: false, indent: 0, parentList: [], favorite: false, collapsed: false, modifiedAt: new Date()}
+    this.loadArchivedTasks(id);
+  }
+
+  tasks: TaskTreeElem[] = [];
+  habits: HabitDetails[] = [];
+
+  loadArchivedTasks(id: number) {
+      this.projectService.getArchivedProject(id).subscribe(
+        (response: ProjectData) => {
+          this.tasks = this.tree.transformTasks(response.tasks);
+          this.project = this.tree.transformProject(response.project);
+          this.habits = response.habits;
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    
   }
 
   chooseTab(num: number) {
@@ -78,33 +97,5 @@ export class ProjectComponent implements OnInit, AfterViewInit {
 
   closeContextTaskMenu() {
     this.showContextMenu = false;
-  }
-
-  archiveCompleted() {
-    if(this.project) {
-      this.projectService.archiveProjectCompletedTasks(this.project.id, {flag: true}).subscribe(
-        (response: Project) => {
-          this.tree.deleteCompletedTasks(response.id);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
-    }
-  }
-
-  archivedTasks: TaskTreeElem[] = [];
-
-  loadArchivedTasks() {
-    if(this.project) {
-      this.taskService.getArchivedTasks(this.project.id).subscribe(
-        (response: TaskDetails[]) => {
-          this.archivedTasks = this.tree.transformTasks(response);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
-    }
   }
 }
