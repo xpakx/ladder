@@ -9,10 +9,7 @@ import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.error.WrongOwnerException;
-import io.github.xpakx.ladder.repository.LabelRepository;
-import io.github.xpakx.ladder.repository.ProjectRepository;
-import io.github.xpakx.ladder.repository.TaskRepository;
-import io.github.xpakx.ladder.repository.UserAccountRepository;
+import io.github.xpakx.ladder.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +25,7 @@ public class ProjectService {
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
+    private final HabitRepository habitRepository;
 
     /**
      * Getting object with project's data from repository.
@@ -760,5 +758,20 @@ public class ProjectService {
             toArchive = newToArchive;
         }
         return toReturn;
+    }
+
+    public ProjectData getProjectData(Integer projectId, Integer userId) {
+        ProjectData result = new ProjectData();
+        result.setProject(
+                projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
+                        .orElseThrow(() -> new NotFoundException("No such project!"))
+        );
+        result.setTasks(
+                taskRepository.findByOwnerIdAndProjectId(userId, projectId, TaskDetails.class)
+        );
+        result.setHabits(
+                habitRepository.findByOwnerIdAndProjectId(userId, projectId, HabitDetails.class)
+        );
+        return result;
     }
 }

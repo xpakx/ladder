@@ -7,10 +7,7 @@ import io.github.xpakx.ladder.entity.dto.NameRequest;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
-import io.github.xpakx.ladder.repository.LabelRepository;
-import io.github.xpakx.ladder.repository.ProjectRepository;
-import io.github.xpakx.ladder.repository.TaskRepository;
-import io.github.xpakx.ladder.repository.UserAccountRepository;
+import io.github.xpakx.ladder.repository.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +36,8 @@ class ProjectServiceTest {
     private UserAccountRepository userRepository;
     @Mock
     private LabelRepository labelRepository;
+    @Mock
+    private HabitRepository habitRepository;
 
     private ProjectService projectService;
 
@@ -51,7 +50,7 @@ class ProjectServiceTest {
     }
 
     private void injectMocks() {
-        projectService = new ProjectService(projectRepository, taskRepository, userRepository, labelRepository);
+        projectService = new ProjectService(projectRepository, taskRepository, userRepository, labelRepository, habitRepository);
     }
 
     @Test

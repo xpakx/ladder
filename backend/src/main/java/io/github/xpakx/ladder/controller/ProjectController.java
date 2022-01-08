@@ -156,4 +156,10 @@ public class ProjectController {
     public ResponseEntity<List<TaskDetails>> getArchivedTasks(@PathVariable Integer userId, @PathVariable Integer projectId) {
         return new ResponseEntity<>(projectService.getArchivedTasks(userId, projectId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping("/{projectId}/data")
+    public ResponseEntity<ProjectData> getProjectData(@PathVariable Integer projectId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(projectService.getProjectData(projectId, userId), HttpStatus.OK);
+    }
 }
