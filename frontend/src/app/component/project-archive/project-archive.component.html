@@ -1,0 +1,52 @@
+<div class="panel"  role="tabpanel">
+    <header class="view_header">
+        <div class="header_content">
+            <h1 class="editable" *ngIf="project">
+                <span class="simple_content" contenteditable="true">{{project.name}}</span>
+            </h1>
+            <div class="header_actions">
+                <button type="button" class="sort_button">
+                    <span class="icon_sort">
+                        <i class ="fa fa-comment-o"></i>
+                    </span>
+                    <span class="action_label">Comments</span>
+                </button>
+                <button type="button" class="sort_button">
+                    <span class="icon_sort">
+                        <i class ="fa fa-sort"></i>
+                    </span>
+                    <span class="action_label">Sort</span>
+                </button>
+                <button type="button" class="sort_button" (click)="openContextMenu($event)">
+                    <span class="icon_sort">
+                        <i class ="fa fa-ellipsis-h"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="tablist">
+        <button class="tablist_elem" [class.selected]="view == 0" (click)="chooseTab(0)">
+          Tasks
+        </button>
+        <button class="tablist_elem" [class.selected]="view == 1" (click)="chooseTab(1)">
+          Habits
+        </button>
+    </div>
+
+    <app-task-list [project]='project' [initTasks]='tasks' [blocked]="true" *ngIf="view == 0"></app-task-list>
+
+    <app-habit-list [project]='project' *ngIf="view == 1"></app-habit-list>
+
+
+
+</div>
+
+
+
+<div class="ist-menu context" [class.hidden-context-menu]="!showContextMenu" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
+	<ul class="context-menu-project" #taskContext>
+		
+	</ul>
+</div>

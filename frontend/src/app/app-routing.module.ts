@@ -7,6 +7,7 @@ import { InboxComponent } from './component/inbox/inbox.component';
 import { LabelComponent } from './component/label/label.component';
 import { LoadProjectComponent } from './component/load-project/load-project.component';
 import { LoginComponent } from './component/login/login.component';
+import { ProjectArchiveComponent } from './component/project-archive/project-archive.component';
 import { ProjectComponent } from './component/project/project.component';
 import { RegisterComponent } from './component/register/register.component';
 import { SearchResultComponent } from './component/search-result/search-result.component';
@@ -22,7 +23,8 @@ const routes: Routes = [
   { path: 'project/:id/habits', component: HabitListComponent },
   { path: 'label/:id', component: LabelComponent },
   { path: 'search', component: SearchResultComponent },
-  { path: 'archive', component: ArchiveComponent }
+  { path: 'archive', component: ArchiveComponent },
+  { path: 'archive/project/:id', component: ProjectArchiveComponent }
 ];
 
 @NgModule({
