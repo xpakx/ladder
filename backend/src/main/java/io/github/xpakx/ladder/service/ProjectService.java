@@ -687,7 +687,7 @@ public class ProjectService {
             List<Task> tasksTemp = tasks.stream()
                     .filter(Task::isCompleted)
                     .collect(Collectors.toList());
-            tasksTemp.addAll(archiveChildren(userId, tasks, tasksTemp, now, request.isFlag()));
+            tasksTemp.addAll(archiveChildren(tasks, tasksTemp, now, request.isFlag()));
             tasks = tasksTemp;
         }
         tasks.forEach((a) -> {
@@ -739,7 +739,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    private List<Task> archiveChildren(Integer userId, List<Task> projectTasks, List<Task> parentTasks, LocalDateTime now, boolean archived) {
+    private List<Task> archiveChildren(List<Task> projectTasks, List<Task> parentTasks, LocalDateTime now, boolean archived) {
         Map<Integer, List<Task>> tasksByParent = projectTasks.stream()
                 .filter((a) -> a.getParent() != null)
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
