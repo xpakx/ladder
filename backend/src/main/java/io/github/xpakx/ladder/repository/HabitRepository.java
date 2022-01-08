@@ -80,4 +80,6 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
     @EntityGraph("habit-with-labels")
     <T> List<T> findByOwnerIdAndProjectId(Integer ownerId, Integer projectId, Class<T> type);
+    @EntityGraph("habit-with-labels")
+    <T> List<T> findByOwnerIdAndProjectIdAndArchived(Integer ownerId, Integer projectId, boolean archived, Class<T> type);
 }

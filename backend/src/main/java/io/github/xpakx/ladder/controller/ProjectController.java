@@ -162,4 +162,10 @@ public class ProjectController {
     public ResponseEntity<ProjectData> getProjectData(@PathVariable Integer projectId, @PathVariable Integer userId) {
         return new ResponseEntity<>(projectService.getProjectData(projectId, userId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping("/{projectId}/data/archived")
+    public ResponseEntity<ProjectData> getProjectDataWithArchived(@PathVariable Integer projectId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(projectService.getProjectDataWithArchived(projectId, userId), HttpStatus.OK);
+    }
 }

@@ -128,4 +128,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @EntityGraph("task-with-labels")
     <T> List<T> findByOwnerIdAndProjectId(Integer ownerId, Integer projectId, Class<T> type);
+    @EntityGraph("task-with-labels")
+    <T> List<T> findByOwnerIdAndProjectIdAndArchived(Integer ownerId, Integer projectId, boolean archived, Class<T> type);
 }

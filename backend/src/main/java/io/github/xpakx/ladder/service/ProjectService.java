@@ -767,6 +767,21 @@ public class ProjectService {
                         .orElseThrow(() -> new NotFoundException("No such project!"))
         );
         result.setTasks(
+                taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false, TaskDetails.class)
+        );
+        result.setHabits(
+                habitRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false, HabitDetails.class)
+        );
+        return result;
+    }
+
+    public ProjectData getProjectDataWithArchived(Integer projectId, Integer userId) {
+        ProjectData result = new ProjectData();
+        result.setProject(
+                projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
+                        .orElseThrow(() -> new NotFoundException("No such project!"))
+        );
+        result.setTasks(
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId, TaskDetails.class)
         );
         result.setHabits(
