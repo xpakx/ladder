@@ -9,7 +9,7 @@
                             <div class="project-color"  [style]="'color: ' + project.color +';'">
                             </div>
                         </div>
-                        <div class="task_list_item_content">
+                        <div class="task_list_item_content" (click)="toProject(project.id)">
                             <div class="task_list_item__content_wrapper">
                                 <div class="markdown_content task_content">
                                     {{project.name}}
