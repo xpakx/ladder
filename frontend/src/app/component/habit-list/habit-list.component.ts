@@ -24,6 +24,7 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
  implements OnInit {
   @Input("project") project: ProjectTreeElem | undefined;
   @Input("habitList") habitList: HabitDetails[] = [];
+  @Input("blocked") blocked: boolean = false;
 
   showAddHabitForm: boolean = false;
   habitData: AddEvent<HabitDetails> = new AddEvent<HabitDetails>();
@@ -39,7 +40,7 @@ extends DraggableComponent<HabitDetails, Habit, HabitService, HabitTreeService>
   }
 
   get habits(): HabitDetails[] {
-    if(this.project) {
+    if(this.project && this.habitList.length == 0) {
       return this.treeService.getHabitsByProject(this.project.id);
     } else if(this.habitList.length > 0) {
       return this.habitList;
