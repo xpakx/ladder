@@ -593,7 +593,7 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
         return 0;
     }
 
-    let children = this.list.filter((a) => a.parent?.id == task.id);
+    let children = tasks.filter((a) => a.parent?.id == task.id);
     var num = 0;
     for(let proj of children) {
         let childNum = this.countAllChildrenToReturn(proj, offset, tasks, task);
