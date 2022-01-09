@@ -192,7 +192,7 @@ implements OnInit, AfterViewInit {
   }
 
   getTaskById(taskId: number): TaskTreeElem | undefined {
-    return this.initTasks.length == 0 ? this.tree.getTaskById(taskId) : this.initTasks.find((a) => a.id = taskId);
+    return this.initTasks.length == 0 ? this.tree.getTaskById(taskId) : this.initTasks.find((a) => a.id == taskId);
   }
 
   closeContextTaskMenu() {

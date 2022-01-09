@@ -604,7 +604,7 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
   }
 
   restoreTask(task: Task, tree: TaskTreeElem[]) {
-    let newTask = tree.find((a) => a.id = task.id);
+    let newTask = tree.find((a) => a.id == task.id);
     if(newTask) {
       newTask.parent = null; 
       newTask.order = task.projectOrder;
