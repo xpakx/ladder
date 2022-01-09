@@ -61,7 +61,6 @@ export class ProjectSearchListComponent implements OnInit {
     if(this.contextProjectMenu) {
       this.projectService.archiveProject(this.contextProjectMenu.id, {flag: false}).subscribe(
         (response: Project) => {
-          //this.tree.addNewProject(response, 0);
           this.getRestoredData(response.id);
         },
         (error: HttpErrorResponse) => {
