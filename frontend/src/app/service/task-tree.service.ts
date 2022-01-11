@@ -618,7 +618,8 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
 
   restoreTask(task: Task, tree: TaskTreeElem[]) {
     let newTask = tree.find((a) => a.id == task.id);
-    if(newTask) {
+    let oldTask = this.getById(task.id);
+    if(newTask && !oldTask) {
       newTask.parent = null; 
       newTask.order = task.projectOrder;
       newTask.dailyOrder = task.dailyViewOrder;

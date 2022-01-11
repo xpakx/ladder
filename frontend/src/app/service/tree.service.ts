@@ -304,9 +304,11 @@ export class TreeService {
   }
 
   syncProject(response: ProjectData) {
-    this.projects.syncOne(response.project);
-    this.tasks.sync(response.tasks);
-    this.habits.sync(response.habits);
+    let projectRestored = this.projects.syncOne(response.project);
+    if(projectRestored) {
+      this.tasks.sync(response.tasks);
+      this.habits.sync(response.habits);
+    }
     //this.completions.sync(response.habitCompletions);
   }
 
