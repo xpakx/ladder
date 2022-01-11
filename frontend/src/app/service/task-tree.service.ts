@@ -637,4 +637,8 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
     }
   }
 
+  archiveTask(task: Task) {
+    this.lastArchivization = new Date(task.modifiedAt);
+    this.deleteTask(task.id);
+  }
 }

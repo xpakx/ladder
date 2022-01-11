@@ -379,7 +379,7 @@ export class TreeService {
   }
 
   archiveTask(response: Task) {
-    this.tasks.deleteTask(response.id);
+    this.tasks.archiveTask(response);
   }
 
   restoreTask(response: Task, tree: TaskTreeElem[]) {
