@@ -541,7 +541,7 @@ public class TaskService {
     }
 
     @Transactional
-    @NotifyOnProjectChange
+    @NotifyOnTaskChange
     public Task archiveTask(BooleanRequest request, Integer taskId, Integer userId) {
         Task task = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
