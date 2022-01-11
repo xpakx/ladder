@@ -15,9 +15,14 @@ import { MovableTaskTreeService } from './movable-task-tree-service';
 export class TaskTreeService extends IndentableService<ParentWithId> 
 implements MovableTaskTreeService<Task, TaskTreeElem> {
   public list: TaskTreeElem[] = [];
+  private lastArchivization: Date | undefined;
 
   constructor() { super() }
 
+  public getLastArchivization(): Date | undefined {
+    return this.lastArchivization;
+  }
+  
   load(tasks: TaskDetails[]) {
     this.list = this.transformAll(tasks);
     this.sort();
@@ -467,9 +472,17 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     for(let task of tasks) {
       let taskWithId = this.getById(task.id);
       if(taskWithId) {
+        if(task.archived) {
+          this.lastArchivization = new Date(task.modifiedAt);
+          this.deleteTask(task.id)
+        }
+        else {
         this.updateTaskDetails(taskWithId, task, tasks);
-      } else {
+        }
+      } else if (!task.archived) {
         this.list.push(this.transformSync(task, tasks));
+      } else {
+        this.lastArchivization = new Date(task.modifiedAt);
       }
     }
     this.sort();

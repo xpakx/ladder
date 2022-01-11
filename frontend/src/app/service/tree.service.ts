@@ -374,6 +374,10 @@ export class TreeService {
     return this.projects.getLastArchivization();
   }
 
+  public getLastTaskArchivization(): Date | undefined {
+    return this.tasks.getLastArchivization();
+  }
+
   archiveTask(response: Task) {
     this.tasks.deleteTask(response.id);
   }
