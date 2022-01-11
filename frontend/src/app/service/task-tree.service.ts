@@ -623,7 +623,7 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
       newTask.parent = null; 
       newTask.order = task.projectOrder;
       newTask.dailyOrder = task.dailyViewOrder;
-      newTask.modifiedAt = task.modifiedAt;
+      newTask.modifiedAt = new Date(task.modifiedAt);
       this.list.push(newTask);
       let children = [newTask];
       while(children.length > 0) {
