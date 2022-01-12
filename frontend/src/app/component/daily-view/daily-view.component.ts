@@ -42,6 +42,10 @@ implements OnInit {
     return [...this.tree.getByDate(this.todayDate)].sort((a,b) => a.dailyOrder - b.dailyOrder);
   }
 
+  get overdue(): TaskTreeElem[] {
+    return this.tree.getByDateOverdue(this.todayDate);
+  }
+
   protected getElems(): TaskTreeElem[] {
     return this.tasks;
   }

@@ -81,6 +81,15 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     );
   }
 
+  getOverdue(date: Date): TaskTreeElem[] {
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+  return this.list.filter((a) => 
+    !a.completed && a.due && a.due < date
+  );
+  }
+
   getNumOfUncompletedTasksByProject(projectId: number): number {
     return this.list.filter((a) => 
       a.project && a.project.id == projectId && !a.completed

@@ -124,6 +124,10 @@ export class TreeService {
     return this.tasks.getByDate(date);
   }
 
+  getByDateOverdue(date: Date): TaskTreeElem[] {
+    return this.tasks.getOverdue(date);
+  }
+
   getNumOfUncompletedTasksByProject(projectId: number): number {
     return this.tasks.getNumOfUncompletedTasksByProject(projectId);
   }

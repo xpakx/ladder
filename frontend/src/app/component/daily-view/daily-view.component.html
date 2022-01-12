@@ -104,6 +104,11 @@
                 <li *ngIf="draggedId" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, task)" class="drag-zone drag_list_item"></li>
             </ng-container>
 
+            <ng-container *ngIf="overdue.length>0">
+                <h5>Overdue</h5>
+                <app-subtask-list [taskList]='overdue'></app-subtask-list>
+            </ng-container>
+
             <li>
                 <button type="button" class="plus_add_button" *ngIf="!showAddTaskForm" (click)="openAddTaskForm()">
                     <span class="icon_add">
