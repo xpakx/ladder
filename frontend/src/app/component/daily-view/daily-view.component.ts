@@ -12,6 +12,7 @@ import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { DraggableComponent } from '../abstract/draggable-component';
+import { TaskDailyListComponent } from '../task-daily-list/task-daily-list.component';
 
 @Component({
   selector: 'app-daily-view',
@@ -23,6 +24,7 @@ implements OnInit {
   public invalid: boolean = false;
   public message: string = '';
   todayDate: Date = new Date();
+  @ViewChild(TaskDailyListComponent) child!: TaskDailyListComponent;
 
   constructor(private router: Router, public tree: TreeService, 
     private taskService: TaskService, private taskTreeService: TaskTreeService,
@@ -92,7 +94,7 @@ implements OnInit {
   }
 // Task form
 openAddTaskForm() {
-  this.closeEditTaskForm();
+  this.child.closeEditTaskForm();
   this.showAddTaskForm = true;
   this.taskData = new AddEvent<TaskTreeElem>();
 }
@@ -146,6 +148,7 @@ contextTaskMenuJustOpened: boolean = false;
 taskContextMenuX: number = 0;
 taskContextMenuY: number = 0;
 @ViewChild('taskContext', {read: ElementRef}) taskContextMenuElem!: ElementRef;
+
 
 
 ngAfterViewInit() {
@@ -317,5 +320,4 @@ getTaskLabels(task: TaskTreeElem): LabelDetails[] {
   }
   return labels;
 }
-
 }
