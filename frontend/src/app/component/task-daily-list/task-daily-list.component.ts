@@ -21,6 +21,7 @@ import { DraggableComponent } from '../abstract/draggable-component';
 export class TaskDailyListComponent  extends DraggableComponent<TaskTreeElem, Task, TaskService, TaskTreeService>
 implements OnInit {
   @Input("tasks") tasks: TaskTreeElem[] = [];
+  @Input("overdue") overdue: boolean = false;
   @Output() closeAddForm = new EventEmitter<boolean>();
 
   constructor(public tree: TreeService, private router: Router,
