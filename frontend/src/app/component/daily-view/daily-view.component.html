@@ -23,7 +23,13 @@
             <app-task-daily-list [tasks]="tasks" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
 
             <ng-container *ngIf="overdue.length>0">
-                <h5>Overdue</h5>
+                <div class="section_header">
+                    <h2><span>Overdue</span></h2>
+                    <div class="section_header__actions">
+                        <button class="reschedule__button" (click)="openSelectDateModal()">Reschedule</button>
+                    </div>
+                </div>
+
                 <app-task-daily-list [tasks]="overdue" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
             </ng-container>
 
@@ -57,3 +63,5 @@
         
 	</ul>
 </div>
+
+<app-date-dialog *ngIf="showSelectDateModal" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>

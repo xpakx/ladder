@@ -106,4 +106,19 @@ implements OnInit {
     this.contextTaskMenu = undefined;
     this.showContextTaskMenu = false;
   }
+
+  showSelectDateModal: boolean = false;
+
+  closeSelectDateModal(date: Date | undefined) {
+    this.showSelectDateModal = false;
+    //reschedule
+  }
+
+  cancelDateSelection() {
+    this.showSelectDateModal = false;
+  }
+
+  openSelectDateModal() {
+    this.showSelectDateModal = true;
+  }
 }
