@@ -242,6 +242,7 @@ public class TaskService {
                 .title(originalTask.getTitle())
                 .description(originalTask.getDescription())
                 .projectOrder(originalTask.getProjectOrder())
+                .dailyViewOrder(originalTask.getDailyViewOrder())
                 .project(originalTask.getProject())
                 .createdAt(LocalDateTime.now())
                 .due(originalTask.getDue())
