@@ -651,4 +651,10 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
     this.lastArchivization = new Date(task.modifiedAt);
     this.deleteTask(task.id);
   }
+
+  updateTasksDate(tasks: Task[]) {
+    for(let task of tasks) {
+      this.updateTaskDate(task);
+    }
+  }
 }

@@ -111,7 +111,13 @@ implements OnInit {
 
   closeSelectDateModal(date: Date | undefined) {
     this.showSelectDateModal = false;
-    //reschedule
+    this.taskService.rescheduleOverdueTasks({date: date}).subscribe(
+      (response: Task[]) => {
+        this.taskTreeService.updateTasksDate(response);
+    },
+    (error: HttpErrorResponse) => {
+    
+    });
   }
 
   cancelDateSelection() {
