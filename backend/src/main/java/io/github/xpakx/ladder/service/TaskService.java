@@ -290,7 +290,6 @@ public class TaskService {
         return taskRepository.save(taskToMove);
     }
 
-
     private void incrementTasksOrder(IdRequest request, Integer userId, Project project) {
         if(request.getId() != null) {
             taskRepository.incrementGeneralOrderByOwnerIdAndParentId(
@@ -580,5 +579,19 @@ public class TaskService {
             toArchive = newToArchive;
         }
         return toReturn;
+    }
+
+    @NotifyOnTaskChange
+    public List<Task> updateDueDateForOverdue(DateRequest request, Integer userId) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime today = now.minusHours(now.getHour()).minusMinutes(now.getMinute()).minusSeconds(now.getSecond());
+        List<Task> tasksToUpdate = taskRepository.findByOwnerIdAndDueBefore(userId, today);
+        int order = getMaxDailyOrder(request, userId)+1;
+        for(Task task : tasksToUpdate) {
+            task.setDue(request.getDate());
+            task.setModifiedAt(now);
+            task.setDailyViewOrder(order++);
+        }
+        return taskRepository.saveAll(tasksToUpdate);
     }
 }
