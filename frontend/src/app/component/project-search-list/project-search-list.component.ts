@@ -84,13 +84,16 @@ export class ProjectSearchListComponent implements OnInit {
   askForDelete() {
     if(this.contextProjectMenu) {
       if(this.archived) {
-        this.deleteService.openModalForArchivedProject(this.contextProjectMenu);
-        this.projectList = this.projectList.filter((a) => a.id != this.contextProjectMenu?.id)
+        this.deleteService.openModalForArchivedProject(this.contextProjectMenu, this);
       } else {
         this.deleteService.openModalForProject(this.contextProjectMenu);
       }
     }
     this.closeContextTaskMenu();
+  }
+
+  deleteProjectFromArchive(id: number) {
+    this.projectList = this.projectList.filter((a) => a.id != id)
   }
 
   toProject(id: number) {
