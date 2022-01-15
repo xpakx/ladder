@@ -554,3 +554,36 @@ button {
     height: 35px;
     margin-top: -18px;
 }
+
+.section_header {
+    display: flex;
+    align-items: center;
+    position: -webkit-sticky;
+    position: sticky;
+    top: var(--view-header-height);
+    background-color: #fff;
+    border: #ddd;
+        border-bottom-color: rgb(221, 221, 221);
+        border-bottom-style: none;
+        border-bottom-width: medium;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 0;
+    z-index: 2;
+}
+
+.section_header h2 {
+    text-align: left;
+    padding: 6px 30px 5px 0;
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    flex: 1;
+    margin: 0;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+.reschedule__button {
+    font-size: 14px;
+    color: #d1453b;
+}
