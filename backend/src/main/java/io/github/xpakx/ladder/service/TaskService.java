@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskDeletion;
+import io.github.xpakx.ladder.aspect.NotifyOnTasksChange;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -581,7 +582,7 @@ public class TaskService {
         return toReturn;
     }
 
-    @NotifyOnTaskChange
+    @NotifyOnTasksChange
     public List<Task> updateDueDateForOverdue(DateRequest request, Integer userId) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime today = now.minusHours(now.getHour()).minusMinutes(now.getMinute()).minusSeconds(now.getSecond());
