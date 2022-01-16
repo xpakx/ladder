@@ -19,6 +19,7 @@ export class UpcomingComponent implements OnInit {
   todayDate: Date = new Date();
   nextDates: Date[] = [];
   @ViewChildren(TaskDailyListComponent) listComponents!: TaskDailyListComponent[];
+  tasks: TaskTreeElem[][] = [];
 
   constructor(private router: Router, public tree: TreeService, 
     private taskService: TaskService, private taskTreeService: TaskTreeService) {}
@@ -35,15 +36,16 @@ export class UpcomingComponent implements OnInit {
       newDate.setDate(newDate.getDate()+i)
       this.nextDates.push(newDate)
     }
+    this.tasks = this.nextDates.map((a) => this.tree.getByDate(a));
   }
 
   get overdue(): TaskTreeElem[] {
     return this.tree.getByDateOverdue(this.todayDate);
   }
 
-  get tasks(): TaskTreeElem[][] {
+  /*get tasks(): TaskTreeElem[][] {
     return this.nextDates.map((a) => this.tree.getByDate(a));
-  }
+  }*/
 
   showAddTaskForm: boolean = false;
 
