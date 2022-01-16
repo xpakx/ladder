@@ -11,6 +11,7 @@ import { ProjectArchiveComponent } from './component/project-archive/project-arc
 import { ProjectComponent } from './component/project/project.component';
 import { RegisterComponent } from './component/register/register.component';
 import { SearchResultComponent } from './component/search-result/search-result.component';
+import { UpcomingComponent } from './component/upcoming/upcoming.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,7 +19,7 @@ const routes: Routes = [
   { path: 'load', component: LoadProjectComponent },
   { path: '', component: DailyViewComponent },
   { path: 'inbox', component: InboxComponent }, 
-  { path: 'upcoming', component: DailyViewComponent }, // todo
+  { path: 'upcoming', component: UpcomingComponent }, 
   { path: 'project/:id', component: ProjectComponent },
   { path: 'project/:id/habits', component: HabitListComponent },
   { path: 'label/:id', component: LabelComponent },
