@@ -123,4 +123,9 @@ export class TaskService implements MultilevelMovableService<Task> {
     let userId  = this.getUserId();
     return this.http.get<TaskDetails[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks/archived`);
   }
+
+  public rescheduleOverdueTasks(request: DateRequest):  Observable<Task[]> {
+    let userId  = this.getUserId();
+    return this.http.put<Task[]>(`${this.apiServerUrl}/${userId}/tasks/overdue/due`, request);
+  }
 }

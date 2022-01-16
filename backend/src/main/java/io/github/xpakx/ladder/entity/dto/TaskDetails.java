@@ -12,6 +12,7 @@ public interface TaskDetails {
     LocalDateTime getDue();
     boolean getCompleted();
     boolean getCollapsed();
+    boolean getArchived();
     Integer getProjectOrder();
     Integer getDailyViewOrder();
     Set<LabelDetails> getLabels();

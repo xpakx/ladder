@@ -304,8 +304,13 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     this.sort();
   }
 
-  syncOne(project: ProjectDetails) {
-    this.list.push(this.transformSync(project, []));
+  syncOne(project: ProjectDetails):boolean {
+    let oldProject = this.getById(project.id);
+    if(!oldProject) {
+      this.list.push(this.transformSync(project, []));
+      return true;
+    }
+    return false;
   }
 
   updateProjectDetails(project: ProjectTreeElem, details: ProjectDetails, projects: ProjectDetails[]) {

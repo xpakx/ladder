@@ -103,6 +103,10 @@ export class NotificationService {
     if(projectArchiv) {
       dates.push(projectArchiv)
     }
+    let taskArchiv = this.tree.getLastTaskArchivization();
+    if(taskArchiv) {
+      dates.push(taskArchiv)
+    }
     for(let date of dates) {
       if(date > maxDate) {
         maxDate = date;

@@ -1,5 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ProjectArchiveComponent } from '../component/project-archive/project-archive.component';
+import { ProjectSearchListComponent } from '../component/project-search-list/project-search-list.component';
 import { FilterDetails } from '../entity/filter-details';
 import { HabitDetails } from '../entity/habit-details';
 import { LabelDetails } from '../entity/label-details';
@@ -26,6 +28,7 @@ export class DeleteService {
   public showDeleteMonit: boolean = false;
   public name: string = "";
   public id: number = -1;
+  private archiveDelete: ProjectSearchListComponent | undefined;
 
   constructor(private labelService: LabelService, private projectService: ProjectService,
     private taskService: TaskService, private tree: TreeService, private habitService: HabitService,
@@ -72,21 +75,29 @@ export class DeleteService {
     this.shouldDeleteProject = true;
   }
 
-  openModalForArchivedProject(project: ProjectTreeElem) {
+  openModalForArchivedProject(project: ProjectTreeElem, archive: ProjectSearchListComponent) {
      this.archived = true;
+     this.archiveDelete = archive;
      this.openModalForProject(project);
   }
 
   private deleteProject(deletedId: number) {
-  
-      this.projectService.deleteProject(deletedId).subscribe(
-        (response: any, projectId: number = deletedId, archived: boolean = this.archived) => {
-        if(!archived) {this.tree.deleteProject(projectId)};
-      },
-      (error: HttpErrorResponse) => {
-       
-      });
+    this.projectService.deleteProject(deletedId).subscribe(
+      (response: any, projectId: number = deletedId, archived: boolean = this.archived) => {
+      if(!archived) {
+        this.tree.deleteProject(projectId)
+      } else {
+        if(this.archiveDelete) {
+          this.archiveDelete.deleteProjectFromArchive(projectId);
+        }
+        this.archiveDelete = undefined;
+        this.archived = false;
+      }
+    },
+    (error: HttpErrorResponse) => {
+      this.archiveDelete = undefined;
       this.archived = false;
+    });
   }
 
   openModalForTask(task: TaskTreeElem) {

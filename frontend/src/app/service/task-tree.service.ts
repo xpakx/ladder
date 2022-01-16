@@ -15,9 +15,14 @@ import { MovableTaskTreeService } from './movable-task-tree-service';
 export class TaskTreeService extends IndentableService<ParentWithId> 
 implements MovableTaskTreeService<Task, TaskTreeElem> {
   public list: TaskTreeElem[] = [];
+  private lastArchivization: Date | undefined;
 
   constructor() { super() }
 
+  public getLastArchivization(): Date | undefined {
+    return this.lastArchivization;
+  }
+  
   load(tasks: TaskDetails[]) {
     this.list = this.transformAll(tasks);
     this.sort();
@@ -74,6 +79,15 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return this.list.filter((a) => 
       !a.completed && a.due && a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
     );
+  }
+
+  getOverdue(date: Date): TaskTreeElem[] {
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+  return this.list.filter((a) => 
+    !a.completed && a.due && a.due < date
+  );
   }
 
   getNumOfUncompletedTasksByProject(projectId: number): number {
@@ -467,9 +481,17 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     for(let task of tasks) {
       let taskWithId = this.getById(task.id);
       if(taskWithId) {
+        if(task.archived) {
+          this.lastArchivization = new Date(task.modifiedAt);
+          this.deleteTask(task.id)
+        }
+        else {
         this.updateTaskDetails(taskWithId, task, tasks);
-      } else {
+        }
+      } else if (!task.archived) {
         this.list.push(this.transformSync(task, tasks));
+      } else {
+        this.lastArchivization = new Date(task.modifiedAt);
       }
     }
     this.sort();
@@ -593,7 +615,7 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
         return 0;
     }
 
-    let children = this.list.filter((a) => a.parent?.id == task.id);
+    let children = tasks.filter((a) => a.parent?.id == task.id);
     var num = 0;
     for(let proj of children) {
         let childNum = this.countAllChildrenToReturn(proj, offset, tasks, task);
@@ -604,12 +626,13 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
   }
 
   restoreTask(task: Task, tree: TaskTreeElem[]) {
-    let newTask = tree.find((a) => a.id = task.id);
-    if(newTask) {
+    let newTask = tree.find((a) => a.id == task.id);
+    let oldTask = this.getById(task.id);
+    if(newTask && !oldTask) {
       newTask.parent = null; 
       newTask.order = task.projectOrder;
       newTask.dailyOrder = task.dailyViewOrder;
-      newTask.modifiedAt = task.modifiedAt;
+      newTask.modifiedAt = new Date(task.modifiedAt);
       this.list.push(newTask);
       let children = [newTask];
       while(children.length > 0) {
@@ -624,4 +647,14 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
     }
   }
 
+  archiveTask(task: Task) {
+    this.lastArchivization = new Date(task.modifiedAt);
+    this.deleteTask(task.id);
+  }
+
+  updateTasksDate(tasks: Task[]) {
+    for(let task of tasks) {
+      this.updateTaskDate(task);
+    }
+  }
 }

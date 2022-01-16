@@ -124,6 +124,10 @@ export class TreeService {
     return this.tasks.getByDate(date);
   }
 
+  getByDateOverdue(date: Date): TaskTreeElem[] {
+    return this.tasks.getOverdue(date);
+  }
+
   getNumOfUncompletedTasksByProject(projectId: number): number {
     return this.tasks.getNumOfUncompletedTasksByProject(projectId);
   }
@@ -304,9 +308,11 @@ export class TreeService {
   }
 
   syncProject(response: ProjectData) {
-    this.projects.syncOne(response.project);
-    this.tasks.sync(response.tasks);
-    this.habits.sync(response.habits);
+    let projectRestored = this.projects.syncOne(response.project);
+    if(projectRestored) {
+      this.tasks.sync(response.tasks);
+      this.habits.sync(response.habits);
+    }
     //this.completions.sync(response.habitCompletions);
   }
 
@@ -374,8 +380,12 @@ export class TreeService {
     return this.projects.getLastArchivization();
   }
 
+  public getLastTaskArchivization(): Date | undefined {
+    return this.tasks.getLastArchivization();
+  }
+
   archiveTask(response: Task) {
-    this.tasks.deleteTask(response.id);
+    this.tasks.archiveTask(response);
   }
 
   restoreTask(response: Task, tree: TaskTreeElem[]) {

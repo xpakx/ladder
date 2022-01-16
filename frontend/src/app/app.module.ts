@@ -39,6 +39,7 @@ import { LabelSearchListComponent } from './component/label-search-list/label-se
 import { ProjectSearchListComponent } from './component/project-search-list/project-search-list.component';
 import { ArchiveComponent } from './component/archive/archive.component';
 import { ProjectArchiveComponent } from './component/project-archive/project-archive.component';
+import { TaskDailyListComponent } from './component/task-daily-list/task-daily-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -78,7 +79,8 @@ export function tokenGetter() {
     LabelSearchListComponent,
     ProjectSearchListComponent,
     ArchiveComponent,
-    ProjectArchiveComponent
+    ProjectArchiveComponent,
+    TaskDailyListComponent
   ],
   imports: [
     BrowserModule,

@@ -672,11 +672,11 @@ public class ProjectService {
         if(request.isFlag()) {
             project.setGeneralOrder(0);
             project.setParent(null);
+            detachProjectFromTree(request, projectId, userId, project, now);
         } else {
             project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
+            archiveTasks(request, projectId, userId, now, false);
         }
-        archiveTasks(request, projectId, userId, now, false);
-        detachProjectFromTree(request, projectId, userId, project, now);
         return projectRepository.save(project);
     }
 

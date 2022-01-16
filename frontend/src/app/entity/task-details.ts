@@ -11,6 +11,7 @@ export interface TaskDetails {
     due: Date | null;
     completed: boolean;
     collapsed: boolean;
+    archived: boolean;
     projectOrder: number;
     dailyViewOrder: number;
     labels: LabelDetails[];

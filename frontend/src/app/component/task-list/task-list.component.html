@@ -112,7 +112,7 @@
             </li>
         </ng-container>
 
-        <li>
+        <li *ngIf="!blocked">
             <button type="button" class="plus_add_button" *ngIf="!showAddTaskForm" (click)="openAddTaskForm()">
                 <span class="icon_add">
                     <i class="fa fa-plus"></i>

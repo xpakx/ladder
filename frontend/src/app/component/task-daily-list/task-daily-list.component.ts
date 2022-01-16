@@ -1,62 +1,81 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, ElementRef, Input, OnInit, Output, Renderer2, ViewChild, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
+import { DndDropEvent } from 'ngx-drag-drop';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
-import { TaskDetails } from 'src/app/entity/task-details';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
-import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
+import { DraggableComponent } from '../abstract/draggable-component';
 
 @Component({
-  selector: 'app-task-list',
-  templateUrl: './task-list.component.html',
-  styleUrls: ['./task-list.component.css']
+  selector: 'app-task-daily-list',
+  templateUrl: './task-daily-list.component.html',
+  styleUrls: ['./task-daily-list.component.css']
 })
-export class TaskListComponent extends MultilevelTaskComponent<TaskTreeService> 
-implements OnInit, AfterViewInit {
-  @Input("project") project: ProjectTreeElem | undefined;
-  @Input("initTasks") initTasks: TaskTreeElem[] = [];
-  @Input("blocked") blocked: boolean = false;
-  
-  todayDate: Date | undefined;
-  showAddTaskForm: boolean = false;
-  taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
+export class TaskDailyListComponent  extends DraggableComponent<TaskTreeElem, Task, TaskService, TaskTreeService>
+implements OnInit {
+  @Input("tasks") tasks: TaskTreeElem[] = [];
+  @Input("overdue") overdue: boolean = false;
+  @Output() closeAddForm = new EventEmitter<boolean>();
 
-  constructor(private router: Router, private route: ActivatedRoute, 
-    private tree: TreeService, private taskService: TaskService,
-    private taskTreeService: TaskTreeService,
-    private renderer: Renderer2, private deleteService: DeleteService,
-    private redirService: RedirectionService) {
-    super(taskTreeService, taskService);
-  }
+  constructor(public tree: TreeService, private router: Router,
+    private taskService: TaskService, private taskTreeService: TaskTreeService,
+    private renderer: Renderer2, private deleteService: DeleteService) { 
+      super(taskTreeService, taskService);
+    }
 
   ngOnInit(): void {
   }
 
-  get tasks(): TaskTreeElem[] {
-    return (this.project && this.initTasks.length == 0) ? this.tree.getTasksByProject(this.project.id) : this.initTasks;
+  showAddTaskForm: boolean = false;
+  taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
+
+  getProjectColor(id: number): string {
+    let project = this.tree.getProjectById(id)
+    return project ? project.color : ""
   }
 
-  protected getElems(): TaskTreeElem[] {
-    return this.tasks;
+  onDrop(event: DndDropEvent, target: TaskTreeElem) {
+    let id = Number(event.data);
+      
+      this.taskService.moveAfterDaily({id: target.id}, id).subscribe(
+          (response: Task, afterId: number = target.id) => {
+          this.taskTreeService.moveAfterDaily(response, afterId);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
   }
 
-  // Task form
-  openAddTaskForm() {
-    this.closeEditTaskForm();
-    this.showAddTaskForm = true;
-    this.taskData = new AddEvent<TaskTreeElem>();
+  onDropFirst(event: DndDropEvent) {
+    let id = Number(event.data);
+    this.taskService.moveAsFirstDaily(id).subscribe(
+        (response: Task) => {
+        this.taskTreeService.moveAsFirstDaily(response);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
   }
 
+  toProject() {
+    if(this.contextTaskMenu && this.contextTaskMenu.project) {
+      this.router.navigate(['/project/'+this.contextTaskMenu.project.id]);
+    } else if(this.contextTaskMenu) {
+      this.router.navigate(['/inbox']);
+    }
+  }
+  
   closeAddTaskForm() {
-    this.showAddTaskForm = false;
+    this.closeAddForm.emit(true);
   }
 
   openEditTaskForm(task: TaskTreeElem) {
@@ -76,90 +95,26 @@ implements OnInit, AfterViewInit {
     this.closeContextTaskMenu();
   }
 
-  openEditTaskAbove() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, false, true);
-    }
-    this.closeContextTaskMenu();
-  }
-
-  openEditTaskBelow() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, true, false);
-    }
-    this.closeContextTaskMenu();
-  }
-
   shouldEditTaskById(taskId: number): boolean {
     return this.taskObjectContains(taskId) && this.taskData.isInEditMode();
   }
 
   taskObjectContains(taskId: number) {
-   return taskId == this.taskData.object?.id;
-  }
-
-  shouldAddTaskBelowById(taskId: number): boolean {
-   return this.taskObjectContains(taskId) && this.taskData.after;
-  }
-
-  shouldAddTaskAboveById(taskId: number): boolean {
-   return this.taskObjectContains(taskId) && this.taskData.before;
+  return taskId == this.taskData.object?.id;
   }
 
   completeTask(id: number) {
-    if(!this.blocked) {
-      let task = this.tree.getTaskById(id);
-      if(task) {
-      this.taskService.completeTask(id, {flag: !task.completed}).subscribe(
-          (response: Task) => {
-          this.tree.changeTaskCompletion(response);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
+    let task = this.tree.getTaskById(id);
+    if(task) {
+    this.taskService.completeTask(id, {flag: !task.completed}).subscribe(
+        (response: Task) => {
+        this.tree.changeTaskCompletion(response);
+      },
+      (error: HttpErrorResponse) => {
+      
       }
+    );
     }
-  }
-
-  dateWithinWeek(date: Date): boolean {
-    let dateToCompare: Date = new Date();
-    dateToCompare.setDate(dateToCompare.getDate() + 9);
-    dateToCompare.setHours(0);
-    dateToCompare.setMinutes(0);
-    dateToCompare.setSeconds(0);
-    dateToCompare.setMilliseconds(0);
-    return date < dateToCompare && !this.isOverdue(date);
-  }
-
-  isOverdue(date: Date): boolean {
-    let dateToCompare: Date = new Date();
-    dateToCompare.setHours(0);
-    dateToCompare.setMinutes(0);
-    dateToCompare.setSeconds(0);
-    return date < dateToCompare;
-  }
-
-  sameDay(date1: Date, date2: Date): boolean {
-    return date1.getFullYear() == date2.getFullYear() && date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth();
-  }
-
-  isToday(date: Date): boolean {
-    let today = new Date();
-    return this.sameDay(today, date);
-  }
-
-  isTomorrow(date: Date): boolean {
-    let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return this.sameDay(tomorrow, date);
-  }
-
-  thisYear(date: Date): boolean {
-    let today = new Date();
-    return today.getFullYear() == date.getFullYear();
   }
 
   contextTaskMenu: TaskTreeElem | undefined;
@@ -184,15 +139,11 @@ implements OnInit, AfterViewInit {
   }
 
   openContextTaskMenu(event: MouseEvent, taskId: number) {
-	  this.contextTaskMenu = this.getTaskById(taskId);
+    this.contextTaskMenu = this.tree.getTaskById(taskId);
     this.showContextTaskMenu = true;
     this.contextTaskMenuJustOpened = true;
     this.taskContextMenuX = event.clientX-250;
     this.taskContextMenuY = event.clientY;
-  }
-
-  getTaskById(taskId: number): TaskTreeElem | undefined {
-    return this.initTasks.length == 0 ? this.tree.getTaskById(taskId) : this.initTasks.find((a) => a.id == taskId);
   }
 
   closeContextTaskMenu() {
@@ -282,7 +233,8 @@ implements OnInit, AfterViewInit {
 
   openSelectProjectModal(task: TaskTreeElem) {
     this.taskIdForProjectModal = task.id;
-    this.projectForProjectModal = this.project;
+    let project = task.project ? this.tree.getProjectById(task.project.id) : undefined;
+    this.projectForProjectModal = project;
     this.showSelectProjectModal = true;
   }
 
@@ -343,58 +295,4 @@ implements OnInit, AfterViewInit {
     return labels;
   }
 
-  duplicate() {
-    if(this.contextTaskMenu) {
-      this.taskService.duplicateTask(this.contextTaskMenu.id).subscribe(
-        (response: TaskDetails[]) => {
-        this.tree.duplicateTask(response);
-      },
-      (error: HttpErrorResponse) => {
-       
-      }
-    );
-    }
-
-    this.closeContextTaskMenu();
-  }
-
-  openTask?: TaskTreeElem;
-
-  openTaskView(task: TaskTreeElem) {
-    this.openTask = task;
-  }
-
-  closeTaskView() {
-    this.openTask = undefined;
-  }
-
-  archiveTask() {
-    if(this.contextTaskMenu) {
-      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:true}).subscribe(
-        (response: Task) => {
-        this.tree.archiveTask(response);
-      },
-      (error: HttpErrorResponse) => {
-       
-      }
-    );
-    }
-
-    this.closeContextTaskMenu();
-  }
-
-  restoreTask() {
-    if(this.contextTaskMenu) {
-      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:false}).subscribe(
-        (response: Task, tasks: TaskTreeElem[] = this.initTasks) => {
-        this.tree.restoreTask(response ,tasks);
-      },
-      (error: HttpErrorResponse) => {
-       
-      }
-    );
-    }
-
-    this.closeContextTaskMenu();
-  }
 }

@@ -1,6 +1,5 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskDeletion;
 import io.github.xpakx.ladder.entity.Label;
@@ -243,6 +242,7 @@ public class TaskService {
                 .title(originalTask.getTitle())
                 .description(originalTask.getDescription())
                 .projectOrder(originalTask.getProjectOrder())
+                .dailyViewOrder(originalTask.getDailyViewOrder())
                 .project(originalTask.getProject())
                 .createdAt(LocalDateTime.now())
                 .due(originalTask.getDue())
@@ -289,7 +289,6 @@ public class TaskService {
         taskToMove.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToMove);
     }
-
 
     private void incrementTasksOrder(IdRequest request, Integer userId, Project project) {
         if(request.getId() != null) {
@@ -541,12 +540,17 @@ public class TaskService {
     }
 
     @Transactional
-    @NotifyOnProjectChange
+    @NotifyOnTaskChange
     public Task archiveTask(BooleanRequest request, Integer taskId, Integer userId) {
         Task task = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         LocalDateTime now = LocalDateTime.now();
         task.setArchived(request.isFlag());
+        if(!request.isFlag()) {
+            task.setProjectOrder(
+                    task.getProject() != null ? taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, task.getProject().getId())+1 : taskRepository.getMaxOrderByOwnerId(userId)+1
+            );
+        }
         task.setModifiedAt(now);
         taskRepository.saveAll(
                 archiveChildren(userId, task, now, request.isFlag())
@@ -575,5 +579,20 @@ public class TaskService {
             toArchive = newToArchive;
         }
         return toReturn;
+    }
+
+    @NotifyOnTaskChange
+    public List<Task> updateDueDateForOverdue(DateRequest request, Integer userId) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime today = now.minusHours(now.getHour()).minusMinutes(now.getMinute()).minusSeconds(now.getSecond());
+        
+        List<Task> tasksToUpdate = taskRepository.findByOwnerIdAndDueBefore(userId, today);
+        int order = getMaxDailyOrder(request, userId)+1;
+        for(Task task : tasksToUpdate) {
+            task.setDue(request.getDate());
+            task.setModifiedAt(now);
+            task.setDailyViewOrder(order++);
+        }
+        return taskRepository.saveAll(tasksToUpdate);
     }
 }
