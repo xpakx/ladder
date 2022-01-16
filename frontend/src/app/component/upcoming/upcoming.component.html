@@ -30,7 +30,13 @@
                 <app-task-daily-list [tasks]="overdue" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
             </ng-container>
 
-        
+            <ng-container *ngFor="let dayTasks of tasks; let i = index">
+                <li class="section_header">
+                    <h2><span>{{nextDates[i] | date: 'dd MMM YYYY ‧ EEEE'}}</span></h2>
+                </li>
+
+                <app-task-daily-list [tasks]="dayTasks" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
+            </ng-container>
 
         </ul>
     </div>

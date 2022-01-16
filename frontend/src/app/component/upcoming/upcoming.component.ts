@@ -17,21 +17,32 @@ export class UpcomingComponent implements OnInit {
   public invalid: boolean = false;
   public message: string = '';
   todayDate: Date = new Date();
+  nextDates: Date[] = [];
   @ViewChildren(TaskDailyListComponent) listComponents!: TaskDailyListComponent[];
 
   constructor(private router: Router, public tree: TreeService, 
-    private taskService: TaskService, private taskTreeService: TaskTreeService,) {}
+    private taskService: TaskService, private taskTreeService: TaskTreeService) {}
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
-      this.router.navigate(["upcoming"]);
+      this.router.navigate(["load"]);
     }
 
     this.todayDate = new Date();
+    this.nextDates = [];
+    for(let i=1;i<7;i++) {
+      let newDate = new Date(this.todayDate);
+      newDate.setDate(newDate.getDate()+i)
+      this.nextDates.push(newDate)
+    }
   }
 
   get overdue(): TaskTreeElem[] {
     return this.tree.getByDateOverdue(this.todayDate);
+  }
+
+  get tasks(): TaskTreeElem[][] {
+    return this.nextDates.map((a) => this.tree.getByDate(a));
   }
 
   showAddTaskForm: boolean = false;
