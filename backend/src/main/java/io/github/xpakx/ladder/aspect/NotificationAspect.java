@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Aspect
 @Service
@@ -67,6 +68,21 @@ public class NotificationAspect {
                 .type("UPDATE")
                 .build();
         notificationService.sendNotification(notification);
+    }
+
+    @AfterReturning(value="@annotation(NotifyOnTasksChange)", returning="response")
+    public void notifyOnTasksChange(List<Task> response) throws Throwable {
+        if(response.size() > 0) {
+            Task task = response.stream()
+                    .max((a,b) -> a.getModifiedAt().compareTo(b.getModifiedAt()))
+                    .get();
+            NotificationRequest notification = NotificationRequest.builder()
+                    .userId(task.getOwner().getId())
+                    .time(task.getModifiedAt())
+                    .type("UPDATE")
+                    .build();
+            notificationService.sendNotification(notification);
+        }
     }
 
     @After(value="@annotation(NotifyOnTaskDeletion) && args(taskId, userId)", argNames = "taskId,userId")

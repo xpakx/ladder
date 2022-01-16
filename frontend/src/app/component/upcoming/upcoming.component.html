@@ -1,0 +1,47 @@
+<div class="panel"  role="tabpanel" >
+
+    <header class="view_header">
+        <div class="header_content">
+            <h1>
+                <span class="simple_content">Upcoming</span>
+            </h1>
+            <div class="header_actions">
+                <button type="button" class="sort_button">
+                    <span class="icon_sort">
+                        <i class ="fa fa-sort"></i>
+                    </span>
+                    <span class="action_label">Sort</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="tasks_content">
+        <ul class="task_list_items">
+
+            <ng-container *ngIf="overdue.length>0">
+                <div class="section_header">
+                    <h2><span>Overdue</span></h2>
+                    <div class="section_header__actions">
+                        <button class="reschedule__button" (click)="openSelectDateModal()">Reschedule</button>
+                    </div>
+                </div>
+
+                <app-task-daily-list [tasks]="overdue" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
+            </ng-container>
+
+            <ng-container *ngFor="let dayTasks of tasks; let i = index">
+                <li class="section_header">
+                    <h2><span>{{nextDates[i] | date: 'dd MMM YYYY ‧ EEEE'}}</span></h2>
+                </li>
+
+                <app-task-daily-list [tasks]="dayTasks" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
+            </ng-container>
+
+        </ul>
+    </div>
+
+</div>
+
+
+<app-date-dialog *ngIf="showSelectDateModal" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>

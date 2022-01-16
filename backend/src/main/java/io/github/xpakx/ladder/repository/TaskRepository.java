@@ -120,7 +120,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     @EntityGraph("task-with-labels")
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
 
-    List<Task> findByOwnerIdAndDueBefore(Integer ownerId, LocalDateTime due);
+    List<Task> findByOwnerIdAndDueBeforeAndCompletedIsFalse(Integer ownerId, LocalDateTime due);
 
     @Query("SELECT t FROM Task t WHERE t.owner.id = :ownerId AND t.project.id = :projectId AND date_part('year', t.completedAt) = :year")
     List<Task> getByOwnerIdAndProjectIdAndYear(Integer ownerId, Integer projectId, Integer year);
