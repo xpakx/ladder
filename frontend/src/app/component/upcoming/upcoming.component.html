@@ -30,21 +30,21 @@
                 <app-task-daily-list [tasks]="overdue" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
             </ng-container>
 
-            <ng-container *ngFor="let dayTasks of tasks; let i = index">
-                <li class="section_header" [class.empty]="dayTasks.length == 0">
-                    <h2><span>{{nextDates[i] | date: 'dd MMM YYYY ‧ EEEE'}}</span></h2>
+            <ng-container *ngFor="let day of tasks">
+                <li class="section_header" [class.empty]="day.tasks.length == 0">
+                    <h2><span>{{day.date | date: 'dd MMM YYYY ‧ EEEE'}}</span></h2>
                 </li>
 
-                <app-task-daily-list [tasks]="dayTasks" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
+                <app-task-daily-list [tasks]="day.tasks" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
                 <li>
-                    <button type="button" class="plus_add_button" *ngIf="showAddTaskForm != i" (click)="openAddTaskForm(i)">
+                    <button type="button" class="plus_add_button" *ngIf="showAddTaskForm != day.id" (click)="openAddTaskForm(day.id)">
                         <span class="icon_add">
                             <i class="fa fa-plus"></i>
                         </span>
                         Add task
                     </button>
     
-                    <app-task-form *ngIf="showAddTaskForm == i" (closeEvent)="closeAddTaskForm()" [date]="nextDates[i]"></app-task-form>
+                    <app-task-form *ngIf="showAddTaskForm == day.id" (closeEvent)="closeAddTaskForm()" [date]="day.date"></app-task-form>
     
                 </li>
             </ng-container>

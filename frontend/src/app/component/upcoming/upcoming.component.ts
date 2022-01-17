@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
+import { Day } from 'src/app/entity/utils/day';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -19,7 +20,7 @@ export class UpcomingComponent implements OnInit {
   todayDate: Date = new Date();
   nextDates: Date[] = [];
   @ViewChildren(TaskDailyListComponent) listComponents!: TaskDailyListComponent[];
-  tasks: TaskTreeElem[][] = [];
+  tasks: Day[] = [];
 
   constructor(private router: Router, public tree: TreeService, 
     private taskService: TaskService, private taskTreeService: TaskTreeService) {}
@@ -36,7 +37,7 @@ export class UpcomingComponent implements OnInit {
       newDate.setDate(newDate.getDate()+i)
       this.nextDates.push(newDate)
     }
-    this.tasks = this.nextDates.map((a) => this.tree.getByDate(a));
+    this.tasks = this.nextDates.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
   }
 
   get overdue(): TaskTreeElem[] {
