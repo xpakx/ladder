@@ -43,10 +43,14 @@ export class UpcomingComponent implements OnInit {
     return this.tree.getByDateOverdue(this.todayDate);
   }
 
-  showAddTaskForm: boolean = false;
+  showAddTaskForm: number = -1;
 
   closeAddTaskForm() {
-    this.showAddTaskForm = false;
+    this.showAddTaskForm = -1;
+  }
+
+  openAddTaskForm(id: number) {
+    this.showAddTaskForm = id;
   }
 
 

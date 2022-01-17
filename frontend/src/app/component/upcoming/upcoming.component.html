@@ -36,6 +36,17 @@
                 </li>
 
                 <app-task-daily-list [tasks]="dayTasks" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
+                <li>
+                    <button type="button" class="plus_add_button" *ngIf="showAddTaskForm != i" (click)="openAddTaskForm(i)">
+                        <span class="icon_add">
+                            <i class="fa fa-plus"></i>
+                        </span>
+                        Add task
+                    </button>
+    
+                    <app-task-form *ngIf="showAddTaskForm == i" (closeEvent)="closeAddTaskForm()"></app-task-form>
+    
+                </li>
             </ng-container>
 
         </ul>
