@@ -41,7 +41,7 @@
                     Add task
                 </button>
 
-                <app-task-form *ngIf="showAddTaskForm" (closeEvent)="closeAddTaskForm()"></app-task-form>
+                <app-task-form *ngIf="showAddTaskForm" (closeEvent)="closeAddTaskForm()" [date]="todayDate"></app-task-form>
 
             </li>
 
