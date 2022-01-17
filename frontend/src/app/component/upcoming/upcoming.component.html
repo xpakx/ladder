@@ -31,7 +31,7 @@
             </ng-container>
 
             <ng-container *ngFor="let dayTasks of tasks; let i = index">
-                <li class="section_header">
+                <li class="section_header" [class.empty]="dayTasks.length == 0">
                     <h2><span>{{nextDates[i] | date: 'dd MMM YYYY ‧ EEEE'}}</span></h2>
                 </li>
 

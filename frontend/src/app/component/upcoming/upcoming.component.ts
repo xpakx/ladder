@@ -43,10 +43,6 @@ export class UpcomingComponent implements OnInit {
     return this.tree.getByDateOverdue(this.todayDate);
   }
 
-  /*get tasks(): TaskTreeElem[][] {
-    return this.nextDates.map((a) => this.tree.getByDate(a));
-  }*/
-
   showAddTaskForm: boolean = false;
 
   closeAddTaskForm() {

@@ -90,6 +90,12 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
   );
   }
 
+  getByDateBetween(date1: Date, date2: Date): TaskTreeElem[] {
+    return this.list.filter((a) => 
+      a.due && a.due > date1 && a.due < date2
+    );
+  }
+
   getNumOfUncompletedTasksByProject(projectId: number): number {
     return this.list.filter((a) => 
       a.project && a.project.id == projectId && !a.completed

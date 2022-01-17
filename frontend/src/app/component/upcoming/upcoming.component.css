@@ -1,1 +1,5 @@
 @import "../css/project-view.css";
+
+.section_header.empty h2 {
+    color: grey;
+}
