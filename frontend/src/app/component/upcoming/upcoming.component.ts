@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
+import { interval, Subscription } from 'rxjs';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { Day } from 'src/app/entity/utils/day';
@@ -21,9 +22,14 @@ export class UpcomingComponent implements OnInit {
   nextDates: Date[] = [];
   @ViewChildren(TaskDailyListComponent) listComponents!: TaskDailyListComponent[];
   tasks: Day[] = [];
+  mySub: Subscription;
 
   constructor(private router: Router, public tree: TreeService, 
-    private taskService: TaskService, private taskTreeService: TaskTreeService) {}
+    private taskService: TaskService, private taskTreeService: TaskTreeService) {
+      this.mySub = interval(1000).subscribe((func => {
+        this.refreshTasks();
+      }))
+    }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
@@ -39,6 +45,14 @@ export class UpcomingComponent implements OnInit {
     }
     this.tasks = this.nextDates.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
   }
+
+  refreshTasks() {
+    let newTasks = this.nextDates.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
+    for(let day of newTasks) {
+      this.tasks[day.id].tasks = day.tasks;
+    }
+  }
+
 
   get overdue(): TaskTreeElem[] {
     return this.tree.getByDateOverdue(this.todayDate);
