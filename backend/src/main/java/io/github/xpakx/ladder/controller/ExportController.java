@@ -1,6 +1,5 @@
 package io.github.xpakx.ladder.controller;
 
-import io.github.xpakx.ladder.entity.dto.UserWithData;
 import io.github.xpakx.ladder.service.ExportService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
