@@ -19,15 +19,20 @@ public class ExportService {
         StringBuilder result = new StringBuilder();
         result.append("id;name;color;favorite;archived;parentId;order/n");
         for(ProjectDetails project : projects) {
-            result.append(
-                    project.getId()+";"+
-                    project.getName()+";"+
-                    project.getColor()+";"+
-                    project.getFavorite()+";"+
-                    project.getArchived()+";"+
-                    project.getParent().getId()+";"+
-                    project.getGeneralOrder()+";/n"
-            );
+            result.append(project.getId())
+                    .append(";")
+                    .append(project.getName())
+                    .append(";")
+                    .append(project.getColor())
+                    .append(";")
+                    .append(project.getFavorite())
+                    .append(";")
+                    .append(project.getArchived())
+                    .append(";")
+                    .append(project.getParent().getId())
+                    .append(";")
+                    .append(project.getGeneralOrder())
+                    .append(";/n");
         }
         return result.toString();
     }
