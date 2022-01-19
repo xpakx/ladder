@@ -22,7 +22,10 @@ export class TaskDailyListComponent  extends DraggableComponent<TaskTreeElem, Ta
 implements OnInit {
   @Input("tasks") tasks: TaskTreeElem[] = [];
   @Input("overdue") overdue: boolean = false;
+  @Input("dnd") dnd: boolean = false;
   @Output() closeAddForm = new EventEmitter<boolean>();
+  @Output() dragEnd = new EventEmitter<boolean>();
+  @Output() dragStart = new EventEmitter<boolean>();
 
   constructor(public tree: TreeService, private router: Router,
     private taskService: TaskService, private taskTreeService: TaskTreeService,
@@ -43,15 +46,16 @@ implements OnInit {
 
   onDrop(event: DndDropEvent, target: TaskTreeElem) {
     let id = Number(event.data);
+    this.taskService.moveAfterDaily({id: target.id}, id).subscribe(
+        (response: Task, afterId: number = target.id) => {
+        this.taskTreeService.moveAfterDaily(response, afterId);
+      },
+      (error: HttpErrorResponse) => {
       
-      this.taskService.moveAfterDaily({id: target.id}, id).subscribe(
-          (response: Task, afterId: number = target.id) => {
-          this.taskTreeService.moveAfterDaily(response, afterId);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
+      }
+    );
+
+    this.dragEnd.emit(true);
   }
 
   onDropFirst(event: DndDropEvent) {
@@ -64,6 +68,18 @@ implements OnInit {
       
       }
     );
+
+    this.dragEnd.emit(true);
+  }
+
+  onDragStart(id: number) {
+    this.draggedId = id;
+    this.dragStart.emit(true);
+  }
+
+  onDragEnd() {
+    this.draggedId = undefined;
+    this.dragEnd.emit(true);
   }
 
   toProject() {

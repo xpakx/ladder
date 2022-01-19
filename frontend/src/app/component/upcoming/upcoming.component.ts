@@ -24,6 +24,8 @@ export class UpcomingComponent implements OnInit {
   tasks: Day[] = [];
   mySub: Subscription;
 
+  activateDragNDrop: boolean = false;
+
   constructor(private router: Router, public tree: TreeService, 
     private taskService: TaskService, private taskTreeService: TaskTreeService) {
       this.mySub = interval(500).subscribe((func => {
@@ -88,5 +90,13 @@ export class UpcomingComponent implements OnInit {
 
   openSelectDateModal() {
     this.showSelectDateModal = true;
+  }
+
+  onDragStart() {
+    this.activateDragNDrop = true;
+  }
+
+  onDragEnd() {
+    this.activateDragNDrop = false;
   }
 }
