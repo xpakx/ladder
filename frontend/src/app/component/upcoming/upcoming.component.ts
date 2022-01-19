@@ -26,7 +26,7 @@ export class UpcomingComponent implements OnInit {
 
   constructor(private router: Router, public tree: TreeService, 
     private taskService: TaskService, private taskTreeService: TaskTreeService) {
-      this.mySub = interval(1000).subscribe((func => {
+      this.mySub = interval(500).subscribe((func => {
         this.refreshTasks();
       }))
     }
