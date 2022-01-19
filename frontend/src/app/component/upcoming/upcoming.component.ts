@@ -49,7 +49,7 @@ export class UpcomingComponent implements OnInit {
   refreshTasks() {
     let newTasks = this.nextDates.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
     for(let day of newTasks) {
-      this.tasks[day.id].tasks = day.tasks;
+      this.tasks[day.id].tasks = day.tasks.sort((a,b) => a.dailyOrder - b.dailyOrder);
     }
   }
 
