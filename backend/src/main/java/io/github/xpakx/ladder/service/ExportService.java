@@ -17,7 +17,7 @@ public class ExportService {
     public String exportProjectList(Integer userId) {
         List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
         StringBuilder result = new StringBuilder();
-        result.append("id;name;color;favorite;archived;parentId;order/n");
+        result.append("id;name;color;favorite;archived;parentId;order\n");
         for(ProjectDetails project : projects) {
             result.append(project.getId())
                     .append(";")
@@ -32,7 +32,7 @@ public class ExportService {
                     .append(project.getParent().getId())
                     .append(";")
                     .append(project.getGeneralOrder())
-                    .append(";/n");
+                    .append(";\n");
         }
         return result.toString();
     }
