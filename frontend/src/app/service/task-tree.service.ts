@@ -469,6 +469,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
         }
       
       movedTask.dailyOrder = afterTask.dailyOrder+1;
+      movedTask.due = new Date(task.due);
       movedTask.modifiedAt = new Date(task.modifiedAt);
     }
   }
