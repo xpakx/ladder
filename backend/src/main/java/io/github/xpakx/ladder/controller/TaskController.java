@@ -127,7 +127,7 @@ public class TaskController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{taskId}/move/asFirstForDate")
+    @PutMapping("/{taskId}/daily/move/asFirstWithDate")
     public ResponseEntity<Task> moveTaskAsFirstForDate(@RequestBody DateRequest request, @PathVariable Integer userId, @PathVariable Integer taskId) {
         return  new ResponseEntity<>(taskService.moveTaskAsFirstForDate(userId, taskId, request), HttpStatus.OK);
     }
