@@ -507,6 +507,21 @@ public class TaskService {
     }
 
     @NotifyOnTaskChange
+    public Task moveTaskAsFirstForDate(Integer userId, Integer taskToMoveId, DateRequest request) {
+        Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
+                .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
+        taskToMove.setDailyViewOrder(1);
+        taskToMove.setDue(request.getDate());
+        taskRepository.incrementOrderByOwnerIdAndDate(
+                userId,
+                taskToMove.getDue(),
+                LocalDateTime.now()
+        );
+        taskToMove.setModifiedAt(LocalDateTime.now());
+        return taskRepository.save(taskToMove);
+    }
+
+    @NotifyOnTaskChange
     public Task moveTaskAfterInDailyView(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
