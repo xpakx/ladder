@@ -56,6 +56,28 @@ export class UpcomingComponent implements OnInit {
     }
   }
 
+  nextPage() {
+    let startDate = new Date(this.datesToShow[this.datesToShow.length-1]);
+    this.datesToShow = [];
+    for(let i=1;i<=7;i++) {
+      let newDate = new Date(startDate);
+      newDate.setDate(newDate.getDate()+i)
+      this.datesToShow.push(newDate)
+    }
+    this.tasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
+  }
+
+  prevPage() {
+    let startDate = new Date(this.datesToShow[0]);
+    this.datesToShow = [];
+    startDate.setDate(startDate.getDate()-8);
+    for(let i=1;i<=7;i++) {
+      let newDate = new Date(startDate);
+      newDate.setDate(newDate.getDate()+i)
+      this.datesToShow.push(newDate)
+    }
+    this.tasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
+  }
 
   get overdue(): TaskTreeElem[] {
     return this.tree.getByDateOverdue(this.todayDate);

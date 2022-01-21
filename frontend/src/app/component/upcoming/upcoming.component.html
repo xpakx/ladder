@@ -15,6 +15,21 @@
             </div>
         </div>
     </header>
+    
+    <div class="week-nav">
+        <button type="button" class="plus_add_button" (click)="prevPage()">
+            <span class="icon_add">
+                <i class="fa fa-arrow-left"></i>
+            </span>
+            Previous Week
+        </button>
+        <button type="button" class="plus_add_button" (click)="nextPage()">
+            <span class="icon_add">
+                <i class="fa fa-arrow-right"></i>
+            </span>
+            Next Week
+        </button>
+    </div>
 
     <div class="tasks_content">
         <ul class="task_list_items">
