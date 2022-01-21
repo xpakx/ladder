@@ -19,7 +19,7 @@ export class UpcomingComponent implements OnInit {
   public invalid: boolean = false;
   public message: string = '';
   todayDate: Date = new Date();
-  nextDates: Date[] = [];
+  datesToShow: Date[] = [];
   @ViewChildren(TaskDailyListComponent) listComponents!: TaskDailyListComponent[];
   tasks: Day[] = [];
   mySub: Subscription;
@@ -39,17 +39,18 @@ export class UpcomingComponent implements OnInit {
     }
 
     this.todayDate = new Date();
-    this.nextDates = [];
+    this.datesToShow = [];
+    this.datesToShow.push(this.todayDate);
     for(let i=1;i<7;i++) {
       let newDate = new Date(this.todayDate);
       newDate.setDate(newDate.getDate()+i)
-      this.nextDates.push(newDate)
+      this.datesToShow.push(newDate)
     }
-    this.tasks = this.nextDates.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
+    this.tasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
   }
 
   refreshTasks() {
-    let newTasks = this.nextDates.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
+    let newTasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
     for(let day of newTasks) {
       this.tasks[day.id].tasks = day.tasks.sort((a,b) => a.dailyOrder - b.dailyOrder);
     }
