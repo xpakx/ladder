@@ -35,7 +35,7 @@
                     <h2><span>{{day.date | date: 'dd MMM YYYY ‧ EEEE'}}</span></h2>
                 </li>
 
-                <app-task-daily-list [tasks]="day.tasks" [overdue]="true" [dnd]="activateDragNDrop" (closeAddForm)="closeAddTaskForm()" (dragEnd)="onDragEnd()" (dragStart)="onDragStart()"></app-task-daily-list>
+                <app-task-daily-list [tasks]="day.tasks" [overdue]="true" [dnd]="activateDragNDrop" (closeAddForm)="closeAddTaskForm()" [multi]="day.date" (dragEnd)="onDragEnd()" (dragStart)="onDragStart()"></app-task-daily-list>
                 <li>
                     <button type="button" class="plus_add_button" *ngIf="showAddTaskForm != day.id" (click)="openAddTaskForm(day.id)">
                         <span class="icon_add">

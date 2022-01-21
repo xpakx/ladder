@@ -23,6 +23,7 @@ implements OnInit {
   @Input("tasks") tasks: TaskTreeElem[] = [];
   @Input("overdue") overdue: boolean = false;
   @Input("dnd") dnd: boolean = false;
+  @Input("multi") multipanel: Date | undefined;
   @Output() closeAddForm = new EventEmitter<boolean>();
   @Output() dragEnd = new EventEmitter<boolean>();
   @Output() dragStart = new EventEmitter<boolean>();
@@ -60,14 +61,25 @@ implements OnInit {
 
   onDropFirst(event: DndDropEvent) {
     let id = Number(event.data);
-    this.taskService.moveAsFirstDaily(id).subscribe(
-        (response: Task) => {
-        this.taskTreeService.moveAsFirstDaily(response);
-      },
-      (error: HttpErrorResponse) => {
-      
-      }
-    );
+    if(!this.multipanel) {
+      this.taskService.moveAsFirstDaily(id).subscribe(
+          (response: Task) => {
+          this.taskTreeService.moveAsFirstDaily(response);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    } else {
+      this.taskService.moveAsFirstWithDate(id, {date: this.multipanel}).subscribe(
+          (response: Task) => {
+          this.taskTreeService.moveAsFirstDaily(response);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
 
     this.dragEnd.emit(true);
   }
