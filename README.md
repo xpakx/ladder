@@ -16,7 +16,7 @@ A clone of the Todoist web-app written in Java + Spring (backend) and Angular (f
 	- [x] Re-ordering projects with drag'n'drop
 	- [x] Viewing projects' tasks
 	- [x] Duplicating projects
-	- [ ] Archiving projects
+	- [x] Archiving projects
 	- [ ] Sections
 - [ ] Tasks
 	- [x] Creating tasks

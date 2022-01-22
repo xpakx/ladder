@@ -8,3 +8,42 @@
     display: flex;
     align-content: space-between;
 }
+
+.right_nav_button {
+    justify-content: flex-end;
+}
+
+.nav_button {
+    display: flex;
+    text-decoration: none;
+    text-align: left;
+    width: 100%;
+    margin-left: -2px;
+    padding: 0 0 8px;
+    font-size: 14px;
+    white-space: nowrap;
+    color: grey;
+}
+
+.nav_button .icon {
+    align-items: center;
+    border-radius: 50%;
+    color: #dd4b39;
+    display: inline-flex;
+    height: 17px;
+    justify-content: center;
+    margin-right: 11px;
+    -webkit-transform: translateY(8px);
+    transform: translateY(8px);
+    vertical-align: 7px;
+    width: 17px;
+}
+
+.nav_button:hover .icon {
+    color: #fff;
+    background-color: #dd4b39;
+}
+
+.nav_button:hover {
+    color: #dd4b39;
+}
