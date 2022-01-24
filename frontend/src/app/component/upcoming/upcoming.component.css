@@ -9,9 +9,6 @@
     align-content: space-between;
 }
 
-.right_nav_button {
-    justify-content: flex-end;
-}
 
 .nav_button {
     display: flex;
@@ -25,10 +22,15 @@
     color: grey;
 }
 
+.right_nav_button {
+    text-align: right;
+    justify-content: flex-end;
+}
+
 .nav_button .icon {
     align-items: center;
     border-radius: 50%;
-    color: #dd4b39;
+    color: #8f5149;
     display: inline-flex;
     height: 17px;
     justify-content: center;
@@ -41,9 +43,9 @@
 
 .nav_button:hover .icon {
     color: #fff;
-    background-color: #dd4b39;
+    background-color: #8f5149;
 }
 
 .nav_button:hover {
-    color: #dd4b39;
+    color: #8f5149;
 }
