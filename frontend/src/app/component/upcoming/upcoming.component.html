@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <app-task-daily-list [tasks]="overdue" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
+                <app-task-daily-list [tasks]="overdue" [overdue]="true" (closeAddForm)="closeAddTaskForm()" (dragStart)="onDragStart()"></app-task-daily-list>
             </ng-container>
 
             <ng-container *ngFor="let day of tasks">
