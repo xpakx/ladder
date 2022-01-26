@@ -35,7 +35,7 @@
                             <span>{{getNumOfCompletedTasksByParent(task.id)}}/{{getNumOfTasksByParent(task.id)}}</span>
                         </a>
                         <button *ngIf="task.due && !task.completed" type="button" class="due_date_controls">
-                            <span class="date">
+                            <span class="date" [class.overdue]="overdue">
                                 <i class="fa fa-calendar-o"></i>
                                 <ng-container *ngIf="dateWithinWeek(task.due)">
                                     <span *ngIf="isToday(task.due)">Today</span>
