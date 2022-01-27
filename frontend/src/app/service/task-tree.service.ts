@@ -81,7 +81,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     );
   }
 
-  getOverdue(date: Date): TaskTreeElem[] {
+  getOverdue(dateVar: Date): TaskTreeElem[] {
+    let date = new Date(dateVar);
     date.setHours(0);
     date.setMinutes(0);
     date.setSeconds(0);
