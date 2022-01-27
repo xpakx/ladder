@@ -20,6 +20,7 @@
     font-size: 14px;
     white-space: nowrap;
     color: grey;
+    align-items: center;
 }
 
 .right_nav_button {
@@ -35,10 +36,13 @@
     height: 17px;
     justify-content: center;
     margin-right: 11px;
-    -webkit-transform: translateY(8px);
-    transform: translateY(8px);
     vertical-align: 7px;
     width: 17px;
+}
+
+.right_nav_button .icon {
+    margin-right: 0;
+    margin-left: 11px;
 }
 
 .nav_button:hover .icon {
