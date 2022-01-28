@@ -76,4 +76,36 @@ public class ExportService {
                 .collect(Collectors.joining(","));
     }
 
+    public String exportTasks(Integer userId) {
+        List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
+        StringBuilder result = new StringBuilder();
+        result.append("id;title;description;parent_id;due;completed;collapsed;project_order;daily_order;priority;labels;project_id;project_name\n");
+        for(TaskDetails task : tasks) {
+            result.append(task.getId())
+                    .append(";")
+                    .append(task.getTitle())
+                    .append(";")
+                    .append(task.getParent().getId())
+                    .append(";")
+                    .append(task.getDue())
+                    .append(";")
+                    .append(task.getCompleted())
+                    .append(";")
+                    .append(task.getCollapsed())
+                    .append(";")
+                    .append(task.getProjectOrder())
+                    .append(";")
+                    .append(task.getDailyViewOrder())
+                    .append(";")
+                    .append(task.getPriority())
+                    .append(";")
+                    .append(getLabelList(task.getLabels()))
+                    .append(";")
+                    .append(task.getProject().getId())
+                    .append(";")
+                    .append(task.getProject().getName())
+                    .append(";\n");
+        }
+        return result.toString();
+    }
 }

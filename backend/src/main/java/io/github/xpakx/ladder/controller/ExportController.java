@@ -27,4 +27,10 @@ public class ExportController {
     public ResponseEntity<String> exportProjectsTaskListToCSV(@PathVariable Integer userId, @PathVariable Integer projectId) {
         return new ResponseEntity<>(service.exportTasksFromProjectById(userId, projectId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping("/csv/tasks")
+    public ResponseEntity<String> exportTaskListToCSV(@PathVariable Integer userId) {
+        return new ResponseEntity<>(service.exportTasks(userId), HttpStatus.OK);
+    }
 }
