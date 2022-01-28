@@ -1,12 +1,16 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.entity.dto.LabelDetails;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
+import io.github.xpakx.ladder.entity.dto.TaskDetails;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -35,6 +39,41 @@ public class ExportService {
                     .append(";\n");
         }
         return result.toString();
+    }
+
+    public String exportTasksFromProjectById(Integer userId, Integer projectId) {
+        List<TaskDetails> tasks = taskRepository.findByOwnerIdAndProjectId(userId, projectId, TaskDetails.class);
+        StringBuilder result = new StringBuilder();
+        result.append("id;title;description;parent_id;due;completed;collapsed;project_order;daily_order;priority;labels\n");
+        for(TaskDetails task : tasks) {
+            result.append(task.getId())
+                    .append(";")
+                    .append(task.getTitle())
+                    .append(";")
+                    .append(task.getParent().getId())
+                    .append(";")
+                    .append(task.getDue())
+                    .append(";")
+                    .append(task.getCompleted())
+                    .append(";")
+                    .append(task.getCollapsed())
+                    .append(";")
+                    .append(task.getProjectOrder())
+                    .append(";")
+                    .append(task.getDailyViewOrder())
+                    .append(";")
+                    .append(task.getPriority())
+                    .append(";")
+                    .append(getLabelList(task.getLabels()))
+                    .append(";\n");
+        }
+        return result.toString();
+    }
+
+    private String getLabelList(Set<LabelDetails> labels) {
+        return labels.stream()
+                .map(LabelDetails::getName)
+                .collect(Collectors.joining(","));
     }
 
 }
