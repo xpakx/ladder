@@ -25,27 +25,31 @@ public class ExportController {
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping(value = "/csv/projects", produces="text/csv")
     public ResponseEntity<Resource> exportProjectListToCSV(@PathVariable Integer userId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=projects.csv");
-        headers.set(HttpHeaders.CONTENT_TYPE, "text/csv");
-        return new ResponseEntity<>(service.exportProjectList(userId), headers, HttpStatus.OK);
+        return new ResponseEntity<>(service.exportProjectList(userId),
+                getHttpHeadersForFile("projects.csv"),
+                HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/csv/projects/{projectId}/tasks")
     public ResponseEntity<Resource> exportProjectsTaskListToCSV(@PathVariable Integer userId, @PathVariable Integer projectId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=tasks.csv");
-        headers.set(HttpHeaders.CONTENT_TYPE, "text/csv");
-        return new ResponseEntity<>(service.exportTasksFromProjectById(userId, projectId), headers, HttpStatus.OK);
+        return new ResponseEntity<>(service.exportTasksFromProjectById(userId, projectId),
+                getHttpHeadersForFile("tasks.csv"),
+                HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/csv/tasks")
     public ResponseEntity<Resource> exportTaskListToCSV(@PathVariable Integer userId) {
+        return new ResponseEntity<>(service.exportTasks(userId),
+                getHttpHeadersForFile("tasks.csv"),
+                HttpStatus.OK);
+    }
+
+    private HttpHeaders getHttpHeadersForFile(String fileName) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=tasks.csv");
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileName);
         headers.set(HttpHeaders.CONTENT_TYPE, "text/csv");
-        return new ResponseEntity<>(service.exportTasks(userId), headers, HttpStatus.OK);
+        return headers;
     }
 }
