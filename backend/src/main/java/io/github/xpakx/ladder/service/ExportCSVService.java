@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class ExportService implements ExportServiceInterface {
+public class ExportCSVService implements ExportServiceInterface {
     private ProjectRepository projectRepository;
     private TaskRepository taskRepository;
 
