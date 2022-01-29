@@ -1,8 +1,8 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.service.ExportService;
+import io.github.xpakx.ladder.service.ExportServiceInterface;
 import lombok.AllArgsConstructor;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,13 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("{userId}/export")
-public class ExportController {
+public class ExportCSVController {
     private ExportService service;
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
