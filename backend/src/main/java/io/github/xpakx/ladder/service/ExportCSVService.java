@@ -54,7 +54,7 @@ public class ExportCSVService implements ExportServiceInterface {
                     .append(";")
                     .append(task.getTitle())
                     .append(";")
-                    .append(task.getParent().getId())
+                    .append(task.getParent() != null ? task.getParent().getId() : "")
                     .append(";")
                     .append(task.getDue())
                     .append(";")
