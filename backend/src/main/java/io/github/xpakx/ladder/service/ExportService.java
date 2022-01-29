@@ -6,8 +6,11 @@ import io.github.xpakx.ladder.entity.dto.TaskDetails;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,7 +21,7 @@ public class ExportService {
     private ProjectRepository projectRepository;
     private TaskRepository taskRepository;
 
-    public String exportProjectList(Integer userId) {
+    public InputStreamResource exportProjectList(Integer userId) {
         List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
         StringBuilder result = new StringBuilder();
         result.append("id;name;color;favorite;archived;parentId;order\n");
@@ -38,10 +41,11 @@ public class ExportService {
                     .append(project.getGeneralOrder())
                     .append(";\n");
         }
-        return result.toString();
+        InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
+        return new InputStreamResource(stream);
     }
 
-    public String exportTasksFromProjectById(Integer userId, Integer projectId) {
+    public InputStreamResource exportTasksFromProjectById(Integer userId, Integer projectId) {
         List<TaskDetails> tasks = taskRepository.findByOwnerIdAndProjectId(userId, projectId, TaskDetails.class);
         StringBuilder result = new StringBuilder();
         result.append("id;title;description;parent_id;due;completed;collapsed;project_order;daily_order;priority;labels\n");
@@ -67,7 +71,8 @@ public class ExportService {
                     .append(getLabelList(task.getLabels()))
                     .append(";\n");
         }
-        return result.toString();
+        InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
+        return new InputStreamResource(stream);
     }
 
     private String getLabelList(Set<LabelDetails> labels) {
@@ -76,7 +81,7 @@ public class ExportService {
                 .collect(Collectors.joining(","));
     }
 
-    public String exportTasks(Integer userId) {
+    public InputStreamResource exportTasks(Integer userId) {
         List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
         StringBuilder result = new StringBuilder();
         result.append("id;title;description;parent_id;due;completed;collapsed;project_order;daily_order;priority;labels;project_id;project_name\n");
@@ -106,6 +111,7 @@ public class ExportService {
                     .append(task.getProject().getName())
                     .append(";\n");
         }
-        return result.toString();
+        InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
+        return new InputStreamResource(stream);
     }
 }
