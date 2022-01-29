@@ -36,7 +36,7 @@ public class ExportCSVService implements ExportServiceInterface {
                     .append(";")
                     .append(project.getArchived())
                     .append(";")
-                    .append(project.getParent().getId())
+                    .append(project.getParent() != null ? project.getParent().getId() : "")
                     .append(";")
                     .append(project.getGeneralOrder())
                     .append(";\n");
@@ -90,7 +90,7 @@ public class ExportCSVService implements ExportServiceInterface {
                     .append(";")
                     .append(task.getTitle())
                     .append(";")
-                    .append(task.getParent().getId())
+                    .append(task.getParent() != null ? task.getParent().getId() : "")
                     .append(";")
                     .append(task.getDue())
                     .append(";")
@@ -106,9 +106,9 @@ public class ExportCSVService implements ExportServiceInterface {
                     .append(";")
                     .append(getLabelList(task.getLabels()))
                     .append(";")
-                    .append(task.getProject().getId())
+                    .append(task.getProject() != null ? task.getProject().getId() : "")
                     .append(";")
-                    .append(task.getProject().getName())
+                    .append(task.getProject() != null ? task.getProject().getName() : "")
                     .append(";\n");
         }
         InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
