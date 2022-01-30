@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.dto.LabelDetails;
+import io.github.xpakx.ladder.entity.dto.ProjectDetails;
 import io.github.xpakx.ladder.entity.dto.TaskDetails;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -22,7 +23,17 @@ public class ExportTXTService implements ExportServiceInterface {
 
     @Override
     public InputStreamResource exportProjectList(Integer userId) {
-        return null;
+        List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
+        StringBuilder result = new StringBuilder();
+        for(ProjectDetails project : projects) {
+            result.append(project.getName())
+                    .append("("+project.getColor()+")")
+                    .append(project.getFavorite() ? " fav:true" : "")
+                    .append(project.getArchived() ? " arch:true" : "")
+                    .append("\n");
+        }
+        InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
+        return new InputStreamResource(stream);
     }
 
     @Override
