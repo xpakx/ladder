@@ -62,26 +62,32 @@ implements OnInit {
   onDropFirst(event: DndDropEvent) {
     let id = Number(event.data);
     if(!this.multipanel) {
-      this.taskService.moveAsFirstDaily(id).subscribe(
-          (response: Task) => {
-          this.taskTreeService.moveAsFirstDaily(response);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
+      this.moveAsFirst(id);
     } else {
-      this.taskService.moveAsFirstWithDate(id, {date: this.multipanel}).subscribe(
-          (response: Task) => {
-          this.taskTreeService.moveAsFirstDaily(response);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
+      this.moveAsFirstWithDate(id, this.multipanel);
     }
 
     this.dragEnd.emit(true);
+  }
+
+  private moveAsFirst(id: number) {
+    this.taskService.moveAsFirstDaily(id).subscribe(
+      (response: Task) => {
+        this.taskTreeService.moveAsFirstDaily(response);
+      },
+      (error: HttpErrorResponse) => {
+      }
+    );
+  }
+
+  private moveAsFirstWithDate(id: number, date: Date) {
+    this.taskService.moveAsFirstWithDate(id, { date: date }).subscribe(
+      (response: Task) => {
+        this.taskTreeService.moveAsFirstDaily(response);
+      },
+      (error: HttpErrorResponse) => {
+      }
+    );
   }
 
   onDragStart(id: number) {
