@@ -64,6 +64,10 @@ export class AppComponent implements OnInit {
   toHome() {
     this.router.navigate(['/']);
   }
+  
+  toSettings() {
+    this.router.navigate(['/settings']);
+  }
 
   // Task modal window
 

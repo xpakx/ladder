@@ -11,6 +11,7 @@ import { ProjectArchiveComponent } from './component/project-archive/project-arc
 import { ProjectComponent } from './component/project/project.component';
 import { RegisterComponent } from './component/register/register.component';
 import { SearchResultComponent } from './component/search-result/search-result.component';
+import { SettingsComponent } from './component/settings/settings.component';
 import { UpcomingComponent } from './component/upcoming/upcoming.component';
 
 const routes: Routes = [
@@ -25,7 +26,8 @@ const routes: Routes = [
   { path: 'label/:id', component: LabelComponent },
   { path: 'search', component: SearchResultComponent },
   { path: 'archive', component: ArchiveComponent },
-  { path: 'archive/project/:id', component: ProjectArchiveComponent }
+  { path: 'archive/project/:id', component: ProjectArchiveComponent },
+  { path: 'settings', component: SettingsComponent }
 ];
 
 @NgModule({
