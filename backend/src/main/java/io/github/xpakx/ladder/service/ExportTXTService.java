@@ -47,7 +47,8 @@ public class ExportTXTService implements ExportServiceInterface {
                 .append(getLabelList(task.getLabels()))
                 .append(" ")
                 .append(task.getProject() != null ? "@"+ task.getProject().getName() : "")
-                .append(task.getDue() != null ? "due:"+ task.getDue() : "");
+                .append(task.getDue() != null ? "due:"+ task.getDue() : "")
+                .append("\n");
     }
 
     @Override
