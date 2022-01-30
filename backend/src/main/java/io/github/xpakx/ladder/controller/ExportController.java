@@ -22,30 +22,54 @@ public class ExportController {
     @GetMapping(value = "/csv/projects", produces="text/csv")
     public ResponseEntity<Resource> exportProjectListToCSV(@PathVariable Integer userId) {
         return new ResponseEntity<>(service.exportProjectList(userId),
-                getHttpHeadersForFile("projects.csv"),
+                getHttpHeadersForFile("projects.csv", "csv"),
                 HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/csv/projects/{projectId}/tasks")
+    @GetMapping(value = "/csv/projects/{projectId}/tasks", produces="text/csv")
     public ResponseEntity<Resource> exportProjectsTaskListToCSV(@PathVariable Integer userId, @PathVariable Integer projectId) {
         return new ResponseEntity<>(service.exportTasksFromProjectById(userId, projectId),
-                getHttpHeadersForFile("tasks.csv"),
+                getHttpHeadersForFile("tasks.csv", "csv"),
                 HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/csv/tasks")
+    @GetMapping(value = "/csv/tasks", produces="text/csv")
     public ResponseEntity<Resource> exportTaskListToCSV(@PathVariable Integer userId) {
         return new ResponseEntity<>(service.exportTasks(userId),
-                getHttpHeadersForFile("tasks.csv"),
+                getHttpHeadersForFile("tasks.csv", "csv"),
                 HttpStatus.OK);
     }
 
-    private HttpHeaders getHttpHeadersForFile(String fileName) {
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping(value = "/txt/projects", produces="text/txt")
+    public ResponseEntity<Resource> exportProjectListToTXT(@PathVariable Integer userId) {
+        return new ResponseEntity<>(service.exportProjectList(userId),
+                getHttpHeadersForFile("projects.txt", "txt"),
+                HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping(value = "/txt/projects/{projectId}/tasks", produces="text/txt")
+    public ResponseEntity<Resource> exportProjectsTaskListToTXT(@PathVariable Integer userId, @PathVariable Integer projectId) {
+        return new ResponseEntity<>(service.exportTasksFromProjectById(userId, projectId),
+                getHttpHeadersForFile("tasks.txt", "txt"),
+                HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping(value = "/txt/tasks", produces="text/txt")
+    public ResponseEntity<Resource> exportTaskListToTXT(@PathVariable Integer userId) {
+        return new ResponseEntity<>(service.exportTasks(userId),
+                getHttpHeadersForFile("tasks.txt", "txt"),
+                HttpStatus.OK);
+    }
+
+    private HttpHeaders getHttpHeadersForFile(String fileName, String fileType) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileName);
-        headers.set(HttpHeaders.CONTENT_TYPE, "text/csv");
+        headers.set(HttpHeaders.CONTENT_TYPE, "text/"+fileType);
         return headers;
     }
 }
