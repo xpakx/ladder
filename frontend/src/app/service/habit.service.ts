@@ -5,7 +5,6 @@ import { environment } from 'src/environments/environment';
 import { BooleanRequest } from '../entity/boolean-request';
 import { Habit } from '../entity/habit';
 import { HabitCompletion } from '../entity/habit-completion';
-import { HabitCompletionDetails } from '../entity/habit-completion-details';
 import { HabitRequest } from '../entity/habit-request';
 import { IdRequest } from '../entity/id-request';
 import { PriorityRequest } from '../entity/priority-request';

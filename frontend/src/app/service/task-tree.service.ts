@@ -81,13 +81,20 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     );
   }
 
-  getOverdue(date: Date): TaskTreeElem[] {
+  getOverdue(dateVar: Date): TaskTreeElem[] {
+    let date = new Date(dateVar);
     date.setHours(0);
     date.setMinutes(0);
     date.setSeconds(0);
   return this.list.filter((a) => 
     !a.completed && a.due && a.due < date
   );
+  }
+
+  getByDateBetween(date1: Date, date2: Date): TaskTreeElem[] {
+    return this.list.filter((a) => 
+      a.due && a.due > date1 && a.due < date2
+    );
   }
 
   getNumOfUncompletedTasksByProject(projectId: number): number {
@@ -447,6 +454,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       }
       
       movedTask.dailyOrder = 1;
+      movedTask.due = new Date(task.due);
       movedTask.modifiedAt =  new Date(task.modifiedAt);
     }
   }
@@ -463,6 +471,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
         }
       
       movedTask.dailyOrder = afterTask.dailyOrder+1;
+      movedTask.due = new Date(task.due);
       movedTask.modifiedAt = new Date(task.modifiedAt);
     }
   }

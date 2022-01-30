@@ -124,6 +124,10 @@ export class TreeService {
     return this.tasks.getByDate(date);
   }
 
+  getByDateBetween(date1: Date, date2: Date): TaskTreeElem[] {
+    return this.tasks.getByDateBetween(date1, date2);
+  }
+
   getByDateOverdue(date: Date): TaskTreeElem[] {
     return this.tasks.getOverdue(date);
   }

@@ -20,7 +20,7 @@
     <div class="tasks_content">
         <ul class="task_list_items">
 
-            <app-task-daily-list [tasks]="tasks" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
+            <app-task-daily-list [tasks]="tasks" (closeAddForm)="closeAddTaskForm()" [dnd]="activateDragNDrop" ></app-task-daily-list>
 
             <ng-container *ngIf="overdue.length>0">
                 <div class="section_header">
@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <app-task-daily-list [tasks]="overdue" [overdue]="true" (closeAddForm)="closeAddTaskForm()"></app-task-daily-list>
+                <app-task-daily-list [tasks]="overdue" [overdue]="true" (closeAddForm)="closeAddTaskForm()" (dragStart)="onDragStart()" (dragEnd)="onDragEnd()"></app-task-daily-list>
             </ng-container>
 
             <li>
@@ -41,7 +41,7 @@
                     Add task
                 </button>
 
-                <app-task-form *ngIf="showAddTaskForm" (closeEvent)="closeAddTaskForm()"></app-task-form>
+                <app-task-form *ngIf="showAddTaskForm" (closeEvent)="closeAddTaskForm()" [date]="todayDate"></app-task-form>
 
             </li>
 

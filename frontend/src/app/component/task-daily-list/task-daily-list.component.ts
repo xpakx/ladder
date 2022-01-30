@@ -22,7 +22,11 @@ export class TaskDailyListComponent  extends DraggableComponent<TaskTreeElem, Ta
 implements OnInit {
   @Input("tasks") tasks: TaskTreeElem[] = [];
   @Input("overdue") overdue: boolean = false;
+  @Input("dnd") dnd: boolean = false;
+  @Input("multi") multipanel: Date | undefined;
   @Output() closeAddForm = new EventEmitter<boolean>();
+  @Output() dragEnd = new EventEmitter<boolean>();
+  @Output() dragStart = new EventEmitter<boolean>();
 
   constructor(public tree: TreeService, private router: Router,
     private taskService: TaskService, private taskTreeService: TaskTreeService,
@@ -43,27 +47,61 @@ implements OnInit {
 
   onDrop(event: DndDropEvent, target: TaskTreeElem) {
     let id = Number(event.data);
-      
-      this.taskService.moveAfterDaily({id: target.id}, id).subscribe(
-          (response: Task, afterId: number = target.id) => {
-          this.taskTreeService.moveAfterDaily(response, afterId);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
-  }
-
-  onDropFirst(event: DndDropEvent) {
-    let id = Number(event.data);
-    this.taskService.moveAsFirstDaily(id).subscribe(
-        (response: Task) => {
-        this.taskTreeService.moveAsFirstDaily(response);
+    this.taskService.moveAfterDaily({id: target.id}, id).subscribe(
+        (response: Task, afterId: number = target.id) => {
+        this.taskTreeService.moveAfterDaily(response, afterId);
       },
       (error: HttpErrorResponse) => {
       
       }
     );
+
+    this.dragEnd.emit(true);
+  }
+
+  onDropFirst(event: DndDropEvent) {
+    let id = Number(event.data);
+    if(!this.multipanel) {
+      if(!this.dnd) {
+        this.moveAsFirst(id);
+      } else {
+        this.moveAsFirstWithDate(id, new Date());
+      }
+    } else {
+      this.moveAsFirstWithDate(id, this.multipanel);
+    }
+
+    this.dragEnd.emit(true);
+  }
+
+  private moveAsFirst(id: number) {
+    this.taskService.moveAsFirstDaily(id).subscribe(
+      (response: Task) => {
+        this.taskTreeService.moveAsFirstDaily(response);
+      },
+      (error: HttpErrorResponse) => {
+      }
+    );
+  }
+
+  private moveAsFirstWithDate(id: number, date: Date) {
+    this.taskService.moveAsFirstWithDate(id, { date: date }).subscribe(
+      (response: Task) => {
+        this.taskTreeService.moveAsFirstDaily(response);
+      },
+      (error: HttpErrorResponse) => {
+      }
+    );
+  }
+
+  onDragStart(id: number) {
+    this.draggedId = id;
+    this.dragStart.emit(true);
+  }
+
+  onDragEnd() {
+    this.draggedId = undefined;
+    this.dragEnd.emit(true);
   }
 
   toProject() {
@@ -295,4 +333,41 @@ implements OnInit {
     return labels;
   }
 
+  dateWithinWeek(date: Date): boolean {
+    let dateToCompare: Date = new Date();
+    dateToCompare.setDate(dateToCompare.getDate() + 9);
+    dateToCompare.setHours(0);
+    dateToCompare.setMinutes(0);
+    dateToCompare.setSeconds(0);
+    dateToCompare.setMilliseconds(0);
+    return date < dateToCompare && !this.isOverdue(date);
+  }
+
+  isOverdue(date: Date): boolean {
+    let dateToCompare: Date = new Date();
+    dateToCompare.setHours(0);
+    dateToCompare.setMinutes(0);
+    dateToCompare.setSeconds(0);
+    return date < dateToCompare;
+  }
+
+  sameDay(date1: Date, date2: Date): boolean {
+    return date1.getFullYear() == date2.getFullYear() && date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth();
+  }
+
+  isToday(date: Date): boolean {
+    let today = new Date();
+    return this.sameDay(today, date);
+  }
+
+  isTomorrow(date: Date): boolean {
+    let tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return this.sameDay(tomorrow, date);
+  }
+
+  thisYear(date: Date): boolean {
+    let today = new Date();
+    return today.getFullYear() == date.getFullYear();
+  }
 }

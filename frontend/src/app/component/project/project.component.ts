@@ -5,6 +5,7 @@ import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { TaskDetails } from 'src/app/entity/task-details';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
+import { ExportService } from 'src/app/service/export.service';
 import { ProjectService } from 'src/app/service/project.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskService } from 'src/app/service/task.service';
@@ -26,7 +27,7 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService,  private redirService: RedirectionService, 
     private renderer: Renderer2, private projectService: ProjectService,
-    private taskService: TaskService) {  }
+    private taskService: TaskService, private exportService: ExportService) {  }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
@@ -100,6 +101,21 @@ export class ProjectComponent implements OnInit, AfterViewInit {
       this.taskService.getArchivedTasks(this.project.id).subscribe(
         (response: TaskDetails[]) => {
           this.archivedTasks = this.tree.transformTasks(response);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
+  }
+
+  exportToCSV() {
+    if(this.project) {
+      this.exportService.getProjectTasksAsCSV(this.project.id).subscribe(
+        (response: Blob) => {
+          var csv = new Blob([response], { type: "text/csv" });
+          var url= window.URL.createObjectURL(csv);
+          window.open(url);
         },
         (error: HttpErrorResponse) => {
         

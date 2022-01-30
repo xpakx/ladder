@@ -127,4 +127,13 @@ implements OnInit {
   openSelectDateModal() {
     this.showSelectDateModal = true;
   }
+
+  activateDragNDrop: boolean = false;
+  onDragStart() {
+    this.activateDragNDrop = true;
+  }
+
+  onDragEnd() {
+    this.activateDragNDrop = false;
+  }
 }

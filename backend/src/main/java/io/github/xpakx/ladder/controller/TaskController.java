@@ -127,6 +127,12 @@ public class TaskController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{taskId}/daily/move/asFirstWithDate")
+    public ResponseEntity<Task> moveTaskAsFirstForDate(@RequestBody DateRequest request, @PathVariable Integer userId, @PathVariable Integer taskId) {
+        return  new ResponseEntity<>(taskService.moveTaskAsFirstForDate(userId, taskId, request), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{taskId}/daily/move/after")
     public ResponseEntity<Task> moveTaskAfterDaily(@RequestBody IdRequest request, @PathVariable Integer userId,
                                               @PathVariable Integer taskId) {

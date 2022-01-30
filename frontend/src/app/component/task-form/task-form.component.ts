@@ -32,6 +32,7 @@ export class TaskFormComponent implements OnInit {
   asChild: boolean = false;
 
   @Input() data: AddEvent<TaskTreeElem> | undefined;
+  @Input("date") date: Date | undefined;
 
   constructor(public tree: TreeService, private service: ProjectService, 
     private fb: FormBuilder, private taskService: TaskService) {  }
@@ -42,6 +43,10 @@ export class TaskFormComponent implements OnInit {
       this.after = this.data.after;
       this.before = this.data.before;
       this.asChild =  this.data.asChild;
+    }
+
+    if(this.date) {
+      this.taskDate = this.date;
     }
 
     this.taskForm = this.fb.group({

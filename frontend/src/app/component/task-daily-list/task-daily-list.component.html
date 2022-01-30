@@ -1,5 +1,5 @@
 
-<li *ngIf="draggedId" [dndDropzone]="['task-date']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
+<li *ngIf="(draggedId || dnd) && !overdue" [dndDropzone]="['task-date']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
 
 </li>
 <ng-container *ngFor="let task of tasks">
@@ -35,9 +35,17 @@
                             <span>{{getNumOfCompletedTasksByParent(task.id)}}/{{getNumOfTasksByParent(task.id)}}</span>
                         </a>
                         <button *ngIf="task.due && !task.completed" type="button" class="due_date_controls">
-                            <span class="date">
+                            <span class="date" [class.overdue]="overdue">
                                 <i class="fa fa-calendar-o"></i>
-                                <span>Today</span>
+                                <ng-container *ngIf="dateWithinWeek(task.due)">
+                                    <span *ngIf="isToday(task.due)">Today</span>
+                                    <span *ngIf="isTomorrow(task.due)">Tomorrow</span>
+                                    <span *ngIf="!isToday(task.due) && !isTomorrow(task.due)">{{task.due | date: 'EEEE'}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="!dateWithinWeek(task.due)">
+                                    <span *ngIf="thisYear(task.due)">{{task.due | date: 'dd MMM'}}</span>
+                                    <span *ngIf="!thisYear(task.due)">{{task.due | date: 'dd MMM yyyy'}}</span>
+                                </ng-container>
                             </span>
                         </button>
                         <span *ngFor="let label of getTaskLabels(task)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
@@ -80,7 +88,7 @@
     <li *ngIf="shouldEditTaskById(task.id)" class="task_list_item">
         <app-task-form [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
     </li>
-    <li *ngIf="draggedId" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, task)" class="drag-zone drag_list_item"></li>
+    <li *ngIf="(draggedId || dnd) && !overdue" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, task)" class="drag-zone drag_list_item"></li>
 </ng-container>
 
         
