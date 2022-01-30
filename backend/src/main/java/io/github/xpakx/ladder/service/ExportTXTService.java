@@ -27,7 +27,7 @@ public class ExportTXTService implements ExportServiceInterface {
         StringBuilder result = new StringBuilder();
         for(ProjectDetails project : projects) {
             result.append(project.getName())
-                    .append("("+project.getColor()+")")
+                    .append("(").append(project.getColor()).append(")")
                     .append(project.getFavorite() ? " fav:true" : "")
                     .append(project.getArchived() ? " arch:true" : "")
                     .append("\n");
