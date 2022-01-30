@@ -1,0 +1,43 @@
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { ExportService } from 'src/app/service/export.service';
+
+@Component({
+  selector: 'app-settings-export',
+  templateUrl: './settings-export.component.html',
+  styleUrls: ['./settings-export.component.css']
+})
+export class SettingsExportComponent implements OnInit {
+
+  constructor(private exportService: ExportService) { }
+
+  ngOnInit(): void {
+  }
+
+  exportProjectsAsCSV() {
+    this.exportService.getProjectsAsCSV().subscribe(
+      (response: Blob) => {
+        var csv = new Blob([response], { type: "text/csv" });
+        var url= window.URL.createObjectURL(csv);
+        window.open(url);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+  }
+
+  exportTasksAsCSV() {
+    this.exportService.getTasksAsCSV().subscribe(
+      (response: Blob) => {
+        var csv = new Blob([response], { type: "text/csv" });
+        var url= window.URL.createObjectURL(csv);
+        window.open(url);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+  }
+
+}

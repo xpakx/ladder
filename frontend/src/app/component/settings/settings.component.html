@@ -7,3 +7,4 @@
 <button class="elem" [class.selected]="view == 2" (click)="chooseOption(2)">
     Export
 </button>
+<app-settings-export *ngIf="view==2"></app-settings-export>

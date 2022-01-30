@@ -42,6 +42,7 @@ import { ProjectArchiveComponent } from './component/project-archive/project-arc
 import { TaskDailyListComponent } from './component/task-daily-list/task-daily-list.component';
 import { UpcomingComponent } from './component/upcoming/upcoming.component';
 import { SettingsComponent } from './component/settings/settings.component';
+import { SettingsExportComponent } from './component/settings-export/settings-export.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -84,7 +85,8 @@ export function tokenGetter() {
     ProjectArchiveComponent,
     TaskDailyListComponent,
     UpcomingComponent,
-    SettingsComponent
+    SettingsComponent,
+    SettingsExportComponent
   ],
   imports: [
     BrowserModule,
