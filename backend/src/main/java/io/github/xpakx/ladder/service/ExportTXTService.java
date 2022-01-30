@@ -65,6 +65,7 @@ public class ExportTXTService implements ExportServiceInterface {
     private String getLabelList(Set<LabelDetails> labels) {
         return labels.stream()
                 .map(LabelDetails::getName)
-                .collect(Collectors.joining(" +"));
+                .map((a) -> "+"+a)
+                .collect(Collectors.joining(" "));
     }
 }
