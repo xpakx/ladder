@@ -62,7 +62,11 @@ implements OnInit {
   onDropFirst(event: DndDropEvent) {
     let id = Number(event.data);
     if(!this.multipanel) {
-      this.moveAsFirst(id);
+      if(!this.dnd) {
+        this.moveAsFirst(id);
+      } else {
+        this.moveAsFirstWithDate(id, new Date());
+      }
     } else {
       this.moveAsFirstWithDate(id, this.multipanel);
     }
