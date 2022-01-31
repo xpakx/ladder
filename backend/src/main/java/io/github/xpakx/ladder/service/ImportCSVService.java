@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.dto.ProjectImport;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -18,7 +21,18 @@ public class ImportCSVService implements ImportServiceInterface {
 
     @Override
     public void importProjectList(Integer userId, String csv) {
-        List<Project> projects = CSVtoProjectList(csv);
+        List<ProjectImport> projects = CSVtoProjectList(csv);
+        List<Integer> ids = projects.stream()
+                .map(ProjectImport::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Integer> parentIds = projects.stream()
+                .map(ProjectImport::getParentId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        ids.addAll(parentIds);
+        List<Integer> realIds = projectRepository.findIdByOwnerIdAndIdIn(userId, ids);
+        
     }
 
     @Override
@@ -31,19 +45,19 @@ public class ImportCSVService implements ImportServiceInterface {
 
     }
 
-    private List<Project> CSVtoProjectList(String list) {
+    private List<ProjectImport> CSVtoProjectList(String list) {
         String[] charArr = list.split("");
         int i = 0;
         while(!charArr[i].equals("\n")) {
             i++;
         }
-        List<Project> result = new ArrayList<>();
+        List<ProjectImport> result = new ArrayList<>();
         i++;
         while(i<charArr.length) {
             int quoteCount = 0;
             int start = i;
             int fieldNum = 0;
-            Project newProj = new Project();
+            ProjectImport newProj = new ProjectImport();
             while (!(charArr[i].equals("\n") && quoteCount % 2 == 0)) {
                 if (quoteCount % 2 == 0 && charArr[i].equals(DELIMITER)) {
                     String field = list.substring(start, i);
@@ -61,7 +75,7 @@ public class ImportCSVService implements ImportServiceInterface {
         return result;
     }
 
-    private void setField(int fieldNum, Project newProj, String field) {
+    private void setField(int fieldNum, ProjectImport newProj, String field) {
         if(fieldNum == 0) {
             newProj.setId(Integer.valueOf(field));
         } else if(fieldNum == 1) {
@@ -73,7 +87,7 @@ public class ImportCSVService implements ImportServiceInterface {
         } else if(fieldNum == 4) {
             newProj.setArchived(field.equals("true"));
         } else if(fieldNum == 5) {
-            newProj.setParent(projectRepository.getById(Integer.valueOf(field)));
+            newProj.setParentId(Integer.valueOf(field));
         } else if(fieldNum == 6) {
             newProj.setGeneralOrder(Integer.valueOf(field));
         }
