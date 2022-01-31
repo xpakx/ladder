@@ -25,7 +25,10 @@ public class ExportCSVService implements ExportServiceInterface {
     public InputStreamResource exportProjectList(Integer userId) {
         List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
         StringBuilder result = new StringBuilder();
-        result.append("id;name;color;favorite;archived;parentId;order\n");
+        result.append("id").append(DELIMITER).append("name").append(DELIMITER)
+                .append("color").append(DELIMITER).append("favorite").append(DELIMITER)
+                .append("archived").append(DELIMITER).append("parentId").append(DELIMITER).append("order")
+                .append(DELIMITER).append("\n");
         for(ProjectDetails project : projects) {
             result.append(project.getId())
                     .append(DELIMITER)
@@ -50,7 +53,12 @@ public class ExportCSVService implements ExportServiceInterface {
     public InputStreamResource exportTasksFromProjectById(Integer userId, Integer projectId) {
         List<TaskDetails> tasks = taskRepository.findByOwnerIdAndProjectId(userId, projectId, TaskDetails.class);
         StringBuilder result = new StringBuilder();
-        result.append("id;title;description;parent_id;due;completed;collapsed;project_order;daily_order;priority;labels\n");
+        result.append("id").append(DELIMITER).append("title").append(DELIMITER)
+                .append("description").append(DELIMITER).append("parent_id").append(DELIMITER)
+                .append("due").append(DELIMITER).append("completed").append(DELIMITER)
+                .append("collapsed").append(DELIMITER).append("project_order").append(DELIMITER)
+                .append("daily_order").append(DELIMITER).append("priority").append(DELIMITER)
+                .append("labels").append(DELIMITER).append("\n");
         for(TaskDetails task : tasks) {
             result.append(task.getId())
                     .append(DELIMITER)
@@ -89,7 +97,13 @@ public class ExportCSVService implements ExportServiceInterface {
     public InputStreamResource exportTasks(Integer userId) {
         List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
         StringBuilder result = new StringBuilder();
-        result.append("id;title;description;parent_id;due;completed;collapsed;project_order;daily_order;priority;labels;project_id;project_name\n");
+        result.append("id").append(DELIMITER).append("title").append(DELIMITER)
+                .append("description").append(DELIMITER).append("parent_id").append(DELIMITER)
+                .append("due").append(DELIMITER).append("completed").append(DELIMITER)
+                .append("collapsed").append(DELIMITER).append("project_order").append(DELIMITER)
+                .append("daily_order").append(DELIMITER).append("priority").append(DELIMITER)
+                .append("labels").append(DELIMITER).append("project_id").append(DELIMITER)
+                .append("project_name").append(DELIMITER).append("\n");
         for(TaskDetails task : tasks) {
             result.append(task.getId())
                     .append(DELIMITER)

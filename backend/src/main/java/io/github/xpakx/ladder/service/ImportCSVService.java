@@ -45,7 +45,7 @@ public class ImportCSVService implements ImportServiceInterface {
             int fieldNum = 0;
             Project newProj = new Project();
             while (!(charArr[i].equals("\n") && quoteCount % 2 == 0)) {
-                if (quoteCount % 2 == 0 && charArr[i].equals(",")) {
+                if (quoteCount % 2 == 0 && charArr[i].equals(DELIMITER)) {
                     String field = list.substring(start, i);
                     start = i + 1;
                     setField(fieldNum, newProj, field);
