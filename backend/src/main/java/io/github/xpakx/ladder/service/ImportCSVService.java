@@ -7,9 +7,7 @@ import io.github.xpakx.ladder.repository.TaskRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,9 +28,45 @@ public class ImportCSVService implements ImportServiceInterface {
                 .map(ProjectImport::getParentId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        ids.addAll(parentIds);
-        List<Integer> realIds = projectRepository.findIdByOwnerIdAndIdIn(userId, ids);
-        
+        parentIds = projectRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
+        List<Project> projectsInDb = projectRepository.findByOwnerIdAndIdIn(userId, ids);
+        ids = projectsInDb.stream()
+                .map(Project::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Project> toSave = new ArrayList<>();
+        Map<Integer, Project> hashMap = new HashMap<>();
+        Map<Project, Integer> parentMap = new HashMap<>();
+        for(ProjectImport project : projects) {
+            Project projectToSave = projectsInDb.stream()
+                    .filter((a) -> Objects.equals(a.getId(), project.getId()))
+                    .findAny()
+                    .orElse(new Project());
+            projectToSave.setName(project.getName());
+            projectToSave.setColor(project.getColor());
+            projectToSave.setFavorite(project.isFavorite());
+            projectToSave.setArchived(project.isArchived());
+            projectToSave.setGeneralOrder(project.getGeneralOrder());
+            if(project.getId() != null) {
+                hashMap.put(project.getId(), projectToSave);
+            }
+            parentMap.put(projectToSave, project.getParentId());
+            toSave.add(projectToSave);
+        }
+        for(Project project : toSave) {
+            Project parent = null;
+            if(parentMap.containsKey(project)) {
+                Integer parentId = parentMap.get(project);
+                if(hashMap.containsKey(parentId)) {
+                    parent = hashMap.get(parentId);
+                } else if(ids.contains(parentId)) {
+                    parent = projectRepository.getById(parentId);
+                }
+            }
+            project.setParent(parent);
+        }
+
+        projectRepository.saveAll(toSave);
     }
 
     @Override

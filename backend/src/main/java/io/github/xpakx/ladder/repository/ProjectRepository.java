@@ -72,4 +72,5 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
 
     List<Integer> findIdByOwnerIdAndIdIn(Integer userId, List<Integer> ids);
+    List<Project> findByOwnerIdAndIdIn(Integer userId, List<Integer> ids);
 }
