@@ -1,1 +1,4 @@
-<p>settings-import works!</p>
+<input type="file" (change)="selectFile($event)">
+<button [disabled]="!file" (click)="importProjectsAsCSV()">
+    Import projects from CSV
+</button>
