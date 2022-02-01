@@ -26,7 +26,6 @@ export class SettingsImportComponent implements OnInit {
   }
 
   importProjectsAsCSV() {
-    alert("wtf");
     if(!this.file) {
       return;
     }

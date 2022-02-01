@@ -4,18 +4,23 @@ import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.ProjectImport;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
+import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ImportCSVService implements ImportServiceInterface {
-    private ProjectRepository projectRepository;
-    private TaskRepository taskRepository;
+    private final ProjectRepository projectRepository;
+    private final TaskRepository taskRepository;
+    private final UserAccountRepository userRepository;
     private static final String DELIMITER = ",";
+    private static final Pattern isInteger = Pattern.compile("\\d+");
 
     @Override
     public void importProjectList(Integer userId, String csv) {
@@ -47,6 +52,7 @@ public class ImportCSVService implements ImportServiceInterface {
             projectToSave.setFavorite(project.isFavorite());
             projectToSave.setArchived(project.isArchived());
             projectToSave.setGeneralOrder(project.getGeneralOrder());
+            projectToSave.setOwner(userRepository.getById(userId));
             if(project.getId() != null) {
                 hashMap.put(project.getId(), projectToSave);
             }
@@ -111,7 +117,7 @@ public class ImportCSVService implements ImportServiceInterface {
 
     private void setField(int fieldNum, ProjectImport newProj, String field) {
         if(fieldNum == 0) {
-            newProj.setId(Integer.valueOf(field));
+            newProj.setId((toInteger(field)));
         } else if(fieldNum == 1) {
             newProj.setName(field);
         } else if(fieldNum == 2) {
@@ -121,9 +127,18 @@ public class ImportCSVService implements ImportServiceInterface {
         } else if(fieldNum == 4) {
             newProj.setArchived(field.equals("true"));
         } else if(fieldNum == 5) {
-            newProj.setParentId(Integer.valueOf(field));
+            newProj.setParentId(toInteger(field));
         } else if(fieldNum == 6) {
-            newProj.setGeneralOrder(Integer.valueOf(field));
+            newProj.setGeneralOrder(toInteger(field));
+        }
+    }
+
+    private Integer toInteger(String s) {
+        Matcher matcher = isInteger.matcher(s);
+        if(matcher.matches()) {
+            return Integer.valueOf(s);
+        } else {
+            return null;
         }
     }
 }
