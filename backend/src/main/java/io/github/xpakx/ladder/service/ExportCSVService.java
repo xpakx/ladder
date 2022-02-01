@@ -56,7 +56,8 @@ public class ExportCSVService implements ExportServiceInterface {
         result.append("id").append(DELIMITER).append("title").append(DELIMITER)
                 .append("description").append(DELIMITER).append("parent_id").append(DELIMITER)
                 .append("due").append(DELIMITER).append("completed").append(DELIMITER)
-                .append("collapsed").append(DELIMITER).append("project_order").append(DELIMITER)
+                .append("collapsed").append(DELIMITER).append("archived").append(DELIMITER)
+                .append("project_order").append(DELIMITER)
                 .append("daily_order").append(DELIMITER).append("priority").append(DELIMITER)
                 .append("labels").append(DELIMITER).append("\n");
         for(TaskDetails task : tasks) {
@@ -73,6 +74,8 @@ public class ExportCSVService implements ExportServiceInterface {
                     .append(task.getCompleted())
                     .append(DELIMITER)
                     .append(task.getCollapsed())
+                    .append(DELIMITER)
+                    .append(task.getArchived())
                     .append(DELIMITER)
                     .append(task.getProjectOrder())
                     .append(DELIMITER)
@@ -100,7 +103,8 @@ public class ExportCSVService implements ExportServiceInterface {
         result.append("id").append(DELIMITER).append("title").append(DELIMITER)
                 .append("description").append(DELIMITER).append("parent_id").append(DELIMITER)
                 .append("due").append(DELIMITER).append("completed").append(DELIMITER)
-                .append("collapsed").append(DELIMITER).append("project_order").append(DELIMITER)
+                .append("collapsed").append(DELIMITER).append("archived").append(DELIMITER)
+                .append("project_order").append(DELIMITER)
                 .append("daily_order").append(DELIMITER).append("priority").append(DELIMITER)
                 .append("labels").append(DELIMITER).append("project_id").append(DELIMITER)
                 .append("project_name").append(DELIMITER).append("\n");
@@ -118,6 +122,8 @@ public class ExportCSVService implements ExportServiceInterface {
                     .append(task.getCompleted())
                     .append(DELIMITER)
                     .append(task.getCollapsed())
+                    .append(DELIMITER)
+                    .append(task.getArchived())
                     .append(DELIMITER)
                     .append(task.getProjectOrder())
                     .append(DELIMITER)

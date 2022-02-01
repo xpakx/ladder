@@ -2,12 +2,14 @@ package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.ProjectImport;
+import io.github.xpakx.ladder.entity.dto.TaskImport;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,11 +79,33 @@ public class ImportCSVService implements ImportServiceInterface {
 
     @Override
     public void importTasksFromProjectById(Integer userId, Integer projectId, String csv) {
-
+        List<TaskImport> tasks = CSVtoTaskList(csv);
+        List<Integer> ids = tasks.stream()
+                .map(TaskImport::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Integer> parentIds = tasks.stream()
+                .map(TaskImport::getParentId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void importTasks(Integer userId, String csv) {
+        List<TaskImport> tasks = CSVtoTaskList(csv);
+        List<Integer> ids = tasks.stream()
+                .map(TaskImport::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Integer> parentIds = tasks.stream()
+                .map(TaskImport::getParentId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Integer> projectIds = tasks.stream()
+                .map(TaskImport::getProjectId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        projectIds = projectRepository.findIdByOwnerIdAndIdIn(userId, projectIds);
 
     }
 
@@ -139,6 +163,68 @@ public class ImportCSVService implements ImportServiceInterface {
             return Integer.valueOf(s);
         } else {
             return null;
+        }
+    }
+
+    private List<TaskImport> CSVtoTaskList(String list) {
+        String[] charArr = list.split("");
+        int i = 0;
+        while(!charArr[i].equals("\n")) {
+            i++;
+        }
+        List<TaskImport> result = new ArrayList<>();
+        i++;
+        while(i<charArr.length) {
+            int quoteCount = 0;
+            int start = i;
+            int fieldNum = 0;
+            TaskImport newTask = new TaskImport();
+            while (!(charArr[i].equals("\n") && quoteCount % 2 == 0)) {
+                if (quoteCount % 2 == 0 && charArr[i].equals(DELIMITER)) {
+                    String field = list.substring(start, i);
+                    start = i + 1;
+                    setField(fieldNum, newTask, field);
+                    fieldNum++;
+                } else if (charArr[i].equals("\"")) {
+                    quoteCount++;
+                }
+                i++;
+            }
+            result.add(newTask);
+            i++;
+        }
+        return result;
+    }
+
+    private void setField(int fieldNum, TaskImport newTask, String field) {
+        if(fieldNum == 0) {
+            newTask.setId((toInteger(field)));
+        } else if(fieldNum == 1) {
+            newTask.setTitle(field);
+        } else if(fieldNum == 2) {
+            newTask.setDescription(field);
+        } else if(fieldNum == 3) {
+            newTask.setParentId(toInteger(field));
+        } else if(fieldNum == 4) {
+            newTask.setDue(null);
+        } else if(fieldNum == 5) {
+            newTask.setCompleted(field.equals("true"));
+        } else if(fieldNum == 6) {
+            newTask.setCollapsed(field.equals("true"));
+        } else if(fieldNum == 7) {
+            newTask.setArchived(field.equals("true"));
+        } else if(fieldNum == 8) {
+            newTask.setProjectOrder(toInteger(field));
+        } else if(fieldNum == 9) {
+            newTask.setDailyOrder(toInteger(field));
+        } else if(fieldNum == 10) {
+            newTask.setPriority(toInteger(field));
+        } else if(fieldNum == 11) {
+            newTask.setLabels(new HashSet<>());
+        } else if(fieldNum == 12) {
+            newTask.setProjectId(toInteger(field));
+        } else if(fieldNum == 13) {
+            newTask.setProjectName(field);
         }
     }
 }
