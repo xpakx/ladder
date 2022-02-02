@@ -66,7 +66,7 @@ public class ImportCSVService implements ImportServiceInterface {
                 Integer parentId = parentMap.get(project);
                 if(hashMap.containsKey(parentId)) {
                     parent = hashMap.get(parentId);
-                } else if(ids.contains(parentId)) {
+                } else if(ids.contains(parentId) || parentIds.contains(parentId)) {
                     parent = projectRepository.getById(parentId);
                 }
             }
