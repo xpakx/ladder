@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.ProjectImport;
 import io.github.xpakx.ladder.entity.dto.TaskImport;
 import io.github.xpakx.ladder.repository.ProjectRepository;
@@ -87,6 +88,52 @@ public class ImportCSVService implements ImportServiceInterface {
                 .map(TaskImport::getParentId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+        parentIds = taskRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
+        List<Task> tasksInDb = taskRepository.findByOwnerIdAndIdIn(userId, ids);
+        ids = tasksInDb.stream()
+                .map(Task::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Task> toSave = new ArrayList<>();
+        Map<Integer, Task> hashMap = new HashMap<>();
+        Map<Task, Integer> parentMap = new HashMap<>();
+        for(TaskImport task : tasks) {
+            Task taskToSave = tasksInDb.stream()
+                    .filter((a) -> Objects.equals(a.getId(), task.getId()))
+                    .findAny()
+                    .orElse(new Task());
+            taskToSave.setTitle(task.getTitle());
+            taskToSave.setDescription(task.getDescription());
+            taskToSave.setDue(task.getDue());
+            taskToSave.setCompleted(task.isCompleted());
+            taskToSave.setCollapsed(task.isCollapsed());
+            taskToSave.setArchived(task.isArchived());
+            taskToSave.setProjectOrder(task.getProjectOrder());
+            taskToSave.setDailyViewOrder(task.getDailyOrder());
+            taskToSave.setPriority(task.getPriority());
+            taskToSave.setOwner(userRepository.getById(userId));
+            //TODO labels
+            taskToSave.setProject(projectRepository.getById(projectId));
+            if(task.getId() != null) {
+                hashMap.put(task.getId(), taskToSave);
+            }
+            parentMap.put(taskToSave, task.getParentId());
+            toSave.add(taskToSave);
+        }
+        for(Task task : toSave) {
+            Task parent = null;
+            if(parentMap.containsKey(task)) {
+                Integer parentId = parentMap.get(task);
+                if(hashMap.containsKey(parentId)) {
+                    parent = hashMap.get(parentId);
+                } else if(ids.contains(parentId) || parentIds.contains(parentId)) {
+                    parent = taskRepository.getById(parentId);
+                }
+            }
+            task.setParent(parent);
+        }
+
+        taskRepository.saveAll(toSave);
     }
 
     @Override
@@ -105,7 +152,54 @@ public class ImportCSVService implements ImportServiceInterface {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         projectIds = projectRepository.findIdByOwnerIdAndIdIn(userId, projectIds);
+        parentIds = taskRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
+        List<Task> tasksInDb = taskRepository.findByOwnerIdAndIdIn(userId, ids);
+        ids = tasksInDb.stream()
+                .map(Task::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Task> toSave = new ArrayList<>();
+        Map<Integer, Task> hashMap = new HashMap<>();
+        Map<Task, Integer> parentMap = new HashMap<>();
+        for(TaskImport task : tasks) {
+            Task taskToSave = tasksInDb.stream()
+                    .filter((a) -> Objects.equals(a.getId(), task.getId()))
+                    .findAny()
+                    .orElse(new Task());
+            taskToSave.setTitle(task.getTitle());
+            taskToSave.setDescription(task.getDescription());
+            taskToSave.setDue(task.getDue());
+            taskToSave.setCompleted(task.isCompleted());
+            taskToSave.setCollapsed(task.isCollapsed());
+            taskToSave.setArchived(task.isArchived());
+            taskToSave.setProjectOrder(task.getProjectOrder());
+            taskToSave.setDailyViewOrder(task.getDailyOrder());
+            taskToSave.setPriority(task.getPriority());
+            taskToSave.setOwner(userRepository.getById(userId));
+            //TODO labels
+            if(projectIds.contains(task.getProjectId())) {
+                taskToSave.setProject(projectRepository.getById(task.getProjectId())); //TODO
+            }
+            if(task.getId() != null) {
+                hashMap.put(task.getId(), taskToSave);
+            }
+            parentMap.put(taskToSave, task.getParentId());
+            toSave.add(taskToSave);
+        }
+        for(Task task : toSave) {
+            Task parent = null;
+            if(parentMap.containsKey(task)) {
+                Integer parentId = parentMap.get(task);
+                if(hashMap.containsKey(parentId)) {
+                    parent = hashMap.get(parentId);
+                } else if(ids.contains(parentId) || parentIds.contains(parentId)) {
+                    parent = taskRepository.getById(parentId);
+                }
+            }
+            task.setParent(parent);
+        }
 
+        taskRepository.saveAll(toSave);
     }
 
     private List<ProjectImport> CSVtoProjectList(String list) {

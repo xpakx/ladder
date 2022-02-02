@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.repository;
 
+import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.TaskDetails;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -132,4 +133,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     <T> List<T> findByOwnerIdAndProjectId(Integer ownerId, Integer projectId, Class<T> type);
     @EntityGraph("task-with-labels")
     <T> List<T> findByOwnerIdAndProjectIdAndArchived(Integer ownerId, Integer projectId, boolean archived, Class<T> type);
+
+    List<Integer> findIdByOwnerIdAndIdIn(Integer ownerId, List<Integer> ids);
+    List<Task> findByOwnerIdAndIdIn(Integer ownerId, List<Integer> ids);
 }
