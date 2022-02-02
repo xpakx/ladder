@@ -27,14 +27,8 @@ public class ImportCSVService implements ImportServiceInterface {
     @Override
     public void importProjectList(Integer userId, String csv) {
         List<ProjectImport> projects = CSVtoProjectList(csv);
-        List<Integer> ids = projects.stream()
-                .map(ProjectImport::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        List<Integer> parentIds = projects.stream()
-                .map(ProjectImport::getParentId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<Integer> ids = getProjectIdsFromImported(projects);
+        List<Integer> parentIds = getParentIdsFromImported(projects);
         parentIds = projectRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
         List<Project> projectsInDb = projectRepository.findByOwnerIdAndIdIn(userId, ids);
         ids = projectsInDb.stream()
@@ -45,16 +39,8 @@ public class ImportCSVService implements ImportServiceInterface {
         Map<Integer, Project> hashMap = new HashMap<>();
         Map<Project, Integer> parentMap = new HashMap<>();
         for(ProjectImport project : projects) {
-            Project projectToSave = projectsInDb.stream()
-                    .filter((a) -> Objects.equals(a.getId(), project.getId()))
-                    .findAny()
-                    .orElse(new Project());
-            projectToSave.setName(project.getName());
-            projectToSave.setColor(project.getColor());
-            projectToSave.setFavorite(project.isFavorite());
-            projectToSave.setArchived(project.isArchived());
-            projectToSave.setGeneralOrder(project.getGeneralOrder());
-            projectToSave.setOwner(userRepository.getById(userId));
+            Project projectToSave = getProjectFromDbOrNewProject(projectsInDb, project);
+            copyFieldsToProject(projectToSave, project, userId);
             if(project.getId() != null) {
                 hashMap.put(project.getId(), projectToSave);
             }
@@ -75,6 +61,36 @@ public class ImportCSVService implements ImportServiceInterface {
         }
 
         projectRepository.saveAll(toSave);
+    }
+
+    private Project getProjectFromDbOrNewProject(List<Project> projectsInDb, ProjectImport project) {
+        return projectsInDb.stream()
+                .filter((a) -> Objects.equals(a.getId(), project.getId()))
+                .findAny()
+                .orElse(new Project());
+    }
+
+    private void copyFieldsToProject(Project projectToSave, ProjectImport project, Integer userId) {
+        projectToSave.setName(project.getName());
+        projectToSave.setColor(project.getColor());
+        projectToSave.setFavorite(project.isFavorite());
+        projectToSave.setArchived(project.isArchived());
+        projectToSave.setGeneralOrder(project.getGeneralOrder());
+        projectToSave.setOwner(userRepository.getById(userId));
+    }
+
+    private List<Integer> getParentIdsFromImported(List<ProjectImport> projects) {
+        return projects.stream()
+                .map(ProjectImport::getParentId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private List<Integer> getProjectIdsFromImported(List<ProjectImport> projects) {
+        return projects.stream()
+                .map(ProjectImport::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override
