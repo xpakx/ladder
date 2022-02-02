@@ -1,0 +1,4 @@
+<input type="file" (change)="selectFile($event)">
+<button [disabled]="!file" (click)="importProjectsAsCSV()">
+    Import projects from CSV
+</button>

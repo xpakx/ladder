@@ -20,26 +20,31 @@ import java.util.stream.Collectors;
 public class ExportCSVService implements ExportServiceInterface {
     private ProjectRepository projectRepository;
     private TaskRepository taskRepository;
+    private static final String DELIMITER = ",";
 
     public InputStreamResource exportProjectList(Integer userId) {
         List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
         StringBuilder result = new StringBuilder();
-        result.append("id;name;color;favorite;archived;parentId;order\n");
+        result.append("id").append(DELIMITER).append("name").append(DELIMITER)
+                .append("color").append(DELIMITER).append("favorite").append(DELIMITER)
+                .append("archived").append(DELIMITER).append("parentId").append(DELIMITER).append("order")
+                .append(DELIMITER).append("\n");
         for(ProjectDetails project : projects) {
             result.append(project.getId())
-                    .append(";")
-                    .append(project.getName())
-                    .append(";")
+                    .append(DELIMITER)
+                    .append(prepareString(project.getName()))
+                    .append(DELIMITER)
                     .append(project.getColor())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(project.getFavorite())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(project.getArchived())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(project.getParent() != null ? project.getParent().getId() : "")
-                    .append(";")
+                    .append(DELIMITER)
                     .append(project.getGeneralOrder())
-                    .append(";\n");
+                    .append(DELIMITER)
+                    .append("\n");
         }
         InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
         return new InputStreamResource(stream);
@@ -48,30 +53,39 @@ public class ExportCSVService implements ExportServiceInterface {
     public InputStreamResource exportTasksFromProjectById(Integer userId, Integer projectId) {
         List<TaskDetails> tasks = taskRepository.findByOwnerIdAndProjectId(userId, projectId, TaskDetails.class);
         StringBuilder result = new StringBuilder();
-        result.append("id;title;description;parent_id;due;completed;collapsed;project_order;daily_order;priority;labels\n");
+        result.append("id").append(DELIMITER).append("title").append(DELIMITER)
+                .append("description").append(DELIMITER).append("parent_id").append(DELIMITER)
+                .append("due").append(DELIMITER).append("completed").append(DELIMITER)
+                .append("collapsed").append(DELIMITER).append("archived").append(DELIMITER)
+                .append("project_order").append(DELIMITER)
+                .append("daily_order").append(DELIMITER).append("priority").append(DELIMITER)
+                .append("labels").append(DELIMITER).append("\n");
         for(TaskDetails task : tasks) {
             result.append(task.getId())
-                    .append(";")
-                    .append(task.getTitle())
-                    .append(";")
-                    .append(task.getDescription())
-                    .append(";")
+                    .append(DELIMITER)
+                    .append(prepareString(task.getTitle()))
+                    .append(DELIMITER)
+                    .append(prepareString(task.getDescription()))
+                    .append(DELIMITER)
                     .append(task.getParent() != null ? task.getParent().getId() : "")
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getDue())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getCompleted())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getCollapsed())
-                    .append(";")
+                    .append(DELIMITER)
+                    .append(task.getArchived())
+                    .append(DELIMITER)
                     .append(task.getProjectOrder())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getDailyViewOrder())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getPriority())
-                    .append(";")
-                    .append(getLabelList(task.getLabels()))
-                    .append(";\n");
+                    .append(DELIMITER)
+                    .append(prepareString(getLabelList(task.getLabels())))
+                    .append(DELIMITER)
+                    .append("\n");
         }
         InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
         return new InputStreamResource(stream);
@@ -86,34 +100,50 @@ public class ExportCSVService implements ExportServiceInterface {
     public InputStreamResource exportTasks(Integer userId) {
         List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
         StringBuilder result = new StringBuilder();
-        result.append("id;title;description;parent_id;due;completed;collapsed;project_order;daily_order;priority;labels;project_id;project_name\n");
+        result.append("id").append(DELIMITER).append("title").append(DELIMITER)
+                .append("description").append(DELIMITER).append("parent_id").append(DELIMITER)
+                .append("due").append(DELIMITER).append("completed").append(DELIMITER)
+                .append("collapsed").append(DELIMITER).append("archived").append(DELIMITER)
+                .append("project_order").append(DELIMITER)
+                .append("daily_order").append(DELIMITER).append("priority").append(DELIMITER)
+                .append("labels").append(DELIMITER).append("project_id").append(DELIMITER)
+                .append("project_name").append(DELIMITER).append("\n");
         for(TaskDetails task : tasks) {
             result.append(task.getId())
-                    .append(";")
-                    .append(task.getTitle())
-                    .append(";")
+                    .append(DELIMITER)
+                    .append(prepareString(task.getTitle()))
+                    .append(DELIMITER)
+                    .append(prepareString(task.getDescription()))
+                    .append(DELIMITER)
                     .append(task.getParent() != null ? task.getParent().getId() : "")
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getDue())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getCompleted())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getCollapsed())
-                    .append(";")
+                    .append(DELIMITER)
+                    .append(task.getArchived())
+                    .append(DELIMITER)
                     .append(task.getProjectOrder())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getDailyViewOrder())
-                    .append(";")
+                    .append(DELIMITER)
                     .append(task.getPriority())
-                    .append(";")
-                    .append(getLabelList(task.getLabels()))
-                    .append(";")
+                    .append(DELIMITER)
+                    .append(prepareString(getLabelList(task.getLabels())))
+                    .append(DELIMITER)
                     .append(task.getProject() != null ? task.getProject().getId() : "")
-                    .append(";")
-                    .append(task.getProject() != null ? task.getProject().getName() : "")
-                    .append(";\n");
+                    .append(DELIMITER)
+                    .append(task.getProject() != null ? prepareString(task.getProject().getName()) : "")
+                    .append(DELIMITER)
+                    .append("\n");
         }
         InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
         return new InputStreamResource(stream);
+    }
+
+    private String prepareString(String s) {
+        return "\"" +  s.replaceAll("\"", "\"\"") + "\"";
     }
 }

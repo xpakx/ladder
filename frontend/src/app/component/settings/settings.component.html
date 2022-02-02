@@ -8,3 +8,7 @@
     Export
 </button>
 <app-settings-export *ngIf="view==2"></app-settings-export>
+<button class="elem" [class.selected]="view == 3" (click)="chooseOption(3)">
+    Import
+</button>
+<app-settings-import *ngIf="view==3"></app-settings-import>
