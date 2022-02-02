@@ -31,13 +31,16 @@ public class ImportCSVService implements ImportServiceInterface {
         List<Integer> parentIds = getParentIdsFromImported(projects);
         parentIds = projectRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
         List<Project> projectsInDb = projectRepository.findByOwnerIdAndIdIn(userId, ids);
-        ids = projectsInDb.stream()
-                .map(Project::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        List<Project> toSave = new ArrayList<>();
+        ids = listToIds(projectsInDb);
         Map<Integer, Project> hashMap = new HashMap<>();
         Map<Project, Integer> parentMap = new HashMap<>();
+        List<Project> toSave = transformToProjects(userId, projects, projectsInDb, hashMap, parentMap);
+        appendParentsToProjects(ids, parentIds, toSave, hashMap, parentMap);
+        projectRepository.saveAll(toSave);
+    }
+
+    private List<Project> transformToProjects(Integer userId, List<ProjectImport> projects, List<Project> projectsInDb, Map<Integer, Project> hashMap, Map<Project, Integer> parentMap) {
+        List<Project> toSave = new ArrayList<>();
         for(ProjectImport project : projects) {
             Project projectToSave = getProjectFromDbOrNewProject(projectsInDb, project);
             copyFieldsToProject(projectToSave, project, userId);
@@ -47,6 +50,10 @@ public class ImportCSVService implements ImportServiceInterface {
             parentMap.put(projectToSave, project.getParentId());
             toSave.add(projectToSave);
         }
+        return toSave;
+    }
+
+    private void appendParentsToProjects(List<Integer> ids, List<Integer> parentIds, List<Project> toSave, Map<Integer, Project> hashMap, Map<Project, Integer> parentMap) {
         for(Project project : toSave) {
             Project parent = null;
             if(parentMap.containsKey(project)) {
@@ -59,8 +66,13 @@ public class ImportCSVService implements ImportServiceInterface {
             }
             project.setParent(parent);
         }
+    }
 
-        projectRepository.saveAll(toSave);
+    private List<Integer> listToIds(List<Project> projectsInDb) {
+        return projectsInDb.stream()
+                .map(Project::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private Project getProjectFromDbOrNewProject(List<Project> projectsInDb, ProjectImport project) {
