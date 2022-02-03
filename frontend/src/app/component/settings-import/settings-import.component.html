@@ -2,7 +2,11 @@ Import your projects and tasks.
 
 <ul class="option-menu">
     <li>
-        <input type="file" (change)="selectFile($event)">
+        <input class="hidden" type="file" (change)="selectFile($event)" #fileselection>
+        <button class="option-button" (click)="openFileSelection()">
+            <i class="fa fa-file"></i>
+            Select file…
+        </button>
     </li>
     <li>
         <button class="option-button option-button-red" (click)="importProjectsAsCSV()"  [disabled]="!file">
@@ -26,4 +30,4 @@ Import your projects and tasks.
     </li>
 </ul>
 
-<app-project-choice-dialog *ngIf="showSelectProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
+<app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="project" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>

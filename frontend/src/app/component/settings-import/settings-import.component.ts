@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { ImportService } from 'src/app/service/import.service';
 
@@ -12,6 +12,7 @@ export class SettingsImportComponent implements OnInit {
   file?: File;
   project: ProjectTreeElem | undefined;
   showSelectProjectModal: boolean = false;
+  @ViewChild('fileselection', {static: true}) fileselectionButton?: ElementRef;
 
   constructor(private importService: ImportService) { }
   
@@ -25,6 +26,12 @@ export class SettingsImportComponent implements OnInit {
     if(fileList && fileList.length > 0) {
       let firstFile = fileList.item(0);
       this.file = firstFile ? firstFile : undefined;
+    }
+  }
+
+  openFileSelection() {
+    if(this.fileselectionButton) {
+      this.fileselectionButton.nativeElement.click();
     }
   }
 

@@ -58,3 +58,7 @@
 .option-button-right {
     border-radius: 0 3px 3px 0;
 }
+
+.hidden {
+    display: none;
+}
