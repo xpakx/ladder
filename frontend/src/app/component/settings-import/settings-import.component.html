@@ -1,4 +1,30 @@
-<input type="file" (change)="selectFile($event)">
-<button [disabled]="!file" (click)="importProjectsAsCSV()">
-    Import projects from CSV
-</button>
+Import your projects and tasks.
+
+<ul class="option-menu">
+    <li>
+        <input type="file" (change)="selectFile($event)">
+    </li>
+    <li>
+        <button class="option-button option-button-red" (click)="importProjectsAsCSV()"  [disabled]="!file">
+            <i class="fa fa-file"></i>
+            Import projects from CSV
+        </button>
+    </li>
+    <li>
+        <button class="option-button option-button-red" (click)="importTasksAsCSV()" [disabled]="!file">
+            <i class="fa fa-file"></i>
+            Import tasks from CSV
+        </button>
+    </li>
+    <li>
+        <button class="option-button option-button-red option-button-left" (click)="openProjectSelection()">
+            <i class="fa fa-tasks"></i>
+        </button>
+        <button class="option-button option-button-red option-button-right" (click)="importProjectTasksAsCSV()" [disabled]="!file || !project">
+            <i class="fa fa-file"></i>
+            Import tasks to project from CSV
+        </button>
+    </li>
+</ul>
+
+<app-project-choice-dialog *ngIf="showSelectProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
