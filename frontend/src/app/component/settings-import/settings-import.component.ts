@@ -77,5 +77,6 @@ export class SettingsImportComponent implements OnInit {
 
   closeSelectProjectModal(project: ProjectTreeElem | undefined) {
     this.project = project;
+    this.showSelectProjectModal = false;
   }
 }
