@@ -11,6 +11,7 @@ import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -30,6 +31,7 @@ public class ImportCSVService implements ImportServiceInterface {
     private static final Pattern isInteger = Pattern.compile("\\d+");
 
     @Override
+    @Transactional
     public void importProjectList(Integer userId, String csv) {
         List<ProjectImport> projects = CSVtoProjectList(csv);
         List<Integer> ids = getProjectIdsFromImported(projects);
@@ -111,6 +113,7 @@ public class ImportCSVService implements ImportServiceInterface {
     }
 
     @Override
+    @Transactional
     public void importTasksFromProjectById(Integer userId, Integer projectId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
         List<Integer> ids = tasks.stream()
@@ -205,6 +208,7 @@ public class ImportCSVService implements ImportServiceInterface {
     }
 
     @Override
+    @Transactional
     public void importTasks(Integer userId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
         List<Integer> ids = tasks.stream()
@@ -248,7 +252,7 @@ public class ImportCSVService implements ImportServiceInterface {
             taskToSave.setOwner(userRepository.getById(userId));
             taskToSave.setLabels(getLabelForTask(task, labelMap));
             if(projectIds.contains(task.getProjectId())) {
-                taskToSave.setProject(projectRepository.getById(task.getProjectId())); 
+                taskToSave.setProject(projectRepository.getById(task.getProjectId()));
             } else {
                 taskToSave.setProject(newProjectsMap.get(task.getProjectId()));
             }
