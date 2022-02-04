@@ -10,6 +10,8 @@ import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -327,7 +329,7 @@ public class ImportCSVService implements ImportServiceInterface {
         } else if(fieldNum == 3) {
             newTask.setParentId(toInteger(field));
         } else if(fieldNum == 4) {
-            newTask.setDue(null);
+            newTask.setDue(toDate(field));
         } else if(fieldNum == 5) {
             newTask.setCompleted(field.equals("true"));
         } else if(fieldNum == 6) {
@@ -347,5 +349,14 @@ public class ImportCSVService implements ImportServiceInterface {
         } else if(fieldNum == 13) {
             newTask.setProjectName(field);
         }
+    }
+
+    private LocalDateTime toDate(String s) {
+        try {
+            return LocalDateTime.parse(s);
+        } catch(DateTimeParseException ex) {
+            return null;
+        }
+
     }
 }
