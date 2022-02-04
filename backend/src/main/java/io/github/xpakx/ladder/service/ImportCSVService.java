@@ -336,6 +336,12 @@ public class ImportCSVService implements ImportServiceInterface {
     }
 
     private void setField(int fieldNum, ProjectImport newProj, String field) {
+        if(field.length()>1 && field.charAt(0) == '"') {
+            field = field.substring(1);
+        }
+        if(field.length()>0 && field.charAt(field.length()-1) == '"') {
+            field = field.substring(0,field.length()-1);
+        }
         if(fieldNum == 0) {
             newProj.setId((toInteger(field)));
         } else if(fieldNum == 1) {
