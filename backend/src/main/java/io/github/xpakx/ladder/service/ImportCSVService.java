@@ -220,6 +220,7 @@ public class ImportCSVService implements ImportServiceInterface {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         projectIds = projectRepository.findIdByOwnerIdAndIdIn(userId, projectIds);
+        Map<Integer, Project> newProjectsMap = generateNewProjects(tasks, projectIds, userId);
         parentIds = taskRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
         Map<String, Label> labelMap = getLabelMap(userId, tasks);
         List<Task> tasksInDb = taskRepository.findByOwnerIdAndIdIn(userId, ids);
@@ -247,7 +248,9 @@ public class ImportCSVService implements ImportServiceInterface {
             taskToSave.setOwner(userRepository.getById(userId));
             taskToSave.setLabels(getLabelForTask(task, labelMap));
             if(projectIds.contains(task.getProjectId())) {
-                taskToSave.setProject(projectRepository.getById(task.getProjectId())); //TODO
+                taskToSave.setProject(projectRepository.getById(task.getProjectId())); 
+            } else {
+                taskToSave.setProject(newProjectsMap.get(task.getProjectId()));
             }
             if(task.getId() != null) {
                 hashMap.put(task.getId(), taskToSave);
@@ -269,6 +272,33 @@ public class ImportCSVService implements ImportServiceInterface {
         }
 
         taskRepository.saveAll(toSave);
+    }
+
+    private Map<Integer, Project> generateNewProjects(List<TaskImport> tasks, List<Integer> projectIds, Integer userId) {
+        List<Project> projects = new ArrayList<>();
+        for(TaskImport task : tasks) {
+            if(!projectIds.contains(task.getProjectId())) {
+                Project newProject = new Project();
+                newProject.setOwner(userRepository.getById(userId));
+                newProject.setArchived(false);
+                newProject.setFavorite(false);
+                newProject.setColor("#ffffff");
+                newProject.setName(task.getProjectName());
+                newProject.setModifiedAt(LocalDateTime.now());
+                newProject.setCreatedAt(LocalDateTime.now());
+                //TODO order
+                projects.add(newProject);
+            }
+        }
+        projects = projectRepository.saveAll(projects);
+        Map<Integer, Project> result = new HashMap<>();
+        for(TaskImport task : tasks) {
+            Optional<Project> proj = projects.stream()
+                    .filter((a) -> a.getName().equals(task.getProjectName()))
+                    .findAny();
+            proj.ifPresent(project -> result.put(project.getId(), project));
+        }
+        return result;
     }
 
     private List<ProjectImport> CSVtoProjectList(String list) {
