@@ -96,6 +96,12 @@ public class ImportCSVService implements ImportServiceInterface {
         projectToSave.setArchived(project.isArchived());
         projectToSave.setGeneralOrder(project.getGeneralOrder());
         projectToSave.setOwner(userRepository.getById(userId));
+        if(projectToSave.getId() == null) {
+            LocalDateTime now = LocalDateTime.now();
+            projectToSave.setCreatedAt(now);
+            projectToSave.setModifiedAt(now);
+            projectToSave.setCollapsed(true);
+        }
     }
 
     private List<Integer> getParentIdsFromImported(List<ProjectImport> projects) {
