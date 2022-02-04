@@ -38,7 +38,7 @@ public class ImportCSVService implements ImportServiceInterface {
         List<Integer> parentIds = getParentIdsFromImported(projects);
         parentIds = projectRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
         List<Project> projectsInDb = projectRepository.findByOwnerIdAndIdIn(userId, ids);
-        ids = listToIds(projectsInDb);
+        ids = projectListToIds(projectsInDb);
         Map<Integer, Project> hashMap = new HashMap<>();
         Map<Project, Integer> parentMap = new HashMap<>();
         List<Project> toSave = transformToProjects(userId, projects, projectsInDb, hashMap, parentMap);
@@ -75,7 +75,7 @@ public class ImportCSVService implements ImportServiceInterface {
         }
     }
 
-    private List<Integer> listToIds(List<Project> projectsInDb) {
+    private List<Integer> projectListToIds(List<Project> projectsInDb) {
         return projectsInDb.stream()
                 .map(Project::getId)
                 .filter(Objects::nonNull)
@@ -125,16 +125,19 @@ public class ImportCSVService implements ImportServiceInterface {
         List<Integer> ids = getTaskIdsFromImported(tasks);
         List<Integer> parentIds = getParentIdsFromImported(tasks, userId);
         List<Task> tasksInDb = taskRepository.findByOwnerIdAndIdIn(userId, ids);
-        ids = tasksInDb.stream()
+        ids = taskListToIds(tasksInDb);
+        Map<Integer, Task> hashMap = new HashMap<>();
+        Map<Task, Integer> parentMap = new HashMap<>();
+        List<Task> toSave = transformToTasks(userId, projectId, tasks, tasksInDb, hashMap, parentMap);
+        appendParentsToTasks(toSave, parentMap, hashMap, ids, parentIds);
+        taskRepository.saveAll(toSave);
+    }
+
+    private List<Integer> taskListToIds(List<Task> tasksInDb) {
+        return tasksInDb.stream()
                 .map(Task::getId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        Map<Integer, Task> hashMap = new HashMap<>();
-        Map<Task, Integer> parentMap = new HashMap<>();
-        Map<String, Label> labelMap = getLabelMap(userId, tasks);
-        List<Task> toSave = transformToTasks(userId, projectId, tasks, tasksInDb, hashMap, parentMap, labelMap);
-        appendParentsToTasks(toSave, parentMap, hashMap, ids, parentIds);
-        taskRepository.saveAll(toSave);
     }
 
     private void appendParentsToTasks(List<Task> toSave, Map<Task, Integer> parentMap, Map<Integer, Task> hashMap, List<Integer> ids, List<Integer> parentIds) {
@@ -152,7 +155,8 @@ public class ImportCSVService implements ImportServiceInterface {
         }
     }
 
-    private List<Task> transformToTasks(Integer userId, Integer projectId, List<TaskImport> tasks, List<Task> tasksInDb, Map<Integer, Task> hashMap, Map<Task, Integer> parentMap, Map<String, Label> labelMap) {
+    private List<Task> transformToTasks(Integer userId, Integer projectId, List<TaskImport> tasks, List<Task> tasksInDb, Map<Integer, Task> hashMap, Map<Task, Integer> parentMap) {
+        Map<String, Label> labelMap = getLabelMap(userId, tasks);
         List<Task> toSave = new ArrayList<>();
         for(TaskImport task : tasks) {
             Task taskToSave = tasksInDb.stream()
