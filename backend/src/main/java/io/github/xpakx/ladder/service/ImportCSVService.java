@@ -122,47 +122,22 @@ public class ImportCSVService implements ImportServiceInterface {
     @Transactional
     public void importTasksFromProjectById(Integer userId, Integer projectId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
-        List<Integer> ids = tasks.stream()
-                .map(TaskImport::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        List<Integer> parentIds = tasks.stream()
-                .map(TaskImport::getParentId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        parentIds = taskRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
+        List<Integer> ids = getTaskIdsFromImported(tasks);
+        List<Integer> parentIds = getParentIdsFromImported(tasks, userId);
         List<Task> tasksInDb = taskRepository.findByOwnerIdAndIdIn(userId, ids);
         ids = tasksInDb.stream()
                 .map(Task::getId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        List<Task> toSave = new ArrayList<>();
         Map<Integer, Task> hashMap = new HashMap<>();
         Map<Task, Integer> parentMap = new HashMap<>();
         Map<String, Label> labelMap = getLabelMap(userId, tasks);
-        for(TaskImport task : tasks) {
-            Task taskToSave = tasksInDb.stream()
-                    .filter((a) -> Objects.equals(a.getId(), task.getId()))
-                    .findAny()
-                    .orElse(new Task());
-            taskToSave.setTitle(task.getTitle());
-            taskToSave.setDescription(task.getDescription());
-            taskToSave.setDue(task.getDue());
-            taskToSave.setCompleted(task.isCompleted());
-            taskToSave.setCollapsed(task.isCollapsed());
-            taskToSave.setArchived(task.isArchived());
-            taskToSave.setProjectOrder(task.getProjectOrder());
-            taskToSave.setDailyViewOrder(task.getDailyOrder());
-            taskToSave.setPriority(task.getPriority());
-            taskToSave.setOwner(userRepository.getById(userId));
-            taskToSave.setLabels(getLabelForTask(task, labelMap));
-            taskToSave.setProject(projectRepository.getById(projectId));
-            if(task.getId() != null) {
-                hashMap.put(task.getId(), taskToSave);
-            }
-            parentMap.put(taskToSave, task.getParentId());
-            toSave.add(taskToSave);
-        }
+        List<Task> toSave = transformToTasks(userId, projectId, tasks, tasksInDb, hashMap, parentMap, labelMap);
+        appendParentsToTasks(toSave, parentMap, hashMap, ids, parentIds);
+        taskRepository.saveAll(toSave);
+    }
+
+    private void appendParentsToTasks(List<Task> toSave, Map<Task, Integer> parentMap, Map<Integer, Task> hashMap, List<Integer> ids, List<Integer> parentIds) {
         for(Task task : toSave) {
             Task parent = null;
             if(parentMap.containsKey(task)) {
@@ -175,8 +150,53 @@ public class ImportCSVService implements ImportServiceInterface {
             }
             task.setParent(parent);
         }
+    }
 
-        taskRepository.saveAll(toSave);
+    private List<Task> transformToTasks(Integer userId, Integer projectId, List<TaskImport> tasks, List<Task> tasksInDb, Map<Integer, Task> hashMap, Map<Task, Integer> parentMap, Map<String, Label> labelMap) {
+        List<Task> toSave = new ArrayList<>();
+        for(TaskImport task : tasks) {
+            Task taskToSave = tasksInDb.stream()
+                    .filter((a) -> Objects.equals(a.getId(), task.getId()))
+                    .findAny()
+                    .orElse(new Task());
+            copyFieldsToTask(taskToSave, task, userId);
+            taskToSave.setProject(projectRepository.getById(projectId));
+            taskToSave.setLabels(getLabelForTask(task, labelMap));
+            if(task.getId() != null) {
+                hashMap.put(task.getId(), taskToSave);
+            }
+            parentMap.put(taskToSave, task.getParentId());
+            toSave.add(taskToSave);
+        }
+        return toSave;
+    }
+
+    private void copyFieldsToTask(Task taskToSave, TaskImport task, Integer userId) {
+        taskToSave.setTitle(task.getTitle());
+        taskToSave.setDescription(task.getDescription());
+        taskToSave.setDue(task.getDue());
+        taskToSave.setCompleted(task.isCompleted());
+        taskToSave.setCollapsed(task.isCollapsed());
+        taskToSave.setArchived(task.isArchived());
+        taskToSave.setProjectOrder(task.getProjectOrder());
+        taskToSave.setDailyViewOrder(task.getDailyOrder());
+        taskToSave.setPriority(task.getPriority());
+        taskToSave.setOwner(userRepository.getById(userId));
+    }
+
+    private List<Integer> getParentIdsFromImported(List<TaskImport> tasks, Integer userId) {
+        List<Integer> parentIds = tasks.stream()
+                .map(TaskImport::getParentId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        return taskRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
+    }
+
+    private List<Integer> getTaskIdsFromImported(List<TaskImport> tasks) {
+        return tasks.stream()
+                .map(TaskImport::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private Set<Label> getLabelForTask(TaskImport task, Map<String, Label> labelMap) {
@@ -246,16 +266,7 @@ public class ImportCSVService implements ImportServiceInterface {
                     .filter((a) -> Objects.equals(a.getId(), task.getId()))
                     .findAny()
                     .orElse(new Task());
-            taskToSave.setTitle(task.getTitle());
-            taskToSave.setDescription(task.getDescription());
-            taskToSave.setDue(task.getDue());
-            taskToSave.setCompleted(task.isCompleted());
-            taskToSave.setCollapsed(task.isCollapsed());
-            taskToSave.setArchived(task.isArchived());
-            taskToSave.setProjectOrder(task.getProjectOrder());
-            taskToSave.setDailyViewOrder(task.getDailyOrder());
-            taskToSave.setPriority(task.getPriority());
-            taskToSave.setOwner(userRepository.getById(userId));
+            copyFieldsToTask(taskToSave, task, userId);
             taskToSave.setLabels(getLabelForTask(task, labelMap));
             if(projectIds.contains(task.getProjectId())) {
                 taskToSave.setProject(projectRepository.getById(task.getProjectId()));
@@ -268,18 +279,7 @@ public class ImportCSVService implements ImportServiceInterface {
             parentMap.put(taskToSave, task.getParentId());
             toSave.add(taskToSave);
         }
-        for(Task task : toSave) {
-            Task parent = null;
-            if(parentMap.containsKey(task)) {
-                Integer parentId = parentMap.get(task);
-                if(hashMap.containsKey(parentId)) {
-                    parent = hashMap.get(parentId);
-                } else if(ids.contains(parentId) || parentIds.contains(parentId)) {
-                    parent = taskRepository.getById(parentId);
-                }
-            }
-            task.setParent(parent);
-        }
+        appendParentsToTasks(toSave, parentMap, hashMap, ids, parentIds);
 
         taskRepository.saveAll(toSave);
     }
