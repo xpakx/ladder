@@ -21,4 +21,18 @@ export class ImportService {
     formData.append('file', file);
     return this.http.post(`${this.apiServerUrl}/${userId}/import/csv/projects`, formData);
   }
+
+  public sendTasksAsCSV(file: File): Observable<any> {   
+    let userId  = this.getUserId();
+    let formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiServerUrl}/${userId}/import/csv/tasks`, formData);
+  }
+
+  public sendProjectTasksAsCSV(file: File, projectId: number): Observable<any> {   
+    let userId  = this.getUserId();
+    let formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiServerUrl}/${userId}/import/csv/projects/${projectId}/tasks`, formData);
+  }
 }
