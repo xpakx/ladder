@@ -41,4 +41,5 @@ public interface LabelRepository extends JpaRepository<Label, Integer> {
     List<Integer> findOwnerIdById(List<Integer> ids);
 
     <T> List<T> findByOwnerIdAndModifiedAtAfter(Integer ownerId, LocalDateTime modifiedAt, Class<T> type);
+    List<Label> findIdByOwnerIdAndNameIn(Integer ownerId, List<String> names);
 }

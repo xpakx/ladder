@@ -1,9 +1,11 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.ProjectImport;
 import io.github.xpakx.ladder.entity.dto.TaskImport;
+import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -23,6 +25,7 @@ public class ImportCSVService implements ImportServiceInterface {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
+    private final LabelRepository labelRepository;
     private static final String DELIMITER = ",";
     private static final Pattern isInteger = Pattern.compile("\\d+");
 
@@ -127,6 +130,7 @@ public class ImportCSVService implements ImportServiceInterface {
         List<Task> toSave = new ArrayList<>();
         Map<Integer, Task> hashMap = new HashMap<>();
         Map<Task, Integer> parentMap = new HashMap<>();
+        Map<String, Label> labelMap = getLabelMap(userId, tasks);
         for(TaskImport task : tasks) {
             Task taskToSave = tasksInDb.stream()
                     .filter((a) -> Objects.equals(a.getId(), task.getId()))
@@ -142,7 +146,7 @@ public class ImportCSVService implements ImportServiceInterface {
             taskToSave.setDailyViewOrder(task.getDailyOrder());
             taskToSave.setPriority(task.getPriority());
             taskToSave.setOwner(userRepository.getById(userId));
-            //TODO labels
+            taskToSave.setLabels(getLabelForTask(task, labelMap));
             taskToSave.setProject(projectRepository.getById(projectId));
             if(task.getId() != null) {
                 hashMap.put(task.getId(), taskToSave);
@@ -166,6 +170,40 @@ public class ImportCSVService implements ImportServiceInterface {
         taskRepository.saveAll(toSave);
     }
 
+    private Set<Label> getLabelForTask(TaskImport task, Map<String, Label> labelMap) {
+        return null;
+    }
+
+    private Map<String, Label> getLabelMap(Integer userId, List<TaskImport> tasks) {
+        List<String> names = tasks.stream()
+                .map(TaskImport::getLabels)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        List<Label> labels = labelRepository.findIdByOwnerIdAndNameIn(userId, names);
+        HashMap<String, Label> result = new HashMap<>();
+        for(Label label : labels) {
+            result.put(label.getName(), label);
+        }
+        List<String> namesInDb = labels.stream()
+                .map(Label::getName)
+                .collect(Collectors.toList());
+        names.stream()
+                .filter((a) -> !namesInDb.contains(a))
+                .map((a) -> stringToLabel(userId, a))
+                .forEach((a) -> result.put(a.getName(), a));
+        return result;
+    }
+
+    private Label stringToLabel(Integer userId, String s) {
+        Label newLabel = new Label();
+        newLabel.setOwner(userRepository.getById(userId));
+        newLabel.setFavorite(false);
+        newLabel.setColor("#ffffff");
+        newLabel.setName(s);
+        //TODO order
+        return newLabel;
+    }
+
     @Override
     public void importTasks(Integer userId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
@@ -183,6 +221,7 @@ public class ImportCSVService implements ImportServiceInterface {
                 .collect(Collectors.toList());
         projectIds = projectRepository.findIdByOwnerIdAndIdIn(userId, projectIds);
         parentIds = taskRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
+        Map<String, Label> labelMap = getLabelMap(userId, tasks);
         List<Task> tasksInDb = taskRepository.findByOwnerIdAndIdIn(userId, ids);
         ids = tasksInDb.stream()
                 .map(Task::getId)
@@ -206,7 +245,7 @@ public class ImportCSVService implements ImportServiceInterface {
             taskToSave.setDailyViewOrder(task.getDailyOrder());
             taskToSave.setPriority(task.getPriority());
             taskToSave.setOwner(userRepository.getById(userId));
-            //TODO labels
+            taskToSave.setLabels(getLabelForTask(task, labelMap));
             if(projectIds.contains(task.getProjectId())) {
                 taskToSave.setProject(projectRepository.getById(task.getProjectId())); //TODO
             }
@@ -343,7 +382,7 @@ public class ImportCSVService implements ImportServiceInterface {
         } else if(fieldNum == 10) {
             newTask.setPriority(toInteger(field));
         } else if(fieldNum == 11) {
-            newTask.setLabels(new HashSet<>());
+            newTask.setLabels(toLabelList(field));
         } else if(fieldNum == 12) {
             newTask.setProjectId(toInteger(field));
         } else if(fieldNum == 13) {
@@ -357,6 +396,13 @@ public class ImportCSVService implements ImportServiceInterface {
         } catch(DateTimeParseException ex) {
             return null;
         }
+    }
 
+    private HashSet<String> toLabelList(String s) {
+        return new HashSet<>(
+                Arrays.asList(
+                        s.split(";")
+                )
+        );
     }
 }
