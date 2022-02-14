@@ -186,6 +186,11 @@ public class ImportCSVService implements ImportServiceInterface {
         taskToSave.setDailyViewOrder(task.getDailyOrder());
         taskToSave.setPriority(task.getPriority());
         taskToSave.setOwner(userRepository.getById(userId));
+        if(taskToSave.getId() == null) {
+            LocalDateTime now = LocalDateTime.now();
+            taskToSave.setCreatedAt(now);
+            taskToSave.setModifiedAt(now);
+        }
     }
 
     private List<Integer> getParentIdsFromImported(List<TaskImport> tasks, Integer userId) {
