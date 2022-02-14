@@ -209,7 +209,10 @@ public class ImportCSVService implements ImportServiceInterface {
     }
 
     private Set<Label> getLabelForTask(TaskImport task, Map<String, Label> labelMap) {
-        return null;
+        return task.getLabels()
+                .stream()
+                .map(labelMap::get)
+                .collect(Collectors.toSet());
     }
 
     private Map<String, Label> getLabelMap(Integer userId, List<TaskImport> tasks) {
@@ -225,9 +228,12 @@ public class ImportCSVService implements ImportServiceInterface {
         List<String> namesInDb = labels.stream()
                 .map(Label::getName)
                 .collect(Collectors.toList());
-        names.stream()
+        List<Label> newLabels = names.stream()
                 .filter((a) -> !namesInDb.contains(a))
+                .distinct()
                 .map((a) -> stringToLabel(userId, a))
+                .collect(Collectors.toList());
+        labelRepository.saveAll(newLabels)
                 .forEach((a) -> result.put(a.getName(), a));
         return result;
     }
@@ -238,6 +244,8 @@ public class ImportCSVService implements ImportServiceInterface {
         newLabel.setFavorite(false);
         newLabel.setColor("#ffffff");
         newLabel.setName(s);
+        LocalDateTime now = LocalDateTime.now();
+        newLabel.setModifiedAt(now);
         //TODO order
         return newLabel;
     }
@@ -462,7 +470,7 @@ public class ImportCSVService implements ImportServiceInterface {
     private HashSet<String> toLabelList(String s) {
         return new HashSet<>(
                 Arrays.asList(
-                        s.split(";")
+                        s.split(",")
                 )
         );
     }
