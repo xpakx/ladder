@@ -284,13 +284,8 @@ public class ImportCSVService implements ImportServiceInterface {
         List<TaskImport> tasks = CSVtoTaskList(csv);
         List<Integer> ids = getTaskIdsFromImported(tasks);
         List<Integer> parentIds = getParentIdsFromImported(tasks, userId);
-        List<Integer> projectIds = tasks.stream()
-                .map(TaskImport::getProjectId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        projectIds = projectRepository.findIdByOwnerIdAndIdIn(userId, projectIds);
+        List<Integer> projectIds = getProjectIdsFromImported(userId, tasks);
         Map<Integer, Project> newProjectsMap = generateNewProjects(tasks, projectIds, userId);
-        Map<String, Label> labelMap = getLabelMap(userId, tasks);
         List<Task> tasksInDb = taskRepository.findByOwnerIdAndIdIn(userId, ids);
         ids = taskListToIds(tasksInDb);
 
@@ -300,6 +295,15 @@ public class ImportCSVService implements ImportServiceInterface {
         appendParentsToTasks(toSave, parentMap, hashMap, ids, parentIds);
 
         taskRepository.saveAll(toSave);
+    }
+
+    private List<Integer> getProjectIdsFromImported(Integer userId, List<TaskImport> tasks) {
+        List<Integer> projectIds = tasks.stream()
+                .map(TaskImport::getProjectId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        projectIds = projectRepository.findIdByOwnerIdAndIdIn(userId, projectIds);
+        return projectIds;
     }
 
     private Map<Integer, Project> generateNewProjects(List<TaskImport> tasks, List<Integer> projectIds, Integer userId) {
