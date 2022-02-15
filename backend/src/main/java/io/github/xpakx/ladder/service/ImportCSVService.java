@@ -159,20 +159,29 @@ public class ImportCSVService implements ImportServiceInterface {
         Map<String, Label> labelMap = getLabelMap(userId, tasks);
         List<Task> toSave = new ArrayList<>();
         for(TaskImport task : tasks) {
-            Task taskToSave = tasksInDb.stream()
-                    .filter((a) -> Objects.equals(a.getId(), task.getId()))
-                    .findAny()
-                    .orElse(new Task());
-            copyFieldsToTask(taskToSave, task, userId);
+            Task taskToSave = createNewTaskToSave(userId, tasksInDb, labelMap, task);
             taskToSave.setProject(projectRepository.getById(projectId));
-            taskToSave.setLabels(getLabelForTask(task, labelMap));
-            if(task.getId() != null) {
-                hashMap.put(task.getId(), taskToSave);
-            }
-            parentMap.put(taskToSave, task.getParentId());
-            toSave.add(taskToSave);
+            addTaskToDataStructures(hashMap, parentMap, toSave, task, taskToSave);
         }
         return toSave;
+    }
+
+    private void addTaskToDataStructures(Map<Integer, Task> hashMap, Map<Task, Integer> parentMap, List<Task> toSave, TaskImport task, Task taskToSave) {
+        if(task.getId() != null) {
+            hashMap.put(task.getId(), taskToSave);
+        }
+        parentMap.put(taskToSave, task.getParentId());
+        toSave.add(taskToSave);
+    }
+
+    private Task createNewTaskToSave(Integer userId, List<Task> tasksInDb, Map<String, Label> labelMap, TaskImport task) {
+        Task taskToSave = tasksInDb.stream()
+                .filter((a) -> Objects.equals(a.getId(), task.getId()))
+                .findAny()
+                .orElse(new Task());
+        copyFieldsToTask(taskToSave, task, userId);
+        taskToSave.setLabels(getLabelForTask(task, labelMap));
+        return taskToSave;
     }
 
     private List<Task> transformToTasksWithProjects(Integer userId, List<TaskImport> tasks, List<Task> tasksInDb, Map<Integer,
@@ -180,22 +189,13 @@ public class ImportCSVService implements ImportServiceInterface {
         Map<String, Label> labelMap = getLabelMap(userId, tasks);
         List<Task> toSave = new ArrayList<>();
         for(TaskImport task : tasks) {
-            Task taskToSave = tasksInDb.stream()
-                    .filter((a) -> Objects.equals(a.getId(), task.getId()))
-                    .findAny()
-                    .orElse(new Task());
-            copyFieldsToTask(taskToSave, task, userId);
-            taskToSave.setLabels(getLabelForTask(task, labelMap));
+            Task taskToSave = createNewTaskToSave(userId, tasksInDb, labelMap, task);
             if(projectIds.contains(task.getProjectId())) {
                 taskToSave.setProject(projectRepository.getById(task.getProjectId()));
             } else {
                 taskToSave.setProject(newProjectsMap.get(task.getProjectId()));
             }
-            if(task.getId() != null) {
-                hashMap.put(task.getId(), taskToSave);
-            }
-            parentMap.put(taskToSave, task.getParentId());
-            toSave.add(taskToSave);
+            addTaskToDataStructures(hashMap, parentMap, toSave, task, taskToSave);
         }
         return toSave;
     }
