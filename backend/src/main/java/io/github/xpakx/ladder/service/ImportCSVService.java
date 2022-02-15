@@ -120,7 +120,7 @@ public class ImportCSVService implements ImportServiceInterface {
 
     @Override
     @Transactional
-    public void importTasksFromProjectById(Integer userId, Integer projectId, String csv) {
+    public void importTasksToProjectById(Integer userId, Integer projectId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
         List<Integer> ids = getTaskIdsFromImported(tasks);
         List<Integer> parentIds = getParentIdsFromImported(tasks, userId);
