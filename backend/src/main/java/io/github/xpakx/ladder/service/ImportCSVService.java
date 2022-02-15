@@ -190,14 +190,18 @@ public class ImportCSVService implements ImportServiceInterface {
         List<Task> toSave = new ArrayList<>();
         for(TaskImport task : tasks) {
             Task taskToSave = createNewTaskToSave(userId, tasksInDb, labelMap, task);
-            if(projectIds.contains(task.getProjectId())) {
-                taskToSave.setProject(projectRepository.getById(task.getProjectId()));
-            } else {
-                taskToSave.setProject(newProjectsMap.get(task.getProjectId()));
-            }
+            setProjectForTask(projectIds, newProjectsMap, task, taskToSave);
             addTaskToDataStructures(hashMap, parentMap, toSave, task, taskToSave);
         }
         return toSave;
+    }
+
+    private void setProjectForTask(List<Integer> projectIds, Map<Integer, Project> newProjectsMap, TaskImport task, Task taskToSave) {
+        if(projectIds.contains(task.getProjectId())) {
+            taskToSave.setProject(projectRepository.getById(task.getProjectId()));
+        } else {
+            taskToSave.setProject(newProjectsMap.get(task.getProjectId()));
+        }
     }
 
     private void copyFieldsToTask(Task taskToSave, TaskImport task, Integer userId) {
