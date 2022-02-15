@@ -221,6 +221,7 @@ public class ImportCSVService implements ImportServiceInterface {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         List<Label> labels = labelRepository.findIdByOwnerIdAndNameIn(userId, names);
+        Integer order = labelRepository.getMaxOrderByOwnerId(userId);
         HashMap<String, Label> result = new HashMap<>();
         for(Label label : labels) {
             result.put(label.getName(), label);
@@ -233,6 +234,9 @@ public class ImportCSVService implements ImportServiceInterface {
                 .distinct()
                 .map((a) -> stringToLabel(userId, a))
                 .collect(Collectors.toList());
+        for(Label l : newLabels) {
+            l.setGeneralOrder(++order);
+        }
         labelRepository.saveAll(newLabels)
                 .forEach((a) -> result.put(a.getName(), a));
         return result;
@@ -246,7 +250,6 @@ public class ImportCSVService implements ImportServiceInterface {
         newLabel.setName(s);
         LocalDateTime now = LocalDateTime.now();
         newLabel.setModifiedAt(now);
-        //TODO order
         return newLabel;
     }
 
