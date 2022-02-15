@@ -175,6 +175,31 @@ public class ImportCSVService implements ImportServiceInterface {
         return toSave;
     }
 
+    private List<Task> transformToTasksWithProjects(Integer userId, List<TaskImport> tasks, List<Task> tasksInDb, Map<Integer,
+            Task> hashMap, Map<Task, Integer> parentMap, List<Integer> projectIds, Map<Integer, Project> newProjectsMap) {
+        Map<String, Label> labelMap = getLabelMap(userId, tasks);
+        List<Task> toSave = new ArrayList<>();
+        for(TaskImport task : tasks) {
+            Task taskToSave = tasksInDb.stream()
+                    .filter((a) -> Objects.equals(a.getId(), task.getId()))
+                    .findAny()
+                    .orElse(new Task());
+            copyFieldsToTask(taskToSave, task, userId);
+            taskToSave.setLabels(getLabelForTask(task, labelMap));
+            if(projectIds.contains(task.getProjectId())) {
+                taskToSave.setProject(projectRepository.getById(task.getProjectId()));
+            } else {
+                taskToSave.setProject(newProjectsMap.get(task.getProjectId()));
+            }
+            if(task.getId() != null) {
+                hashMap.put(task.getId(), taskToSave);
+            }
+            parentMap.put(taskToSave, task.getParentId());
+            toSave.add(taskToSave);
+        }
+        return toSave;
+    }
+
     private void copyFieldsToTask(Task taskToSave, TaskImport task, Integer userId) {
         taskToSave.setTitle(task.getTitle());
         taskToSave.setDescription(task.getDescription());
@@ -257,48 +282,21 @@ public class ImportCSVService implements ImportServiceInterface {
     @Transactional
     public void importTasks(Integer userId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
-        List<Integer> ids = tasks.stream()
-                .map(TaskImport::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        List<Integer> parentIds = tasks.stream()
-                .map(TaskImport::getParentId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<Integer> ids = getTaskIdsFromImported(tasks);
+        List<Integer> parentIds = getParentIdsFromImported(tasks, userId);
         List<Integer> projectIds = tasks.stream()
                 .map(TaskImport::getProjectId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         projectIds = projectRepository.findIdByOwnerIdAndIdIn(userId, projectIds);
         Map<Integer, Project> newProjectsMap = generateNewProjects(tasks, projectIds, userId);
-        parentIds = taskRepository.findIdByOwnerIdAndIdIn(userId, parentIds);
         Map<String, Label> labelMap = getLabelMap(userId, tasks);
         List<Task> tasksInDb = taskRepository.findByOwnerIdAndIdIn(userId, ids);
-        ids = tasksInDb.stream()
-                .map(Task::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        List<Task> toSave = new ArrayList<>();
+        ids = taskListToIds(tasksInDb);
+
         Map<Integer, Task> hashMap = new HashMap<>();
         Map<Task, Integer> parentMap = new HashMap<>();
-        for(TaskImport task : tasks) {
-            Task taskToSave = tasksInDb.stream()
-                    .filter((a) -> Objects.equals(a.getId(), task.getId()))
-                    .findAny()
-                    .orElse(new Task());
-            copyFieldsToTask(taskToSave, task, userId);
-            taskToSave.setLabels(getLabelForTask(task, labelMap));
-            if(projectIds.contains(task.getProjectId())) {
-                taskToSave.setProject(projectRepository.getById(task.getProjectId()));
-            } else {
-                taskToSave.setProject(newProjectsMap.get(task.getProjectId()));
-            }
-            if(task.getId() != null) {
-                hashMap.put(task.getId(), taskToSave);
-            }
-            parentMap.put(taskToSave, task.getParentId());
-            toSave.add(taskToSave);
-        }
+        List<Task> toSave = transformToTasksWithProjects(userId, tasks, tasksInDb, hashMap, parentMap, projectIds, newProjectsMap);
         appendParentsToTasks(toSave, parentMap, hashMap, ids, parentIds);
 
         taskRepository.saveAll(toSave);
