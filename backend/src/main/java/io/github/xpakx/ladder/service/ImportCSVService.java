@@ -477,6 +477,9 @@ public class ImportCSVService implements ImportServiceInterface {
     }
 
     private HashSet<String> toLabelList(String s) {
+        if(s.length() == 0) {
+            return new HashSet<>();
+        }
         return new HashSet<>(
                 Arrays.asList(
                         s.split(",")
