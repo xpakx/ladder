@@ -33,7 +33,7 @@ public class ImportController {
     public ResponseEntity<Resource> importProjectsTaskListFromCSV(@RequestParam("file") MultipartFile file, @PathVariable Integer userId, @PathVariable Integer projectId) {
         try {
             String content = new String(file.getBytes());
-            service.importTasksFromProjectById(userId, projectId, content);
+            service.importTasksToProjectById(userId, projectId, content);
         } catch (IOException ex) {
             throw new IllegalArgumentException();
         }
