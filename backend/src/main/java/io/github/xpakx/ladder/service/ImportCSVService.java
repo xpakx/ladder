@@ -312,8 +312,9 @@ public class ImportCSVService implements ImportServiceInterface {
 
     private Map<Integer, Project> generateNewProjects(List<TaskImport> tasks, List<Integer> projectIds, Integer userId) {
         List<Project> projects = new ArrayList<>();
+        List<Integer> newProjectsIds =  new ArrayList<>();
         for(TaskImport task : tasks) {
-            if(!projectIds.contains(task.getProjectId())) {
+            if(task.getProjectId() != null && !projectIds.contains(task.getProjectId()) && !newProjectsIds.contains(task.getProjectId())) {
                 Project newProject = new Project();
                 newProject.setOwner(userRepository.getById(userId));
                 newProject.setArchived(false);
@@ -324,6 +325,7 @@ public class ImportCSVService implements ImportServiceInterface {
                 newProject.setCreatedAt(LocalDateTime.now());
                 //TODO order
                 projects.add(newProject);
+                newProjectsIds.add(task.getProjectId());
             }
         }
         projects = projectRepository.saveAll(projects);
