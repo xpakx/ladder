@@ -334,7 +334,7 @@ public class ImportCSVService implements ImportServiceInterface {
             Optional<Project> proj = projects.stream()
                     .filter((a) -> a.getName().equals(task.getProjectName()))
                     .findAny();
-            proj.ifPresent(project -> result.put(project.getId(), project));
+            proj.ifPresent(project -> result.put(task.getProjectId(), project));
         }
         return result;
     }
