@@ -147,4 +147,14 @@ public class NotificationAspect {
                 .build();
         notificationService.sendNotification(notification);
     }
+
+    @After(value="@annotation(NotifyOnImport) && args(userId, ..)", argNames = "userId")
+    public void notifyOnImport(Integer userId) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(userId)
+                .time(LocalDateTime.now())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+    }
 }

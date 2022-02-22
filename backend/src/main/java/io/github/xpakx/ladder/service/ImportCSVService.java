@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnImport;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -32,6 +33,7 @@ public class ImportCSVService implements ImportServiceInterface {
 
     @Override
     @Transactional
+    @NotifyOnImport
     public void importProjectList(Integer userId, String csv) {
         List<ProjectImport> projects = CSVtoProjectList(csv);
         List<Integer> ids = getProjectIdsFromImported(projects);
@@ -120,6 +122,7 @@ public class ImportCSVService implements ImportServiceInterface {
 
     @Override
     @Transactional
+    @NotifyOnImport
     public void importTasksToProjectById(Integer userId, Integer projectId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
         List<Integer> ids = getTaskIdsFromImported(tasks);
@@ -284,6 +287,7 @@ public class ImportCSVService implements ImportServiceInterface {
 
     @Override
     @Transactional
+    @NotifyOnImport
     public void importTasks(Integer userId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
         List<Integer> ids = getTaskIdsFromImported(tasks);
