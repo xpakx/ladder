@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnImport;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
@@ -32,6 +33,7 @@ public class ImportCSVService implements ImportServiceInterface {
 
     @Override
     @Transactional
+    @NotifyOnImport
     public void importProjectList(Integer userId, String csv) {
         List<ProjectImport> projects = CSVtoProjectList(csv);
         List<Integer> ids = getProjectIdsFromImported(projects);
@@ -120,6 +122,7 @@ public class ImportCSVService implements ImportServiceInterface {
 
     @Override
     @Transactional
+    @NotifyOnImport
     public void importTasksToProjectById(Integer userId, Integer projectId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
         List<Integer> ids = getTaskIdsFromImported(tasks);
@@ -284,6 +287,7 @@ public class ImportCSVService implements ImportServiceInterface {
 
     @Override
     @Transactional
+    @NotifyOnImport
     public void importTasks(Integer userId, String csv) {
         List<TaskImport> tasks = CSVtoTaskList(csv);
         List<Integer> ids = getTaskIdsFromImported(tasks);
@@ -313,6 +317,7 @@ public class ImportCSVService implements ImportServiceInterface {
     private Map<Integer, Project> generateNewProjects(List<TaskImport> tasks, List<Integer> projectIds, Integer userId) {
         List<Project> projects = new ArrayList<>();
         List<Integer> newProjectsIds =  new ArrayList<>();
+        Integer order = projectRepository.getMaxOrderByOwnerId(userId);
         for(TaskImport task : tasks) {
             if(task.getProjectId() != null && !projectIds.contains(task.getProjectId()) && !newProjectsIds.contains(task.getProjectId())) {
                 Project newProject = new Project();
@@ -323,7 +328,7 @@ public class ImportCSVService implements ImportServiceInterface {
                 newProject.setName(task.getProjectName());
                 newProject.setModifiedAt(LocalDateTime.now());
                 newProject.setCreatedAt(LocalDateTime.now());
-                //TODO order
+                newProject.setGeneralOrder(++order);
                 projects.add(newProject);
                 newProjectsIds.add(task.getProjectId());
             }
@@ -334,7 +339,7 @@ public class ImportCSVService implements ImportServiceInterface {
             Optional<Project> proj = projects.stream()
                     .filter((a) -> a.getName().equals(task.getProjectName()))
                     .findAny();
-            proj.ifPresent(project -> result.put(project.getId(), project));
+            proj.ifPresent(project -> result.put(task.getProjectId(), project));
         }
         return result;
     }
