@@ -42,6 +42,12 @@ public class ExportTXTService implements ExportServiceInterface {
     public InputStreamResource exportTasksFromProjectById(Integer userId, Integer projectId) {
         List<TaskDetails> tasks = taskRepository.findByOwnerIdAndProjectId(userId, projectId, TaskDetails.class);
         StringBuilder result = new StringBuilder();
+        transformProjectTasksToTXT(tasks, result);
+        InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
+        return new InputStreamResource(stream);
+    }
+
+    private void transformProjectTasksToTXT(List<TaskDetails> tasks, StringBuilder result) {
         Map<Integer, List<TaskDetails>> taskByParentId = tasks.stream()
                 .filter((a) -> a.getParent() != null)
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
@@ -53,8 +59,6 @@ public class ExportTXTService implements ExportServiceInterface {
             addTaskToResult(result, task);
             addChildrenToResult(result, task, taskByParentId, 1);
         }
-        InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
-        return new InputStreamResource(stream);
     }
 
     private void addChildrenToResult(StringBuilder result, TaskDetails parent,
