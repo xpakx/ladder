@@ -91,9 +91,17 @@ public class ExportTXTService implements ExportServiceInterface {
     @Override
     public InputStreamResource exportTasks(Integer userId) {
         List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
+        Map<Integer, List<TaskDetails>> taskByProjectId = tasks.stream()
+                .filter((a) -> a.getProject() != null)
+                .collect(Collectors.groupingBy((a) -> a.getProject().getId()));
+        List<TaskDetails> inboxTasks = tasks.stream()
+                .filter((a) -> a.getProject() == null)
+                .sorted(Comparator.comparingInt(TaskDetails::getProjectOrder))
+                .collect(Collectors.toList());
         StringBuilder result = new StringBuilder();
-        for(TaskDetails task : tasks) {
-            addTaskToResult(result, task);
+        transformProjectTasksToTXT(inboxTasks, result);
+        for(List<TaskDetails> taskList : taskByProjectId.values()) {
+            transformProjectTasksToTXT(taskList, result);
         }
         InputStream stream = new ByteArrayInputStream(result.toString().getBytes());
         return new InputStreamResource(stream);
