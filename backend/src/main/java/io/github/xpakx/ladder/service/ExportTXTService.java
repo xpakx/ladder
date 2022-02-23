@@ -63,6 +63,7 @@ public class ExportTXTService implements ExportServiceInterface {
                 .sorted(Comparator.comparingInt(TaskDetails::getProjectOrder))
                 .collect(Collectors.toList());
         for(TaskDetails task : tasks) {
+            result.append(" ".repeat(order));
             addTaskToResult(result, task);
             addChildrenToResult(result, task, taskByParentId, order+1);
         }
