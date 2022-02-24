@@ -63,6 +63,9 @@ public class ExportTXTService implements ExportServiceInterface {
 
     private void addChildrenToResult(StringBuilder result, TaskDetails parent,
                                      Map<Integer, List<TaskDetails>> taskByParentId, Integer order) {
+        if(taskByParentId.get(parent.getId()) == null) {
+            return;
+        }
         List<TaskDetails> tasks = taskByParentId.get(parent.getId()).stream()
                 .sorted(Comparator.comparingInt(TaskDetails::getProjectOrder))
                 .collect(Collectors.toList());
