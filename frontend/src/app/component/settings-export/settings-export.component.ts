@@ -40,4 +40,30 @@ export class SettingsExportComponent implements OnInit {
     );
   }
 
+  exportProjectsAsTXT() {
+    this.exportService.getProjectsAsTXT().subscribe(
+      (response: Blob) => {
+        var txt = new Blob([response], { type: "text/txt" });
+        var url= window.URL.createObjectURL(txt);
+        window.open(url);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+  }
+
+  exportTasksAsTXT() {
+    this.exportService.getTasksAsTXT().subscribe(
+      (response: Blob) => {
+        var txt = new Blob([response], { type: "text/txt" });
+        var url= window.URL.createObjectURL(txt);
+        window.open(url);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+  }
+
 }

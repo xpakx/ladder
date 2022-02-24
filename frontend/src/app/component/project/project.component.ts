@@ -123,4 +123,19 @@ export class ProjectComponent implements OnInit, AfterViewInit {
       );
     }
   }
+
+  exportToTXT() {
+    if(this.project) {
+      this.exportService.getProjectTasksAsTXT(this.project.id).subscribe(
+        (response: Blob) => {
+          var txt = new Blob([response], { type: "text/txt" });
+          var url= window.URL.createObjectURL(txt);
+          window.open(url);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+      );
+    }
+  }
 }

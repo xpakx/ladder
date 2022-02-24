@@ -7,6 +7,7 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -55,4 +56,12 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "user_account_id")
     private UserAccount owner;
+
+    @JsonIgnore
+    @ManyToMany(cascade={CascadeType.MERGE})
+    @JoinTable(name="collaborators",
+            joinColumns={@JoinColumn(name="project_id")},
+            inverseJoinColumns={@JoinColumn(name="user_account_id")})
+    private Set<UserAccount> collaborators;
+    private boolean collaborative;
 }

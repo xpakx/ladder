@@ -29,4 +29,19 @@ export class ExportService {
     let userId  = this.getUserId();
     return this.http.get(`${this.apiServerUrl}/${userId}/export/csv/tasks`, { responseType: 'blob' });
   }
+
+  public getProjectTasksAsTXT(projectId: number): Observable<Blob> {   
+    let userId  = this.getUserId();
+    return this.http.get(`${this.apiServerUrl}/${userId}/export/txt/projects/${projectId}/tasks`, { responseType: 'blob' });
+  }
+
+  public getProjectsAsTXT(): Observable<Blob> {   
+    let userId  = this.getUserId();
+    return this.http.get(`${this.apiServerUrl}/${userId}/export/txt/projects`, { responseType: 'blob' });
+  }
+
+  public getTasksAsTXT(): Observable<Blob> {   
+    let userId  = this.getUserId();
+    return this.http.get(`${this.apiServerUrl}/${userId}/export/txt/tasks`, { responseType: 'blob' });
+  }
 }
