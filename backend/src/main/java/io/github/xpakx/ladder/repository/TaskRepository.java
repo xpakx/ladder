@@ -136,4 +136,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     List<Integer> findIdByOwnerIdAndIdIn(Integer ownerId, List<Integer> ids);
     List<Task> findByOwnerIdAndIdIn(Integer ownerId, List<Integer> ids);
+
+    @Query("SELECT COUNT(1) FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators u WHERE u.id = :id")
+    boolean existsCollaboratorById(Integer id);
 }
