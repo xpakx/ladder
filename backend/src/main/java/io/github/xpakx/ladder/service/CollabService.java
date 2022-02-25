@@ -20,13 +20,17 @@ public class CollabService {
     private final ProjectRepository projectRepository;
 
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
+        Integer ownerId = testAccess(projectId, userId).orElse(userId);
+        return projectService.addTask(request, projectId, ownerId);
+    }
+
+    private Optional<Integer> testAccess(Integer projectId, Integer userId) {
         boolean isCollaborator = projectRepository.existsCollaboratorById(userId);
         Optional<Integer> owner = userRepository.getOwnerIdByProjectId(projectId);
         if(!isCollaborator && owner.isEmpty()) {
             throw new AccessDeniedException("You aren't collaborator in this project!");
         }
-        Integer ownerId = owner.orElse(userId);
-        return projectService.addTask(request, projectId, ownerId);
+        return owner;
     }
 
     public Task addTaskAfter(AddTaskRequest request, Integer userId, Integer afterId) {
