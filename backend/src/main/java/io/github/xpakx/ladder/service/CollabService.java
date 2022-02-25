@@ -2,9 +2,14 @@ package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
+import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
 
 @Service
 @AllArgsConstructor
@@ -12,9 +17,15 @@ public class CollabService {
     private final TaskService taskService;
     private final ProjectService projectService;
     private final UserAccountRepository userRepository;
+    private final ProjectRepository projectRepository;
 
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
-        Integer ownerId = userRepository.getOwnerIdByProjectId(projectId).orElse(userId);
+        boolean isCollaborator = projectRepository.existsCollaboratorById(userId);
+        Optional<Integer> owner = userRepository.getOwnerIdByProjectId(projectId);
+        if(!isCollaborator && owner.isEmpty()) {
+            throw new AccessDeniedException("You aren't collaborator in this project!");
+        }
+        Integer ownerId = owner.orElse(userId);
         return projectService.addTask(request, projectId, ownerId);
     }
 
