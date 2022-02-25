@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
+import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,60 +11,75 @@ import org.springframework.stereotype.Service;
 public class CollabService {
     private final TaskService taskService;
     private final ProjectService projectService;
+    private final UserAccountRepository userRepository;
 
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
-        return projectService.addTask(request, projectId, userId);
+        Integer ownerId = userRepository.getOwnerIdByProjectId(projectId).orElse(userId);
+        return projectService.addTask(request, projectId, ownerId);
     }
 
     public Task addTaskAfter(AddTaskRequest request, Integer userId, Integer afterId) {
-        return taskService.addTaskAfter(request, userId, afterId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(afterId).orElse(userId);
+        return taskService.addTaskAfter(request, ownerId, afterId);
     }
 
     public Task addTaskBefore(AddTaskRequest request, Integer userId, Integer beforeId) {
-        return taskService.addTaskBefore(request, userId, beforeId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(beforeId).orElse(userId);
+        return taskService.addTaskBefore(request, ownerId, beforeId);
     }
 
     public Task addTaskAsChild(AddTaskRequest request, Integer userId, Integer parentId) {
-        return taskService.addTaskAsChild(request, userId, parentId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(parentId).orElse(userId);
+        return taskService.addTaskAsChild(request, ownerId, parentId);
     }
 
     public TasksAndProjects duplicate(Integer projectId, Integer userId) {
-        return projectService.duplicate(projectId, userId);
+        Integer ownerId = userRepository.getOwnerIdByProjectId(projectId).orElse(userId);
+        return projectService.duplicate(projectId, ownerId);
     }
 
     public void deleteTask(Integer taskId, Integer userId) {
-        taskService.deleteTask(taskId, userId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(taskId).orElse(userId);
+        taskService.deleteTask(taskId, ownerId);
     }
 
     public Task updateTask(AddTaskRequest request, Integer taskId, Integer userId) {
-        return taskService.updateTask(request, taskId, userId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(taskId).orElse(userId);
+        return taskService.updateTask(request, taskId, ownerId);
     }
 
     public Task updateTaskDueDate(DateRequest request, Integer taskId, Integer userId) {
-        return taskService.updateTaskDueDate(request, taskId, userId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(taskId).orElse(userId);
+        return taskService.updateTaskDueDate(request, taskId, ownerId);
     }
 
     public Task updateTaskPriority(PriorityRequest request, Integer taskId, Integer userId) {
-        return taskService.updateTaskPriority(request, taskId, userId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(taskId).orElse(userId);
+        return taskService.updateTaskPriority(request, taskId, ownerId);
     }
 
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
-        return taskService.completeTask(request, taskId, userId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(taskId).orElse(userId);
+        return taskService.completeTask(request, taskId, ownerId);
     }
 
     public Task moveTaskAfter(IdRequest request, Integer userId, Integer taskToMoveId) {
-        return taskService.moveTaskAfter(request, userId, taskToMoveId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(taskToMoveId).orElse(userId);
+        return taskService.moveTaskAfter(request, ownerId, taskToMoveId);
     }
 
     public Task moveTaskAsFirstChild(IdRequest request, Integer userId, Integer taskToMoveId) {
-        return taskService.moveTaskAsFirstChild(request, userId, taskToMoveId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(taskToMoveId).orElse(userId);
+        return taskService.moveTaskAsFirstChild(request, ownerId, taskToMoveId);
     }
 
     public Task updateTaskCollapsion(BooleanRequest request, Integer taskId, Integer userId) {
-        return taskService.updateTaskCollapsion(request, taskId, userId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(taskId).orElse(userId);
+        return taskService.updateTaskCollapsion(request, taskId, ownerId);
     }
 
     public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {
-        return  taskService.moveTaskAsFirst(userId, taskToMoveId);
+        Integer ownerId = userRepository.getOwnerIdByTaskId(taskToMoveId).orElse(userId);
+        return  taskService.moveTaskAsFirst(ownerId, taskToMoveId);
     }
 }
