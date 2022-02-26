@@ -795,6 +795,22 @@ public class ProjectService {
                 .findByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         toUpdate.getCollaborators().add(userRepository.getById(request.getId()));
+        toUpdate.setCollaborative(true);
+        return projectRepository.save(toUpdate);
+    }
+
+    public Project deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
+        Project toUpdate = projectRepository
+                .findByIdAndOwnerId(projectId, ownerId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        toUpdate.setCollaborators(
+                toUpdate.getCollaborators().stream()
+                        .filter((a) -> !collabId.equals(a.getId()))
+                        .collect(Collectors.toSet())
+        );
+        if(toUpdate.getCollaborators().size() == 0) {
+            toUpdate.setCollaborative(false);
+        }
         return projectRepository.save(toUpdate);
     }
 }
