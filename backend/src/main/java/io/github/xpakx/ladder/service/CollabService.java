@@ -69,6 +69,7 @@ public class CollabService {
         taskService.deleteTask(taskId, ownerId);
     }
 
+    //TODO: prevent changing project
     public Task updateTask(AddTaskRequest request, Integer taskId, Integer userId) {
         Integer ownerId = testAccessToTask(taskId, userId).orElse(userId);
         return taskService.updateTask(request, taskId, ownerId);
@@ -89,11 +90,13 @@ public class CollabService {
         return taskService.completeTask(request, taskId, ownerId);
     }
 
+    //TODO: prevent changing project
     public Task moveTaskAfter(IdRequest request, Integer userId, Integer taskToMoveId) {
         Integer ownerId = testAccessToTask(taskToMoveId, userId).orElse(userId);
         return taskService.moveTaskAfter(request, ownerId, taskToMoveId);
     }
 
+    //TODO: prevent changing project
     public Task moveTaskAsFirstChild(IdRequest request, Integer userId, Integer taskToMoveId) {
         Integer ownerId = testAccessToTask(taskToMoveId, userId).orElse(userId);
         return taskService.moveTaskAsFirstChild(request, ownerId, taskToMoveId);
@@ -104,6 +107,7 @@ public class CollabService {
         return taskService.updateTaskCollapsion(request, taskId, ownerId);
     }
 
+    //TODO: prevent changing project
     public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {
         Integer ownerId = testAccessToTask(taskToMoveId, userId).orElse(userId);
         return  taskService.moveTaskAsFirst(ownerId, taskToMoveId);
