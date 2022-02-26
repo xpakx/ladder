@@ -67,6 +67,26 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
+    @NotifyOnTaskChange
+    public Task updateTaskWithoutProjectChange(AddTaskRequest request, Integer taskId, Integer userId) {
+        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
+                .orElseThrow(() -> new NotFoundException("No such task!"));
+        taskToUpdate.setTitle(request.getTitle());
+        taskToUpdate.setDescription(request.getDescription());
+        taskToUpdate.setProjectOrder(request.getProjectOrder());
+        if(haveDifferentDueDate(request.getDue(), taskToUpdate.getDue())) {
+            taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
+        }
+        taskToUpdate.setDue(request.getDue());
+        taskToUpdate.setPriority(request.getPriority());
+        taskToUpdate.setCompletedAt(request.getCompletedAt());
+        taskToUpdate.setPriority(request.getPriority());
+        taskToUpdate.setOwner(userRepository.getById(userId));
+        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
+        return taskRepository.save(taskToUpdate);
+    }
+
     private boolean haveDifferentDueDate(LocalDateTime dueDate1, LocalDateTime dueDate2) {
         if(dueDate1 == null && dueDate2 == null) {
             return false;
