@@ -789,4 +789,12 @@ public class ProjectService {
         );
         return result;
     }
+
+    public Project addCollaborator(IdRequest request, Integer projectId, Integer ownerId) {
+        Project toUpdate = projectRepository
+                .findByIdAndOwnerId(projectId, ownerId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        toUpdate.getCollaborators().add(userRepository.getById(request.getId()));
+        return projectRepository.save(toUpdate);
+    }
 }
