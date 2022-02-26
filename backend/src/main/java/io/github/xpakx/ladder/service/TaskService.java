@@ -52,7 +52,6 @@ public class TaskService {
             taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
         }
         taskToUpdate.setDue(request.getDue());
-        //taskToUpdate.setParent(parent);
         if(!haveSameProject(taskToUpdate, project)) {
             List<Task> childrenWithUpdatedProject = updateChildrenProject(project, taskToUpdate, userId);
             taskRepository.saveAll(childrenWithUpdatedProject);
