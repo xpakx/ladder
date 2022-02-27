@@ -17,6 +17,6 @@ public class UserWithData {
     private List<HabitDetails> habits;
     private List<HabitCompletionDetails> todayHabitCompletions;
     private List<FilterDetails> filters;
-    private List<ProjectDetails> collabs;
-    private List<TaskDetails> collabTasks;
+    private List<CollabProjectDetails> collabs;
+    private List<CollabTaskDetails> collabTasks;
 }

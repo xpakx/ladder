@@ -33,11 +33,11 @@ public class MainService {
         result.setHabits(habitRepository.findByOwnerIdAndArchived(userId, false, HabitDetails.class));
         result.setFilters(filterRepository.findByOwnerId(userId, FilterDetails.class));
 
-        List<ProjectDetails> collabProjects = projectRepository.findCollabsByUserIdAndNotArchived(userId, ProjectDetails.class);
+        List<CollabProjectDetails> collabProjects = projectRepository.findCollabsByUserIdAndNotArchived(userId, CollabProjectDetails.class);
         result.setCollabs(collabProjects);
         result.setCollabTasks(taskRepository.findByProjectIdIn(
-                collabProjects.stream().map(ProjectDetails::getId).collect(Collectors.toList()),
-                TaskDetails.class
+                collabProjects.stream().map(CollabProjectDetails::getId).collect(Collectors.toList()),
+                CollabTaskDetails.class
         ));
 
         LocalDateTime today = LocalDateTime.now();
