@@ -1,3 +1,5 @@
+import { CollabProjectDetails } from "./collab-project-details";
+import { CollabTaskDetails } from "./collab-task-details";
 import { FilterDetails } from "./filter-details";
 import { HabitCompletionDetails } from "./habit-completion-details";
 import { HabitDetails } from "./habit-details";
@@ -15,4 +17,6 @@ export interface UserWithData {
     habits: HabitDetails[];
     todayHabitCompletions: HabitCompletionDetails[];
     filters: FilterDetails[];
+    collabs: CollabProjectDetails[];
+    collabTasks: CollabTaskDetails[];
 }

@@ -135,4 +135,14 @@ export class ProjectService implements MultilevelMovableService<Project>{
     let userId  = this.getUserId();
     return this.http.get<ProjectData>(`${this.apiServerUrl}/${userId}/projects/${projectId}/data`);
   }
+
+  public addCollaborator(request: IdRequest, projectId: number):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`, request);
+  }
+
+  public deleteCollaborator(collaboratorId: number, projectId: number):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.delete<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators/${collaboratorId}`);
+  }
 }
