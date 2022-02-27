@@ -19,6 +19,13 @@
                 Add
             </button>
         </form>
+
+        <li class="user-list" *ngFor="let user of collaborators">
+            {{user.username}}
+            <button type="button cancel-button" (click)="deleteCollaborator(user.id)">
+                    <i class="fa fa-cancel"></i>
+            </button>
+        </li>
   
       </div>
       <div class="modal-footer">
