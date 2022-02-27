@@ -12,6 +12,7 @@ import { ProjectDetails } from '../entity/project-details';
 import { ProjectRequest } from '../entity/project-request';
 import { Task } from '../entity/task';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
+import { UserMin } from '../entity/user-min';
 import { UserWithData } from '../entity/user-with-data';
 import { MultilevelMovableService } from './multilevel-movable-service';
 
@@ -144,5 +145,10 @@ export class ProjectService implements MultilevelMovableService<Project>{
   public deleteCollaborator(collaboratorId: number, projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
     return this.http.delete<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators/${collaboratorId}`);
+  }
+
+  public getCollaborators(projectId: number): Observable<UserMin[]> {
+    let userId  = this.getUserId();
+    return this.http.get<UserMin[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`);
   }
 }
