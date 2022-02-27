@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +18,9 @@ import java.util.Optional;
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
     <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);
     Optional<Project> findByIdAndOwnerId(Integer Id, Integer ownerId);
+
+    @EntityGraph("project-with-collaborators")
+    Optional<Project> getByIdAndOwnerId(Integer Id, Integer ownerId);
 
     <T> List<T> findByOwnerIdAndParentIsNull(Integer ownerId, Class<T> type);
     <T> List<T> findByOwnerId(Integer ownerId, Class<T> type);

@@ -792,7 +792,7 @@ public class ProjectService {
 
     public Project addCollaborator(IdRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
-                .findByIdAndOwnerId(projectId, ownerId)
+                .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         toUpdate.getCollaborators().add(userRepository.getById(request.getId()));
         toUpdate.setCollaborative(true);
@@ -801,7 +801,7 @@ public class ProjectService {
 
     public Project deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
-                .findByIdAndOwnerId(projectId, ownerId)
+                .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         toUpdate.setCollaborators(
                 toUpdate.getCollaborators().stream()
