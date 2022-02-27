@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -30,6 +32,13 @@ public class MainService {
         result.setLabels(labelRepository.findByOwnerId(userId, LabelDetails.class));
         result.setHabits(habitRepository.findByOwnerIdAndArchived(userId, false, HabitDetails.class));
         result.setFilters(filterRepository.findByOwnerId(userId, FilterDetails.class));
+
+        List<ProjectDetails> collabProjects = projectRepository.findCollabsByUserIdAndNotArchived(userId, ProjectDetails.class);
+        result.setCollabs(collabProjects);
+        result.setCollabTasks(taskRepository.findByProjectIdIn(
+                collabProjects.stream().map(ProjectDetails::getId).collect(Collectors.toList()),
+                TaskDetails.class
+        ));
 
         LocalDateTime today = LocalDateTime.now();
         today = today.minusHours(today.getHour())

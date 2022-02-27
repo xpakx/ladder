@@ -139,4 +139,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     @Query("SELECT COUNT(1) FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators u WHERE u.id = :id")
     boolean existsCollaboratorById(Integer id);
+
+    @EntityGraph("task-with-labels")
+    <T> List<T> findByProjectIdIn(List<Integer> projectIds, Class<T> type);
 }
