@@ -45,6 +45,7 @@ import { SettingsComponent } from './component/settings/settings.component';
 import { SettingsExportComponent } from './component/settings-export/settings-export.component';
 import { SettingsImportComponent } from './component/settings-import/settings-import.component';
 import { EditCollabsComponent } from './component/edit-collabs/edit-collabs.component';
+import { CollabProjectListComponent } from './component/collab-project-list/collab-project-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -90,7 +91,8 @@ export function tokenGetter() {
     SettingsComponent,
     SettingsExportComponent,
     SettingsImportComponent,
-    EditCollabsComponent
+    EditCollabsComponent,
+    CollabProjectListComponent
   ],
   imports: [
     BrowserModule,
