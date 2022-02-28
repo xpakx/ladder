@@ -35,8 +35,9 @@ public class MainService {
 
         List<CollabProjectDetails> collabProjects = projectRepository.findCollabsByUserIdAndNotArchived(userId, CollabProjectDetails.class);
         result.setCollabs(collabProjects);
-        result.setCollabTasks(taskRepository.findByProjectIdIn(
+        result.setCollabTasks(taskRepository.findByProjectIdInAndArchived(
                 collabProjects.stream().map(CollabProjectDetails::getId).collect(Collectors.toList()),
+                false,
                 CollabTaskDetails.class
         ));
 

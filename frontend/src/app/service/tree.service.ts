@@ -165,6 +165,10 @@ export class TreeService {
     return this.tasks.getById(taskId);
   }
 
+  getCollabTaskById(taskId: number): TaskTreeElem | undefined {
+    return this.collabTasks.getById(taskId);
+  }
+
   getTasksByProject(projectId: number): TaskTreeElem[] {
     return this.tasks.getTasksByProject(projectId);
   }

@@ -81,6 +81,6 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Query("SELECT COUNT(1) FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id")
     boolean existsCollaboratorById(Integer id);
 
-    @Query("SELECT p FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id")
+    @Query("SELECT p FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id AND p.archived = false")
     <T> List<T> findCollabsByUserIdAndNotArchived(Integer id, Class<T> type);
 }

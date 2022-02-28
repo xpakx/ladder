@@ -103,11 +103,11 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
 
   completeTask(id: number) {
     if(!this.blocked) {
-      let task = this.tree.getTaskById(id);
+      let task = this.tree.getCollabTaskById(id);
       if(task) {
       this.taskService.completeTask(id, {flag: !task.completed}).subscribe(
           (response: Task) => {
-          this.tree.changeTaskCompletion(response);
+          this.taskTreeService.changeTaskCompletion(response);
         },
         (error: HttpErrorResponse) => {
         
