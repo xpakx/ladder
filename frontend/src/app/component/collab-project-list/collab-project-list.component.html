@@ -19,7 +19,7 @@
                                 <i class="fa fa-flip-horizontal fa-users"></i>
                             </div>
                             <span class="project-name">{{project.name}}</span>
-                            <div class="counter_count">0</div>
+                            <div class="counter_count">{{treeService.getNumOfUncompletedTasksByCollabProject(project.id)}}</div>
                         </button>
                         
                         <button type="button" #contextMenuButton class="icon_more" (click)="openContextMenu($event, project)">

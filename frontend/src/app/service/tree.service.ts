@@ -18,6 +18,7 @@ import { TaskTreeElem } from '../entity/task-tree-elem';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { UserWithData } from '../entity/user-with-data';
 import { CollabProjectTreeService } from './collab-project-tree.service';
+import { CollabTaskTreeService } from './collab-task-tree.service';
 import { FilterTreeService } from './filter-tree.service';
 import { HabitCompletionTreeService } from './habit-completion-tree.service';
 import { HabitTreeService } from './habit-tree.service';
@@ -37,7 +38,7 @@ export class TreeService {
   constructor(private projects: ProjectTreeService, private tasks: TaskTreeService,
     private labels: LabelTreeService, private habits: HabitTreeService, 
     private completions: HabitCompletionTreeService, private filters: FilterTreeService,
-    private collabs: CollabProjectTreeService) { }
+    private collabs: CollabProjectTreeService, private collabTasks: CollabTaskTreeService) { }
 
   isLoaded(): boolean {
     return this.loaded;
@@ -53,6 +54,7 @@ export class TreeService {
     this.completions.load(tree.todayHabitCompletions);
     this.filters.load(tree.filters);
     this.collabs.load(tree.collabs);
+    this.collabTasks.loadTasks(tree.collabTasks)
   }
 
   transformTasks(tasks: TaskDetails[]): TaskTreeElem[] {
@@ -153,6 +155,10 @@ export class TreeService {
 
   getNumOfUncompletedTasksToday(): number {
     return this.tasks.getNumOfUncompletedTasksToday();
+  }
+
+  getNumOfUncompletedTasksByCollabProject(projectId: number): number {
+    return this.collabTasks.getNumOfUncompletedTasksByProject(projectId);
   }
 
   getTaskById(taskId: number): TaskTreeElem | undefined {

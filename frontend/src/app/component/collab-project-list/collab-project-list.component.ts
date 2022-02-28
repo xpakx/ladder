@@ -4,6 +4,7 @@ import { CollabProjectDetails } from 'src/app/entity/collab-project-details';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { CollabProjectTreeService } from 'src/app/service/collab-project-tree.service';
 import { LabelService } from 'src/app/service/label.service';
+import { TreeService } from 'src/app/service/tree.service';
 
 @Component({
   selector: 'app-collab-project-list',
@@ -16,7 +17,7 @@ export class CollabProjectListComponent implements OnInit, AfterViewInit  {
 
   constructor(private router: Router,
     private renderer: Renderer2, private labelService: LabelService, 
-    public tree: CollabProjectTreeService) { }
+    public tree: CollabProjectTreeService, public treeService: TreeService) { }
 
   ngOnInit(): void {
   }
