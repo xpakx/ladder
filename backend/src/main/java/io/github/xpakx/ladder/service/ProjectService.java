@@ -813,4 +813,8 @@ public class ProjectService {
         }
         return projectRepository.save(toUpdate);
     }
+
+    public List<UserWithNameAndId> getCollaborators( Integer projectId, Integer ownerId) {
+        return userRepository.getCollaboratorsByProjectIdAndOwnerId(projectId, ownerId);
+    }
 }
