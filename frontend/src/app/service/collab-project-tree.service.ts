@@ -37,11 +37,14 @@ export class CollabProjectTreeService  {
   }
 
   getProjects(): CollabProjectDetails[] {
-    console.log(JSON.stringify(this.list))
     return this.list;
   }
 
   isEmpty(): boolean {
     return this.list.length == 0;
+  }
+
+  getProjectById(id: number): CollabProjectDetails | undefined {
+    return this.list.find((a) => a.id == id);
   }
 }

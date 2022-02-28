@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ArchiveComponent } from './component/archive/archive.component';
+import { CollabProjectComponent } from './component/collab-project/collab-project.component';
 import { DailyViewComponent } from './component/daily-view/daily-view.component';
 import { HabitListComponent } from './component/habit-list/habit-list.component';
 import { InboxComponent } from './component/inbox/inbox.component';
@@ -27,7 +28,8 @@ const routes: Routes = [
   { path: 'search', component: SearchResultComponent },
   { path: 'archive', component: ArchiveComponent },
   { path: 'archive/project/:id', component: ProjectArchiveComponent },
-  { path: 'settings', component: SettingsComponent }
+  { path: 'settings', component: SettingsComponent },
+  { path: 'collab/:id', component: CollabProjectComponent }
 ];
 
 @NgModule({
