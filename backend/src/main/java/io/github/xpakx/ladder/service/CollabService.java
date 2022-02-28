@@ -31,7 +31,7 @@ public class CollabService {
     private Optional<Integer> testAccessToProject(Integer projectId, Integer userId) {
         boolean isCollaborator = projectRepository.existsCollaboratorById(userId);
         Optional<Integer> owner = userRepository.getOwnerIdByProjectId(projectId);
-        if(!isCollaborator && owner.isEmpty()) {
+        if(!isCollaborator || owner.isEmpty()) {
             throw new AccessDeniedException("You aren't collaborator in this project!");
         }
         return owner;
@@ -39,8 +39,8 @@ public class CollabService {
 
     private Optional<Integer> testAccessToTask(Integer taskId, Integer userId) {
         boolean isCollaborator = taskRepository.existsCollaboratorById(userId);
-        Optional<Integer> owner = userRepository.getOwnerIdByProjectId(taskId);
-        if(!isCollaborator && owner.isEmpty()) {
+        Optional<Integer> owner = userRepository.getOwnerIdByTaskId(taskId);
+        if(!isCollaborator || owner.isEmpty()) {
             throw new AccessDeniedException("You aren't collaborator in this project!");
         }
         return owner;

@@ -137,7 +137,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Integer> findIdByOwnerIdAndIdIn(Integer ownerId, List<Integer> ids);
     List<Task> findByOwnerIdAndIdIn(Integer ownerId, List<Integer> ids);
 
-    @Query("SELECT COUNT(1) FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators u WHERE u.id = :id")
+    @Query("SELECT case when count(u)> 0 then true else false end FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators u WHERE u.id = :id")
     boolean existsCollaboratorById(Integer id);
 
     <T> List<T> findByProjectIdInAndArchived(List<Integer> projectIds, boolean archived, Class<T> type);
