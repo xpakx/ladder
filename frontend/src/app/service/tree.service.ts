@@ -230,6 +230,10 @@ export class TreeService {
     this.tasks.deleteTask(taskId);
   }
 
+  deleteCollabTask(taskId: number) {
+    this.collabTasks.deleteTask(taskId);
+  }
+
   deleteHabit(habitId: number) {
     this.habits.deleteHabit(habitId);
   }

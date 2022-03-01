@@ -203,7 +203,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
 
   askForDelete() {
     if(this.contextTaskMenu) {
-      this.deleteService.openModalForTask(this.contextTaskMenu);
+      this.deleteService.openModalForCollabTask(this.contextTaskMenu);
     }
     this.closeContextTaskMenu();
   }
