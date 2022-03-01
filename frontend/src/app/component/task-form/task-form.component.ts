@@ -67,6 +67,9 @@ export class TaskFormComponent implements OnInit {
   }
 
   openSelectProjectMenu() {
+    if(this.collab) {
+      return;
+    }
     this.showSelectProjectMenu = true;
   }
 
