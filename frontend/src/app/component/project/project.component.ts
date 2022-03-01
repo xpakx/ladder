@@ -138,4 +138,15 @@ export class ProjectComponent implements OnInit, AfterViewInit {
       );
     }
   }
+
+  displayCollabModal: boolean = false;
+
+  openCollabModal() {
+    this.closeContextTaskMenu();
+    this.displayCollabModal = true;
+  }
+
+  closeCollabModal() {
+    this.displayCollabModal = false;
+  }
 }

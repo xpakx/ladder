@@ -15,10 +15,15 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@NamedEntityGraph(name = "project-with-children",
-        attributeNodes = {@NamedAttributeNode("children"),
-                @NamedAttributeNode(value = "tasks")}
-)
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "project-with-children",
+                attributeNodes = {@NamedAttributeNode("children"),
+                        @NamedAttributeNode(value = "tasks")}
+        ),
+        @NamedEntityGraph(name = "project-with-collaborators",
+                attributeNodes = {@NamedAttributeNode("collaborators")}
+        )
+})
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

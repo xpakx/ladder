@@ -7,6 +7,7 @@ import { HabitDetails } from '../entity/habit-details';
 import { LabelDetails } from '../entity/label-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
 import { TaskTreeElem } from '../entity/task-tree-elem';
+import { CollabTaskService } from './collab-task.service';
 import { FilterService } from './filter.service';
 import { HabitService } from './habit.service';
 import { LabelService } from './label.service';
@@ -21,6 +22,7 @@ export class DeleteService {
   private shouldDeleteLabel: boolean = false;
   private shouldDeleteProject: boolean = false;
   private shouldDeleteTask: boolean = false;
+  private shouldDeleteCollabTask: boolean = false;
   private shouldDeleteHabit: boolean = false;
   private shouldDeleteFilter: boolean = false;
   private archived: boolean = false;
@@ -32,7 +34,7 @@ export class DeleteService {
 
   constructor(private labelService: LabelService, private projectService: ProjectService,
     private taskService: TaskService, private tree: TreeService, private habitService: HabitService,
-    private filterService: FilterService) { }
+    private filterService: FilterService, private collabService: CollabTaskService) { }
 
   delete(deletedId: number) {
     if(this.shouldDeleteLabel) {
@@ -45,6 +47,8 @@ export class DeleteService {
       this.deleteHabit(deletedId);
     } else if(this.shouldDeleteFilter) {
       this.deleteFilter(deletedId);
+    } else if(this.shouldDeleteCollabTask) {
+      this.deleteCollabTask(deletedId);
     }
 
     this.closeModal();    
@@ -111,6 +115,24 @@ export class DeleteService {
     this.taskService.deleteTask(deletedId).subscribe(
         (response: any, taskId: number = deletedId) => {
         this.tree.deleteTask(taskId);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+  }
+
+  openModalForCollabTask(task: TaskTreeElem) {
+    this.name = task.title;
+    this.id = task.id;
+    this.showDeleteMonit = true;
+    this.shouldDeleteCollabTask = true;
+  }
+
+  private deleteCollabTask(deletedId: number) {
+    this.collabService.deleteTask(deletedId).subscribe(
+        (response: any, taskId: number = deletedId) => {
+        this.tree.deleteCollabTask(taskId);
       },
       (error: HttpErrorResponse) => {
       

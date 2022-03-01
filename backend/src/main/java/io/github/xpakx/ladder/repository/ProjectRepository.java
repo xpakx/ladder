@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.ProjectDetails;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +18,9 @@ import java.util.Optional;
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
     <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);
     Optional<Project> findByIdAndOwnerId(Integer Id, Integer ownerId);
+
+    @EntityGraph("project-with-collaborators")
+    Optional<Project> getByIdAndOwnerId(Integer Id, Integer ownerId);
 
     <T> List<T> findByOwnerIdAndParentIsNull(Integer ownerId, Class<T> type);
     <T> List<T> findByOwnerId(Integer ownerId, Class<T> type);
@@ -73,4 +77,10 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     List<Integer> findIdByOwnerIdAndIdIn(Integer userId, List<Integer> ids);
     List<Project> findByOwnerIdAndIdIn(Integer userId, List<Integer> ids);
+
+    @Query("SELECT case when count(u)> 0 then true else false end FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id")
+    boolean existsCollaboratorById(Integer id);
+
+    @Query("SELECT p FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id AND p.archived = false")
+    <T> List<T> findCollabsByUserIdAndNotArchived(Integer id, Class<T> type);
 }

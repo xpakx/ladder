@@ -1,12 +1,24 @@
 package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.UserWithNameAndId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserAccountRepository extends JpaRepository<UserAccount, Integer> {
     Optional<UserAccount> findByUsername(String username);
+
+    @Query("SELECT u.id FROM Project p LEFT JOIN p.owner u WHERE p.id = :projectId")
+    Optional<Integer> getOwnerIdByProjectId(Integer projectId);
+
+    @Query("SELECT u.id FROM Task t LEFT JOIN t.owner u WHERE t.id = :taskId")
+    Optional<Integer> getOwnerIdByTaskId(Integer taskId);
+
+    @Query("SELECT u.id AS id, u.username AS username FROM Project p LEFT JOIN p.collaborators u WHERE p.id = :projectId AND p.owner.id = :ownerId")
+    List<UserWithNameAndId> getCollaboratorsByProjectIdAndOwnerId(Integer projectId, Integer ownerId);
 }

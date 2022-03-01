@@ -1,0 +1,49 @@
+<div class="expansion_panel">
+    <div class="expansion_panel__header" style="top: 372px;">
+        <button type="button" class="expansion_panel__toggle" (click)="switchCollapse()">
+            <div class="expansion_panel__toggle_icon">
+                <i class="fa mx-2 text-muted fa-chevron-right"  [class.rotated]="!tree.collapsed"></i>
+            </div>
+            Collaborative
+        </button>
+    </div>
+    <div class="projects" style="min-height: 0px;" [class.hidden]="tree.collapsed">
+        <div class="projects_list_container">
+            <ul class="items generic_left_list projects_list">
+                <ng-container *ngFor="let project of tree.getProjects()">
+                    <li class="project_list_item">
+                        <span class="left_actions">
+                        </span>
+                        <button class="text" (click)="toProject(project.id)">
+                            <div class="label-color" [style]="'color: ' + project.color +';'">
+                                <i class="fa fa-flip-horizontal fa-users"></i>
+                            </div>
+                            <span class="project-name">{{project.name}}</span>
+                            <div class="counter_count">{{treeService.getNumOfUncompletedTasksByCollabProject(project.id)}}</div>
+                        </button>
+                        
+                        <button type="button" #contextMenuButton class="icon_more" (click)="openContextMenu($event, project)">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </button>
+                    </li>
+
+                </ng-container>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<div class="ist-menu context" [class.hidden-context-menu]="!showContextMenu" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
+	<ul class="context-menu-project" #projectContext>
+	
+		<li class="context-menu-project-item" *ngIf="contextMenuProject">
+			<button >
+				<span class="menu_icon">
+					<i class="fa fa-heart-o"></i>
+				</span>
+				<div class="menu_label">???</div>
+			</button>
+		</li>
+	</ul>
+</div>

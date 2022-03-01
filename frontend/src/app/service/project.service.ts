@@ -12,6 +12,7 @@ import { ProjectDetails } from '../entity/project-details';
 import { ProjectRequest } from '../entity/project-request';
 import { Task } from '../entity/task';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
+import { UserMin } from '../entity/user-min';
 import { UserWithData } from '../entity/user-with-data';
 import { MultilevelMovableService } from './multilevel-movable-service';
 
@@ -92,6 +93,11 @@ export class ProjectService implements MultilevelMovableService<Project>{
     }
   }
 
+  public addCollabTask(request: AddTaskRequest, projectId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/collab/projects/${projectId}/tasks`, request);
+  }
+
   private getUserId() {
     return localStorage.getItem("user_id");
   }
@@ -134,5 +140,20 @@ export class ProjectService implements MultilevelMovableService<Project>{
   public getProjectData(projectId: number):  Observable<ProjectData> {
     let userId  = this.getUserId();
     return this.http.get<ProjectData>(`${this.apiServerUrl}/${userId}/projects/${projectId}/data`);
+  }
+
+  public addCollaborator(request: IdRequest, projectId: number):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`, request);
+  }
+
+  public deleteCollaborator(collaboratorId: number, projectId: number):  Observable<Project> {
+    let userId  = this.getUserId();
+    return this.http.delete<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators/${collaboratorId}`);
+  }
+
+  public getCollaborators(projectId: number): Observable<UserMin[]> {
+    let userId  = this.getUserId();
+    return this.http.get<UserMin[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`);
   }
 }

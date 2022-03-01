@@ -1,0 +1,39 @@
+<div class="modal modal-background"
+  tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Collaborators</h4>
+        <i class="fa fa-question fa-circle"></i>
+      </div>
+      <div class="modal-body">
+        <form class="form" [formGroup]="addCollabForm">
+            <div class="form-field">
+                <label for="projectName">Id</label>
+                <input class="form-control mr-sm-2" placeholder="" id="id" formControlName="id">
+            </div>
+            
+            <button type="button" class="modal-button modal-button-red" 
+            (click)="addCollaborator()" [disabled]="addCollabForm.invalid">
+                Add
+            </button>
+        </form>
+
+        <li class="user-list" *ngFor="let user of collaborators">
+            {{user.username}}
+            <button type="button cancel-button" (click)="deleteCollaborator(user.id)">
+                    <i class="fa fa-times-circle-o"></i>
+            </button>
+        </li>
+  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-button" 
+                (click)="close()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

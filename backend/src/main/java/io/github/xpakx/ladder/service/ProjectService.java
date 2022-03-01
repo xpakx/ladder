@@ -789,4 +789,32 @@ public class ProjectService {
         );
         return result;
     }
+
+    public Project addCollaborator(IdRequest request, Integer projectId, Integer ownerId) {
+        Project toUpdate = projectRepository
+                .getByIdAndOwnerId(projectId, ownerId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        toUpdate.getCollaborators().add(userRepository.getById(request.getId()));
+        toUpdate.setCollaborative(true);
+        return projectRepository.save(toUpdate);
+    }
+
+    public Project deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
+        Project toUpdate = projectRepository
+                .getByIdAndOwnerId(projectId, ownerId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        toUpdate.setCollaborators(
+                toUpdate.getCollaborators().stream()
+                        .filter((a) -> !collabId.equals(a.getId()))
+                        .collect(Collectors.toSet())
+        );
+        if(toUpdate.getCollaborators().size() == 0) {
+            toUpdate.setCollaborative(false);
+        }
+        return projectRepository.save(toUpdate);
+    }
+
+    public List<UserWithNameAndId> getCollaborators( Integer projectId, Integer ownerId) {
+        return userRepository.getCollaboratorsByProjectIdAndOwnerId(projectId, ownerId);
+    }
 }

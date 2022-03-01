@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CollabProjectDetails } from '../entity/collab-project-details';
 import { Filter } from '../entity/filter';
 import { FilterDetails } from '../entity/filter-details';
 import { Habit } from '../entity/habit';
@@ -17,6 +18,8 @@ import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { UserWithData } from '../entity/user-with-data';
+import { CollabProjectTreeService } from './collab-project-tree.service';
+import { CollabTaskTreeService } from './collab-task-tree.service';
 import { FilterTreeService } from './filter-tree.service';
 import { HabitCompletionTreeService } from './habit-completion-tree.service';
 import { HabitTreeService } from './habit-tree.service';
@@ -35,7 +38,8 @@ export class TreeService {
   
   constructor(private projects: ProjectTreeService, private tasks: TaskTreeService,
     private labels: LabelTreeService, private habits: HabitTreeService, 
-    private completions: HabitCompletionTreeService, private filters: FilterTreeService) { }
+    private completions: HabitCompletionTreeService, private filters: FilterTreeService,
+    private collabs: CollabProjectTreeService, private collabTasks: CollabTaskTreeService) { }
 
   isLoaded(): boolean {
     return this.loaded;
@@ -50,6 +54,8 @@ export class TreeService {
     this.habits.load(tree.habits);
     this.completions.load(tree.todayHabitCompletions);
     this.filters.load(tree.filters);
+    this.collabs.load(tree.collabs);
+    this.collabTasks.loadTasks(tree.collabTasks)
   }
 
   transformTasks(tasks: TaskDetails[]): TaskTreeElem[] {
@@ -94,6 +100,24 @@ export class TreeService {
 
   getProjectById(projectId: number): ProjectTreeElem | undefined {
     return this.projects.getById(projectId);
+  }
+
+  getCollabProjectById(projectId: number): ProjectTreeElem | undefined {
+    let collab: CollabProjectDetails | undefined = this.collabs.getProjectById(projectId);
+    return collab ? {
+      id: collab.id,
+      name: collab.name,
+      parent: null,
+      color: collab.color,
+      order: 0,
+      realOrder: 0,
+      hasChildren: false,
+      indent: 0,
+      parentList: [],
+      favorite: collab.favorite,
+      collapsed: false,
+      modifiedAt: collab.modifiedAt
+    } : undefined;
   }
 
   deleteProject(projectId: number) {
@@ -144,6 +168,14 @@ export class TreeService {
     return this.tasks.getNumOfTasksByParent(parentId);
   }
 
+  getNumOfCompletedCollabTasksByParent(parentId: number): number {
+    return this.collabTasks.getNumOfCompletedTasksByParent(parentId);
+  }
+
+  getNumOfCollabTasksByParent(parentId: number): number {
+    return this.collabTasks.getNumOfTasksByParent(parentId);
+  }
+
   getNumOfUncompletedTasksInInbox(): number {
     return this.tasks.getNumOfUncompletedTasksInInbox();
   }
@@ -152,8 +184,16 @@ export class TreeService {
     return this.tasks.getNumOfUncompletedTasksToday();
   }
 
+  getNumOfUncompletedTasksByCollabProject(projectId: number): number {
+    return this.collabTasks.getNumOfUncompletedTasksByProject(projectId);
+  }
+
   getTaskById(taskId: number): TaskTreeElem | undefined {
     return this.tasks.getById(taskId);
+  }
+
+  getCollabTaskById(taskId: number): TaskTreeElem | undefined {
+    return this.collabTasks.getById(taskId);
   }
 
   getTasksByProject(projectId: number): TaskTreeElem[] {
@@ -163,6 +203,11 @@ export class TreeService {
   addNewTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
     let project = projectId ? this.getProjectById(projectId) : undefined;
     this.tasks.addNewTask(response, project, 0, null, this.getLabelsFromIds(labelIds));
+  }
+
+  addNewCollabTask(response: Task, projectId: number | undefined) {
+    let project = projectId ? this.getCollabProjectById(projectId) : undefined;
+    this.collabTasks.addNewTask(response, project, 0, null);
   }
 
   addNewHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []) {
@@ -182,6 +227,11 @@ export class TreeService {
   updateTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
     let project = projectId ? this.getProjectById(projectId) : undefined;
     this.tasks.updateTask(response, project, this.getLabelsFromIds(labelIds));
+  }
+
+  updateCollabTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
+    let project = projectId ? this.getCollabProjectById(projectId) : undefined;
+    this.collabTasks.updateTask(response, project);
   }
 
   updateHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []) {
@@ -209,6 +259,10 @@ export class TreeService {
     this.tasks.deleteTask(taskId);
   }
 
+  deleteCollabTask(taskId: number) {
+    this.collabTasks.deleteTask(taskId);
+  }
+
   deleteHabit(habitId: number) {
     this.habits.deleteHabit(habitId);
   }
@@ -231,6 +285,18 @@ export class TreeService {
 
   addNewTaskAsChild(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
     this.tasks.addNewTaskAsChild(task, indent, afterId, project, this.getLabelsFromIds(labelIds));
+  }
+
+  addNewCollabTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined) {
+    this.collabTasks.addNewTaskAfter(task, indent, afterId, project);
+  }
+
+  addNewCollabTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined) {
+    this.collabTasks.addNewTaskBefore(task, indent, beforeId, project);
+  }
+
+  addNewCollabTaskAsChild(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined) {
+    this.collabTasks.addNewTaskAsChild(task, indent, afterId, project);
   }
 
   moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
@@ -402,5 +468,9 @@ export class TreeService {
     for(let task of tasks) {
       this.tasks.deleteTask(task.id);
     }
+  }
+
+  hasCollabs(): boolean {
+    return !this.collabs.isEmpty();
   }
 }
