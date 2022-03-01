@@ -93,6 +93,11 @@ export class ProjectService implements MultilevelMovableService<Project>{
     }
   }
 
+  public addCollabTask(request: AddTaskRequest, projectId: number):  Observable<Task> {
+    let userId  = this.getUserId();
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/collab/projects/${projectId}/tasks`, request);
+  }
+
   private getUserId() {
     return localStorage.getItem("user_id");
   }

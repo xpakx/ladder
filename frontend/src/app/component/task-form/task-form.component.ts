@@ -6,6 +6,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { CollabTaskService } from 'src/app/service/collab-task.service';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -25,6 +26,7 @@ export class TaskFormComponent implements OnInit {
 
   projectSelectForm: FormGroup | undefined;
   @Input() project: ProjectTreeElem | undefined;
+  @Input() collab: boolean = false;
 
   task: TaskTreeElem | undefined;
   after: boolean = false;
@@ -35,7 +37,7 @@ export class TaskFormComponent implements OnInit {
   @Input("date") date: Date | undefined;
 
   constructor(public tree: TreeService, private service: ProjectService, 
-    private fb: FormBuilder, private taskService: TaskService) {  }
+    private fb: FormBuilder, private taskService: TaskService, private collabTaskService: CollabTaskService) {  }
 
   ngOnInit(): void {
     if(this.data) {
@@ -136,7 +138,11 @@ export class TaskFormComponent implements OnInit {
     if(this.task) {
       this.makeRequestWithTask();
     } else {
-      this.addTask();
+      if(this.collab) {
+        this.addCollabTask();
+      } else {
+        this.addTask();
+      }
     }
 
     this.closeEvent.emit(true);
@@ -166,6 +172,29 @@ export class TaskFormComponent implements OnInit {
     }
   }
 
+  addCollabTask() {
+    if(this.taskForm && this.taskForm.valid && this.project) {
+      this.service.addCollabTask({
+        title: this.taskForm.controls.title.value,
+        description: this.taskForm.controls.description.value,
+        projectOrder: 0,
+        parentId: null,
+        projectId: this.project ? this.project.id : null,
+        priority: this.priority,
+        due: this.taskDate ? this.taskDate : null,
+        completedAt: null,
+        labelIds: []
+      }, this.project.id).subscribe(
+        (response: Task, projectId: number | undefined = this.project?.id) => {
+          this.tree.addNewCollabTask(response, projectId);
+        },
+        (error: HttpErrorResponse) => {
+         
+        }
+      );
+    }
+  }
+
   makeRequestWithTask() {
     if(this.asChild) {
       this.addTaskAsChild();
@@ -179,9 +208,10 @@ export class TaskFormComponent implements OnInit {
   }
 
   updateTask() {
+    let service = this.collab ? this.collabTaskService : this.taskService;
     if(this.task && this.taskForm && this.taskForm.valid) {
       let lbls = this.labels.map((a) => a.id);
-      this.taskService.updateTask({
+      service.updateTask({
         title: this.taskForm.controls.title.value,
         description: this.taskForm.controls.description.value,
         projectOrder: this.task.order,
@@ -193,7 +223,12 @@ export class TaskFormComponent implements OnInit {
         labelIds: lbls
       }, this.task.id).subscribe(
         (response: Task, projectId: number | undefined = this.project?.id, labels: number[] = lbls) => {
-          this.tree.updateTask(response, projectId, labels);
+          if(this.collab) {
+            this.tree.updateCollabTask(response, projectId, labels);
+
+          } else {
+            this.tree.updateTask(response, projectId, labels);
+          }
         },
         (error: HttpErrorResponse) => {
          
@@ -203,11 +238,12 @@ export class TaskFormComponent implements OnInit {
   }
 
   addTaskAfter() {
+    let service = this.collab ? this.collabTaskService : this.taskService;
     if(this.task && this.taskForm && this.taskForm.valid) {
       let indentAfter = this.task.indent;
       let idAfter = this.task.id;
       let lbls = this.labels.map((a) => a.id);
-      this.taskService.addTaskAfter({
+      service.addTaskAfter({
         title: this.taskForm.controls.title.value,
         description: this.taskForm.controls.description.value,
         projectOrder: this.task.order,
@@ -219,7 +255,12 @@ export class TaskFormComponent implements OnInit {
         labelIds: lbls
       }, this.task.id).subscribe(
         (response: Task, indent: number = indentAfter, taskId: number = idAfter, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
-          this.tree.addNewTaskAfter(response, indent, taskId, project, labels);
+          if(this.collab) {
+            this.tree.addNewCollabTaskAfter(response, indent, taskId, project);
+
+          } else {
+            this.tree.addNewTaskAfter(response, indent, taskId, project, labels);
+          }
         },
         (error: HttpErrorResponse) => {
          
@@ -229,11 +270,12 @@ export class TaskFormComponent implements OnInit {
   }
 
   addTaskBefore() {
+    let service = this.collab ? this.collabTaskService : this.taskService;
     if(this.task && this.taskForm && this.taskForm.valid) {
       let indentBefore = this.task.indent;
       let idBfore = this.task.id;
       let lbls = this.labels.map((a) => a.id);
-      this.taskService.addTaskBefore({
+      service.addTaskBefore({
         title: this.taskForm.controls.title.value,
         description: this.taskForm.controls.description.value,
         projectOrder: this.task.order,
@@ -245,7 +287,12 @@ export class TaskFormComponent implements OnInit {
         labelIds: lbls
       }, this.task.id).subscribe(
         (response: Task, indent: number = indentBefore, taskId: number = idBfore, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
-          this.tree.addNewTaskBefore(response, indent, taskId, project, labels);
+          if(this.collab) {
+            this.tree.addNewCollabTaskBefore(response, indent, taskId, project);
+
+          } else {
+            this.tree.addNewTaskBefore(response, indent, taskId, project, labels);
+          }
         },
         (error: HttpErrorResponse) => {
          
@@ -255,11 +302,12 @@ export class TaskFormComponent implements OnInit {
   }
 
   addTaskAsChild() {
+    let service = this.collab ? this.collabTaskService : this.taskService;
     if(this.task && this.taskForm && this.taskForm.valid) {
       let indentChild = this.task.indent+1;
       let idParent = this.task.id;
       let lbls = this.labels.map((a) => a.id);
-      this.taskService.addTaskAsChild({
+      service.addTaskAsChild({
         title: this.taskForm.controls.title.value,
         description: this.taskForm.controls.description.value,
         projectOrder: this.task.order,
@@ -271,7 +319,12 @@ export class TaskFormComponent implements OnInit {
         labelIds: lbls
       }, this.task.id).subscribe(
         (response: Task, indent: number = indentChild, taskId: number = idParent, project: ProjectTreeElem | undefined = this.project, labels: number[] = lbls) => {
-          this.tree.addNewTaskAsChild(response, indent, taskId, project, labels);
+          if(this.collab) {
+            this.tree.addNewCollabTaskAsChild(response, indent, taskId, project);
+
+          } else {
+            this.tree.addNewTaskAsChild(response, indent, taskId, project, labels);
+          }
         },
         (error: HttpErrorResponse) => {
          
