@@ -185,7 +185,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   }
 
   getTaskById(taskId: number): TaskTreeElem | undefined {
-    return this.initTasks.length == 0 ? this.tree.getTaskById(taskId) : this.initTasks.find((a) => a.id == taskId);
+    return this.initTasks.length == 0 ? this.tree.getCollabTaskById(taskId) : this.initTasks.find((a) => a.id == taskId);
   }
 
   closeContextTaskMenu() {
@@ -194,11 +194,11 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   }
 
   getNumOfCompletedTasksByParent(parentId: number): number {
-    return this.tree.getNumOfCompletedTasksByParent(parentId);
+    return this.tree.getNumOfCompletedCollabTasksByParent(parentId);
   }
 
   getNumOfTasksByParent(parentId: number): number {
-    return this.tree.getNumOfTasksByParent(parentId);
+    return this.tree.getNumOfCollabTasksByParent(parentId);
   }
 
   askForDelete() {
@@ -217,7 +217,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     if(this.taskIdForDateModal) {
       this.taskService.updateTaskDueDate({date: date}, this.taskIdForDateModal).subscribe(
           (response: Task) => {
-          this.tree.updateTaskDate(response);
+          this.treeService.updateTaskDate(response);
         },
         (error: HttpErrorResponse) => {
         
@@ -256,7 +256,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     if(this.taskIdForPriorityModal) {
       this.taskService.updateTaskPriority({priority: priority}, this.taskIdForPriorityModal).subscribe(
           (response: Task) => {
-          this.tree.updateTaskPriority(response);
+          this.treeService.updateTaskPriority(response);
         },
         (error: HttpErrorResponse) => {
         

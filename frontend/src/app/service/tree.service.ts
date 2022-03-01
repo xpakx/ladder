@@ -149,6 +149,14 @@ export class TreeService {
     return this.tasks.getNumOfTasksByParent(parentId);
   }
 
+  getNumOfCompletedCollabTasksByParent(parentId: number): number {
+    return this.collabTasks.getNumOfCompletedTasksByParent(parentId);
+  }
+
+  getNumOfCollabTasksByParent(parentId: number): number {
+    return this.collabTasks.getNumOfTasksByParent(parentId);
+  }
+
   getNumOfUncompletedTasksInInbox(): number {
     return this.tasks.getNumOfUncompletedTasksInInbox();
   }
