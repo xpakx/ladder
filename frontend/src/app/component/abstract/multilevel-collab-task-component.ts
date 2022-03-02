@@ -6,7 +6,6 @@ import { Task } from "src/app/entity/task";
 import { TaskTreeElem } from "src/app/entity/task-tree-elem";
 import { CollabTaskService } from "src/app/service/collab-task.service";
 import { MovableTaskTreeService } from "src/app/service/movable-task-tree-service";
-import { TaskService } from "src/app/service/task.service";
 import { MultilevelDraggableComponent } from "./multilevel-draggable-component";
 
 export class MultilevelCollabTaskComponent<U extends MovableTaskTreeService<Task, TaskTreeElem>>

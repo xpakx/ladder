@@ -413,6 +413,9 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
         List<Project> projects = generateProjectDuplicatesToSave(projectId, projectsById);
         List<Task> tasks2 = generateTaskDuplicatesToSave(projectsById, projects);
+        projects.stream().filter((a) -> a.getId().equals(projectId))
+                .findAny()
+                .ifPresent((a) -> incrementOrderForDuplication(a, userId));
         projects.forEach((a) -> a.setId(null));
 
         List<Integer> projectIds = projectRepository.saveAll(projects).stream()
@@ -422,6 +425,11 @@ public class ProjectService {
                 .map(Task::getId)
                 .collect(Collectors.toList());
         return constructResponseWithDuplicatedElements(projectIds, taskIds);
+    }
+
+    private void incrementOrderForDuplication(Project project, Integer userId) {
+        incrementGeneralOrderIfGreaterThan(userId, project);
+        project.setGeneralOrder(project.getGeneralOrder()+1);
     }
 
     private TasksAndProjects constructResponseWithDuplicatedElements(List<Integer> projectIds, List<Integer> taskIds) {

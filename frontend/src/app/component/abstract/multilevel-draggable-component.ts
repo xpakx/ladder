@@ -71,7 +71,8 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         if(elem) {
           elem.collapsed = !elem.collapsed;
           this.service.updateCollapse(elem.id, {flag: elem.collapsed}).subscribe(
-            (response: T) => {
+            (response: T, id: number = elemId) => {
+                this.collapseInTree(response);
             },
             (error: HttpErrorResponse) => {
             
@@ -79,6 +80,10 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
           );
         }
     }
+
+    collapseInTree(elem: T) {
+        
+    } 
 
     isParentDragged(elems: IndentableTreeElem<P>[]): boolean {
         for(let elem of elems) {

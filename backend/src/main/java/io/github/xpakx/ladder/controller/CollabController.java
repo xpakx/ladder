@@ -117,7 +117,7 @@ public class CollabController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{taskId}/move/asFirst")
+    @PutMapping("/tasks/{taskId}/move/asFirst")
     public ResponseEntity<Task> moveTaskAsFirst(@PathVariable Integer userId, @PathVariable Integer taskId) {
         return  new ResponseEntity<>(collabService.moveTaskAsFirst(userId, taskId), HttpStatus.OK);
     }

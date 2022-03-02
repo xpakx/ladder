@@ -666,4 +666,13 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
       this.updateTaskDate(task);
     }
   }
+
+
+  collapse(response: Task) {
+    let task = this.getById(response.id);
+    if(task){
+      task.collapsed = response.collapsed;
+      task.modifiedAt = new Date(response.modifiedAt);
+    }
+  }
 }
