@@ -32,5 +32,8 @@ extends MultilevelDraggableComponent<ParentWithId, TaskTreeElem, Task, TaskServi
       let dropzones = elem.indent - this.amountOfDropzones(i, elem);
       return elem.parentList.slice(-dropzones);
   }
+
+  collapseInTree(elem: Task) {
+        this.treeService.collapse(elem);
+  } 
 }
-  

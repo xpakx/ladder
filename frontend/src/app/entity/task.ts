@@ -3,6 +3,7 @@ export interface Task {
     description: string;
     id: number;
     completed: boolean;
+    collapsed: boolean;
     projectOrder: number;
     dailyViewOrder: number
     due: Date;

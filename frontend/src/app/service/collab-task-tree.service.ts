@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CollabTaskDetails } from '../entity/collab-task-details';
+import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
 import { TaskTreeService } from './task-tree.service';
 
@@ -12,6 +13,10 @@ export class CollabTaskTreeService extends TaskTreeService {
 
   loadTasks(tasks: CollabTaskDetails[]) {
     this.load(tasks.map((a) => this.transformCollabToTask(a)));
+  }
+
+  collapse(task: Task) {
+
   }
 
   private transformCollabToTask(task: CollabTaskDetails): TaskDetails {
