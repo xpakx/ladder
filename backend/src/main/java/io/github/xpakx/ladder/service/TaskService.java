@@ -250,6 +250,11 @@ public class TaskService {
             allDuplicated.addAll(newToDuplicate);
         }
 
+        incrementOrderOfTasksAfter(userId, duplicatedTask);
+        duplicatedTask.setProjectOrder(duplicatedTask.getProjectOrder()+1);
+        incrementDailyOrderOfTasksAfter(userId, duplicatedTask);
+        duplicatedTask.setDailyViewOrder(duplicatedTask.getDailyViewOrder()+1);
+
         List<Integer> ids = taskRepository.saveAll(allDuplicated).stream()
                 .map(Task::getId)
                 .collect(Collectors.toList());
