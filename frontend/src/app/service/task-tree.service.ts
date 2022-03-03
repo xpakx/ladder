@@ -476,10 +476,40 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  addDuplicated(response: TaskDetails[]) {
+  addDuplicated(response: TaskDetails[], mainId: number | undefined = undefined) {
     let tasks = this.transformAll(response);
+    let mainTask = mainId ? this.getById(mainId) : undefined;
+    if(mainTask) {
+      this.incrementOrderAfter(mainTask);
+    }
     this.list = this.list.concat(tasks);
     this.sort();
+  }
+
+  incrementOrderForAllSiblings(task: TaskTreeElem) {
+    let siblings = this.list
+        .filter((a) => !a.parent && !task.parent || (a.parent && task.parent && a.parent.id == task.parent.id));
+    for(let sibling of siblings) {
+      sibling.order = sibling.order + 1;
+    }
+  }
+  
+  incrementOrderAfter(task: TaskTreeElem) {
+    let siblingsAfter = this.list
+        .filter((a) => !a.parent && !task.parent || (a.parent && task.parent && a.parent.id == task.parent.id))
+        .filter((a) => a.order > task.order);
+    for(let sibling of siblingsAfter) {
+      sibling.order = sibling.order + 1;
+    }
+  }
+
+  incrementOrderAfterOrEqual(task: TaskTreeElem) {
+    let siblingsAfter = this.list
+        .filter((a) => !a.parent && !task.parent || (a.parent && task.parent && a.parent.id == task.parent.id))
+        .filter((a) => a.order >= task.order);
+    for(let sibling of siblingsAfter) {
+      sibling.order = sibling.order + 1;
+    }
   }
 
   getByParentId(parentId: number): TaskTreeElem[] {

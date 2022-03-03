@@ -364,8 +364,8 @@ export class TreeService {
     this.duplicateTask(response.tasks);
   }
 
-  duplicateTask(response: TaskDetails[]) {
-    this.tasks.addDuplicated(response);
+  duplicateTask(response: TaskDetails[], mainId: number | undefined = undefined) {
+    this.tasks.addDuplicated(response, mainId);
   }
 
   sync(response: SyncData) {
