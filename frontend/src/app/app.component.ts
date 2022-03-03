@@ -31,14 +31,13 @@ export class AppComponent implements OnInit {
   searchForm: FormGroup;
 
   constructor(public tree : TreeService, public deleteService: DeleteService,
-    private router: Router, private notifications: NotificationService, private fb: FormBuilder) {
+    private router: Router, private fb: FormBuilder) {
       this.searchForm = this.fb.group({
         search: ['']
       });
   }
 
   ngOnInit(): void {
-    this.notifications.subscribe();
   }
 
   //Project modal window

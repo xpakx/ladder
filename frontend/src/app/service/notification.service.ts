@@ -13,17 +13,24 @@ export class NotificationService {
 
   constructor(private tree: TreeService, private service: SyncService) { }
 
+  private getUserId() {
+    return localStorage.getItem("user_id");
+  }
+
   subscribe() {
-    let eventSource = new EventSource(`${this.url}/subscription/1`);
-    eventSource.onopen = (e) => console.log("open");
+    let id = this.getUserId();
+    if(id) {
+      let eventSource = new EventSource(`${this.url}/subscription/${id}`);
+      eventSource.onopen = (e) => console.log("open");
 
-    eventSource.onerror = (e) => {
-        console.log(e);
-    };
+      eventSource.onerror = (e) => {
+          console.log(e);
+      };
 
-    eventSource.addEventListener("message", (event) => {
-      this.onNotificationSent(event);
-    }, false);
+      eventSource.addEventListener("message", (event) => {
+        this.onNotificationSent(event);
+      }, false);
+    }
   }
 
   onNotificationSent(event: MessageEvent<any>) {
