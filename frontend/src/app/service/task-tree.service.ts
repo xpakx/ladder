@@ -421,15 +421,18 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
   moveAsFirstDaily(task: Task) {
     let movedTask = this.getById(task.id);
     if(movedTask) {
-      let tasks = this.getByDate(new Date);
-        
-      for(let pro of tasks) {
-        pro.dailyOrder = pro.dailyOrder + 1;
-      }
-      
+      let date = new Date(task.due);
+      this.incrementDailyOrderForDate(date);
       movedTask.dailyOrder = 1;
-      movedTask.due = new Date(task.due);
+      movedTask.due = date
       movedTask.modifiedAt =  new Date(task.modifiedAt);
+    }
+  }
+
+  private incrementDailyOrderForDate(date: Date) {
+    let tasks = this.getByDate(date);
+    for (let task of tasks) {
+      task.dailyOrder = task.dailyOrder + 1;
     }
   }
 
@@ -437,16 +440,19 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let afterTask = this.getById(afterId);
     let movedTask = this.getById(task.id);
     if(afterTask && movedTask) {
-      let tas : TaskTreeElem = afterTask;
-      let tasks = this.getByDate(new Date)
-        .filter((a) => a.dailyOrder > tas.dailyOrder);
-        for(let tsk of tasks) {
-          tsk.dailyOrder = tsk.dailyOrder + 1;
-        }
-      
+      let date = new Date(task.due);
+      this.incrementDailyOrderForDateAfter(date, afterTask);
       movedTask.dailyOrder = afterTask.dailyOrder+1;
       movedTask.due = new Date(task.due);
       movedTask.modifiedAt = new Date(task.modifiedAt);
+    }
+  }
+
+  private incrementDailyOrderForDateAfter(date: Date, afterTask: TaskTreeElem) {
+    let tasks = this.getByDate(date)
+      .filter((a) => a.dailyOrder > afterTask.dailyOrder);
+    for (let task of tasks) {
+      task.dailyOrder = task.dailyOrder + 1;
     }
   }
 
