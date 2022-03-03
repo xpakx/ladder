@@ -461,6 +461,9 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let mainTask = mainId ? this.getById(mainId) : undefined;
     if(mainTask) {
       this.incrementOrderAfter(mainTask);
+      if(mainTask.due) {
+        this.incrementDailyOrderForDateAfter(mainTask.due, mainTask);
+      }
     }
     this.list = this.list.concat(tasks);
     this.sort();
