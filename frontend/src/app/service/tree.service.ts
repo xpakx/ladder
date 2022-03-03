@@ -359,8 +359,8 @@ export class TreeService {
     return this.tasks.getNumOfUncompletedTasksByLabel(labelId);
   }
 
-  duplicateProject(response: TasksWithProjects) {
-    this.projects.addDuplicated(response.projects);
+  duplicateProject(response: TasksWithProjects, mainId: number) {
+    this.projects.addDuplicated(response.projects, mainId);
     this.duplicateTask(response.tasks);
   }
 

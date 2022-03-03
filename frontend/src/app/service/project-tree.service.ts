@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
@@ -272,10 +273,23 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     );
   }
 
-  addDuplicated(response: ProjectDetails[]) {
+  addDuplicated(response: ProjectDetails[], mainId: number) {
     let projects = this.transformAll(response);
+    let mainProject = this.getById(mainId);
+    if(mainProject) {
+      this.incrementOrderAfter(mainProject);
+    }
     this.list = this.list.concat(projects);
     this.sort();
+  }
+
+  incrementOrderAfter(project: ProjectTreeElem) {
+    let siblingsAfter = this.list
+        .filter((a) => a.parent == project.parent)
+        .filter((a) => a.order > project.order);
+        for(let sibling of siblingsAfter) {
+          sibling.order = sibling.order + 1;
+        }
   }
 
   sync(projects: ProjectDetails[]) {
