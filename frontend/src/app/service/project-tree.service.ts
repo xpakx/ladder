@@ -135,11 +135,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     if(parentProject && movedProject) {
       let proj : ProjectTreeElem = parentProject;
       let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
-      let projects = this.list
-        .filter((a) => a.parent == proj);
-        for(let pro of projects) {
-          pro.order = pro.order + 1;
-        }
+      this.incrementOrderForAllSiblings(proj);
       
       movedProject.indent = indent;
       movedProject.order = 1;
@@ -152,6 +148,14 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       this.recalculateHasChildren(proj);
 
       this.sort();
+    }
+  }
+
+  incrementOrderForAllSiblings(project: ProjectTreeElem) {
+    let siblings = this.list
+        .filter((a) => !a.parent && !project.parent || (a.parent && project.parent && a.parent.id == project.parent.id));
+    for(let sibling of siblings) {
+      sibling.order = sibling.order + 1;
     }
   }
 
@@ -176,9 +180,9 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
 
   incrementOrdeForFirstOrderProjects() {
     let projects = this.list.filter((a) => !a.parent);
-        for(let project of projects) {
-          project.order = project.order + 1;
-        }
+    for(let project of projects) {
+      project.order = project.order + 1;
+    }
   }
 
   addNewProjectBefore(project: Project, indent: number, beforeId: number) {
@@ -276,18 +280,18 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     let siblingsAfter = this.list
         .filter((a) => !a.parent && !project.parent || (a.parent && project.parent && a.parent.id == project.parent.id))
         .filter((a) => a.order > project.order);
-        for(let sibling of siblingsAfter) {
-          sibling.order = sibling.order + 1;
-        }
+    for(let sibling of siblingsAfter) {
+      sibling.order = sibling.order + 1;
+    }
   }
 
   incrementOrderAfterOrEqual(project: ProjectTreeElem) {
     let siblingsAfter = this.list
         .filter((a) => !a.parent && !project.parent || (a.parent && project.parent && a.parent.id == project.parent.id))
         .filter((a) => a.order >= project.order);
-        for(let sibling of siblingsAfter) {
-          sibling.order = sibling.order + 1;
-        }
+    for(let sibling of siblingsAfter) {
+      sibling.order = sibling.order + 1;
+    }
   }
 
   sync(projects: ProjectDetails[]) {
