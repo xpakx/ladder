@@ -7,7 +7,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { LoginComponent } from './component/login/login.component';
 import { RegisterComponent } from './component/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DailyViewComponent } from './component/daily-view/daily-view.component';
 import { LoadProjectComponent } from './component/load-project/load-project.component';
 import { ProjectComponent } from './component/project/project.component';
@@ -48,6 +48,7 @@ import { EditCollabsComponent } from './component/edit-collabs/edit-collabs.comp
 import { CollabProjectListComponent } from './component/collab-project-list/collab-project-list.component';
 import { CollabProjectComponent } from './component/collab-project/collab-project.component';
 import { CollabTaskListComponent } from './component/collab-task-list/collab-task-list.component';
+import { ErrorInterceptor } from './utils/error.interceptor';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -112,7 +113,13 @@ export function tokenGetter() {
     HttpClientModule,
     DndModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
