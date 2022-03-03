@@ -159,10 +159,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     let movedProject = this.getById(project.id);
     if(movedProject) {
       let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
-      let projects = this.list.filter((a) => !a.parent);
-        for(let pro of projects) {
-          pro.order = pro.order + 1;
-        }
+      this.incrementOrdeForFirstOrderProjects();
       
       movedProject.indent = 0;
       movedProject.order = 1;
@@ -175,6 +172,13 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
 
       this.sort();
     }
+  }
+
+  incrementOrdeForFirstOrderProjects() {
+    let projects = this.list.filter((a) => !a.parent);
+        for(let project of projects) {
+          project.order = project.order + 1;
+        }
   }
 
   addNewProjectBefore(project: Project, indent: number, beforeId: number) {
