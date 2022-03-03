@@ -202,12 +202,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     if(afterTask && movedTask) {
       let tas : TaskTreeElem = afterTask;
       let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getById(movedTask.parent.id) : undefined;
-      let tasks = this.list
-        .filter((a) => a.parent == tas.parent)
-        .filter((a) => a.order > tas.order);
-        for(let tsk of tasks) {
-          tsk.order = tsk.order + 1;
-        }
+      this.incrementOrderAfter(tas);
       
       movedTask.indent = indent;
       movedTask.parent = afterTask.parent;
@@ -230,11 +225,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     if(parentTask && movedTask) {
       let tas : TaskTreeElem = parentTask;
       let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getById(movedTask.parent.id) : undefined;
-      let tasks = this.list
-        .filter((a) => a.parent == tas);
-        for(let tsk of tasks) {
-          tsk.order = tsk.order + 1;
-        }
+      this.incrementOrderForAllSiblings(tas);
       
       movedTask.indent = indent;
       movedTask.order = 1;
@@ -259,12 +250,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let movedTask = this.getById(task.id);
     if(movedTask) {
       let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getById(movedTask.parent.id) : undefined;
-      let tasks = this.list
-        .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
-        .filter((a) => !a.parent);
-      for(let pro of tasks) {
-        pro.order = pro.order + 1;
-      }
+      this.incrementOrderForFirstOrderTasks(project);
       
       movedTask.indent = 0;
       movedTask.order = 1;
@@ -314,13 +300,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     if(afterTask) {
       let tsk : TaskTreeElem = afterTask;
       task.projectOrder = tsk.order+1;
-      let tasks = this.list
-        .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
-        .filter((a) => a.parent == tsk.parent)
-        .filter((a) => a.order > tsk.order);
-      for(let sibling of tasks) {
-        sibling.order = sibling.order + 1;
-      }
+      this.incrementOrderAfter(tsk);
       this.addNewTask(task, project, indent, tsk.parent, labels);
     }
   }
@@ -330,13 +310,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     if(beforeTask) {
       let tsk : TaskTreeElem = beforeTask;
       task.projectOrder = tsk.order;
-      let tasks = this.list
-        .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
-        .filter((a) => a.parent == tsk.parent)
-        .filter((a) => a.order >= tsk.order);
-      for(let sibling of tasks) {
-        sibling.order = sibling.order + 1;
-      }
+      this.incrementOrderAfterOrEqual(tsk);
       this.addNewTask(task, project, indent, tsk.parent, labels);
     }
   }
@@ -484,6 +458,16 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
     this.list = this.list.concat(tasks);
     this.sort();
+  }
+
+
+  private incrementOrderForFirstOrderTasks(project: ProjectTreeElem | undefined) {
+    let tasks = this.list
+      .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
+      .filter((a) => !a.parent);
+    for (let pro of tasks) {
+      pro.order = pro.order + 1;
+    }
   }
 
   incrementOrderForAllSiblings(task: TaskTreeElem) {
