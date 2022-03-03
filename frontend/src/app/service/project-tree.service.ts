@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { Project } from '../entity/project';
 import { ProjectDetails } from '../entity/project-details';
 import { ProjectTreeElem } from '../entity/project-tree-elem';
@@ -101,13 +102,8 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     if(afterProject) {
       let proj : ProjectTreeElem = afterProject;
       project.order = proj.order+1;
-      let projects = this.list
-        .filter((a) => a.parent == proj.parent)
-        .filter((a) => a.order > proj.order);
-        for(let pro of projects) {
-          pro.order = pro.order + 1;
-        }
-        this.addNewProject(project, indent, proj.parent);
+      this.incrementOrderAfter(proj);
+      this.addNewProject(project, indent, proj.parent);
     }
   }
 
@@ -117,12 +113,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     if(afterProject && movedProject) {
       let proj : ProjectTreeElem = afterProject;
       let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
-      let projects = this.list
-        .filter((a) => a.parent == proj.parent)
-        .filter((a) => a.order > proj.order);
-        for(let pro of projects) {
-          pro.order = pro.order + 1;
-        }
+      this.incrementOrderAfter(proj);
       
       movedProject.indent = indent;
       movedProject.parent = afterProject.parent;
@@ -144,11 +135,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     if(parentProject && movedProject) {
       let proj : ProjectTreeElem = parentProject;
       let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
-      let projects = this.list
-        .filter((a) => a.parent == proj);
-        for(let pro of projects) {
-          pro.order = pro.order + 1;
-        }
+      this.incrementOrderForAllSiblings(proj);
       
       movedProject.indent = indent;
       movedProject.order = 1;
@@ -168,10 +155,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     let movedProject = this.getById(project.id);
     if(movedProject) {
       let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
-      let projects = this.list.filter((a) => !a.parent);
-        for(let pro of projects) {
-          pro.order = pro.order + 1;
-        }
+      this.incrementOrdeForFirstOrderProjects();
       
       movedProject.indent = 0;
       movedProject.order = 1;
@@ -191,13 +175,8 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     if(beforeProject) {
       let proj : ProjectTreeElem = beforeProject;
       project.order = proj.order;
-      let projects = this.list
-        .filter((a) => a.parent == proj.parent)
-        .filter((a) => a.order >= proj.order);
-        for(let pro of projects) {
-          pro.order = pro.order + 1;
-        }
-        this.addNewProject(project, indent, proj.parent);
+      this.incrementOrderAfterOrEqual(proj);
+      this.addNewProject(project, indent, proj.parent);
     }
   }
 
@@ -272,10 +251,47 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     );
   }
 
-  addDuplicated(response: ProjectDetails[]) {
+  addDuplicated(response: ProjectDetails[], mainId: number) {
     let projects = this.transformAll(response);
+    let mainProject = this.getById(mainId);
+    if(mainProject) {
+      this.incrementOrderAfter(mainProject);
+    }
     this.list = this.list.concat(projects);
     this.sort();
+  }
+
+  incrementOrderForAllSiblings(project: ProjectTreeElem) {
+    let siblings = this.list
+        .filter((a) => !a.parent && !project.parent || (a.parent && project.parent && a.parent.id == project.parent.id));
+    for(let sibling of siblings) {
+      sibling.order = sibling.order + 1;
+    }
+  }
+
+  incrementOrdeForFirstOrderProjects() {
+    let projects = this.list.filter((a) => !a.parent);
+    for(let project of projects) {
+      project.order = project.order + 1;
+    }
+  }
+  
+  incrementOrderAfter(project: ProjectTreeElem) {
+    let siblingsAfter = this.list
+        .filter((a) => !a.parent && !project.parent || (a.parent && project.parent && a.parent.id == project.parent.id))
+        .filter((a) => a.order > project.order);
+    for(let sibling of siblingsAfter) {
+      sibling.order = sibling.order + 1;
+    }
+  }
+
+  incrementOrderAfterOrEqual(project: ProjectTreeElem) {
+    let siblingsAfter = this.list
+        .filter((a) => !a.parent && !project.parent || (a.parent && project.parent && a.parent.id == project.parent.id))
+        .filter((a) => a.order >= project.order);
+    for(let sibling of siblingsAfter) {
+      sibling.order = sibling.order + 1;
+    }
   }
 
   sync(projects: ProjectDetails[]) {

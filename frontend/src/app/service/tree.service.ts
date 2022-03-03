@@ -359,13 +359,13 @@ export class TreeService {
     return this.tasks.getNumOfUncompletedTasksByLabel(labelId);
   }
 
-  duplicateProject(response: TasksWithProjects) {
-    this.projects.addDuplicated(response.projects);
+  duplicateProject(response: TasksWithProjects, mainId: number) {
+    this.projects.addDuplicated(response.projects, mainId);
     this.duplicateTask(response.tasks);
   }
 
-  duplicateTask(response: TaskDetails[]) {
-    this.tasks.addDuplicated(response);
+  duplicateTask(response: TaskDetails[], mainId: number | undefined = undefined) {
+    this.tasks.addDuplicated(response, mainId);
   }
 
   sync(response: SyncData) {

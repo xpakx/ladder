@@ -131,9 +131,10 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
 
   duplicateProject() {
     if(this.contextProjectMenu) {
-      this.projectService.duplicateProject(this.contextProjectMenu.id).subscribe(
-        (response: TasksWithProjects) => {
-        this.tree.duplicateProject(response);
+      let id: number = this.contextProjectMenu.id;
+      this.projectService.duplicateProject(id).subscribe(
+        (response: TasksWithProjects, mainId: number = id) => {
+        this.tree.duplicateProject(response, mainId);
       },
       (error: HttpErrorResponse) => {
        

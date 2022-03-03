@@ -345,9 +345,10 @@ implements OnInit, AfterViewInit {
 
   duplicate() {
     if(this.contextTaskMenu) {
-      this.taskService.duplicateTask(this.contextTaskMenu.id).subscribe(
-        (response: TaskDetails[]) => {
-        this.tree.duplicateTask(response);
+      let id: number = this.contextTaskMenu.id;
+      this.taskService.duplicateTask(id).subscribe(
+        (response: TaskDetails[], mainId: number = id) => {
+        this.tree.duplicateTask(response, mainId);
       },
       (error: HttpErrorResponse) => {
        
