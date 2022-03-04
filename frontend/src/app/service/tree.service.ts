@@ -127,6 +127,12 @@ export class TreeService {
     }
   }
 
+  deleteCollabProject(projectId: number) {
+    this.collabs.deleteProject(projectId);
+    this.collabTasks.deleteAllTasksFromProject(projectId);
+    
+  }
+
   archiveProject(project: Project) {
     this.projects.archiveProject(project);
     this.tasks.deleteAllTasksFromProject(project.id);
@@ -375,6 +381,8 @@ export class TreeService {
     this.habits.sync(response.habits);
     this.completions.sync(response.habitCompletions);
     this.filters.sync(response.filters);
+    this.collabs.sync(response.collabs);
+    this.collabTasks.syncTasks(response.collabTasks);
   }
 
   syncProject(response: ProjectData) {

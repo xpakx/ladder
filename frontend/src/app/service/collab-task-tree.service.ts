@@ -15,6 +15,10 @@ export class CollabTaskTreeService extends TaskTreeService {
     this.load(tasks.map((a) => this.transformCollabToTask(a)));
   }
 
+  syncTasks(tasks: CollabTaskDetails[]) {
+    this.sync(tasks.map((a) => this.transformCollabToTask(a)));
+  }
+
   collapse(task: Task) {
 
   }

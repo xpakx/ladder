@@ -81,6 +81,11 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Query("SELECT case when count(u)> 0 then true else false end FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id")
     boolean existsCollaboratorById(Integer id);
 
+    boolean existsByIdAndCollaborative(Integer id, boolean collaborative);
+
     @Query("SELECT p FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id AND p.archived = false")
     <T> List<T> findCollabsByUserIdAndNotArchived(Integer id, Class<T> type);
+
+    @Query("SELECT p FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id AND p.archived = false AND p.modifiedAt > :modifiedAt")
+    <T> List<T> findCollabsByUserIdAndNotArchivedAndModifiedAtAfter(Integer id, Class<T> type, LocalDateTime modifiedAt);
 }

@@ -141,4 +141,5 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     boolean existsCollaboratorById(Integer id);
 
     <T> List<T> findByProjectIdInAndArchived(List<Integer> projectIds, boolean archived, Class<T> type);
+    <T> List<T> findByProjectIdInAndArchivedAndModifiedAtAfter(List<Integer> projectIds, boolean archived, Class<T> type, LocalDateTime modifiedAt);
 }

@@ -13,17 +13,24 @@ export class NotificationService {
 
   constructor(private tree: TreeService, private service: SyncService) { }
 
+  private getUserId() {
+    return localStorage.getItem("user_id");
+  }
+
   subscribe() {
-    let eventSource = new EventSource(`${this.url}/subscription/1`);
-    eventSource.onopen = (e) => console.log("open");
+    let id = this.getUserId();
+    if(id) {
+      let eventSource = new EventSource(`${this.url}/subscription/${id}`);
+      eventSource.onopen = (e) => console.log("open");
 
-    eventSource.onerror = (e) => {
-        console.log(e);
-    };
+      eventSource.onerror = (e) => {
+          console.log(e);
+      };
 
-    eventSource.addEventListener("message", (event) => {
-      this.onNotificationSent(event);
-    }, false);
+      eventSource.addEventListener("message", (event) => {
+        this.onNotificationSent(event);
+      }, false);
+    }
   }
 
   onNotificationSent(event: MessageEvent<any>) {
@@ -43,6 +50,10 @@ export class NotificationService {
       setTimeout(() => this.deleteHabit(JSON.parse(event.data).id), 500);
     } else if(type == 'DELETE_FILTER') {
       setTimeout(() => this.deleteFilter(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_CPROJ') {
+      setTimeout(() => this.deleteCProject(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_CTASK') {
+      setTimeout(() => this.deleteCTask(JSON.parse(event.data).id), 500);
     }
   }
 
@@ -50,6 +61,13 @@ export class NotificationService {
     let proj = this.tree.getProjectById(id);
     if(proj) {
       this.tree.deleteProject(id);
+    }
+  }
+
+  deleteCProject(id: number) {
+    let proj = this.tree.getCollabProjectById(id);
+    if(proj) {
+      this.tree.deleteCollabProject(id);
     }
   }
 
@@ -64,6 +82,13 @@ export class NotificationService {
     let task = this.tree.getTaskById(id);
     if(task) {
       this.tree.deleteTask(id);
+    }
+  }
+
+  deleteCTask(id: number) {
+    let task = this.tree.getCollabTaskById(id);
+    if(task) {
+      this.tree.deleteCollabTask(id);
     }
   }
 

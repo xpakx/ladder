@@ -47,4 +47,20 @@ export class CollabProjectTreeService  {
   getProjectById(id: number): CollabProjectDetails | undefined {
     return this.list.find((a) => a.id == id);
   }
+
+  sync(projects: CollabProjectDetails[]) {
+    for(let project of projects) {
+      let projectWithId = this.getProjectById(project.id);
+      if(projectWithId) {
+        projectWithId.color = project.color;
+        projectWithId.favorite = project.favorite;
+        projectWithId.generalOrder = project.generalOrder;
+        projectWithId.name = project.name;
+        projectWithId.modifiedAt = new Date(project.modifiedAt);
+      } else {
+        this.list.push(project);
+      }
+    }
+    this.sort();
+  }
 }

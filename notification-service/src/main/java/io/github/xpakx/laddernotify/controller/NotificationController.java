@@ -1,5 +1,6 @@
 package io.github.xpakx.laddernotify.controller;
 
+import io.github.xpakx.laddernotify.entity.CollabNotificationRequest;
 import io.github.xpakx.laddernotify.entity.NotificationRequest;
 import io.github.xpakx.laddernotify.service.NotificationService;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,12 @@ public class NotificationController {
 
     @PostMapping("/notification")
     public ResponseEntity<?> send(@RequestBody NotificationRequest request) {
+        notificationService.pushNotification(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/collab/notification")
+    public ResponseEntity<?> sendCollab(@RequestBody CollabNotificationRequest request) {
         notificationService.pushNotification(request);
         return ResponseEntity.ok().build();
     }
