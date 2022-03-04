@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.entity.dto.CollabNotificationRequest;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,16 @@ public class NotificationService {
         try {
             ResponseEntity<?> r = template
                     .postForEntity(uri  + "/notification", notification, Object.class);
+            LOG.info("Notification service response: {}", r.getStatusCode());
+        } catch(Exception e) {
+            LOG.error("Problem with sending notification.", e);
+        }
+    }
+
+    public void sendCollabNotification(CollabNotificationRequest notification) {
+        try {
+            ResponseEntity<?> r = template
+                    .postForEntity(uri  + "/collab/notification", notification, Object.class);
             LOG.info("Notification service response: {}", r.getStatusCode());
         } catch(Exception e) {
             LOG.error("Problem with sending notification.", e);

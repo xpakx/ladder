@@ -210,6 +210,7 @@ public class NotificationAspect {
                 .time(modifiedAt)
                 .type("UPDATE")
                 .build();
+
     }
 
     private void sendCollabDeleteNotification(LocalDateTime modifiedAt, Integer id, String type, List<Integer> collaborators) {
@@ -219,5 +220,6 @@ public class NotificationAspect {
                 .type("DELETE_"+type)
                 .id(id)
                 .build();
+        notificationService.sendCollabNotification(notification);
     }
 }
