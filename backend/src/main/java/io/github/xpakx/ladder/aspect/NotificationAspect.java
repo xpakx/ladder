@@ -37,7 +37,10 @@ public class NotificationAspect {
                 .type("UPDATE")
                 .build();
         if(response.isCollaborative()) {
-            sendCollabUpdateNotification(response.getModifiedAt(), response.getId());
+            sendCollabUpdateNotification(
+                    response.getModifiedAt(),
+                    userRepository.getCollaboratorsIdByProjectId(response.getId())
+            );
         }
         notificationService.sendNotification(notification);
     }
@@ -93,6 +96,10 @@ public class NotificationAspect {
                 .time(response.getModifiedAt())
                 .type("UPDATE")
                 .build();
+        List<Integer> collab = userRepository.getCollaboratorsIdByTaskId(response.getId());
+        if(collab.size() > 0) {
+            sendCollabUpdateNotification(LocalDateTime.now(), collab);
+        }
         notificationService.sendNotification(notification);
     }
 
@@ -107,8 +114,9 @@ public class NotificationAspect {
                     .time(task.getModifiedAt())
                     .type("UPDATE")
                     .build();
-            if(task.getProject().isCollaborative()) {
-                sendCollabUpdateNotification(task.getModifiedAt(), task.getProject().getId());
+            List<Integer> collab = userRepository.getCollaboratorsIdByTaskId(task.getId());
+            if(collab.size() > 0) {
+                sendCollabUpdateNotification(task.getModifiedAt(), collab);
             }
             notificationService.sendNotification(notification);
         }
@@ -123,6 +131,15 @@ public class NotificationAspect {
                 .id(taskId)
                 .build();
         notificationService.sendNotification(notification);
+    }
+
+    @Around(value="@annotation(NotifyOnTaskDeletion) && args(taskId, ..)", argNames = "taskId")
+    public void notifyCollabOnTaskDeletion(ProceedingJoinPoint joinPoint, Integer taskId) throws Throwable {
+        List<Integer> collab = userRepository.getCollaboratorsIdByTaskId(taskId);
+        joinPoint.proceed();
+        if(collab.size() > 0) {
+            sendCollabDeleteNotification(LocalDateTime.now(), taskId, "TASK", collab);
+        }
     }
 
     @AfterReturning(value="@annotation(NotifyOnHabitChange)", returning="response")
@@ -187,9 +204,9 @@ public class NotificationAspect {
         notificationService.sendNotification(notification);
     }
 
-    private void sendCollabUpdateNotification(LocalDateTime modifiedAt, Integer id) {
+    private void sendCollabUpdateNotification(LocalDateTime modifiedAt, List<Integer> collaborators) {
         CollabNotificationRequest notification = CollabNotificationRequest.builder()
-                .collabId(userRepository.getCollaboratorsIdByProjectId(id))
+                .collabId(collaborators)
                 .time(modifiedAt)
                 .type("UPDATE")
                 .build();
