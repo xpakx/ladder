@@ -50,6 +50,10 @@ export class NotificationService {
       setTimeout(() => this.deleteHabit(JSON.parse(event.data).id), 500);
     } else if(type == 'DELETE_FILTER') {
       setTimeout(() => this.deleteFilter(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_CPROJ') {
+      setTimeout(() => this.deleteCProject(JSON.parse(event.data).id), 500);
+    } else if(type == 'DELETE_CTASK') {
+      setTimeout(() => this.deleteCTask(JSON.parse(event.data).id), 500);
     }
   }
 
@@ -57,6 +61,13 @@ export class NotificationService {
     let proj = this.tree.getProjectById(id);
     if(proj) {
       this.tree.deleteProject(id);
+    }
+  }
+
+  deleteCProject(id: number) {
+    let proj = this.tree.getCollabProjectById(id);
+    if(proj) {
+      this.tree.deleteCollabProject(id);
     }
   }
 
@@ -71,6 +82,13 @@ export class NotificationService {
     let task = this.tree.getTaskById(id);
     if(task) {
       this.tree.deleteTask(id);
+    }
+  }
+
+  deleteCTask(id: number) {
+    let task = this.tree.getCollabTaskById(id);
+    if(task) {
+      this.tree.deleteCollabTask(id);
     }
   }
 
