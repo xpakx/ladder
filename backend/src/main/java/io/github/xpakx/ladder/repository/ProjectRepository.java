@@ -83,4 +83,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     @Query("SELECT p FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id AND p.archived = false")
     <T> List<T> findCollabsByUserIdAndNotArchived(Integer id, Class<T> type);
+
+    @Query("SELECT p FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id AND p.archived = false AND p.modifiedAt > :modifiedAt")
+    <T> List<T> findCollabsByUserIdAndNotArchivedAndModifiedAtAfter(Integer id, Class<T> type, LocalDateTime modifiedAt);
 }

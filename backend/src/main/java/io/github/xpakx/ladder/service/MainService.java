@@ -70,6 +70,13 @@ public class MainService {
         result.setFilters(
                 filterRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), FilterDetails.class)
         );
+        List<CollabProjectDetails> collabProjects = projectRepository.findCollabsByUserIdAndNotArchived(userId, CollabProjectDetails.class);
+        result.setCollabs(collabProjects);
+        result.setCollabTasks(taskRepository.findByProjectIdInAndArchived(
+                collabProjects.stream().map(CollabProjectDetails::getId).collect(Collectors.toList()),
+                false,
+                CollabTaskDetails.class
+        ));
 
         return result;
     }
