@@ -1,5 +1,6 @@
 package io.github.xpakx.laddernotify.service;
 
+import io.github.xpakx.laddernotify.entity.CollabNotificationRequest;
 import io.github.xpakx.laddernotify.entity.Notification;
 import io.github.xpakx.laddernotify.entity.NotificationRequest;
 import io.github.xpakx.laddernotify.utils.CustomEmitter;
@@ -41,6 +42,25 @@ public class NotificationService {
                         deadEmitters.add(emitter);
                     }
         });
+
+        emitters.removeAll(deadEmitters);
+    }
+
+    public void pushNotification(CollabNotificationRequest request) {
+        List<CustomEmitter> deadEmitters = new ArrayList<>();
+
+        Notification notification = new Notification(request.getTime(), request.getType(), request.getId());
+
+        emitters.stream()
+                .filter((a) -> request.getCollabId().contains(a.getUserId()))
+                .forEach(emitter -> {
+                    try {
+                        sendNotification(notification, emitter);
+
+                    } catch (IOException e) {
+                        deadEmitters.add(emitter);
+                    }
+                });
 
         emitters.removeAll(deadEmitters);
     }
