@@ -100,10 +100,9 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
   addNewProjectAfter(project: Project, indent: number, afterId: number) {
     let afterProject = this.getById(afterId);
     if(afterProject) {
-      let proj : ProjectTreeElem = afterProject;
-      project.order = proj.order+1;
-      this.incrementOrderAfter(proj);
-      this.addNewProject(project, indent, proj.parent);
+      project.order = afterProject.order+1;
+      this.incrementOrderAfter(afterProject);
+      this.addNewProject(project, indent, afterProject.parent);
     }
   }
 
@@ -111,9 +110,8 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     let afterProject = this.getById(afterId);
     let movedProject = this.getById(project.id);
     if(afterProject && movedProject) {
-      let proj : ProjectTreeElem = afterProject;
       let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
-      this.incrementOrderAfter(proj);
+      this.incrementOrderAfter(afterProject);
       
       movedProject.indent = indent;
       movedProject.parent = afterProject.parent;
@@ -123,7 +121,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       if(oldParent) {
         this.recalculateHasChildren(oldParent);
       }
-      this.recalculateHasChildren(proj);
+      this.recalculateHasChildren(afterProject);
 
       this.sort();
     }
@@ -133,9 +131,8 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     let parentProject = this.getById(parentId);
     let movedProject = this.getById(project.id);
     if(parentProject && movedProject) {
-      let proj : ProjectTreeElem = parentProject;
       let oldParent: ProjectTreeElem | undefined = movedProject.parent ? this.getById(movedProject.parent.id) : undefined;
-      this.incrementOrderForAllSiblings(proj);
+      this.incrementOrderForAllSiblings(parentProject);
       
       movedProject.indent = indent;
       movedProject.order = 1;
@@ -145,7 +142,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       if(oldParent) {
         this.recalculateHasChildren(oldParent);
       }
-      this.recalculateHasChildren(proj);
+      this.recalculateHasChildren(parentProject);
 
       this.sort();
     }
@@ -173,10 +170,9 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
   addNewProjectBefore(project: Project, indent: number, beforeId: number) {
     let beforeProject = this.getById(beforeId);
     if(beforeProject) {
-      let proj : ProjectTreeElem = beforeProject;
-      project.order = proj.order;
-      this.incrementOrderAfterOrEqual(proj);
-      this.addNewProject(project, indent, proj.parent);
+      project.order = beforeProject.order;
+      this.incrementOrderAfterOrEqual(beforeProject);
+      this.addNewProject(project, indent, beforeProject.parent);
     }
   }
 
@@ -261,9 +257,9 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
     this.sort();
   }
 
-  incrementOrderForAllSiblings(project: ProjectTreeElem) {
+  incrementOrderForAllSiblings(parent: ProjectTreeElem) {
     let siblings = this.list
-        .filter((a) => !a.parent && !project.parent || (a.parent && project.parent && a.parent.id == project.parent.id));
+        .filter((a) => !a.parent && !parent || (a.parent && parent && a.parent.id == parent.id));
     for(let sibling of siblings) {
       sibling.order = sibling.order + 1;
     }
