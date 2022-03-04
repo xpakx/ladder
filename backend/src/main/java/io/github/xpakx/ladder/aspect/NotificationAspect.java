@@ -1,7 +1,11 @@
 package io.github.xpakx.ladder.aspect;
 
 import io.github.xpakx.ladder.entity.*;
+import io.github.xpakx.ladder.entity.dto.CollabNotificationRequest;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
+import io.github.xpakx.ladder.repository.ProjectRepository;
+import io.github.xpakx.ladder.repository.UserAccountRepository;
+import io.github.xpakx.ladder.service.NotificationService;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -15,8 +19,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class NotificationAspect {
-    private final io.github.xpakx.ladder.service.NotificationService notificationService;
-
+    private final NotificationService notificationService;
+    private final UserAccountRepository userRepository;
+    private final ProjectRepository projectRepository;
 
     @AfterReturning(value="@annotation(NotifyOnProjectChange)", returning="response")
     public void notifyOnProjectChange(Project response) throws Throwable {
@@ -25,6 +30,9 @@ public class NotificationAspect {
                 .time(response.getModifiedAt())
                 .type("UPDATE")
                 .build();
+        if(response.isCollaborative()) {
+            sendCollabUpdateNotification(response.getModifiedAt(), response.getId());
+        }
         notificationService.sendNotification(notification);
     }
 
@@ -36,6 +44,9 @@ public class NotificationAspect {
                 .type("DELETE_PROJ")
                 .id(projectId)
                 .build();
+        if(projectRepository.existsByIdAndCollaborative(projectId, true)) {
+            sendCollabDeleteNotification(LocalDateTime.now(), projectId, "PROJ");
+        }
         notificationService.sendNotification(notification);
     }
 
@@ -67,6 +78,9 @@ public class NotificationAspect {
                 .time(response.getModifiedAt())
                 .type("UPDATE")
                 .build();
+        if(response.getProject().isCollaborative()) {
+            sendCollabUpdateNotification(response.getModifiedAt(), response.getProject().getId());
+        }
         notificationService.sendNotification(notification);
     }
 
@@ -81,6 +95,9 @@ public class NotificationAspect {
                     .time(task.getModifiedAt())
                     .type("UPDATE")
                     .build();
+            if(task.getProject().isCollaborative()) {
+                sendCollabUpdateNotification(task.getModifiedAt(), task.getProject().getId());
+            }
             notificationService.sendNotification(notification);
         }
     }
@@ -156,5 +173,21 @@ public class NotificationAspect {
                 .type("UPDATE")
                 .build();
         notificationService.sendNotification(notification);
+    }
+
+    private void sendCollabUpdateNotification(LocalDateTime modifiedAt, Integer id) {
+        CollabNotificationRequest notification = CollabNotificationRequest.builder()
+                .collabId(userRepository.getCollaboratorsIdByProjectId(id))
+                .time(modifiedAt)
+                .type("UPDATE")
+                .build();
+    }
+
+    private void sendCollabDeleteNotification(LocalDateTime modifiedAt, Integer id, String type) {
+        CollabNotificationRequest notification = CollabNotificationRequest.builder()
+                .collabId(userRepository.getCollaboratorsIdByProjectId(id))
+                .time(modifiedAt)
+                .type("DELETE_"+type)
+                .build();
     }
 }
