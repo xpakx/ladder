@@ -4,12 +4,10 @@ import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.CollabNotificationRequest;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
-import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import io.github.xpakx.ladder.service.NotificationService;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Aspect
 @Service
@@ -27,7 +24,6 @@ public class NotificationAspect {
     private final NotificationService notificationService;
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
-    private final TaskRepository taskRepository;
 
     @AfterReturning(value="@annotation(NotifyOnProjectChange)", returning="response")
     public void notifyOnProjectChange(Project response) throws Throwable {
