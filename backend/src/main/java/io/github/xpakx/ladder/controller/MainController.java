@@ -29,7 +29,7 @@ public class MainController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/collab/tasks/sync")
+    @PostMapping("/sync/collab/tasks")
     public ResponseEntity<List<CollabTaskDetails>> sync(@RequestBody IdCollectionRequest projectIds, @PathVariable Integer userId) {
         return new ResponseEntity<>(service.syncCollabTasks(projectIds, userId), HttpStatus.OK);
     }

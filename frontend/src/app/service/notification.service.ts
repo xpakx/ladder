@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { CollabTaskDetails } from '../entity/collab-task-details';
 import { SyncData } from '../entity/sync-data';
 import { SyncService } from './sync.service';
 import { TreeService } from './tree.service';
@@ -152,7 +153,18 @@ export class NotificationService {
     console.log(date.toISOString());
     this.service.sync({'date': date}).subscribe(
       (response: SyncData) => {
+        let ids: number[] = this.tree.filterNewCollabsIds(response.collabs);
         this.tree.sync(response);
+        this.syncNewCollabs(ids)
+      },
+      (error: HttpErrorResponse) => {}
+    );
+  }
+
+  syncNewCollabs(ids: number[]) {
+    this.service.syncCollabTasks({'ids': ids}).subscribe(
+      (response: CollabTaskDetails[]) => {
+        this.tree.syncCollabTasks(response);
       },
       (error: HttpErrorResponse) => {}
     );
