@@ -223,18 +223,20 @@ public class NotificationAspect {
         notificationService.sendCollabNotification(notification);
     }
 
-    @AfterReturning(value="@annotation(NotifyOnCollaborationDeletion) && args(collabId, projectId, ownerId)", argNames = "collabId, projectId, ownerId", returning="response")
-    public void notifyOnCollabDeletion(Integer collabId, Integer projectId, Integer ownerId, Project response) throws Throwable {
+    @Around(value="@annotation(NotifyOnCollaborationDeletion) && args(collabId, projectId, ownerId)", argNames = "collabId, projectId, ownerId")
+    public void notifyOnCollabDeletion(ProceedingJoinPoint pjp, Integer collabId, Integer projectId, Integer ownerId) throws Throwable {
+        Project result = (Project) pjp.proceed();
         NotificationRequest notification = NotificationRequest.builder()
                 .userId(ownerId)
-                .time(response.getModifiedAt())
+                .time(result.getModifiedAt())
                 .type("UPDATE")
                 .build();
         notificationService.sendNotification(notification);
         NotificationRequest collabNotification = NotificationRequest.builder()
                 .userId(collabId)
-                .time(response.getModifiedAt())
+                .time(result.getModifiedAt())
                 .type("DELETE_CPROJ")
+                .id(projectId)
                 .build();
         notificationService.sendNotification(collabNotification);
     }
