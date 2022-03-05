@@ -80,4 +80,13 @@ public class MainService {
 
         return result;
     }
+
+    public List<CollabTaskDetails> syncCollabTasks(IdCollectionRequest ids, Integer userId) {
+        //TODO: check userId
+        return  taskRepository.findByProjectIdInAndArchived(
+                ids.getIds(),
+                false,
+                CollabTaskDetails.class
+        );
+    }
 }
