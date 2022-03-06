@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CollabProjectDetails } from '../entity/collab-project-details';
+import { CollabTaskDetails } from '../entity/collab-task-details';
 import { Filter } from '../entity/filter';
 import { FilterDetails } from '../entity/filter-details';
 import { Habit } from '../entity/habit';
@@ -383,6 +384,17 @@ export class TreeService {
     this.filters.sync(response.filters);
     this.collabs.sync(response.collabs);
     this.collabTasks.syncTasks(response.collabTasks);
+  }
+
+  syncCollabTasks(list: CollabTaskDetails[]) {
+    this.collabTasks.syncTasks(list);
+  }
+
+  filterNewCollabsIds(list: CollabProjectDetails[]): number[] {
+    let existingIds = this.collabs.list.map((a) => a.id);
+    return list
+      .map((a) => a.id)
+      .filter((a) => !existingIds.includes(a));
   }
 
   syncProject(response: ProjectData) {

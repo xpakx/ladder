@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnCollaborationDeletion;
 import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnProjectDeletion;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
@@ -798,15 +799,18 @@ public class ProjectService {
         return result;
     }
 
+    @NotifyOnProjectChange
     public Project addCollaborator(IdRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         toUpdate.getCollaborators().add(userRepository.getById(request.getId()));
         toUpdate.setCollaborative(true);
+        toUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(toUpdate);
     }
 
+    @NotifyOnCollaborationDeletion
     public Project deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
@@ -819,6 +823,7 @@ public class ProjectService {
         if(toUpdate.getCollaborators().size() == 0) {
             toUpdate.setCollaborative(false);
         }
+		toUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(toUpdate);
     }
 

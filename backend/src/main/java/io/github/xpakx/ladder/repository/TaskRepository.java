@@ -142,4 +142,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     <T> List<T> findByProjectIdInAndArchived(List<Integer> projectIds, boolean archived, Class<T> type);
     <T> List<T> findByProjectIdInAndArchivedAndModifiedAtAfter(List<Integer> projectIds, boolean archived, Class<T> type, LocalDateTime modifiedAt);
+
+    @Query("select t from Task t LEFT JOIN t.project.collaborators u where t.project.id in :projectIds and t.archived = false and u.id = :collaboratorId")
+    <T> List<T> getTasksInProjectsForCollaborator(List<Integer> projectIds, Integer collaboratorId, Class<T> type);
+
 }

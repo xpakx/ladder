@@ -223,9 +223,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let parentTask = this.getById(parentId);
     let movedTask = this.getById(task.id);
     if(parentTask && movedTask) {
-      let tas : TaskTreeElem = parentTask;
       let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getById(movedTask.parent.id) : undefined;
-      this.incrementOrderForAllSiblings(tas);
+      this.incrementOrderForAllSiblings(parentTask);
       
       movedTask.indent = indent;
       movedTask.order = 1;
@@ -236,7 +235,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       if(oldParent) {
         this.recalculateHasChildren(oldParent);
       }
-      this.recalculateHasChildren(tas);
+      this.recalculateHasChildren(parentTask);
 
       this.sort();
     }
@@ -479,9 +478,9 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  incrementOrderForAllSiblings(task: TaskTreeElem) {
+  incrementOrderForAllSiblings(parent: TaskTreeElem) {
     let siblings = this.list
-        .filter((a) => !a.parent && !task.parent || (a.parent && task.parent && a.parent.id == task.parent.id));
+        .filter((a) => !a.parent && !parent || (a.parent && parent && a.parent.id == parent.id));
     for(let sibling of siblings) {
       sibling.order = sibling.order + 1;
     }

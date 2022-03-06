@@ -4,12 +4,10 @@ import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.CollabNotificationRequest;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
-import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import io.github.xpakx.ladder.service.NotificationService;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Aspect
 @Service
@@ -27,7 +24,6 @@ public class NotificationAspect {
     private final NotificationService notificationService;
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
-    private final TaskRepository taskRepository;
 
     @AfterReturning(value="@annotation(NotifyOnProjectChange)", returning="response")
     public void notifyOnProjectChange(Project response) throws Throwable {
@@ -45,7 +41,7 @@ public class NotificationAspect {
         notificationService.sendNotification(notification);
     }
 
-    @After(value="@annotation(NotifyOnProjectDeletion) && args(projectId, userId)", argNames = "projectId,userId")
+    @AfterReturning(value="@annotation(NotifyOnProjectDeletion) && args(projectId, userId)", argNames = "projectId,userId")
     public void notifyOnProjectDeletion(Integer projectId, Integer userId) throws Throwable {
         NotificationRequest notification = NotificationRequest.builder()
                 .userId(userId)
@@ -78,7 +74,7 @@ public class NotificationAspect {
         notificationService.sendNotification(notification);
     }
 
-    @After(value="@annotation(NotifyOnLabelDeletion) && args(labelId, userId)", argNames = "labelId,userId")
+    @AfterReturning(value="@annotation(NotifyOnLabelDeletion) && args(labelId, userId)", argNames = "labelId,userId")
     public void notifyOnLabelDeletion(Integer labelId, Integer userId) throws Throwable {
         NotificationRequest notification = NotificationRequest.builder()
                 .userId(userId)
@@ -122,7 +118,7 @@ public class NotificationAspect {
         }
     }
 
-    @After(value="@annotation(NotifyOnTaskDeletion) && args(taskId, userId)", argNames = "taskId,userId")
+    @AfterReturning(value="@annotation(NotifyOnTaskDeletion) && args(taskId, userId)", argNames = "taskId,userId")
     public void notifyOnTaskDeletion(Integer taskId, Integer userId) throws Throwable {
         NotificationRequest notification = NotificationRequest.builder()
                 .userId(userId)
@@ -152,7 +148,7 @@ public class NotificationAspect {
         notificationService.sendNotification(notification);
     }
 
-    @After(value="@annotation(NotifyOnHabitDeletion) && args(habitId, userId)", argNames = "habitId,userId")
+    @AfterReturning(value="@annotation(NotifyOnHabitDeletion) && args(habitId, userId)", argNames = "habitId,userId")
     public void notifyOnHabitDeletion(Integer habitId, Integer userId) throws Throwable {
         NotificationRequest notification = NotificationRequest.builder()
                 .userId(userId)
@@ -183,7 +179,7 @@ public class NotificationAspect {
         notificationService.sendNotification(notification);
     }
 
-    @After(value="@annotation(NotifyOnFilterDeletion) && args(filterId, userId)", argNames = "filterId,userId")
+    @AfterReturning(value="@annotation(NotifyOnFilterDeletion) && args(filterId, userId)", argNames = "filterId,userId")
     public void notifyOnFilterDeletion(Integer filterId, Integer userId) throws Throwable {
         NotificationRequest notification = NotificationRequest.builder()
                 .userId(userId)
@@ -194,7 +190,7 @@ public class NotificationAspect {
         notificationService.sendNotification(notification);
     }
 
-    @After(value="@annotation(NotifyOnImport) && args(userId, ..)", argNames = "userId")
+    @AfterReturning(value="@annotation(NotifyOnImport) && args(userId, ..)", argNames = "userId")
     public void notifyOnImport(Integer userId) throws Throwable {
         NotificationRequest notification = NotificationRequest.builder()
                 .userId(userId)
@@ -221,5 +217,23 @@ public class NotificationAspect {
                 .id(id)
                 .build();
         notificationService.sendCollabNotification(notification);
+    }
+
+    @Around(value="@annotation(NotifyOnCollaborationDeletion) && args(collabId, projectId, ownerId)", argNames = "collabId, projectId, ownerId")
+    public void notifyOnCollabDeletion(ProceedingJoinPoint pjp, Integer collabId, Integer projectId, Integer ownerId) throws Throwable {
+        Project result = (Project) pjp.proceed();
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(ownerId)
+                .time(result.getModifiedAt())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+        NotificationRequest collabNotification = NotificationRequest.builder()
+                .userId(collabId)
+                .time(result.getModifiedAt())
+                .type("DELETE_CPROJ")
+                .id(projectId)
+                .build();
+        notificationService.sendNotification(collabNotification);
     }
 }
