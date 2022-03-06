@@ -87,10 +87,9 @@ public class MainService {
     }
 
     public List<CollabTaskDetails> syncCollabTasks(IdCollectionRequest ids, Integer userId) {
-        //TODO: check userId
-        return  taskRepository.findByProjectIdInAndArchived(
+        return  taskRepository.getTasksInProjectsForCollaborator(
                 ids.getIds(),
-                false,
+                userId,
                 CollabTaskDetails.class
         );
     }
