@@ -4,9 +4,7 @@ import io.github.xpakx.ladder.aspect.NotifyOnCollaborationDeletion;
 import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnProjectDeletion;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
-import io.github.xpakx.ladder.entity.Label;
-import io.github.xpakx.ladder.entity.Project;
-import io.github.xpakx.ladder.entity.Task;
+import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.error.WrongOwnerException;
@@ -805,10 +803,19 @@ public class ProjectService {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        toUpdate.getCollaborators().add(userRepository.getById(request.getId()));
+        toUpdate.getCollaborators().add(createCollabForUser(userRepository.getById(request.getId())));
         toUpdate.setCollaborative(true);
         toUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(toUpdate);
+    }
+
+    private Collaboration createCollabForUser(UserAccount user) {
+        return Collaboration.builder()
+                .owner(user)
+                .accepted(true) //TODO
+                .editionAllowed(true)
+                .taskCompletionAllowed(true)
+                .build();
     }
 
     @NotifyOnCollaborationDeletion
@@ -818,7 +825,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         toUpdate.setCollaborators(
                 toUpdate.getCollaborators().stream()
-                        .filter((a) -> !collabId.equals(a.getId()))
+                        .filter((a) -> !collabId.equals(a.getOwner().getId()))
                         .collect(Collectors.toSet())
         );
         if(toUpdate.getCollaborators().size() == 0) {

@@ -66,7 +66,7 @@ public class Project {
     @ManyToMany(cascade={CascadeType.MERGE})
     @JoinTable(name="collaborators",
             joinColumns={@JoinColumn(name="project_id")},
-            inverseJoinColumns={@JoinColumn(name="user_account_id")})
-    private Set<UserAccount> collaborators;
+            inverseJoinColumns={@JoinColumn(name="collaboration_id")})
+    private Set<Collaboration> collaborators;
     private boolean collaborative;
 }
