@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { CollabProjectTreeService } from 'src/app/service/collab-project-tree.service';
@@ -10,7 +10,7 @@ import { TreeService } from 'src/app/service/tree.service';
   templateUrl: './collab-project.component.html',
   styleUrls: ['./collab-project.component.css']
 })
-export class CollabProjectComponent implements OnInit, AfterViewInit {
+export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
   public invalid: boolean = false;
   public message: string = '';
   project: ProjectTreeElem | undefined;
@@ -30,6 +30,14 @@ export class CollabProjectComponent implements OnInit, AfterViewInit {
     this.route.params.subscribe(routeParams => {
       this.loadProject(routeParams.id);
     });    
+  }
+
+  ngDoCheck(): void {
+    if(this.id) {
+      if(!this.tree.getCollabProjectById(this.id)) {
+        this.router.navigate(["/"]);
+      }
+    }
   }
 
   loadProject(id: number) {
