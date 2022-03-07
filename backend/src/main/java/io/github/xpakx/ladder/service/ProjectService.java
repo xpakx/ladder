@@ -682,6 +682,7 @@ public class ProjectService {
             project.setGeneralOrder(0);
             project.setParent(null);
             detachProjectFromTree(request, projectId, userId, project, now);
+            archiveTasks(request, projectId, userId, now, false);
         } else {
             project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
             archiveTasks(request, projectId, userId, now, false);
