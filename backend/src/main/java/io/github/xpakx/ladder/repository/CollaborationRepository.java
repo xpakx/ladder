@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.repository;
 
 import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.dto.CollaborationDetails;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

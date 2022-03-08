@@ -1,7 +1,8 @@
 <ul class="invitations">
     <li *ngFor="let invitation of invitations">
+        <b>{{ invitation.project.name }}</b> by {{ invitation.project.owner.username }}
         <button class="option-button" (click)="accept(invitation.id)">
-            <i class="fa fa-file"></i>
+            <i class="fa fa-check"></i>
             Accept
         </button>
     </li>

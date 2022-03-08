@@ -4,4 +4,6 @@ public interface CollaborationDetails {
     Integer getId();
     boolean getTaskCompletionAllowed();
     boolean getEditionAllowed();
+
+    ProjectWithNameAndUser getProject();
 }
