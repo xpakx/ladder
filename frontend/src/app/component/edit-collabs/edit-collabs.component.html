@@ -13,11 +13,6 @@
                 <label for="projectName">Id</label>
                 <input class="form-control mr-sm-2" placeholder="" id="id" formControlName="id">
             </div>
-            
-            <button type="button" class="modal-button modal-button-red" 
-            (click)="addCollaborator()" [disabled]="addCollabForm.invalid">
-                Add
-            </button>
 
             <div class="form-field-inline">
               <div class="switch" [class.switch-checked]="edit" (click)="switchEdit()">
@@ -36,6 +31,11 @@
                   Can complete tasks
               </label>
             </div>
+            
+            <button type="button" class="modal-button modal-button-red" 
+            (click)="addCollaborator()" [disabled]="addCollabForm.invalid">
+                Add
+            </button>
         </form>
 
         <li class="user-list" *ngFor="let user of collaborators">
