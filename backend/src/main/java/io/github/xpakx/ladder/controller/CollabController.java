@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
+import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.CollabService;
@@ -128,5 +129,12 @@ public class CollabController {
     @GetMapping("/invitations")
     public ResponseEntity<List<CollaborationDetails>> getInvitations(@PathVariable Integer userId) {
         return  new ResponseEntity<>(collabService.getNotAcceptedCollaborations(userId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{collabId}")
+    public ResponseEntity<Collaboration> updateCollabAcceptation(@RequestBody BooleanRequest request,
+                                                                 @PathVariable Integer collabId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(collabService.updateAcceptation(request, collabId, userId), HttpStatus.OK);
     }
 }

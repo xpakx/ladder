@@ -1,7 +1,9 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
+import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.CollaborationRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -125,5 +127,12 @@ public class CollabService {
 
     public List<CollaborationDetails> getNotAcceptedCollaborations(Integer userId) {
         return collabRepository.findByOwnerIdAndAccepted(userId, false);
+    }
+
+    public Collaboration updateAcceptation(BooleanRequest request, Integer userId, Integer collabId) {
+        Collaboration collab = collabRepository.findByOwnerIdAndId(userId, collabId)
+                .orElseThrow(() -> new NotFoundException("Not such collaboration!"));
+        collab.setAccepted(request.isFlag());
+        return collabRepository.save(collab);
     }
 }
