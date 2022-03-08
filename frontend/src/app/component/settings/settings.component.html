@@ -12,3 +12,7 @@
     Import
 </button>
 <app-settings-import *ngIf="view==3"></app-settings-import>
+<button class="elem" [class.selected]="view == 4" (click)="chooseOption(4)">
+    Invitations
+</button>
+<app-settings-invitation *ngIf="view==4"></app-settings-invitation>

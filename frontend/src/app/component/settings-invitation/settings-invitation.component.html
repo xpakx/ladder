@@ -1,0 +1,8 @@
+<ul class="invitations">
+    <li *ngFor="let invitation of invitations">
+        <button class="option-button" (click)="accept(invitation.id)">
+            <i class="fa fa-file"></i>
+            Accept
+        </button>
+    </li>
+</ul>

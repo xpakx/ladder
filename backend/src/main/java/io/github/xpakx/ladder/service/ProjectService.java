@@ -798,7 +798,7 @@ public class ProjectService {
         return result;
     }
 
-    @NotifyOnProjectChange
+    @NotifyOnProjectChange //TODO: send message about new invitation only
     public Project addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
@@ -812,7 +812,7 @@ public class ProjectService {
     private Collaboration createCollabForUser(CollaborationRequest request) {
         return Collaboration.builder()
                 .owner(userRepository.getById(request.getCollaboratorId()))
-                .accepted(true) //TODO
+                .accepted(false)
                 .editionAllowed(request.isEditionAllowed())
                 .taskCompletionAllowed(request.isCompletionAllowed())
                 .build();

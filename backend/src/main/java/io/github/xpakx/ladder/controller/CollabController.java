@@ -132,7 +132,7 @@ public class CollabController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{collabId}")
+    @PutMapping("/{collabId}/invitation")
     public ResponseEntity<Collaboration> updateCollabAcceptation(@RequestBody BooleanRequest request,
                                                                  @PathVariable Integer collabId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(collabService.updateAcceptation(request, collabId, userId), HttpStatus.OK);
