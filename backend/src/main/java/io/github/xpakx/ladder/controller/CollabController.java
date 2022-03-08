@@ -135,13 +135,13 @@ public class CollabController {
     @PutMapping("/{collabId}/invitation")
     public ResponseEntity<Collaboration> updateCollabAcceptation(@RequestBody BooleanRequest request,
                                                                  @PathVariable Integer collabId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(collabService.updateAcceptation(request, collabId, userId), HttpStatus.OK);
+        return  new ResponseEntity<>(collabService.updateAcceptation(request, userId, collabId), HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/projects/{projectId}/subscription")
     public ResponseEntity<List<Collaboration>> unsubscribe(@RequestBody BooleanRequest request,
                                                                  @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(collabService.unsubscribe(request, projectId, userId), HttpStatus.OK);
+        return  new ResponseEntity<>(collabService.unsubscribe(request, userId, projectId), HttpStatus.OK);
     }
 }
