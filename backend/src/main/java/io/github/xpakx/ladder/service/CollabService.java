@@ -135,4 +135,10 @@ public class CollabService {
         collab.setAccepted(request.isFlag());
         return collabRepository.save(collab);
     }
+
+    public List<Collaboration> unsubscribe(BooleanRequest request, Integer userId, Integer projectId) {
+        List<Collaboration> collabs = collabRepository.findByOwnerIdAndProjectId(userId, projectId);
+        collabs.forEach((a) -> a.setAccepted(request.isFlag()));
+        return collabRepository.saveAll(collabs);
+    }
 }
