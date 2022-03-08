@@ -799,22 +799,22 @@ public class ProjectService {
     }
 
     @NotifyOnProjectChange
-    public Project addCollaborator(IdRequest request, Integer projectId, Integer ownerId) {
+    public Project addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        toUpdate.getCollaborators().add(createCollabForUser(userRepository.getById(request.getId())));
+        toUpdate.getCollaborators().add(createCollabForUser(request));
         toUpdate.setCollaborative(true);
         toUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(toUpdate);
     }
 
-    private Collaboration createCollabForUser(UserAccount user) {
+    private Collaboration createCollabForUser(CollaborationRequest request) {
         return Collaboration.builder()
-                .owner(user)
+                .owner(userRepository.getById(request.getCollaboratorId()))
                 .accepted(true) //TODO
-                .editionAllowed(true)
-                .taskCompletionAllowed(true)
+                .editionAllowed(request.isEditionAllowed())
+                .taskCompletionAllowed(request.isCompletionAllowed())
                 .build();
     }
 
