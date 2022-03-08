@@ -11,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_account_id", "project_id"}))
 public class Collaboration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +25,10 @@ public class Collaboration {
     @ManyToOne
     @JoinColumn(name = "user_account_id")
     private UserAccount owner;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
 }

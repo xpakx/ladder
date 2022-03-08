@@ -804,15 +804,16 @@ public class ProjectService {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        toUpdate.getCollaborators().add(createCollabForUser(request));
+        toUpdate.getCollaborators().add(createCollabForUser(request, projectId));
         toUpdate.setCollaborative(true);
         toUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(toUpdate);
     }
 
-    private Collaboration createCollabForUser(CollaborationRequest request) {
+    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId) {
         return Collaboration.builder()
                 .owner(userRepository.getById(request.getCollaboratorId()))
+                .project(projectRepository.getById(projectId))
                 .accepted(false)
                 .editionAllowed(request.isEditionAllowed())
                 .taskCompletionAllowed(request.isCompletionAllowed())
@@ -824,10 +825,10 @@ public class ProjectService {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        Set<Collaboration> collaborations = toUpdate.getCollaborators();
+        List<Collaboration> collaborations = toUpdate.getCollaborators();
         toUpdate.setCollaborators(collaborations.stream()
                 .filter((a) -> !collabId.equals(a.getOwner().getId()))
-                .collect(Collectors.toSet())
+                .collect(Collectors.toList())
         );
         if(toUpdate.getCollaborators().size() == 0) {
             toUpdate.setCollaborative(false);
