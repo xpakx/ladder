@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
+import io.github.xpakx.ladder.repository.CollaborationRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -20,6 +22,7 @@ public class CollabService {
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
+    private final CollaborationRepository collabRepository;
 
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
         Integer ownerId = testAccessToProject(projectId, userId, true).orElse(userId);
@@ -118,5 +121,9 @@ public class CollabService {
     public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {
         Integer ownerId = testAccessToTask(taskToMoveId, userId, true, false).orElse(userId);
         return  taskService.moveTaskAsFirst(ownerId, taskToMoveId);
+    }
+
+    public List<CollaborationDetails> getNotAcceptedCollaborations(Integer userId) {
+        return collabRepository.findByOwnerIdAndAccepted(userId, false);
     }
 }

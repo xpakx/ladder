@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/{userId}/collab")
 @AllArgsConstructor
@@ -120,5 +122,11 @@ public class CollabController {
     @PutMapping("/tasks/{taskId}/move/asFirst")
     public ResponseEntity<Task> moveTaskAsFirst(@PathVariable Integer userId, @PathVariable Integer taskId) {
         return  new ResponseEntity<>(collabService.moveTaskAsFirst(userId, taskId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping("/invitations")
+    public ResponseEntity<List<CollaborationDetails>> getInvitations(@PathVariable Integer userId) {
+        return  new ResponseEntity<>(collabService.getNotAcceptedCollaborations(userId), HttpStatus.OK);
     }
 }
