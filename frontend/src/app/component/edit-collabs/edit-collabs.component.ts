@@ -59,7 +59,7 @@ export class EditCollabsComponent implements OnInit {
   deleteCollaborator(collaboratorId: number) {
     if(this.projectId) {
       this.service.deleteCollaborator(collaboratorId, this.projectId).subscribe(
-        (response: Project, collabId: number = collaboratorId) => {
+        (response: any, collabId: number = collaboratorId) => {
           this.collaborators = this.collaborators.filter((a) => a.owner.id != collabId);
         },
         (error: HttpErrorResponse) => {

@@ -177,8 +177,9 @@ public class ProjectController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @DeleteMapping("/{projectId}/collaborators/{collabId}")
-    public ResponseEntity<Project> addCollaborator(@PathVariable Integer collabId, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.deleteCollaborator(collabId, projectId, userId), HttpStatus.OK);
+    public ResponseEntity<?> addCollaborator(@PathVariable Integer collabId, @PathVariable Integer projectId, @PathVariable Integer userId) {
+        projectService.deleteCollaborator(collabId, projectId, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")

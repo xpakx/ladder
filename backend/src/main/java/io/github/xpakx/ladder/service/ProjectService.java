@@ -821,7 +821,7 @@ public class ProjectService {
     }
 
     @NotifyOnCollaborationDeletion
-    public Project deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
+    public void deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
@@ -834,13 +834,12 @@ public class ProjectService {
             toUpdate.setCollaborative(false);
         }
 		toUpdate.setModifiedAt(LocalDateTime.now());
-        toUpdate = projectRepository.save(toUpdate);
+        projectRepository.save(toUpdate);
         collabRepository.deleteAll(
                 collaborations.stream()
                         .filter((a) -> collabId.equals(a.getOwner().getId()))
                         .collect(Collectors.toSet())
         );
-        return toUpdate;
     }
 
     public List<CollaborationWithOwner> getCollaborators( Integer projectId, Integer ownerId) {
