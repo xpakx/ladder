@@ -37,7 +37,11 @@ export class EditCollabsComponent implements OnInit {
 
   addCollaborator() {
     if(this.projectId) {
-      this.service.addCollaborator({id: this.addCollabForm.controls.id.value }, this.projectId).subscribe(
+      this.service.addCollaborator({
+        collaboratorId: this.addCollabForm.controls.id.value, 
+        completionAllowed: true, 
+        editionAllowed: true 
+      }, this.projectId).subscribe(
         (response: Project) => {
           this.ngOnInit();
         },
