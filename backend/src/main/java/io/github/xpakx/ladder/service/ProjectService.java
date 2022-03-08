@@ -25,6 +25,7 @@ public class ProjectService {
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
     private final HabitRepository habitRepository;
+    private final CollaborationRepository collabRepository;
 
     /**
      * Getting object with project's data from repository.
@@ -823,16 +824,22 @@ public class ProjectService {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        toUpdate.setCollaborators(
-                toUpdate.getCollaborators().stream()
-                        .filter((a) -> !collabId.equals(a.getOwner().getId()))
-                        .collect(Collectors.toSet())
+        Set<Collaboration> collaborations = toUpdate.getCollaborators();
+        toUpdate.setCollaborators(collaborations.stream()
+                .filter((a) -> !collabId.equals(a.getOwner().getId()))
+                .collect(Collectors.toSet())
         );
         if(toUpdate.getCollaborators().size() == 0) {
             toUpdate.setCollaborative(false);
         }
 		toUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(toUpdate);
+        toUpdate = projectRepository.save(toUpdate);
+        collabRepository.deleteAll(
+                collaborations.stream()
+                        .filter((a) -> collabId.equals(a.getOwner().getId()))
+                        .collect(Collectors.toSet())
+        );
+        return toUpdate;
     }
 
     public List<UserWithNameAndId> getCollaborators( Integer projectId, Integer ownerId) {

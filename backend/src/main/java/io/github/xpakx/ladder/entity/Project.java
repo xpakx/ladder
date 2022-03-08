@@ -63,7 +63,7 @@ public class Project {
     private UserAccount owner;
 
     @JsonIgnore
-    @ManyToMany(cascade={CascadeType.MERGE})
+    @ManyToMany(cascade={CascadeType.REMOVE, CascadeType.MERGE})
     @JoinTable(name="collaborators",
             joinColumns={@JoinColumn(name="project_id")},
             inverseJoinColumns={@JoinColumn(name="collaboration_id")})
