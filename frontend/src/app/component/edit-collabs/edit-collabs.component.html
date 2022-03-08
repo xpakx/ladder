@@ -18,6 +18,24 @@
             (click)="addCollaborator()" [disabled]="addCollabForm.invalid">
                 Add
             </button>
+
+            <div class="form-field-inline">
+              <div class="switch" [class.switch-checked]="edit" (click)="switchEdit()">
+                  <span class="switch-handle"></span>
+              </div>
+              <label>
+                  Can edit tasks
+              </label>
+            </div>
+
+            <div class="form-field-inline">
+              <div class="switch" [class.switch-checked]="complete" (click)="switchComplete()">
+                  <span class="switch-handle"></span>
+              </div>
+              <label>
+                  Can complete tasks
+              </label>
+            </div>
         </form>
 
         <li class="user-list" *ngFor="let user of collaborators">

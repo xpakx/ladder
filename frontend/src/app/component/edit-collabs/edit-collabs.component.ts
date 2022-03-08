@@ -39,8 +39,8 @@ export class EditCollabsComponent implements OnInit {
     if(this.projectId) {
       this.service.addCollaborator({
         collaboratorId: this.addCollabForm.controls.id.value, 
-        completionAllowed: true, 
-        editionAllowed: true 
+        completionAllowed: this.complete, 
+        editionAllowed: this.edit 
       }, this.projectId).subscribe(
         (response: Project) => {
           this.ngOnInit();
@@ -67,5 +67,16 @@ export class EditCollabsComponent implements OnInit {
   
   close() {
     this.closeEvent.emit(true);
+  }
+
+  edit: boolean = false;
+  complete: boolean = false;
+
+  switchEdit(): void {
+    this.edit = !this.edit;
+  }
+
+  switchComplete(): void {
+    this.complete = !this.complete;
   }
 }
