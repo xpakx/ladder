@@ -34,11 +34,11 @@
 <div class="ist-menu context" [class.hidden-context-menu]="!showContextMenu" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
 	<ul class="context-menu-project" #taskContext>
         <li class="context-menu-project-item">
-			<button>
+			<button (click)="unsubscribe()">
 				<span class="menu_icon">
 					<i class="fa fa-users"></i>
 				</span>
-				<div class="menu_label">???</div>
+				<div class="menu_label">Unsubscribe</div>
 			</button>
 		</li>
 	</ul>

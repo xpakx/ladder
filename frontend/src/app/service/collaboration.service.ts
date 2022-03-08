@@ -28,4 +28,9 @@ export class CollaborationService {
     let userId  = this.getUserId();
     return this.http.get<CollaborationDetails[]>(`${this.apiServerUrl}/${userId}/collab/invitations`);
   }
+
+  public unsubscribe(projectId: number, request: BooleanRequest):  Observable<Collaboration[]> {
+    let userId  = this.getUserId();
+    return this.http.put<Collaboration[]>(`${this.apiServerUrl}/${userId}/collab/projects/${projectId}/subscription`, request);
+  }
 }

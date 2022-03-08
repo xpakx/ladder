@@ -1,7 +1,10 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, DoCheck, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Collaboration } from 'src/app/entity/collaboration';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { CollabProjectTreeService } from 'src/app/service/collab-project-tree.service';
+import { CollaborationService } from 'src/app/service/collaboration.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
 import { TreeService } from 'src/app/service/tree.service';
 
@@ -19,7 +22,7 @@ export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService,  private redirService: RedirectionService, 
     private renderer: Renderer2,
-    private projectTree: CollabProjectTreeService) {  }
+    private projectTree: CollabProjectTreeService, private collabService: CollaborationService) {  }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
@@ -90,5 +93,16 @@ export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
 
   closeContextTaskMenu() {
     this.showContextMenu = false;
+  }
+
+  unsubscribe() {
+    if(this.id) {
+      this.collabService.unsubscribe(this.id, {flag: false}).subscribe(
+        (collabs: Collaboration[]) => {
+          this.tree.deleteCollabProject(this.id);
+        },
+        (error: HttpErrorResponse) => {}
+      );
+    }
   }
 }
