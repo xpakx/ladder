@@ -183,7 +183,7 @@ public class ProjectController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/{projectId}/collaborators")
-    public ResponseEntity<List<UserWithNameAndId>> getCollaborators(@PathVariable Integer projectId, @PathVariable Integer userId) {
+    public ResponseEntity<List<CollaborationWithOwner>> getCollaborators(@PathVariable Integer projectId, @PathVariable Integer userId) {
         return new ResponseEntity<>(projectService.getCollaborators(projectId, userId), HttpStatus.OK);
     }
 }

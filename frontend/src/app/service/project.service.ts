@@ -15,7 +15,9 @@ import { TasksWithProjects } from '../entity/tasks-with-projects';
 import { CollaborationRequest } from '../entity/collaboration-request';
 import { UserMin } from '../entity/user-min';
 import { UserWithData } from '../entity/user-with-data';
+import { CollaborationDetails } from '../entity/collaboration-details';
 import { MultilevelMovableService } from './multilevel-movable-service';
+import { CollaborationWithOwner } from '../entity/collaboration-with-owner';
 
 @Injectable({
   providedIn: 'root'
@@ -153,8 +155,8 @@ export class ProjectService implements MultilevelMovableService<Project>{
     return this.http.delete<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators/${collaboratorId}`);
   }
 
-  public getCollaborators(projectId: number): Observable<UserMin[]> {
+  public getCollaborators(projectId: number): Observable<CollaborationWithOwner[]> {
     let userId  = this.getUserId();
-    return this.http.get<UserMin[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`);
+    return this.http.get<CollaborationWithOwner[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`);
   }
 }

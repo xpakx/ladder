@@ -1,1 +1,9 @@
 @import '../css/modal.css';
+
+.permission {
+    color: gray
+}
+
+.permission.permitted {
+    color: black;
+}

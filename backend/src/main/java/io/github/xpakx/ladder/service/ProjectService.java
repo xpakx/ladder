@@ -843,7 +843,7 @@ public class ProjectService {
         return toUpdate;
     }
 
-    public List<UserWithNameAndId> getCollaborators( Integer projectId, Integer ownerId) {
-        return userRepository.getCollaboratorsByProjectIdAndOwnerId(projectId, ownerId);
+    public List<CollaborationWithOwner> getCollaborators( Integer projectId, Integer ownerId) {
+        return collabRepository.findByProjectIdAndProjectOwnerId(projectId, ownerId);
     }
 }
