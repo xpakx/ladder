@@ -4,9 +4,7 @@ import io.github.xpakx.ladder.aspect.NotifyOnCollaborationDeletion;
 import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnProjectDeletion;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
-import io.github.xpakx.ladder.entity.Label;
-import io.github.xpakx.ladder.entity.Project;
-import io.github.xpakx.ladder.entity.Task;
+import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.error.WrongOwnerException;
@@ -27,6 +25,7 @@ public class ProjectService {
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
     private final HabitRepository habitRepository;
+    private final CollaborationRepository collabRepository;
 
     /**
      * Getting object with project's data from repository.
@@ -682,6 +681,7 @@ public class ProjectService {
             project.setGeneralOrder(0);
             project.setParent(null);
             detachProjectFromTree(request, projectId, userId, project, now);
+            archiveTasks(request, projectId, userId, now, false);
         } else {
             project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
             archiveTasks(request, projectId, userId, now, false);
@@ -799,35 +799,50 @@ public class ProjectService {
         return result;
     }
 
-    @NotifyOnProjectChange
-    public Project addCollaborator(IdRequest request, Integer projectId, Integer ownerId) {
+    @NotifyOnProjectChange //TODO: send message about new invitation only
+    public Project addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        toUpdate.getCollaborators().add(userRepository.getById(request.getId()));
+        toUpdate.getCollaborators().add(createCollabForUser(request, projectId));
         toUpdate.setCollaborative(true);
         toUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(toUpdate);
     }
 
+    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId) {
+        return Collaboration.builder()
+                .owner(userRepository.getById(request.getCollaboratorId()))
+                .project(projectRepository.getById(projectId))
+                .accepted(false)
+                .editionAllowed(request.isEditionAllowed())
+                .taskCompletionAllowed(request.isCompletionAllowed())
+                .build();
+    }
+
     @NotifyOnCollaborationDeletion
-    public Project deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
+    public void deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        toUpdate.setCollaborators(
-                toUpdate.getCollaborators().stream()
-                        .filter((a) -> !collabId.equals(a.getId()))
-                        .collect(Collectors.toSet())
+        List<Collaboration> collaborations = toUpdate.getCollaborators();
+        toUpdate.setCollaborators(collaborations.stream()
+                .filter((a) -> !collabId.equals(a.getOwner().getId()))
+                .collect(Collectors.toList())
         );
         if(toUpdate.getCollaborators().size() == 0) {
             toUpdate.setCollaborative(false);
         }
 		toUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(toUpdate);
+        projectRepository.save(toUpdate);
+        collabRepository.deleteAll(
+                collaborations.stream()
+                        .filter((a) -> collabId.equals(a.getOwner().getId()))
+                        .collect(Collectors.toSet())
+        );
     }
 
-    public List<UserWithNameAndId> getCollaborators( Integer projectId, Integer ownerId) {
-        return userRepository.getCollaboratorsByProjectIdAndOwnerId(projectId, ownerId);
+    public List<CollaborationWithOwner> getCollaborators( Integer projectId, Integer ownerId) {
+        return collabRepository.findByProjectIdAndProjectOwnerId(projectId, ownerId);
     }
 }

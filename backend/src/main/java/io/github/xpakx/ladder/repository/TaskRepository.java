@@ -137,13 +137,19 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Integer> findIdByOwnerIdAndIdIn(Integer ownerId, List<Integer> ids);
     List<Task> findByOwnerIdAndIdIn(Integer ownerId, List<Integer> ids);
 
-    @Query("SELECT case when count(u)> 0 then true else false end FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators u WHERE u.id = :id")
-    boolean existsCollaboratorById(Integer id);
+    @Query("SELECT case when count(u)> 0 then true else false end FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE u.id = :userId AND t.id = :taskId AND c.accepted = true")
+    boolean existsCollaboratorById(Integer taskId, Integer userId);
+
+    @Query("SELECT case when count(u)> 0 then true else false end FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE u.id = :userId AND t.id = :taskId AND c.accepted = true AND c.taskCompletionAllowed = true")
+    boolean existsDoerCollaboratorById(Integer taskId, Integer userId);
+
+    @Query("SELECT case when count(u)> 0 then true else false end FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE u.id = :userId AND t.id = :taskId AND c.accepted = true AND c.editionAllowed = true")
+    boolean existsEditorCollaboratorById(Integer taskId, Integer userId);
 
     <T> List<T> findByProjectIdInAndArchived(List<Integer> projectIds, boolean archived, Class<T> type);
     <T> List<T> findByProjectIdInAndArchivedAndModifiedAtAfter(List<Integer> projectIds, boolean archived, Class<T> type, LocalDateTime modifiedAt);
 
-    @Query("select t from Task t LEFT JOIN t.project.collaborators u where t.project.id in :projectIds and t.archived = false and u.id = :collaboratorId")
+    @Query("select t from Task t LEFT JOIN t.project.collaborators c LEFT JOIN c.owner u where t.project.id in :projectIds and t.archived = false and u.id = :collaboratorId AND c.accepted = true")
     <T> List<T> getTasksInProjectsForCollaborator(List<Integer> projectIds, Integer collaboratorId, Class<T> type);
 
 }

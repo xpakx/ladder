@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
+import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.CollabService;
@@ -8,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/{userId}/collab")
@@ -120,5 +123,25 @@ public class CollabController {
     @PutMapping("/tasks/{taskId}/move/asFirst")
     public ResponseEntity<Task> moveTaskAsFirst(@PathVariable Integer userId, @PathVariable Integer taskId) {
         return  new ResponseEntity<>(collabService.moveTaskAsFirst(userId, taskId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @GetMapping("/invitations")
+    public ResponseEntity<List<CollaborationDetails>> getInvitations(@PathVariable Integer userId) {
+        return  new ResponseEntity<>(collabService.getNotAcceptedCollaborations(userId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/{collabId}/invitation")
+    public ResponseEntity<Collaboration> updateCollabAcceptation(@RequestBody BooleanRequest request,
+                                                                 @PathVariable Integer collabId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(collabService.updateAcceptation(request, userId, collabId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/projects/{projectId}/subscription")
+    public ResponseEntity<List<Collaboration>> unsubscribe(@RequestBody BooleanRequest request,
+                                                                 @PathVariable Integer projectId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(collabService.unsubscribe(request, userId, projectId), HttpStatus.OK);
     }
 }

@@ -78,14 +78,17 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     List<Integer> findIdByOwnerIdAndIdIn(Integer userId, List<Integer> ids);
     List<Project> findByOwnerIdAndIdIn(Integer userId, List<Integer> ids);
 
-    @Query("SELECT case when count(u)> 0 then true else false end FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id")
-    boolean existsCollaboratorById(Integer id);
+    @Query("SELECT case when count(u)> 0 then true else false end FROM Project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE u.id = :userId AND p.id = :projectId AND c.accepted = true")
+    boolean existsCollaboratorById(Integer projectId, Integer userId);
+
+    @Query("SELECT case when count(u)> 0 then true else false end FROM Project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE u.id = :userId AND p.id = :projectId AND c.accepted = true AND c.editionAllowed = true")
+    boolean existsEditorCollaboratorById(Integer projectId, Integer userId);
 
     boolean existsByIdAndCollaborative(Integer id, boolean collaborative);
 
-    @Query("SELECT p FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id AND p.archived = false")
+    @Query("SELECT p FROM Project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE u.id = :id AND p.archived = false AND c.accepted = true")
     <T> List<T> findCollabsByUserIdAndNotArchived(Integer id, Class<T> type);
 
-    @Query("SELECT p FROM Project p LEFT JOIN p.collaborators u WHERE u.id = :id AND p.archived = false AND p.modifiedAt > :modifiedAt")
+    @Query("SELECT p FROM Project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE u.id = :id AND p.archived = false AND c.accepted = true AND p.modifiedAt > :modifiedAt")
     <T> List<T> findCollabsByUserIdAndNotArchivedAndModifiedAtAfter(Integer id, Class<T> type, LocalDateTime modifiedAt);
 }

@@ -171,19 +171,20 @@ public class ProjectController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/collaborators")
-    public ResponseEntity<Project> addCollaborator(@RequestBody IdRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
+    public ResponseEntity<Project> addCollaborator(@RequestBody CollaborationRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.addCollaborator(request, projectId, userId), HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @DeleteMapping("/{projectId}/collaborators/{collabId}")
-    public ResponseEntity<Project> addCollaborator(@PathVariable Integer collabId, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.deleteCollaborator(collabId, projectId, userId), HttpStatus.OK);
+    public ResponseEntity<?> addCollaborator(@PathVariable Integer collabId, @PathVariable Integer projectId, @PathVariable Integer userId) {
+        projectService.deleteCollaborator(collabId, projectId, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/{projectId}/collaborators")
-    public ResponseEntity<List<UserWithNameAndId>> getCollaborators(@PathVariable Integer projectId, @PathVariable Integer userId) {
+    public ResponseEntity<List<CollaborationWithOwner>> getCollaborators(@PathVariable Integer projectId, @PathVariable Integer userId) {
         return new ResponseEntity<>(projectService.getCollaborators(projectId, userId), HttpStatus.OK);
     }
 }

@@ -63,10 +63,7 @@ public class Project {
     private UserAccount owner;
 
     @JsonIgnore
-    @ManyToMany(cascade={CascadeType.MERGE})
-    @JoinTable(name="collaborators",
-            joinColumns={@JoinColumn(name="project_id")},
-            inverseJoinColumns={@JoinColumn(name="user_account_id")})
-    private Set<UserAccount> collaborators;
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade={CascadeType.REMOVE, CascadeType.MERGE})
+    private List<Collaboration> collaborators;
     private boolean collaborative;
 }

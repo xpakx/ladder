@@ -12,9 +12,13 @@ import { ProjectDetails } from '../entity/project-details';
 import { ProjectRequest } from '../entity/project-request';
 import { Task } from '../entity/task';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
+import { CollaborationRequest } from '../entity/collaboration-request';
 import { UserMin } from '../entity/user-min';
 import { UserWithData } from '../entity/user-with-data';
+import { CollaborationDetails } from '../entity/collaboration-details';
 import { MultilevelMovableService } from './multilevel-movable-service';
+import { CollaborationWithOwner } from '../entity/collaboration-with-owner';
+import { Collaboration } from '../entity/collaboration';
 
 @Injectable({
   providedIn: 'root'
@@ -142,18 +146,28 @@ export class ProjectService implements MultilevelMovableService<Project>{
     return this.http.get<ProjectData>(`${this.apiServerUrl}/${userId}/projects/${projectId}/data`);
   }
 
-  public addCollaborator(request: IdRequest, projectId: number):  Observable<Project> {
+  public addCollaborator(request: CollaborationRequest, projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
     return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`, request);
   }
 
-  public deleteCollaborator(collaboratorId: number, projectId: number):  Observable<Project> {
+  public deleteCollaborator(collaboratorId: number, projectId: number):  Observable<any> {
     let userId  = this.getUserId();
-    return this.http.delete<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators/${collaboratorId}`);
+    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators/${collaboratorId}`);
   }
 
-  public getCollaborators(projectId: number): Observable<UserMin[]> {
+  public getCollaborators(projectId: number): Observable<CollaborationWithOwner[]> {
     let userId  = this.getUserId();
-    return this.http.get<UserMin[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`);
+    return this.http.get<CollaborationWithOwner[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`);
+  }
+
+  public switchEdit(request: BooleanRequest, collabId: number): Observable<Collaboration> {
+    let userId  = this.getUserId();
+    return this.http.put<Collaboration>(`${this.apiServerUrl}/${userId}/collab/${collabId}/edit`, request);
+  }
+
+  public switchComplete(request: BooleanRequest, collabId: number): Observable<Collaboration> {
+    let userId  = this.getUserId();
+    return this.http.put<Collaboration>(`${this.apiServerUrl}/${userId}/collab/${collabId}/complete`, request);
   }
 }

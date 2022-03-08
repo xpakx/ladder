@@ -49,6 +49,7 @@ import { CollabProjectListComponent } from './component/collab-project-list/coll
 import { CollabProjectComponent } from './component/collab-project/collab-project.component';
 import { CollabTaskListComponent } from './component/collab-task-list/collab-task-list.component';
 import { ErrorInterceptor } from './utils/error.interceptor';
+import { SettingsInvitationComponent } from './component/settings-invitation/settings-invitation.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -97,7 +98,8 @@ export function tokenGetter() {
     EditCollabsComponent,
     CollabProjectListComponent,
     CollabProjectComponent,
-    CollabTaskListComponent
+    CollabTaskListComponent,
+    SettingsInvitationComponent
   ],
   imports: [
     BrowserModule,
