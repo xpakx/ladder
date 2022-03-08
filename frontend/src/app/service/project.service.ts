@@ -18,6 +18,7 @@ import { UserWithData } from '../entity/user-with-data';
 import { CollaborationDetails } from '../entity/collaboration-details';
 import { MultilevelMovableService } from './multilevel-movable-service';
 import { CollaborationWithOwner } from '../entity/collaboration-with-owner';
+import { Collaboration } from '../entity/collaboration';
 
 @Injectable({
   providedIn: 'root'
@@ -158,5 +159,15 @@ export class ProjectService implements MultilevelMovableService<Project>{
   public getCollaborators(projectId: number): Observable<CollaborationWithOwner[]> {
     let userId  = this.getUserId();
     return this.http.get<CollaborationWithOwner[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`);
+  }
+
+  public switchEdit(request: BooleanRequest, collabId: number): Observable<Collaboration> {
+    let userId  = this.getUserId();
+    return this.http.put<Collaboration>(`${this.apiServerUrl}/${userId}/collab/${collabId}/edit`, request);
+  }
+
+  public switchComplete(request: BooleanRequest, collabId: number): Observable<Collaboration> {
+    let userId  = this.getUserId();
+    return this.http.put<Collaboration>(`${this.apiServerUrl}/${userId}/collab/${collabId}/complete`, request);
   }
 }

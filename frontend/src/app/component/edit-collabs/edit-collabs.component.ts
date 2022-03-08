@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Collaboration } from 'src/app/entity/collaboration';
 import { CollaborationDetails } from 'src/app/entity/collaboration-details';
 import { CollaborationWithOwner } from 'src/app/entity/collaboration-with-owner';
 import { Project } from 'src/app/entity/project';
@@ -81,5 +82,33 @@ export class EditCollabsComponent implements OnInit {
 
   switchComplete(): void {
     this.complete = !this.complete;
+  }
+
+  changeEdit(collab: Collaboration): void {
+    this.service.switchEdit({flag: !collab.editionAllowed}, collab.id).subscribe(
+      (response: Collaboration) => {
+        let collabToUpdate = this.collaborators.find((a) => a.id == response.id);
+        if(collabToUpdate) {
+          collabToUpdate.editionAllowed = response.editionAllowed;
+        }
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+  }
+
+  changeComplete(collab: Collaboration): void {
+    this.service.switchComplete({flag: !collab.taskCompletionAllowed}, collab.id).subscribe(
+      (response: Collaboration) => {
+        let collabToUpdate = this.collaborators.find((a) => a.id == response.id);
+        if(collabToUpdate) {
+          collabToUpdate.taskCompletionAllowed = response.taskCompletionAllowed;
+        }
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
   }
 }
