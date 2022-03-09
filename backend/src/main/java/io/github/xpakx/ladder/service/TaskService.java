@@ -1,13 +1,16 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskDeletion;
 import io.github.xpakx.ladder.aspect.NotifyOnTasksChange;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
+import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
+import io.github.xpakx.ladder.error.WrongOwnerException;
 import io.github.xpakx.ladder.repository.LabelRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -649,5 +652,17 @@ public class TaskService {
             }
         }
         return taskRepository.saveAll(tasksToUpdate);
+    }
+
+    @Transactional
+    @NotifyOnTaskChange
+    public Task updateAssigned(IdRequest request, Integer taskId, Integer userId) {
+        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
+        UserAccount assigned = userRepository.getCollaboratorByTaskIdAndId(taskId, request.getId())
+                        .orElseThrow(() -> new WrongOwnerException("Given user isn't collaborator on this project!"));
+        taskToUpdate.setAssigned(assigned);
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
+        return taskRepository.save(taskToUpdate);
     }
 }
