@@ -46,8 +46,8 @@ export class EditCollabsComponent implements OnInit {
         completionAllowed: this.complete, 
         editionAllowed: this.edit 
       }, this.projectId).subscribe(
-        (response: Project) => {
-          this.ngOnInit();
+        (response: CollaborationWithOwner) => {
+          this.collaborators.push(response);
         },
         (error: HttpErrorResponse) => {
         
