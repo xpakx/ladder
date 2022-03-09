@@ -199,6 +199,14 @@
                 </button>
             </li>
         </ng-container>
+        <li class="context-menu-project-item">
+			<button (click)="assign()" *ngIf="project && project.collaborative">
+				<span class="menu_icon">
+					<i class="fa fa-user"></i>
+				</span>
+				<div class="menu_label">Assign</div>
+			</button>
+		</li>
         <li class="context-menu-project-item" *ngIf="blocked">
             <button (click)="restoreTask()">
                 <span class="menu_icon">

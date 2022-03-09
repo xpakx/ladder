@@ -398,4 +398,10 @@ implements OnInit, AfterViewInit {
 
     this.closeContextTaskMenu();
   }
+
+  assign() {
+    //TODO: open dialog
+
+    this.closeContextTaskMenu();
+  }
 }

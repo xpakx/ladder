@@ -16,6 +16,7 @@ export class TaskTreeService extends IndentableService<ParentWithId>
 implements MovableTaskTreeService<Task, TaskTreeElem> {
   public list: TaskTreeElem[] = [];
   private lastArchivization: Date | undefined;
+  protected id: number = -1;
 
   constructor() { super() }
 
@@ -24,6 +25,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
   }
   
   load(tasks: TaskDetails[]) {
+    this.id = Number(localStorage.getItem("user_id"));
     this.list = this.transformAll(tasks);
     this.sort();
   }
@@ -70,15 +72,27 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return tasks.find((a) => a.parent?.id == taskId) != null;
   }
 
+  protected isTaskAssignedToMe(a: TaskTreeElem): boolean {
+    return (!a.assigned || a.assigned.id == this.id);
+  }
+
   getByDate(date: Date): TaskTreeElem[] {
     return this.list.filter((a) => 
-      a.due && a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
+      this.isTaskAssignedToMe(a) &&
+      a.due && a.due.getDate() === date.getDate() && 
+      a.due.getMonth() === date.getMonth() && 
+      a.due.getFullYear() === date.getFullYear()
     );
   }
 
   getByDateUncompleted(date: Date): TaskTreeElem[] {
     return this.list.filter((a) => 
-      !a.completed && a.due && a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
+      this.isTaskAssignedToMe(a) &&
+      !a.completed && 
+      a.due && 
+      a.due.getDate() === date.getDate() && 
+      a.due.getMonth() === date.getMonth() && 
+      a.due.getFullYear() === date.getFullYear() 
     );
   }
 
@@ -88,15 +102,18 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     date.setMinutes(0);
     date.setSeconds(0);
   return this.list.filter((a) => 
+    this.isTaskAssignedToMe(a) &&
     !a.completed && a.due && a.due < date
   );
   }
 
   getByDateBetween(date1: Date, date2: Date): TaskTreeElem[] {
     return this.list.filter((a) => 
+      this.isTaskAssignedToMe(a) &&
       a.due && a.due > date1 && a.due < date2
     );
   }
+
 
   getNumOfUncompletedTasksByProject(projectId: number): number {
     return this.list.filter((a) => 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CollabTaskDetails } from '../entity/collab-task-details';
 import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
+import { TaskTreeElem } from '../entity/task-tree-elem';
 import { TaskTreeService } from './task-tree.service';
 
 @Injectable({
@@ -41,5 +42,9 @@ export class CollabTaskTreeService extends TaskTreeService {
       modifiedAt:  new Date(task.modifiedAt),
       assigned: task.assigned
     }
+  }
+
+  protected isTaskAssignedToMe(a: TaskTreeElem): boolean {
+    return (a.assigned != null && a.assigned.id == this.id);
   }
 }
