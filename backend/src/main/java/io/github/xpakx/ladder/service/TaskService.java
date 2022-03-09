@@ -182,10 +182,19 @@ public class TaskService {
         Task taskToUpdate = taskRepository.getByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
         if(request.isFlag()) {
-            return taskRepository.saveAll(completeTask(userId, taskToUpdate)).stream()
-                    .filter((a) -> a.getId().equals(taskId))
-                    .findAny()
-                    .orElse(null);
+            taskToUpdate.setAssigned(userRepository.getById(userId));
+            if(taskToUpdate.getProject().isCollaborative()) {
+                LocalDateTime now = LocalDateTime.now();
+                taskToUpdate.setCompleted(true);
+                taskToUpdate.setCompletedAt(now);
+                taskToUpdate.setModifiedAt(now);
+                return taskRepository.save(taskToUpdate);
+            } else {
+                return taskRepository.saveAll(completeTask(userId, taskToUpdate)).stream()
+                        .filter((a) -> a.getId().equals(taskId))
+                        .findAny()
+                        .orElse(null);
+            }
         } else {
             taskToUpdate.setCompleted(false);
             taskToUpdate.setCompletedAt(null);

@@ -20,7 +20,8 @@ import java.util.Set;
     ),
     @NamedEntityGraph(name = "task-with-labels",
             attributeNodes = {@NamedAttributeNode("labels"),
-				              @NamedAttributeNode("project")}
+				              @NamedAttributeNode("project"),
+				              @NamedAttributeNode("assigned")}
     )
 })
 public class Task {
@@ -76,4 +77,9 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "user_account_id")
     private UserAccount owner;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "assigned_user_id")
+    private UserAccount assigned;
 }
