@@ -799,7 +799,7 @@ public class ProjectService {
         return result;
     }
 
-    @NotifyOnProjectChange //TODO: send message about new invitation only
+    @NotifyOnProjectChange //TODO: send message about new invitation
     @Transactional
     public CollaborationWithOwner addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository

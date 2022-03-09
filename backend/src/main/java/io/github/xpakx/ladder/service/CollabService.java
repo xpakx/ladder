@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnCollaborationAcceptation;
 import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
@@ -129,6 +130,7 @@ public class CollabService {
         return collabRepository.findByOwnerIdAndAccepted(userId, false);
     }
 
+    @NotifyOnCollaborationAcceptation
     public Collaboration updateAcceptation(BooleanRequest request, Integer userId, Integer collabId) {
         Collaboration collab = collabRepository.findByOwnerIdAndId(userId, collabId)
                 .orElseThrow(() -> new NotFoundException("Not such collaboration!"));

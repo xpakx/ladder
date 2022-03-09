@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.aspect;
 
 import io.github.xpakx.ladder.entity.*;
+import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.CollabNotificationRequest;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Aspect
 @Service
@@ -235,5 +237,31 @@ public class NotificationAspect {
                 .id(projectId)
                 .build();
         notificationService.sendNotification(collabNotification);
+    }
+
+    @AfterReturning(value="@annotation(NotifyOnCollaborationAcceptation) && args(request, userId, collabId)", argNames = "request, userId, collabId")
+    public void notifyOnCollabAcceptation(BooleanRequest request, Integer userId, Integer collabId) throws Throwable {
+        LocalDateTime now = LocalDateTime.now();
+        if(request.isFlag()) {
+            NotificationRequest notification = NotificationRequest.builder()
+                    .userId(userId)
+                    .time(now)
+                    .type("UPDATE")
+                    .build();
+            notificationService.sendNotification(notification);
+        } else {
+            Optional<Integer> projectId = projectRepository.getIdByCollaborationId(collabId);
+            if(projectId.isPresent()) {
+                NotificationRequest collabNotification = NotificationRequest.builder()
+                        .userId(userId)
+                        .time(now)
+                        .type("DELETE_CPROJ")
+                        .id(projectId.get())
+                        .build();
+                notificationService.sendNotification(collabNotification);
+            }
+
+        }
+
     }
 }
