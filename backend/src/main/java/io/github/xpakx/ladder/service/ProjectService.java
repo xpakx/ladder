@@ -801,7 +801,7 @@ public class ProjectService {
 
     @NotifyOnProjectChange //TODO: send message about new invitation only
     @Transactional
-    public CollaborationDetails addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
+    public CollaborationWithOwner addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
