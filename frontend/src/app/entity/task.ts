@@ -1,3 +1,5 @@
+import { UserMin } from "./user-min";
+
 export interface Task {
     title: string;
     description: string;

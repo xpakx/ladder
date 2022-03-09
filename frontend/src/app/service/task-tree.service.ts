@@ -51,7 +51,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       completed: task.completed,
       labels: task.labels,
       priority: task.priority,
-      modifiedAt:  new Date(task.modifiedAt)
+      modifiedAt:  new Date(task.modifiedAt),
+      assigned: task.assigned
     }
   }
 
@@ -163,7 +164,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       collapsed: false,
       labels: labels,
       priority: response.priority,
-      modifiedAt:  new Date(response.modifiedAt)
+      modifiedAt:  new Date(response.modifiedAt),
+      assigned: null
     });
     this.sort();
   }
@@ -547,7 +549,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       completed: task.completed,
       labels: task.labels,
       priority: task.priority,
-      modifiedAt: task.modifiedAt
+      modifiedAt: task.modifiedAt,
+      assigned: task.assigned
     }
   }
 

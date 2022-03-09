@@ -2,6 +2,7 @@ import { IndentableTreeElem } from "./indentable-tree-elem";
 import { LabelDetails } from "./label-details";
 import { ParentWithId } from "./parent-with-id";
 import { ProjectWithNameAndId } from "./project-with-name-and-id";
+import { UserMin } from "./user-min";
 
 export interface TaskTreeElem extends IndentableTreeElem<ParentWithId> {
     id: number;
@@ -22,4 +23,6 @@ export interface TaskTreeElem extends IndentableTreeElem<ParentWithId> {
     labels: LabelDetails[];
     priority: number;
     modifiedAt: Date;
+
+    assigned: UserMin | null;
 }

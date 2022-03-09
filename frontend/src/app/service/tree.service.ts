@@ -117,7 +117,8 @@ export class TreeService {
       parentList: [],
       favorite: collab.favorite,
       collapsed: false,
-      modifiedAt: collab.modifiedAt
+      modifiedAt: collab.modifiedAt,
+      collaborative: true
     } : undefined;
   }
 

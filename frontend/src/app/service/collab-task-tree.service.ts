@@ -38,7 +38,8 @@ export class CollabTaskTreeService extends TaskTreeService {
       completed: task.completed,
       labels: [],
       priority: task.priority,
-      modifiedAt:  new Date(task.modifiedAt)
+      modifiedAt:  new Date(task.modifiedAt),
+      assigned: task.assigned
     }
   }
 }

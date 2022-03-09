@@ -11,6 +11,7 @@ export interface ProjectTreeElem extends IndentableTreeElem<ProjectWithNameAndId
     indent: number;
     parentList: ProjectTreeElem[];
     favorite: boolean;
+    collaborative: boolean;
     collapsed: boolean;
     modifiedAt: Date;
 }

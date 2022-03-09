@@ -10,4 +10,5 @@ export interface ProjectDetails {
     collapsed: boolean;
     modifiedAt: Date;
     archived: boolean;
+    collaborative: boolean;
 }
