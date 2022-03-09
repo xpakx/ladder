@@ -609,6 +609,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     task.modifiedAt = new Date(response.modifiedAt);
     task.indent = newParent ? newParent.indent+1 : 0;
     task.parentList = [];
+    task.assigned = response.assigned;
     this.recalculateChildrenIndent(task.id, task.indent+1);
     if(oldParent) {
       this.recalculateHasChildrenSync(oldParent, tasks);
@@ -708,7 +709,6 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
       this.updateTaskDate(task);
     }
   }
-
 
   collapse(response: Task) {
     let task = this.getById(response.id);
