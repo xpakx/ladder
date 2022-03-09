@@ -170,9 +170,9 @@ public class ProjectController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/collaborators")
+    @PostMapping("/{projectId}/collaborators")
     public ResponseEntity<CollaborationDetails> addCollaborator(@RequestBody CollaborationRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.addCollaborator(request, projectId, userId), HttpStatus.OK);
+        return  new ResponseEntity<>(projectService.addCollaborator(request, projectId, userId), HttpStatus.CREATED);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
