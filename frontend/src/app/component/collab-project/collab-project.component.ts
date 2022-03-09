@@ -59,7 +59,8 @@ export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
         indent: 0,
         favorite: collabProject.favorite,
         collapsed: false,
-        modifiedAt: collabProject.modifiedAt
+        modifiedAt: collabProject.modifiedAt,
+        collaborative: true
       }
     }
   }

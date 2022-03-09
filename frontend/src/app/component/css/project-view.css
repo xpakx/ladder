@@ -587,3 +587,18 @@ button {
     font-size: 14px;
     color: #d1453b;
 }
+
+.assigned_controls {
+    font-size: 12px;
+    white-space: nowrap;
+    height: 16px;
+    line-height: 16px;
+    color: grey;
+    border-radius: 3px;
+    margin: 0 8px 0 0;
+    text-decoration: none;
+}
+
+.assigned_controls i {
+    margin-right: 3px;
+}

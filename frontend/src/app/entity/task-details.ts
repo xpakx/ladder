@@ -1,6 +1,7 @@
 import { LabelDetails } from "./label-details";
 import { ParentWithId } from "./parent-with-id";
 import { ProjectWithNameAndId } from "./project-with-name-and-id";
+import { UserMin } from "./user-min";
 
 export interface TaskDetails {
     id: number;
@@ -17,4 +18,5 @@ export interface TaskDetails {
     labels: LabelDetails[];
     priority: number;
     modifiedAt: Date;
+    assigned: UserMin | null;
 }

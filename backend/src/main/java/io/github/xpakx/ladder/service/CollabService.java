@@ -1,9 +1,13 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.aspect.NotifyOnCollaborationAcceptation;
+import io.github.xpakx.ladder.aspect.NotifyOnCollaborationUnsubscription;
+import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
 import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
+import io.github.xpakx.ladder.error.WrongOwnerException;
 import io.github.xpakx.ladder.repository.CollaborationRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -12,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,9 +105,28 @@ public class CollabService {
         return taskService.updateTaskPriority(request, taskId, ownerId);
     }
 
+    @NotifyOnTaskChange
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
         Integer ownerId = testAccessToTask(taskId, userId, false, true).orElse(userId);
-        return taskService.completeTask(request, taskId, ownerId);
+        Task taskToUpdate = taskRepository.getByIdAndOwnerId(taskId, ownerId)
+                .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
+        if(request.isFlag()) {
+            taskToUpdate.setAssigned(userRepository.getById(userId));
+            LocalDateTime now = LocalDateTime.now();
+            taskToUpdate.setCompleted(true);
+            taskToUpdate.setCompletedAt(now);
+            taskToUpdate.setModifiedAt(now);
+            return taskRepository.save(taskToUpdate);
+
+        } else {
+            if(!taskToUpdate.getAssigned().getId().equals(userId) && !testTaskCollaboration(taskId, userId, true, false)) {
+                throw new WrongOwnerException("You cannot uncomplete tasks completed by someone else!");
+            }
+            taskToUpdate.setCompleted(false);
+            taskToUpdate.setCompletedAt(null);
+            taskToUpdate.setModifiedAt(LocalDateTime.now());
+        }
+        return taskRepository.save(taskToUpdate);
     }
 
     public Task moveTaskAfter(IdRequest request, Integer userId, Integer taskToMoveId) {
@@ -129,6 +153,7 @@ public class CollabService {
         return collabRepository.findByOwnerIdAndAccepted(userId, false);
     }
 
+    @NotifyOnCollaborationAcceptation
     public Collaboration updateAcceptation(BooleanRequest request, Integer userId, Integer collabId) {
         Collaboration collab = collabRepository.findByOwnerIdAndId(userId, collabId)
                 .orElseThrow(() -> new NotFoundException("Not such collaboration!"));
@@ -136,6 +161,7 @@ public class CollabService {
         return collabRepository.save(collab);
     }
 
+    @NotifyOnCollaborationUnsubscription
     public List<Collaboration> unsubscribe(BooleanRequest request, Integer userId, Integer projectId) {
         List<Collaboration> collabs = collabRepository.findByOwnerIdAndProjectId(userId, projectId);
         collabs.forEach((a) -> a.setAccepted(request.isFlag()));

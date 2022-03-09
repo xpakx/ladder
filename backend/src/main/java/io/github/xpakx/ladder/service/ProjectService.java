@@ -799,15 +799,17 @@ public class ProjectService {
         return result;
     }
 
-    @NotifyOnProjectChange //TODO: send message about new invitation only
-    public Project addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
+    @NotifyOnProjectChange //TODO: send message about new invitation
+    @Transactional
+    public CollaborationWithOwner addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         toUpdate.getCollaborators().add(createCollabForUser(request, projectId));
         toUpdate.setCollaborative(true);
         toUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(toUpdate);
+        projectRepository.save(toUpdate);
+        return collabRepository.findProjectedByOwnerIdAndProjectId(request.getCollaboratorId(), projectId).get();
     }
 
     private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId) {

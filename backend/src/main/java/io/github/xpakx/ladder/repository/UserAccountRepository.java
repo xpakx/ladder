@@ -27,4 +27,7 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Intege
 
     @Query("SELECT u.id FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE t.id = :taskId AND p.collaborative = true")
     List<Integer> getCollaboratorsIdByTaskId(Integer taskId);
+
+    @Query("SELECT u FROM Task t LEFT JOIN t.project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE t.id = :taskId AND p.collaborative = true AND u.id = :userId")
+    Optional<UserAccount> getCollaboratorByTaskIdAndId(Integer taskId, Integer userId);
 }

@@ -45,6 +45,10 @@
                                     <i class="fa fa-folder"></i>
                                     <span>{{getNumOfCompletedTasksByParent(task.id)}}/{{getNumOfTasksByParent(task.id)}}</span>
                                 </a>
+                                <span class="assigned_controls" *ngIf="project.collaborative && task.assigned">
+                                    <i class="fa fa-user"></i>
+                                    {{ task.assigned.username }}
+                                </span>
                                 <button *ngIf="task.due && !task.completed" type="button" class="due_date_controls">
                                     <span class="date">
                                         <i class="fa fa-calendar-o"></i>
@@ -195,6 +199,14 @@
                 </button>
             </li>
         </ng-container>
+        <li class="context-menu-project-item">
+			<button (click)="assign()" *ngIf="project && project.collaborative">
+				<span class="menu_icon">
+					<i class="fa fa-user"></i>
+				</span>
+				<div class="menu_label">Assign</div>
+			</button>
+		</li>
         <li class="context-menu-project-item" *ngIf="blocked">
             <button (click)="restoreTask()">
                 <span class="menu_icon">

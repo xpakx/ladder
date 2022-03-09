@@ -44,6 +44,10 @@
                                     <i class="fa fa-folder"></i>
                                     <span>{{getNumOfCompletedTasksByParent(task.id)}}/{{getNumOfTasksByParent(task.id)}}</span>
                                 </a>
+                                <span class="assigned_controls" *ngIf="task.assigned">
+                                    <i class="fa fa-user"></i>
+                                    {{ task.assigned.username }}
+                                </span>
                                 <button *ngIf="task.due && !task.completed" type="button" class="due_date_controls">
                                     <span class="date">
                                         <i class="fa fa-calendar-o"></i>

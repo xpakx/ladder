@@ -50,7 +50,8 @@ export class ArchiveComponent implements OnInit {
       parentList: [],
       favorite: project.favorite,
       collapsed: project.collapsed,
-      modifiedAt: new Date(project.modifiedAt)
+      modifiedAt: new Date(project.modifiedAt),
+      collaborative: project.collaborative
     }
   }
 

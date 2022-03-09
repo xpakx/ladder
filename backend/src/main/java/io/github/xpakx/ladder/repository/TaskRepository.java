@@ -17,7 +17,6 @@ import java.util.Optional;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer> {
 
-    @EntityGraph("task-with-children")
     Optional<Task> getByIdAndOwnerId(Integer taskId, Integer ownerId);
     Optional<Task> findByIdAndOwnerId(Integer taskId, Integer ownerId);
     <T> Optional<T> findProjectedByIdAndOwnerId(Integer id, Integer ownerId, Class<T> type);

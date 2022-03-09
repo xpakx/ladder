@@ -1,5 +1,6 @@
 import { ParentWithId } from "./parent-with-id";
 import { ProjectWithNameAndId } from "./project-with-name-and-id";
+import { UserMin } from "./user-min";
 
 export interface CollabTaskDetails {
     id: number;
@@ -14,4 +15,5 @@ export interface CollabTaskDetails {
     projectOrder: number;
     priority: number;
     modifiedAt: Date;
+    assigned: UserMin | null;
 }

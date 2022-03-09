@@ -16,6 +16,7 @@ export class TaskTreeService extends IndentableService<ParentWithId>
 implements MovableTaskTreeService<Task, TaskTreeElem> {
   public list: TaskTreeElem[] = [];
   private lastArchivization: Date | undefined;
+  protected id: number = -1;
 
   constructor() { super() }
 
@@ -24,6 +25,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
   }
   
   load(tasks: TaskDetails[]) {
+    this.id = Number(localStorage.getItem("user_id"));
     this.list = this.transformAll(tasks);
     this.sort();
   }
@@ -51,7 +53,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       completed: task.completed,
       labels: task.labels,
       priority: task.priority,
-      modifiedAt:  new Date(task.modifiedAt)
+      modifiedAt:  new Date(task.modifiedAt),
+      assigned: task.assigned
     }
   }
 
@@ -69,15 +72,27 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return tasks.find((a) => a.parent?.id == taskId) != null;
   }
 
+  protected isTaskAssignedToMe(a: TaskTreeElem): boolean {
+    return (!a.assigned || a.assigned.id == this.id);
+  }
+
   getByDate(date: Date): TaskTreeElem[] {
     return this.list.filter((a) => 
-      a.due && a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
+      this.isTaskAssignedToMe(a) &&
+      a.due && a.due.getDate() === date.getDate() && 
+      a.due.getMonth() === date.getMonth() && 
+      a.due.getFullYear() === date.getFullYear()
     );
   }
 
   getByDateUncompleted(date: Date): TaskTreeElem[] {
     return this.list.filter((a) => 
-      !a.completed && a.due && a.due.getDate() === date.getDate() && a.due.getMonth() === date.getMonth() && a.due.getFullYear() === date.getFullYear() 
+      this.isTaskAssignedToMe(a) &&
+      !a.completed && 
+      a.due && 
+      a.due.getDate() === date.getDate() && 
+      a.due.getMonth() === date.getMonth() && 
+      a.due.getFullYear() === date.getFullYear() 
     );
   }
 
@@ -87,15 +102,18 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     date.setMinutes(0);
     date.setSeconds(0);
   return this.list.filter((a) => 
+    this.isTaskAssignedToMe(a) &&
     !a.completed && a.due && a.due < date
   );
   }
 
   getByDateBetween(date1: Date, date2: Date): TaskTreeElem[] {
     return this.list.filter((a) => 
+      this.isTaskAssignedToMe(a) &&
       a.due && a.due > date1 && a.due < date2
     );
   }
+
 
   getNumOfUncompletedTasksByProject(projectId: number): number {
     return this.list.filter((a) => 
@@ -163,7 +181,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       collapsed: false,
       labels: labels,
       priority: response.priority,
-      modifiedAt:  new Date(response.modifiedAt)
+      modifiedAt:  new Date(response.modifiedAt),
+      assigned: null
     });
     this.sort();
   }
@@ -547,7 +566,8 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       completed: task.completed,
       labels: task.labels,
       priority: task.priority,
-      modifiedAt: task.modifiedAt
+      modifiedAt: task.modifiedAt,
+      assigned: task.assigned
     }
   }
 
@@ -589,6 +609,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     task.modifiedAt = new Date(response.modifiedAt);
     task.indent = newParent ? newParent.indent+1 : 0;
     task.parentList = [];
+    task.assigned = response.assigned;
     this.recalculateChildrenIndent(task.id, task.indent+1);
     if(oldParent) {
       this.recalculateHasChildrenSync(oldParent, tasks);
@@ -688,7 +709,6 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
       this.updateTaskDate(task);
     }
   }
-
 
   collapse(response: Task) {
     let task = this.getById(response.id);

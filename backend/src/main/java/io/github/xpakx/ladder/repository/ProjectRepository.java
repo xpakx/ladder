@@ -81,6 +81,9 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Query("SELECT case when count(u)> 0 then true else false end FROM Project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE u.id = :userId AND p.id = :projectId AND c.accepted = true")
     boolean existsCollaboratorById(Integer projectId, Integer userId);
 
+    @Query("SELECT p.id FROM Collaboration c LEFT JOIN c.project p WHERE c.id = :collabId")
+    Optional<Integer> getIdByCollaborationId(Integer collabId);
+
     @Query("SELECT case when count(u)> 0 then true else false end FROM Project p LEFT JOIN p.collaborators c LEFT JOIN c.owner u WHERE u.id = :userId AND p.id = :projectId AND c.accepted = true AND c.editionAllowed = true")
     boolean existsEditorCollaboratorById(Integer projectId, Integer userId);
 

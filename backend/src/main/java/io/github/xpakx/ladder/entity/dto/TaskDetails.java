@@ -18,4 +18,5 @@ public interface TaskDetails {
     Set<LabelDetails> getLabels();
     Integer getPriority();
     LocalDateTime getModifiedAt();
+    UserWithNameAndId getAssigned();
 }

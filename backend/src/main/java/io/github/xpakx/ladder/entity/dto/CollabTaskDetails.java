@@ -16,4 +16,5 @@ public interface CollabTaskDetails {
     Integer getProjectOrder();
     Integer getPriority();
     LocalDateTime getModifiedAt();
+    UserWithNameAndId getAssigned();
 }

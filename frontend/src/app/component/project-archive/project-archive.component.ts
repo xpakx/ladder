@@ -43,7 +43,21 @@ export class ProjectArchiveComponent implements OnInit {
 
   loadProject(id: number) {
     this.id = id;
-    this.project = {id: id, name: '', parent: null, color: '', order: 0, realOrder: 0, hasChildren: false, indent: 0, parentList: [], favorite: false, collapsed: false, modifiedAt: new Date()}
+    this.project = {
+      id: id, 
+      name: '', 
+      parent: null, 
+      color: '', 
+      order: 0, 
+      realOrder: 0, 
+      hasChildren: false, 
+      indent: 0, 
+      parentList: [], 
+      favorite: false, 
+      collapsed: false, 
+      modifiedAt: new Date(),
+      collaborative: false    
+    }
     this.loadArchivedTasks(id);
   }
 
@@ -61,7 +75,6 @@ export class ProjectArchiveComponent implements OnInit {
         
         }
       );
-    
   }
 
   chooseTab(num: number) {

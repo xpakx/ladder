@@ -2,10 +2,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Collaboration } from 'src/app/entity/collaboration';
-import { CollaborationDetails } from 'src/app/entity/collaboration-details';
 import { CollaborationWithOwner } from 'src/app/entity/collaboration-with-owner';
-import { Project } from 'src/app/entity/project';
-import { UserMin } from 'src/app/entity/user-min';
+import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
+import { ProjectTreeService } from 'src/app/service/project-tree.service';
 import { ProjectService } from 'src/app/service/project.service';
 
 @Component({
@@ -16,10 +15,11 @@ import { ProjectService } from 'src/app/service/project.service';
 export class EditCollabsComponent implements OnInit {
   @Output() closeEvent = new EventEmitter<boolean>();
   @Input() projectId: number | undefined;
+  project: ProjectTreeElem | undefined;
   collaborators: CollaborationWithOwner[] = [];
   addCollabForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private service: ProjectService) {
+  constructor(private fb: FormBuilder, private service: ProjectService, private projectTree: ProjectTreeService) {
     this.addCollabForm = this.fb.group({
       id: ['', Validators.required]
     });
@@ -27,6 +27,9 @@ export class EditCollabsComponent implements OnInit {
 
   ngOnInit(): void {
     if(this.projectId) {
+      if(this.projectId) {
+        this.project = this.projectTree.getById(this.projectId);
+      }
       this.service.getCollaborators(this.projectId).subscribe(
         (response: CollaborationWithOwner[]) => {
           this.collaborators = response;
@@ -46,8 +49,11 @@ export class EditCollabsComponent implements OnInit {
         completionAllowed: this.complete, 
         editionAllowed: this.edit 
       }, this.projectId).subscribe(
-        (response: Project) => {
-          this.ngOnInit();
+        (response: CollaborationWithOwner) => {
+          this.collaborators.push(response);
+          if(this.project) {
+            this.project.collaborative = true;
+          }
         },
         (error: HttpErrorResponse) => {
         
@@ -61,6 +67,9 @@ export class EditCollabsComponent implements OnInit {
       this.service.deleteCollaborator(collaboratorId, this.projectId).subscribe(
         (response: any, collabId: number = collaboratorId) => {
           this.collaborators = this.collaborators.filter((a) => a.owner.id != collabId);
+          if(this.collaborators.length == 0 && this.project) {
+            this.project.collaborative = false;
+          }
         },
         (error: HttpErrorResponse) => {
         
