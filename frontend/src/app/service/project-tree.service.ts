@@ -337,6 +337,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       project.collapsed = details.collapsed;
       project.modifiedAt = new Date(details.modifiedAt);
       project.parent = details.parent;
+      project.collaborative = details.collaborative;
       let oldParent = project.parent ? this.getById(project.parent.id) : null;
       let newParent = project.parent ? this.getById(project.parent.id) : null;
       project.indent = newParent ? newParent.indent+1 : 0;
