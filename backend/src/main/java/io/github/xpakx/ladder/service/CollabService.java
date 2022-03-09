@@ -1,6 +1,7 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.aspect.NotifyOnCollaborationAcceptation;
+import io.github.xpakx.ladder.aspect.NotifyOnCollaborationUnsubscription;
 import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
@@ -138,6 +139,7 @@ public class CollabService {
         return collabRepository.save(collab);
     }
 
+    @NotifyOnCollaborationUnsubscription
     public List<Collaboration> unsubscribe(BooleanRequest request, Integer userId, Integer projectId) {
         List<Collaboration> collabs = collabRepository.findByOwnerIdAndProjectId(userId, projectId);
         collabs.forEach((a) -> a.setAccepted(request.isFlag()));

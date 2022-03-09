@@ -262,6 +262,26 @@ public class NotificationAspect {
             }
 
         }
+    }
 
+    @AfterReturning(value="@annotation(NotifyOnCollaborationUnsubscription) && args(request, userId, projectId)", argNames = "request, userId, projectId")
+    public void notifyOnCollabUnsubscription(BooleanRequest request, Integer userId, Integer projectId) throws Throwable {
+        LocalDateTime now = LocalDateTime.now();
+        if(request.isFlag()) {
+            NotificationRequest notification = NotificationRequest.builder()
+                    .userId(userId)
+                    .time(now)
+                    .type("UPDATE")
+                    .build();
+            notificationService.sendNotification(notification);
+        } else {
+            NotificationRequest collabNotification = NotificationRequest.builder()
+                    .userId(userId)
+                    .time(now)
+                    .type("DELETE_CPROJ")
+                    .id(projectId)
+                    .build();
+            notificationService.sendNotification(collabNotification);
+        }
     }
 }
