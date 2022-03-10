@@ -1,9 +1,6 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.aspect.NotifyOnCollaborationDeletion;
-import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
-import io.github.xpakx.ladder.aspect.NotifyOnProjectDeletion;
-import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
+import io.github.xpakx.ladder.aspect.*;
 import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
@@ -799,8 +796,9 @@ public class ProjectService {
         return result;
     }
 
-    @NotifyOnProjectChange //TODO: send message about new invitation
+    @NotifyOnProjectChange
     @Transactional
+    @Notify(message = "You have an invitation to project")
     public CollaborationWithOwner addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)

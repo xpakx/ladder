@@ -3,17 +3,21 @@ package io.github.xpakx.ladder.aspect;
 import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.CollabNotificationRequest;
+import io.github.xpakx.ladder.entity.dto.CollaborationRequest;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import io.github.xpakx.ladder.service.NotificationService;
 import lombok.AllArgsConstructor;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -283,5 +287,18 @@ public class NotificationAspect {
                     .build();
             notificationService.sendNotification(collabNotification);
         }
+    }
+
+    @AfterReturning(value="@annotation(Notify) && args(request, ..)", argNames = "request")
+    public void textNotificationAfterCollabInvitation(JoinPoint jp, CollaborationRequest request) {
+        MethodSignature signature = (MethodSignature) jp.getSignature();
+        Method method = signature.getMethod();
+        Notify annotation = method.getAnnotation(Notify.class);
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(request.getCollaboratorId())
+                .time(LocalDateTime.now())
+                .type("MSG " + annotation.message())
+                .build();
+        notificationService.sendNotification(notification);
     }
 }
