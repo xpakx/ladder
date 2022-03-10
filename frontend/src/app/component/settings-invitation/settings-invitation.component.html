@@ -1,10 +1,18 @@
 <ul class="invitations">
     <li *ngFor="let invitation of invitations">
-        <i class="fa fa-eye"></i>
-        <i class="fa fa-pencil" *ngIf="invitation.editionAllowed"></i>
-        <i class="fa fa-check" *ngIf="invitation.taskCompletionAllowed"></i>
-        <b>{{ invitation.project.name }}</b> 
-        by <i>{{ invitation.project.owner.username }}</i>
+        <span class="permission">
+            <i class="fa fa-eye"></i>
+        </span>
+        <span class="permission" *ngIf="invitation.editionAllowed">
+            <i class="fa fa-pencil"></i>
+        </span>
+        <span class="permission" *ngIf="invitation.taskCompletionAllowed">
+            <i class="fa fa-check"></i>
+        </span>
+        <span class="invitation">
+            <b>{{ invitation.project.name }}</b> 
+            by <i>{{ invitation.project.owner.username }}</i>
+        </span>
         <button class="option-button" (click)="accept(invitation.id)">
             <i class="fa fa-check"></i>
             Accept
