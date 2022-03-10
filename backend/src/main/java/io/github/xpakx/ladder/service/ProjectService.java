@@ -835,8 +835,15 @@ public class ProjectService {
         if(toUpdate.getCollaborators().size() == 0) {
             toUpdate.setCollaborative(false);
         }
-		toUpdate.setModifiedAt(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+		toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
+        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collabId, toUpdate.getId());
+        for(Task task : tasks) {
+            task.setModifiedAt(now);
+            task.setAssigned(null);
+        }
+        taskRepository.saveAll(tasks);
         collabRepository.deleteAll(
                 collaborations.stream()
                         .filter((a) -> collabId.equals(a.getOwner().getId()))
@@ -844,7 +851,7 @@ public class ProjectService {
         );
     }
 
-    public List<CollaborationWithOwner> getCollaborators( Integer projectId, Integer ownerId) {
+    public List<CollaborationWithOwner> getCollaborators(Integer projectId, Integer ownerId) {
         return collabRepository.findByProjectIdAndProjectOwnerId(projectId, ownerId);
     }
 }
