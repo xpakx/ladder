@@ -39,7 +39,8 @@ export class AssignModalComponent implements OnInit {
 
   assignMyself(): void {
     let id = Number(localStorage.getItem("user_id"));
-    this.assign({id: id, username: ''});
+    let username = localStorage.getItem('username');
+    this.assign({id: id, username: username ? username : ''});
   }
 
 }
