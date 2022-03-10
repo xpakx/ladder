@@ -1,25 +1,27 @@
 @import '../css/modal.css';
 
 
-ul {
+.collab-list ul {
     list-style: none;
+    margin: 0;
+    padding: 0 20px;
+}
+
+.collab-list ul li {
+    margin: 0;
+    padding: 0;
     display: flex;
-    margin: 0;
-    padding: 0 !important;
 }
 
-li {
-    margin: 0;
-    padding: 0 !important;
-}
-
-h5 {
+.collab-list h5 {
     font-size: 14px;
     font-weight: 600;
+    padding: 0 20px;
 }
 
 .collab-list {
     padding: 0 20px;
+    margin-bottom: 10px;
 }
 
 .permission {
@@ -30,7 +32,7 @@ h5 {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin-left: 5px !important;
+    margin-left: 5px;
 }
 
 .permission.permitted {
@@ -38,21 +40,21 @@ h5 {
 }
 
 button.permission:hover {
-    color: rgb(110, 110, 110) !important;
-    background-color: transparent !important;
+    color: rgb(110, 110, 110);
+    background-color: transparent;
 }
 
 button.permission.permitted:hover {
-    color: rgb(65, 64, 64) !important;
+    color: rgb(65, 64, 64);
 }
 
 .cancel-button {
-    margin-right: 5px !important;
+    margin-right: 5px;
 }
 
 .cancel-button:hover {
-    background-color: transparent !important;
-    color: rgb(65, 64, 64) !important;
+    background-color: transparent;
+    color: rgb(65, 64, 64);
 }
 
 .right-button {
