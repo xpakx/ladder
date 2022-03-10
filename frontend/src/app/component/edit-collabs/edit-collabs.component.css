@@ -1,9 +1,61 @@
 @import '../css/modal.css';
 
+
+ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0 !important;
+}
+
+li {
+    margin: 0;
+    padding: 0 !important;
+}
+
+h5 {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.collab-list {
+    padding: 0 20px;
+}
+
 .permission {
-    color: gray
+    color: gray;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 5px !important;
 }
 
 .permission.permitted {
     color: black;
+}
+
+button.permission:hover {
+    color: rgb(110, 110, 110) !important;
+    background-color: transparent !important;
+}
+
+button.permission.permitted:hover {
+    color: rgb(65, 64, 64) !important;
+}
+
+.cancel-button {
+    margin-right: 5px !important;
+}
+
+.cancel-button:hover {
+    background-color: transparent !important;
+    color: rgb(65, 64, 64) !important;
+}
+
+.right-button {
+    display: flex;
+    justify-content: flex-end;
 }
