@@ -1,0 +1,33 @@
+<div class="modal modal-background"
+  tabindex="-1"
+  role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Assign Task</h4>
+        <i class="fa fa-question fa-circle"></i>
+      </div>
+      <div class="modal-body">
+        <li class="user-list">
+            <button type="button" (click)="assignMyself()">
+                    <i class="fa fa-times-me"></i>
+                    Assign myself
+            </button>
+        </li>
+        <li class="user-list" *ngFor="let collab of collaborators">
+            <button type="button" (click)="assign(collab.owner)">
+                    <i class="fa fa-times-user"></i>
+                    Assign {{collab.owner.username}}
+            </button>
+        </li>
+  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-button" 
+                (click)="close()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

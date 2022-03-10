@@ -6,6 +6,7 @@ import { ProjectWithNameAndId } from '../entity/project-with-name-and-id';
 import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
+import { UserMin } from '../entity/user-min';
 import { IndentableService } from './indentable-service';
 import { MovableTaskTreeService } from './movable-task-tree-service';
 
@@ -714,6 +715,14 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
     let task = this.getById(response.id);
     if(task){
       task.collapsed = response.collapsed;
+      task.modifiedAt = new Date(response.modifiedAt);
+    }
+  }
+
+  updateAssignation(response: Task, user: UserMin) {
+    let task = this.getById(response.id);
+    if(task){
+      task.assigned = user;
       task.modifiedAt = new Date(response.modifiedAt);
     }
   }

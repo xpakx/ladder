@@ -18,6 +18,7 @@ import { Task } from '../entity/task';
 import { TaskDetails } from '../entity/task-details';
 import { TaskTreeElem } from '../entity/task-tree-elem';
 import { TasksWithProjects } from '../entity/tasks-with-projects';
+import { UserMin } from '../entity/user-min';
 import { UserWithData } from '../entity/user-with-data';
 import { CollabProjectTreeService } from './collab-project-tree.service';
 import { CollabTaskTreeService } from './collab-task-tree.service';
@@ -481,6 +482,10 @@ export class TreeService {
 
   restoreTask(response: Task, tree: TaskTreeElem[]) {
     this.tasks.restoreTask(response, tree);
+  }
+
+  updateAssignation(response: Task, user: UserMin) {
+    this.tasks.updateAssignation(response, user);
   }
 
   deleteCompletedTasks(projectId: number) {

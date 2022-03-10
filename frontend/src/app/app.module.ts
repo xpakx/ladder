@@ -50,6 +50,7 @@ import { CollabProjectComponent } from './component/collab-project/collab-projec
 import { CollabTaskListComponent } from './component/collab-task-list/collab-task-list.component';
 import { ErrorInterceptor } from './utils/error.interceptor';
 import { SettingsInvitationComponent } from './component/settings-invitation/settings-invitation.component';
+import { AssignModalComponent } from './component/assign-modal/assign-modal.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -99,7 +100,8 @@ export function tokenGetter() {
     CollabProjectListComponent,
     CollabProjectComponent,
     CollabTaskListComponent,
-    SettingsInvitationComponent
+    SettingsInvitationComponent,
+    AssignModalComponent
   ],
   imports: [
     BrowserModule,
