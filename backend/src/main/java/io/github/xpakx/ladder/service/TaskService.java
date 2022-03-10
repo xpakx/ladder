@@ -659,8 +659,11 @@ public class TaskService {
     public Task updateAssigned(IdRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        UserAccount assigned = userRepository.getCollaboratorByTaskIdAndId(taskId, request.getId())
-                        .orElseThrow(() -> new WrongOwnerException("Given user isn't collaborator on this project!"));
+        UserAccount assigned = !userId.equals(request.getId()) ?
+                userRepository.getCollaboratorByTaskIdAndId(taskId, request.getId())
+                        .orElseThrow(() -> new WrongOwnerException("Given user isn't collaborator on this project!"))
+                :
+                userRepository.getById(userId);
         taskToUpdate.setAssigned(assigned);
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
