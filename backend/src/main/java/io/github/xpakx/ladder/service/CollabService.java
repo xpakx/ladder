@@ -119,7 +119,7 @@ public class CollabService {
             return taskRepository.save(taskToUpdate);
 
         } else {
-            if(!taskToUpdate.getAssigned().getId().equals(userId) && !testTaskCollaboration(taskId, userId, true, false)) {
+            if((taskToUpdate.getAssigned()==null || !taskToUpdate.getAssigned().getId().equals(userId)) && !testTaskCollaboration(taskId, userId, true, false)) {
                 throw new WrongOwnerException("You cannot uncomplete tasks completed by someone else!");
             }
             taskToUpdate.setCompleted(false);
