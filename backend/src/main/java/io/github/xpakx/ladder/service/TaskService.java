@@ -186,7 +186,7 @@ public class TaskService {
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
         if(request.isFlag()) {
             taskToUpdate.setAssigned(userRepository.getById(userId));
-            if(taskToUpdate.getProject().isCollaborative()) {
+            if(taskToUpdate.getProject()!=null && taskToUpdate.getProject().isCollaborative()) {
                 LocalDateTime now = LocalDateTime.now();
                 taskToUpdate.setCompleted(true);
                 taskToUpdate.setCompletedAt(now);
