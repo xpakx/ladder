@@ -32,27 +32,34 @@
               </label>
             </div>
             
-            <button type="button" class="modal-button modal-button-red" 
-            (click)="addCollaborator()" [disabled]="addCollabForm.invalid">
-                Add
-            </button>
-        </form>
+            <div class="right-button">
+              <button type="button" class="modal-button modal-button-red" 
+              (click)="addCollaborator()" [disabled]="addCollabForm.invalid">
+                  Add
+              </button>
+            </div>
+        </form>  
+      </div>
+      <div class="collab-list">
+        <h5>Already added</h5>
 
-        <li class="user-list" *ngFor="let collab of collaborators">
-
-            <i class="fa fa-eye"></i>
-            <button class="permission" [class.permitted]="collab.editionAllowed" (click)="changeEdit(collab)">
-              <i class="fa fa-pencil"></i>
-            </button>
-            <button class="permission"  [class.permitted]="collab.taskCompletionAllowed" (click)="changeComplete(collab)">
-              <i class="fa fa-check"></i>
-            </button>            
-            {{collab.owner.username}}
-            <button type="button cancel-button" (click)="deleteCollaborator(collab.owner.id)">
-                    <i class="fa fa-times-circle-o"></i>
-            </button>
-        </li>
-  
+        <ul class="user-list" >
+          <li *ngFor="let collab of collaborators">                
+              <button type="button" class="cancel-button" (click)="deleteCollaborator(collab.owner.id)">
+                <i class="fa fa-times-circle-o"></i>
+              </button>       
+              {{collab.owner.username}}
+              <div class="permission permitted">
+                <i class="fa fa-eye"></i>
+              </div>
+              <button class="permission" [class.permitted]="collab.editionAllowed" (click)="changeEdit(collab)">
+                <i class="fa fa-pencil"></i>
+              </button>
+              <button class="permission"  [class.permitted]="collab.taskCompletionAllowed" (click)="changeComplete(collab)">
+                <i class="fa fa-check"></i>
+              </button>   
+          </li>
+        </ul>
       </div>
       <div class="modal-footer">
         <button type="button" class="modal-button" 

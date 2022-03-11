@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CollabProjectData } from '../entity/collab-project-data';
 import { CollabProjectDetails } from '../entity/collab-project-details';
 import { Project } from '../entity/project';
 
@@ -6,12 +7,12 @@ import { Project } from '../entity/project';
   providedIn: 'root'
 })
 export class CollabProjectTreeService  {
-  public list: CollabProjectDetails[] = [];
+  public list: CollabProjectData[] = [];
   public collapsed: boolean = true;
 
   constructor() {  }
 
-  load(projects: CollabProjectDetails[] = []) {
+  load(projects: CollabProjectData[] = []) {
     this.list = projects;
     this.sort();
   }
@@ -20,24 +21,12 @@ export class CollabProjectTreeService  {
     this.list.sort((a, b) => a.id - b.id);
   }
 
-  addNewProject(project: Project, indent: number) {
-    this.list.push({
-      id: project.id,
-      name: project.name,
-      color: project.color,
-      favorite: project.favorite,
-      generalOrder: project.order,
-      modifiedAt: new Date(project.modifiedAt)
-    });
-    this.sort();
-  }
-
   deleteProject(projectId: number) {
-    this.list = this.list.filter((a) => a.id != projectId);
+    this.list = this.list.filter((a) => a.project.id != projectId);
   }
 
   getProjects(): CollabProjectDetails[] {
-    return this.list;
+    return this.list.map((a) => a.project);
   }
 
   isEmpty(): boolean {
@@ -45,17 +34,24 @@ export class CollabProjectTreeService  {
   }
 
   getProjectById(id: number): CollabProjectDetails | undefined {
-    return this.list.find((a) => a.id == id);
+    return this.list.map((a) => a.project).find((a) => a.id == id);
   }
 
-  sync(projects: CollabProjectDetails[]) {
+  getCollabByProjectId(id: number): CollabProjectData | undefined {
+    return this.list.find((a) => a.project.id == id);
+  }
+
+  sync(projects: CollabProjectData[]) {
     for(let project of projects) {
-      let projectWithId = this.getProjectById(project.id);
+      let projectWithId = this.getCollabByProjectId(project.project.id);
       if(projectWithId) {
-        projectWithId.color = project.color;
-        projectWithId.favorite = project.favorite;
-        projectWithId.generalOrder = project.generalOrder;
-        projectWithId.name = project.name;
+        projectWithId.project.color = project.project.color;
+        projectWithId.project.favorite = project.project.favorite;
+        projectWithId.project.generalOrder = project.project.generalOrder;
+        projectWithId.project.name = project.project.name;
+        projectWithId.project.modifiedAt = new Date(project.project.modifiedAt);
+        projectWithId.editionAllowed = project.editionAllowed;
+        projectWithId.taskCompletionAllowed = project.taskCompletionAllowed;
         projectWithId.modifiedAt = new Date(project.modifiedAt);
       } else {
         this.list.push(project);

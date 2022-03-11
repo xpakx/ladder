@@ -6,6 +6,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskDetails } from 'src/app/entity/task-details';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
+import { UserMin } from 'src/app/entity/user-min';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
@@ -399,9 +400,30 @@ implements OnInit, AfterViewInit {
     this.closeContextTaskMenu();
   }
 
-  assign() {
-    //TODO: open dialog
+  showAssignModal: boolean = false;
+  taskIdForAssignation: number | undefined;
 
+  assign(event: UserMin) {
+    if(this.taskIdForAssignation) {
+      this.taskService.updateAssigned({id: event.id}, this.taskIdForAssignation).subscribe(
+          (response: Task, user: UserMin = event) => {
+          this.tree.updateAssignation(response, user);
+        },
+        (error: HttpErrorResponse) => {
+        
+        }
+     );
+    }
+    this.closeAssignModal();
+  }
+
+  openAssignModal() {
+    this.showAssignModal = true;
+    this.taskIdForAssignation = this.contextTaskMenu?.id;
     this.closeContextTaskMenu();
+  }
+
+  closeAssignModal() {
+    this.showAssignModal = false;
   }
 }

@@ -25,6 +25,7 @@ export class LoadProjectComponent implements OnInit {
       this.service.getFullInfo().subscribe(
         (response: UserWithData) => {
           this.tree.load(response);
+          localStorage.setItem("username", response.username);
           this.router.navigate([this.redirService.getAddress()]);
           
         },
@@ -32,6 +33,7 @@ export class LoadProjectComponent implements OnInit {
           if(error.status === 401) {
             localStorage.removeItem("token");
             localStorage.removeItem("user_id");
+            localStorage.removeItem("username");
             this.router.navigate(['login']);
           }
         }

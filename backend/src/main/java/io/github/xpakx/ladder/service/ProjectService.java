@@ -1,9 +1,6 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.aspect.NotifyOnCollaborationDeletion;
-import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
-import io.github.xpakx.ladder.aspect.NotifyOnProjectDeletion;
-import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
+import io.github.xpakx.ladder.aspect.*;
 import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
@@ -799,26 +796,29 @@ public class ProjectService {
         return result;
     }
 
-    @NotifyOnProjectChange //TODO: send message about new invitation
+    @NotifyOnProjectChange
     @Transactional
+    @Notify(message = "You have an invitation to project")
     public CollaborationWithOwner addCollaborator(CollaborationRequest request, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        toUpdate.getCollaborators().add(createCollabForUser(request, projectId));
+        LocalDateTime now = LocalDateTime.now();
+        toUpdate.getCollaborators().add(createCollabForUser(request, projectId, now));
         toUpdate.setCollaborative(true);
-        toUpdate.setModifiedAt(LocalDateTime.now());
+        toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
         return collabRepository.findProjectedByOwnerIdAndProjectId(request.getCollaboratorId(), projectId).get();
     }
 
-    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId) {
+    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId, LocalDateTime now) {
         return Collaboration.builder()
                 .owner(userRepository.getById(request.getCollaboratorId()))
                 .project(projectRepository.getById(projectId))
                 .accepted(false)
                 .editionAllowed(request.isEditionAllowed())
                 .taskCompletionAllowed(request.isCompletionAllowed())
+                .modifiedAt(now)
                 .build();
     }
 
@@ -835,8 +835,15 @@ public class ProjectService {
         if(toUpdate.getCollaborators().size() == 0) {
             toUpdate.setCollaborative(false);
         }
-		toUpdate.setModifiedAt(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+		toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
+        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collabId, toUpdate.getId());
+        for(Task task : tasks) {
+            task.setModifiedAt(now);
+            task.setAssigned(null);
+        }
+        taskRepository.saveAll(tasks);
         collabRepository.deleteAll(
                 collaborations.stream()
                         .filter((a) -> collabId.equals(a.getOwner().getId()))
@@ -844,7 +851,7 @@ public class ProjectService {
         );
     }
 
-    public List<CollaborationWithOwner> getCollaborators( Integer projectId, Integer ownerId) {
+    public List<CollaborationWithOwner> getCollaborators(Integer projectId, Integer ownerId) {
         return collabRepository.findByProjectIdAndProjectOwnerId(projectId, ownerId);
     }
 }

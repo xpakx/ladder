@@ -117,9 +117,8 @@ public class CollabService {
             taskToUpdate.setCompletedAt(now);
             taskToUpdate.setModifiedAt(now);
             return taskRepository.save(taskToUpdate);
-
         } else {
-            if(!taskToUpdate.getAssigned().getId().equals(userId) && !testTaskCollaboration(taskId, userId, true, false)) {
+            if((taskToUpdate.getAssigned()==null || !taskToUpdate.getAssigned().getId().equals(userId)) && !testTaskCollaboration(taskId, userId, true, false)) {
                 throw new WrongOwnerException("You cannot uncomplete tasks completed by someone else!");
             }
             taskToUpdate.setCompleted(false);
@@ -158,6 +157,7 @@ public class CollabService {
         Collaboration collab = collabRepository.findByOwnerIdAndId(userId, collabId)
                 .orElseThrow(() -> new NotFoundException("Not such collaboration!"));
         collab.setAccepted(request.isFlag());
+        collab.setModifiedAt(LocalDateTime.now());
         return collabRepository.save(collab);
     }
 

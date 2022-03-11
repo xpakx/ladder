@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -31,4 +32,5 @@ public class Collaboration {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    private LocalDateTime modifiedAt;
 }

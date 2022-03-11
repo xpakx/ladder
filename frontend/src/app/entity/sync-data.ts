@@ -1,3 +1,4 @@
+import { CollabProjectData } from "./collab-project-data";
 import { CollabProjectDetails } from "./collab-project-details";
 import { CollabTaskDetails } from "./collab-task-details";
 import { FilterDetails } from "./filter-details";
@@ -14,6 +15,6 @@ export interface SyncData {
     habits: HabitDetails[];
     habitCompletions: HabitCompletionDetails[];
     filters: FilterDetails[];
-    collabs: CollabProjectDetails[];
+    collabs: CollabProjectData[];
     collabTasks: CollabTaskDetails[];
 }

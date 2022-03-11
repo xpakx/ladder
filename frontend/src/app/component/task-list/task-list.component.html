@@ -200,7 +200,7 @@
             </li>
         </ng-container>
         <li class="context-menu-project-item">
-			<button (click)="assign()" *ngIf="project && project.collaborative">
+			<button (click)="openAssignModal()" *ngIf="project && project.collaborative">
 				<span class="menu_icon">
 					<i class="fa fa-user"></i>
 				</span>
@@ -229,5 +229,6 @@
 <app-date-dialog *ngIf="showSelectDateModal" [taskDate]="dateForDateModal" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
 <app-project-choice-dialog *ngIf="showSelectProjectModal" [project]="projectForProjectModal" (closeEvent)="closeSelectProjectModal($event)" (cancelEvent)="cancelProjectSelection()"></app-project-choice-dialog>
 <app-priority-modal *ngIf="showSelectPriorityModal" [priority]="priorityForPriorityModal" (closeEvent)="closeSelectPriorityModal($event)" (cancelEvent)="cancelPrioritySelection()"></app-priority-modal>
+<app-assign-modal *ngIf="project && showAssignModal" [projectId]="project.id"  (closeEvent)="assign($event)" (cancelEvent)="closeAssignModal()"></app-assign-modal>
 
 <app-task-view *ngIf="openTask" [task]="openTask" (closeEvent)="closeTaskView()"></app-task-view>

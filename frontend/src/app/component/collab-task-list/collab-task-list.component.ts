@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { CollabProjectData } from 'src/app/entity/collab-project-data';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
@@ -16,10 +17,11 @@ import { MultilevelCollabTaskComponent } from '../abstract/multilevel-collab-tas
   styleUrls: ['./collab-task-list.component.css']
 })
 export class CollabTaskListComponent extends MultilevelCollabTaskComponent<CollabTaskTreeService>  implements OnInit {
-  @Input("project") project: ProjectTreeElem | undefined;
+  @Input("project") collab: CollabProjectData | undefined;
+  project: ProjectTreeElem | undefined;
   @Input("initTasks") initTasks: TaskTreeElem[] = [];
   @Input("blocked") blocked: boolean = false;
-  
+    
   todayDate: Date | undefined;
   showAddTaskForm: boolean = false;
   taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
@@ -31,10 +33,11 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   }
 
   ngOnInit(): void {
+    
   }
 
   get tasks(): TaskTreeElem[] {
-    return (this.project && this.initTasks.length == 0) ? this.taskTreeService.getTasksByProject(this.project.id) : this.initTasks;
+    return (this.collab && this.initTasks.length == 0) ? this.taskTreeService.getTasksByProject(this.collab.project.id) : this.initTasks;
   }
 
   protected getElems(): TaskTreeElem[] {
@@ -102,6 +105,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   }
 
   completeTask(id: number) {
+    if(!this.collab?.taskCompletionAllowed) {return;}
     if(!this.blocked) {
       let task = this.tree.getCollabTaskById(id);
       if(task) {

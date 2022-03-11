@@ -153,7 +153,7 @@ export class NotificationService {
     console.log(date.toISOString());
     this.service.sync({'date': date}).subscribe(
       (response: SyncData) => {
-        let ids: number[] = this.tree.filterNewCollabsIds(response.collabs);
+        let ids: number[] = this.tree.filterNewCollabsIds(response.collabs.map((a) => a.project));
         this.tree.sync(response);
         this.syncNewCollabs(ids)
       },
@@ -162,6 +162,7 @@ export class NotificationService {
   }
 
   syncNewCollabs(ids: number[]) {
+    if(ids.length == 0) {return;}
     this.service.syncCollabTasks({'ids': ids}).subscribe(
       (response: CollabTaskDetails[]) => {
         this.tree.syncCollabTasks(response);
