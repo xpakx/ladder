@@ -22,4 +22,6 @@ public interface CollaborationRepository extends JpaRepository<Collaboration, In
 
     List<CollaborationWithOwner> findByProjectIdAndProjectOwnerId(Integer projectId, Integer ownerId);
 
+    @Query("SELECT c FROM Collaboration c LEFT JOIN c.project p LEFT JOIN c.owner u WHERE u.id = :id AND p.archived = false AND c.accepted = true")
+    <T> List<T> findCollabsByUserIdAndNotArchived(Integer id, Class<T> type);
 }

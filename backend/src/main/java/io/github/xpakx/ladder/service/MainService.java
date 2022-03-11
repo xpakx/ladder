@@ -20,6 +20,7 @@ public class MainService {
     private final HabitRepository habitRepository;
     private final FilterRepository filterRepository;
     private final HabitCompletionRepository habitCompletionRepository;
+    private final CollaborationRepository collaborationRepository;
 
     public UserWithData getAll(Integer userId) {
         UserWithData result = new UserWithData();
@@ -33,10 +34,13 @@ public class MainService {
         result.setHabits(habitRepository.findByOwnerIdAndArchived(userId, false, HabitDetails.class));
         result.setFilters(filterRepository.findByOwnerId(userId, FilterDetails.class));
 
-        List<CollabProjectDetails> collabProjects = projectRepository.findCollabsByUserIdAndNotArchived(userId, CollabProjectDetails.class);
+        List<CollaborationWithProject> collabProjects = collaborationRepository.findCollabsByUserIdAndNotArchived(userId, CollaborationWithProject.class);
         result.setCollabs(collabProjects);
         result.setCollabTasks(taskRepository.findByProjectIdInAndArchived(
-                collabProjects.stream().map(CollabProjectDetails::getId).collect(Collectors.toList()),
+                collabProjects.stream()
+                        .filter((a) -> a.getProject() != null)
+                        .map((a) -> a.getProject().getId())
+                        .collect(Collectors.toList()),
                 false,
                 CollabTaskDetails.class
         ));
