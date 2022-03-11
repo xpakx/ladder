@@ -5,4 +5,5 @@ export interface CollabProjectData {
     taskCompletionAllowed: boolean;
     editionAllowed: boolean;
     project: CollabProjectDetails;
+    modifiedAt: Date;
 }

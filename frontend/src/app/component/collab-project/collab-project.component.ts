@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, DoCheck, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CollabProjectData } from 'src/app/entity/collab-project-data';
 import { Collaboration } from 'src/app/entity/collaboration';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { CollabProjectTreeService } from 'src/app/service/collab-project-tree.service';
@@ -16,7 +17,7 @@ import { TreeService } from 'src/app/service/tree.service';
 export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
   public invalid: boolean = false;
   public message: string = '';
-  project: ProjectTreeElem | undefined;
+  project: CollabProjectData | undefined;
   id!: number;
 
   constructor(private router: Router, private route: ActivatedRoute, 
@@ -45,24 +46,7 @@ export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
 
   loadProject(id: number) {
     this.id = id;
-    let collabProject = this.projectTree.getProjectById(id);
-    if(collabProject) {
-      this.project = {
-        id: collabProject.id,
-        name: collabProject.name,
-        color: collabProject.color,
-        parent: null,
-        order: 0,
-        realOrder: 0, 
-        hasChildren: false,
-        parentList: [], 
-        indent: 0,
-        favorite: collabProject.favorite,
-        collapsed: false,
-        modifiedAt: collabProject.modifiedAt,
-        collaborative: true
-      }
-    }
+    this.project = this.projectTree.getCollabByProjectId(id);
   }
 
   showContextMenu: boolean = false;

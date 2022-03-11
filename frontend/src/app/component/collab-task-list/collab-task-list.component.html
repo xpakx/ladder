@@ -1,4 +1,4 @@
-<div class="tasks_content" *ngIf="project">
+<div class="tasks_content" *ngIf="collab">
     <ul class="task_list_items">
         <li *ngIf="draggedId" [dndDropzone]="['task']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
 
@@ -10,12 +10,12 @@
             </li>
             <li *ngIf="!shouldEditTaskById(task.id)" class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
                 [class.hiddenTask]="isParentCollapsed(task.parentList) || isParentDragged(task.parentList)"
-                [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="task">
+                [dndDraggable]="task.id" [dndDisableIf]="!collab.editionAllowed" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="task">
                 <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
                 <div class="task_list_item_main">
                     <div role="button" tabindex="0" class="task_list_item_body">
                         <div class="task_list_item__overflow_actions">
-                            <span class="handle" dndHandle>
+                            <span class="handle" dndHandle *ngIf="collab.editionAllowed">
                                 <i class="fa fa-ellipsis-v"></i>
                                 <i class="fa fa-ellipsis-v"></i>
                             </span>
@@ -23,7 +23,7 @@
                                 <i class="fa fa-chevron-right" [class.rotated]="!isElemCollapsed(task.id)"></i>
                             </button>
                         </div>
-                        <button type="button" role="checkbox" class="task_checkbox" [ngClass]="'priority_' + task.priority" (click)="completeTask(task.id)">
+                        <button type="button" role="checkbox" class="task_checkbox" [ngClass]="(collab.taskCompletionAllowed ? '' : 'disabled-checkbox' ) + ' priority_' + task.priority" (click)="completeTask(task.id)">
                             <div class="task_checkbox_circle">
                                 <span class="icon_check">
                                     <i class="fa fa-check"></i>
@@ -66,13 +66,13 @@
                                 <span class="task_list_item__project" *ngIf="task.project">
                                     <a [href]="'/project/' + task.project.id + '#task-' + task.id">
                                         <span class="task_list_item__project__label">{{task.project.name}}</span>
-                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + collab.project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
                                     </a>
                                 </span>
                             </div>
                         </div>
                         <div class="task_list_item__actions task_list_item__actions--active">
-                            <ng-container *ngIf="!blocked">
+                            <ng-container *ngIf="!blocked && collab.editionAllowed">
                                 <button type="button" (click)="openEditTaskForm(task)">
                                     <i class="fa fa-edit"></i>
                                 </button>
@@ -83,7 +83,7 @@
                                     <i class="fa fa-comment-o"></i>
                                 </a>
                             </ng-container>
-                            <button type="button" (click)="openContextTaskMenu($event, task.id)">
+                            <button type="button" (click)="openContextTaskMenu($event, task.id)" *ngIf="collab.editionAllowed">
                                 <i class="fa fa-ellipsis-h"></i>
                             </button>
                         </div>

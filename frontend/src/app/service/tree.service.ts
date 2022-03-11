@@ -393,7 +393,7 @@ export class TreeService {
   }
 
   filterNewCollabsIds(list: CollabProjectDetails[]): number[] {
-    let existingIds = this.collabs.list.map((a) => a.id);
+    let existingIds = this.collabs.list.map((a) => a.project.id);
     return list
       .map((a) => a.id)
       .filter((a) => !existingIds.includes(a));
