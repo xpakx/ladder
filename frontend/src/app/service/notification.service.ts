@@ -162,6 +162,7 @@ export class NotificationService {
   }
 
   syncNewCollabs(ids: number[]) {
+    if(ids.length == 0) {return;}
     this.service.syncCollabTasks({'ids': ids}).subscribe(
       (response: CollabTaskDetails[]) => {
         this.tree.syncCollabTasks(response);
