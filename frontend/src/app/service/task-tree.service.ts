@@ -726,4 +726,11 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
       task.modifiedAt = new Date(response.modifiedAt);
     }
   }
+
+  deleteAssignations(projectId: number, userId: number) {
+    this.list
+      .filter((a) => a.project && a.project.id == projectId)
+      .filter((a) => a.assigned && a.assigned.id == userId)
+      .forEach((a) => a.assigned = null);
+  }
 }

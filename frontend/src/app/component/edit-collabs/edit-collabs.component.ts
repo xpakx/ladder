@@ -6,6 +6,7 @@ import { CollaborationWithOwner } from 'src/app/entity/collaboration-with-owner'
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { ProjectTreeService } from 'src/app/service/project-tree.service';
 import { ProjectService } from 'src/app/service/project.service';
+import { TaskTreeService } from 'src/app/service/task-tree.service';
 
 @Component({
   selector: 'app-edit-collabs',
@@ -19,7 +20,9 @@ export class EditCollabsComponent implements OnInit {
   collaborators: CollaborationWithOwner[] = [];
   addCollabForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private service: ProjectService, private projectTree: ProjectTreeService) {
+  constructor(private fb: FormBuilder, private service: ProjectService, 
+    private projectTree: ProjectTreeService,
+    private taskTree: TaskTreeService) {
     this.addCollabForm = this.fb.group({
       id: ['', Validators.required]
     });
@@ -66,7 +69,11 @@ export class EditCollabsComponent implements OnInit {
     if(this.projectId) {
       this.service.deleteCollaborator(collaboratorId, this.projectId).subscribe(
         (response: any, collabId: number = collaboratorId) => {
+          let userId = this.collaborators.find((a) => a.owner.id == collabId)?.id;
           this.collaborators = this.collaborators.filter((a) => a.owner.id != collabId);
+          if(this.project && userId) {
+            this.taskTree.deleteAssignations(this.project.id, userId);
+          }
           if(this.collaborators.length == 0 && this.project) {
             this.project.collaborative = false;
           }
