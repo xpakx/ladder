@@ -14,6 +14,6 @@ public class SyncData {
     private List<HabitDetails> habits;
     private List<HabitCompletionDetails> habitCompletions;
     private List<FilterDetails> filters;
-    private List<CollabProjectDetails> collabs;
+    private List<CollaborationWithProject> collabs;
     private List<CollabTaskDetails> collabTasks;
 }

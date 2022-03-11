@@ -74,14 +74,17 @@ public class MainService {
         result.setFilters(
                 filterRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), FilterDetails.class)
         );
-        List<CollabProjectDetails> collabProjects = projectRepository.findCollabsByUserIdAndNotArchivedAndModifiedAtAfter(
+        List<CollaborationWithProject> collabProjects = collaborationRepository.findCollabsByUserIdAndNotArchivedAndModifiedAtAfter(
                 userId,
-                CollabProjectDetails.class,
+                CollaborationWithProject.class,
                 time.getDate()
         );
         result.setCollabs(collabProjects);
         result.setCollabTasks(taskRepository.findByProjectIdInAndArchivedAndModifiedAtAfter(
-                collabProjects.stream().map(CollabProjectDetails::getId).collect(Collectors.toList()),
+                collabProjects.stream()
+                        .filter((a) -> a.getProject() != null)
+                        .map((a) -> a.getProject().getId())
+                        .collect(Collectors.toList()),
                 false,
                 CollabTaskDetails.class,
                 time.getDate()

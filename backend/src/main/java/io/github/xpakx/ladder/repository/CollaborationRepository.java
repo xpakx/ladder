@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,8 @@ public interface CollaborationRepository extends JpaRepository<Collaboration, In
 
     @Query("SELECT c FROM Collaboration c LEFT JOIN c.project p LEFT JOIN c.owner u WHERE u.id = :id AND p.archived = false AND c.accepted = true")
     <T> List<T> findCollabsByUserIdAndNotArchived(Integer id, Class<T> type);
+
+    @Query("SELECT c FROM Collaboration c LEFT JOIN c.project p LEFT JOIN c.owner u WHERE u.id = :id AND p.archived = false AND c.accepted = true AND p.modifiedAt > :modifiedAt")
+    <T> List<T> findCollabsByUserIdAndNotArchivedAndModifiedAtAfter(Integer id, Class<T> type, LocalDateTime modifiedAt);
+
 }
