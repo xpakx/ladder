@@ -803,20 +803,22 @@ public class ProjectService {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        toUpdate.getCollaborators().add(createCollabForUser(request, projectId));
+        LocalDateTime now = LocalDateTime.now();
+        toUpdate.getCollaborators().add(createCollabForUser(request, projectId, now));
         toUpdate.setCollaborative(true);
-        toUpdate.setModifiedAt(LocalDateTime.now());
+        toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
         return collabRepository.findProjectedByOwnerIdAndProjectId(request.getCollaboratorId(), projectId).get();
     }
 
-    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId) {
+    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId, LocalDateTime now) {
         return Collaboration.builder()
                 .owner(userRepository.getById(request.getCollaboratorId()))
                 .project(projectRepository.getById(projectId))
                 .accepted(false)
                 .editionAllowed(request.isEditionAllowed())
                 .taskCompletionAllowed(request.isCompletionAllowed())
+                .modifiedAt(now)
                 .build();
     }
 

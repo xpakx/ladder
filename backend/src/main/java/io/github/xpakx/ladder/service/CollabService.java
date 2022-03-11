@@ -157,6 +157,7 @@ public class CollabService {
         Collaboration collab = collabRepository.findByOwnerIdAndId(userId, collabId)
                 .orElseThrow(() -> new NotFoundException("Not such collaboration!"));
         collab.setAccepted(request.isFlag());
+        collab.setModifiedAt(LocalDateTime.now());
         return collabRepository.save(collab);
     }
 

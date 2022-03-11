@@ -301,4 +301,14 @@ public class NotificationAspect {
                 .build();
         notificationService.sendNotification(notification);
     }
+
+    @AfterReturning(value="@annotation(NotifyOnCollaborationChange)", returning = "result")
+    public void notifyOnCollaborationUpdate(Collaboration result) throws Throwable {
+        NotificationRequest notification = NotificationRequest.builder()
+                .userId(result.getOwner().getId())
+                .time(result.getModifiedAt())
+                .type("UPDATE")
+                .build();
+        notificationService.sendNotification(notification);
+    }
 }
