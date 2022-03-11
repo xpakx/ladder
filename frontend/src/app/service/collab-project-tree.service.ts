@@ -49,7 +49,8 @@ export class CollabProjectTreeService  {
     return this.list.find((a) => a.id == id);
   }
 
-  sync(projects: CollabProjectDetails[]) {
+  sync(data: CollabProjectData[]) {
+    let projects = data.map((a) => a.project);
     for(let project of projects) {
       let projectWithId = this.getProjectById(project.id);
       if(projectWithId) {
