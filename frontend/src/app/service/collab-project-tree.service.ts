@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CollabProjectData } from '../entity/collab-project-data';
 import { CollabProjectDetails } from '../entity/collab-project-details';
 import { Project } from '../entity/project';
 
@@ -11,8 +12,8 @@ export class CollabProjectTreeService  {
 
   constructor() {  }
 
-  load(projects: CollabProjectDetails[] = []) {
-    this.list = projects;
+  load(projects: CollabProjectData[] = []) {
+    this.list = projects.map((a) => a.project);
     this.sort();
   }
 
