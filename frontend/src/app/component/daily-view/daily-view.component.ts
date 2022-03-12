@@ -44,6 +44,10 @@ implements OnInit {
     return [...this.tree.getByDate(this.todayDate)].sort((a,b) => a.dailyOrder - b.dailyOrder);
   }
 
+  get collabTasks(): TaskTreeElem[] {
+    return [...this.tree.getCollabByDate(this.todayDate)];
+  }
+
   get overdue(): TaskTreeElem[] {
     return this.tree.getByDateOverdue(this.todayDate);
   }

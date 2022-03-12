@@ -157,6 +157,10 @@ export class TreeService {
     return this.tasks.getByDate(date);
   }
 
+  getCollabByDate(date: Date): TaskTreeElem[] {
+    return this.collabTasks.getByDate(date);
+  }
+
   getByDateBetween(date1: Date, date2: Date): TaskTreeElem[] {
     return this.tasks.getByDateBetween(date1, date2);
   }
@@ -250,6 +254,10 @@ export class TreeService {
 
   changeTaskCompletion(response: Task) {
     this.tasks.changeTaskCompletion(response);
+  }
+
+  changeCollabTaskCompletion(response: Task) {
+    this.collabTasks.changeTaskCompletion(response);
   }
 
   moveTaskAfter(task: Task, indent: number, afterId: number) {

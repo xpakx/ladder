@@ -4,11 +4,11 @@
 </li>
 <ng-container *ngFor="let task of tasks">
     <li *ngIf="!shouldEditTaskById(task.id)" class="task_list_item" [id] = "'task-' + task.id" [class.completed]="task.completed"
-        [dndDraggable]="task.id" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="task-date">
+        [dndDraggable]="task.id" [dndDisableIf]="collab" (dndStart)="onDragStart(task.id)" (dndEnd)="onDragEnd()" dndType="task-date">
         <div class="task_list_item_main">
             <div role="button" tabindex="0" class="task_list_item_body">
                 <div class="task_list_item__overflow_actions">
-                    <span class="handle" dndHandle>
+                    <span class="handle" dndHandle *ngIf="!collab">
                         <i class="fa fa-ellipsis-v"></i>
                         <i class="fa fa-ellipsis-v"></i>
                     </span>
@@ -86,7 +86,7 @@
         </div>
     </li>
     <li *ngIf="shouldEditTaskById(task.id)" class="task_list_item">
-        <app-task-form [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+        <app-task-form [data]="taskData" [collab]="collab" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
     </li>
     <li *ngIf="(draggedId || dnd) && !overdue" [dndDropzone]="['task-date']" (dndDrop)="onDrop($event, task)" class="drag-zone drag_list_item"></li>
 </ng-container>
@@ -111,7 +111,7 @@
 				<div class="menu_label">Go to project</div>
 			</button>
 		</li>
-        <li class="context-menu-project-item">
+        <li class="context-menu-project-item" *ngIf="!collab">
 			<button (click)="openSelectProjectModalFormContextMenu()">
 				<span class="menu_icon">
 					<i class="fa fa-arrow-right"></i>
