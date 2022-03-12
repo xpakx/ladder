@@ -40,11 +40,14 @@ export class CommentListComponent implements OnInit {
       this.commentService.addComment({content: this.commentForm.controls.content.value}, 
         this.task.id).subscribe(
         (response: TaskComment) => {
+          let username = localStorage.getItem('username');
+          let id = Number(localStorage.getItem('user_id'));
           this.comments.push(
               {
                 id: response.id,
                 content: response.content,
                 createdAt: response.createdAt,
+                owner: {id: id, username: username ? username : ''}
               }
             );
       },
