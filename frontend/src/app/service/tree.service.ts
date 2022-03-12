@@ -292,6 +292,10 @@ export class TreeService {
     this.tasks.updateTaskDate(task);
   }
 
+  updateCollabTaskDate(task: Task) {
+    this.collabTasks.updateTaskDate(task);
+  }
+
   addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
     this.tasks.addNewTaskAfter(task, indent, afterId, project, this.getLabelsFromIds(labelIds));
   }
@@ -322,6 +326,10 @@ export class TreeService {
 
   updateTaskPriority(task: Task) {
     this.tasks.updateTaskPriority(task);
+  }
+
+  updateCollabTaskPriority(task: Task) {
+    this.collabTasks.updateTaskPriority(task);
   }
 
   updateTaskLabels(task: Task, labels: LabelDetails[]) {

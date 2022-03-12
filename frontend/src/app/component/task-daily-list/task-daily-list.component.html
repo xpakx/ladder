@@ -72,7 +72,7 @@
                     <button type="button" (click)="openEditTaskForm(task)">
                         <i class="fa fa-edit"></i>
                     </button>
-                    <button type="button" (click)="openSelectDateModal(task)" *ngIf="!collab">
+                    <button type="button" (click)="openSelectDateModal(task)">
                         <i class="fa fa-calendar"></i>
                     </button>
                     <a class="task_list_item__comments_link" *ngIf="!collab">
@@ -103,7 +103,7 @@
 				<div class="menu_label">Edit task</div>
 			</button>
 		</li>
-        <li class="context-menu-project-item" *ngIf="!collab">
+        <li class="context-menu-project-item">
 			<button (click)=toProject()>
 				<span class="menu_icon">
 					<i class="fa fa-list"></i>
@@ -119,7 +119,7 @@
 				<div class="menu_label">Move to project</div>
 			</button>
 		</li>
-        <li class="context-menu-project-item" *ngIf="!collab">
+        <li class="context-menu-project-item">
 			<button (click)="openSelectDateModalFormContextMenu()">
 				<span class="menu_icon">
 					<i class="fa fa-calendar-minus-o"></i>
@@ -127,7 +127,7 @@
 				<div class="menu_label">Schedule</div>
 			</button>
 		</li>
-        <li class="context-menu-project-item" *ngIf="!collab">
+        <li class="context-menu-project-item">
 			<button (click)="openSelectPriorityModalFormContextMenu()">
 				<span class="menu_icon">
 					<i class="fa fa-flag-o"></i>
