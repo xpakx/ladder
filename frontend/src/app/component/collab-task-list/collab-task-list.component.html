@@ -185,4 +185,4 @@
 <app-date-dialog *ngIf="showSelectDateModal" [taskDate]="dateForDateModal" (closeEvent)="closeSelectDateModal($event)" (cancelEvent)="cancelDateSelection()"></app-date-dialog>
 <app-priority-modal *ngIf="showSelectPriorityModal" [priority]="priorityForPriorityModal" (closeEvent)="closeSelectPriorityModal($event)" (cancelEvent)="cancelPrioritySelection()"></app-priority-modal>
 
-<app-task-view *ngIf="openTask" [task]="openTask" (closeEvent)="closeTaskView()"></app-task-view>
+<app-task-view *ngIf="openTask" [collab]="true" [task]="openTask" (closeEvent)="closeTaskView()"></app-task-view>

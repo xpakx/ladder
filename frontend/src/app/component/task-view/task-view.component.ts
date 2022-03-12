@@ -5,6 +5,8 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { CollabTaskTreeService } from 'src/app/service/collab-task-tree.service';
+import { CollabTaskService } from 'src/app/service/collab-task.service';
 import { DeleteService } from 'src/app/service/delete.service';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
@@ -17,12 +19,14 @@ import { TreeService } from 'src/app/service/tree.service';
 })
 export class TaskViewComponent implements OnInit {
   @Input("task") parent?: TaskTreeElem;
+  @Input("collab") collab: boolean = false;
   @Output() closeEvent = new EventEmitter<boolean>();
   edit: boolean = false;
   parentData!: AddEvent<TaskTreeElem>;
   menuChoice: number = 0;
 
-  constructor(private taskTree: TaskTreeService, private taskService: TaskService,
+  constructor(private taskTree: TaskTreeService, private taskService: TaskService, 
+    private collabService: CollabTaskService, private collabTree: CollabTaskTreeService,
     private tree: TreeService, private deleteService: DeleteService) { }
 
   ngOnInit(): void {
@@ -41,9 +45,11 @@ export class TaskViewComponent implements OnInit {
 
   complete() {
     if(this.parent) {
-    this.taskService.completeTask(this.parent.id, {flag: !this.parent.completed}).subscribe(
+      let service = this.collab ? this.collabService : this.taskService;
+      let tree = this.collab ? this.collabTree : this.taskTree;
+      service.completeTask(this.parent.id, {flag: !this.parent.completed}).subscribe(
         (response: Task) => {
-        this.taskTree.changeTaskCompletion(response);
+        tree.changeTaskCompletion(response);
       },
       (error: HttpErrorResponse) => {
       
@@ -99,9 +105,11 @@ export class TaskViewComponent implements OnInit {
   closeSelectDateModal(date: Date | undefined) {
     this.showSelectDateModal = false;
     if(this.parent) {
-      this.taskService.updateTaskDueDate({date: date}, this.parent.id).subscribe(
+      let service = this.collab ? this.collabService : this.taskService;
+      let tree = this.collab ? this.collabTree : this.taskTree;
+      service.updateTaskDueDate({date: date}, this.parent.id).subscribe(
           (response: Task) => {
-          this.taskTree.updateTaskDate(response);
+          tree.updateTaskDate(response);
         },
         (error: HttpErrorResponse) => {
         
@@ -146,7 +154,11 @@ export class TaskViewComponent implements OnInit {
 
   askForDelete() {
     if(this.parent) {
-      this.deleteService.openModalForTask(this.parent);
+      if(this.collab) {
+        this.deleteService.openModalForCollabTask(this.parent);
+      } else {
+        this.deleteService.openModalForTask(this.parent);
+      }
     }
   }
 
@@ -156,9 +168,11 @@ export class TaskViewComponent implements OnInit {
   closeSelectPriorityModal(priority: number) {
     this.showSelectPriorityModal = false;
     if(this.parent) {
-      this.taskService.updateTaskPriority({priority: priority}, this.parent.id).subscribe(
+      let service = this.collab ? this.collabService : this.taskService;
+      let tree = this.collab ? this.collabTree : this.taskTree;
+      service.updateTaskPriority({priority: priority}, this.parent.id).subscribe(
           (response: Task) => {
-          this.tree.updateTaskPriority(response);
+          tree.updateTaskPriority(response);
         },
         (error: HttpErrorResponse) => {
         
