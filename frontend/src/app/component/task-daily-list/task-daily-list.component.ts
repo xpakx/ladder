@@ -7,6 +7,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { CollabTaskService } from 'src/app/service/collab-task.service';
 import { DeleteService } from 'src/app/service/delete.service';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
@@ -22,6 +23,7 @@ export class TaskDailyListComponent  extends DraggableComponent<TaskTreeElem, Ta
 implements OnInit {
   @Input("tasks") tasks: TaskTreeElem[] = [];
   @Input("overdue") overdue: boolean = false;
+  @Input("collab") collab: boolean = false;
   @Input("dnd") dnd: boolean = false;
   @Input("multi") multipanel: Date | undefined;
   @Output() closeAddForm = new EventEmitter<boolean>();
@@ -30,7 +32,8 @@ implements OnInit {
 
   constructor(public tree: TreeService, private router: Router,
     private taskService: TaskService, private taskTreeService: TaskTreeService,
-    private renderer: Renderer2, private deleteService: DeleteService) { 
+    private renderer: Renderer2, private deleteService: DeleteService, 
+    private collabTaskService: CollabTaskService) { 
       super(taskTreeService, taskService);
     }
 
@@ -41,7 +44,7 @@ implements OnInit {
   taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
 
   getProjectColor(id: number): string {
-    let project = this.tree.getProjectById(id)
+    let project = this.collab ? this.tree.getCollabProjectById(id) : this.tree.getProjectById(id);
     return project ? project.color : ""
   }
 
@@ -106,7 +109,7 @@ implements OnInit {
 
   toProject() {
     if(this.contextTaskMenu && this.contextTaskMenu.project) {
-      this.router.navigate(['/project/'+this.contextTaskMenu.project.id]);
+      this.router.navigate([(this.collab ? '/collab/': '/project/')+this.contextTaskMenu.project.id]);
     } else if(this.contextTaskMenu) {
       this.router.navigate(['/inbox']);
     }
@@ -141,12 +144,19 @@ implements OnInit {
   return taskId == this.taskData.object?.id;
   }
 
+
   completeTask(id: number) {
-    let task = this.tree.getTaskById(id);
+    let task = this.collab ? this.tree.getCollabTaskById(id) : this.tree.getTaskById(id);
+    let service = this.collab ? this.collabTaskService : this.taskService;
     if(task) {
-    this.taskService.completeTask(id, {flag: !task.completed}).subscribe(
+    service.completeTask(id, {flag: !task.completed}).subscribe(
         (response: Task) => {
-        this.tree.changeTaskCompletion(response);
+          if(this.collab) {
+            this.tree.changeCollabTaskCompletion(response);
+
+          } else {
+            this.tree.changeTaskCompletion(response);
+          }
       },
       (error: HttpErrorResponse) => {
       
@@ -177,7 +187,7 @@ implements OnInit {
   }
 
   openContextTaskMenu(event: MouseEvent, taskId: number) {
-    this.contextTaskMenu = this.tree.getTaskById(taskId);
+    this.contextTaskMenu = this.collab ? this.tree.getCollabTaskById(taskId) : this.tree.getTaskById(taskId);
     this.showContextTaskMenu = true;
     this.contextTaskMenuJustOpened = true;
     this.taskContextMenuX = event.clientX-250;
@@ -199,7 +209,11 @@ implements OnInit {
 
   askForDelete() {
     if(this.contextTaskMenu) {
-      this.deleteService.openModalForTask(this.contextTaskMenu);
+      if(this.collab) {
+        this.deleteService.openModalForCollabTask(this.contextTaskMenu);
+      } else {
+        this.deleteService.openModalForTask(this.contextTaskMenu);
+      }
     }
     this.closeContextTaskMenu();
   }
@@ -210,10 +224,15 @@ implements OnInit {
 
   closeSelectDateModal(date: Date | undefined) {
     this.showSelectDateModal = false;
+    let service = this.collab ? this.collabTaskService : this.taskService;
     if(this.taskIdForDateModal) {
-      this.taskService.updateTaskDueDate({date: date}, this.taskIdForDateModal).subscribe(
+      service.updateTaskDueDate({date: date}, this.taskIdForDateModal).subscribe(
           (response: Task) => {
-          this.tree.updateTaskDate(response);
+            if(this.collab) {
+              this.tree.updateCollabTaskDate(response);
+            } else {
+              this.tree.updateTaskDate(response);
+            }
         },
         (error: HttpErrorResponse) => {
         
@@ -289,10 +308,15 @@ implements OnInit {
 
   closeSelectPriorityModal(priority: number) {
     this.showSelectPriorityModal = false;
+    let service = this.collab ? this.collabTaskService : this.taskService;
     if(this.taskIdForPriorityModal) {
-      this.taskService.updateTaskPriority({priority: priority}, this.taskIdForPriorityModal).subscribe(
+      service.updateTaskPriority({priority: priority}, this.taskIdForPriorityModal).subscribe(
           (response: Task) => {
-          this.tree.updateTaskPriority(response);
+            if(this.collab) {
+              this.tree.updateCollabTaskPriority(response);
+            } else {
+              this.tree.updateTaskPriority(response);
+            }
         },
         (error: HttpErrorResponse) => {
         

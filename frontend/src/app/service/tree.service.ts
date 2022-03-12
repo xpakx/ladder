@@ -157,6 +157,10 @@ export class TreeService {
     return this.tasks.getByDate(date);
   }
 
+  getCollabByDate(date: Date): TaskTreeElem[] {
+    return this.collabTasks.getByDate(date);
+  }
+
   getByDateBetween(date1: Date, date2: Date): TaskTreeElem[] {
     return this.tasks.getByDateBetween(date1, date2);
   }
@@ -252,6 +256,10 @@ export class TreeService {
     this.tasks.changeTaskCompletion(response);
   }
 
+  changeCollabTaskCompletion(response: Task) {
+    this.collabTasks.changeTaskCompletion(response);
+  }
+
   moveTaskAfter(task: Task, indent: number, afterId: number) {
     this.tasks.moveAfter(task, indent, afterId);
   }
@@ -284,6 +292,10 @@ export class TreeService {
     this.tasks.updateTaskDate(task);
   }
 
+  updateCollabTaskDate(task: Task) {
+    this.collabTasks.updateTaskDate(task);
+  }
+
   addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
     this.tasks.addNewTaskAfter(task, indent, afterId, project, this.getLabelsFromIds(labelIds));
   }
@@ -314,6 +326,10 @@ export class TreeService {
 
   updateTaskPriority(task: Task) {
     this.tasks.updateTaskPriority(task);
+  }
+
+  updateCollabTaskPriority(task: Task) {
+    this.collabTasks.updateTaskPriority(task);
   }
 
   updateTaskLabels(task: Task, labels: LabelDetails[]) {

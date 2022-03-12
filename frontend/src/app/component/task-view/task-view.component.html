@@ -55,10 +55,10 @@
               </ng-container>
           </button>
             <div class="right-actions">
-              <button (click)="openSelectProjectModal()">
+              <button (click)="openSelectProjectModal()" *ngIf="!collab">
                 <i class="fa fa-list"></i>
               </button>
-              <button (click)="openSelectLabelsMenu()">
+              <button (click)="openSelectLabelsMenu()" *ngIf="!collab">
                 <i class="fa fa-tag"></i>
               </button>
               <button (click)="openSelectPriorityModal()" [class]="'button_priority_'+parent.priority">

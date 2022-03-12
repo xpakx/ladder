@@ -45,6 +45,14 @@
 
             </li>
 
+            <ng-container *ngIf="collabTasks.length>0">
+                <div class="section_header">
+                    <h2><span>Collaborative tasks</span></h2>
+                </div>
+
+                <app-task-daily-list [tasks]="collabTasks" [collab]="true"></app-task-daily-list>
+            </ng-container>
+
         </ul>
     </div>
 

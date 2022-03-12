@@ -293,7 +293,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   openTask?: TaskTreeElem;
 
   openTaskView(task: TaskTreeElem) {
-    //this.openTask = task;
+    this.openTask = task;
   }
 
   closeTaskView() {
