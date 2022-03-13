@@ -51,6 +51,7 @@ import { CollabTaskListComponent } from './component/collab-task-list/collab-tas
 import { ErrorInterceptor } from './utils/error.interceptor';
 import { SettingsInvitationComponent } from './component/settings-invitation/settings-invitation.component';
 import { AssignModalComponent } from './component/assign-modal/assign-modal.component';
+import { CollabSubtaskListComponent } from './component/collab-subtask-list/collab-subtask-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -101,7 +102,8 @@ export function tokenGetter() {
     CollabProjectComponent,
     CollabTaskListComponent,
     SettingsInvitationComponent,
-    AssignModalComponent
+    AssignModalComponent,
+    CollabSubtaskListComponent
   ],
   imports: [
     BrowserModule,
