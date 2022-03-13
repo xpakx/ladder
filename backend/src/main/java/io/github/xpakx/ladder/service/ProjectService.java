@@ -803,17 +803,19 @@ public class ProjectService {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
+        UserAccount user = userRepository.findByCollaborationToken(request.getCollaboratorToken())
+                .orElseThrow(() -> new NotFoundException("No user with such token!"));
         LocalDateTime now = LocalDateTime.now();
-        toUpdate.getCollaborators().add(createCollabForUser(request, projectId, now));
+        toUpdate.getCollaborators().add(createCollabForUser(request, projectId, now, user));
         toUpdate.setCollaborative(true);
         toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
-        return collabRepository.findProjectedByOwnerIdAndProjectId(request.getCollaboratorId(), projectId).get();
+        return collabRepository.findProjectedByOwnerIdAndProjectId(user.getId(), projectId).get();
     }
 
-    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId, LocalDateTime now) {
+    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId, LocalDateTime now, UserAccount user) {
         return Collaboration.builder()
-                .owner(userRepository.getById(request.getCollaboratorId()))
+                .owner(user)
                 .project(projectRepository.getById(projectId))
                 .accepted(false)
                 .editionAllowed(request.isEditionAllowed())

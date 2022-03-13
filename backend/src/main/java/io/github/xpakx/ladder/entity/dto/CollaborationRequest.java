@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CollaborationRequest {
-    Integer collaboratorId;
+    String collaboratorToken;
     boolean completionAllowed;
     boolean editionAllowed;
 }
