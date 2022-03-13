@@ -23,6 +23,7 @@ public class UserAccount {
     private String password;
     
     private boolean projectCollapsed;
+    private String collaborationToken;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_roles",

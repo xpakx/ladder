@@ -1,7 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { CollabToken } from 'src/app/entity/collab-token';
 import { Collaboration } from 'src/app/entity/collaboration';
 import { CollaborationDetails } from 'src/app/entity/collaboration-details';
+import { User } from 'src/app/entity/user';
 import { CollaborationService } from 'src/app/service/collaboration.service';
 
 @Component({
@@ -11,6 +13,7 @@ import { CollaborationService } from 'src/app/service/collaboration.service';
 })
 export class SettingsInvitationComponent implements OnInit {
   invitations: CollaborationDetails[] = [];
+  token?: string;
 
   constructor(private service: CollaborationService) { }
 
@@ -22,13 +25,32 @@ export class SettingsInvitationComponent implements OnInit {
       (error: HttpErrorResponse) => {
 
       }
-    )
+    );
+    this.service.getToken().subscribe(
+      (response: CollabToken) => {
+        this.token = response.token;
+      },
+      (error: HttpErrorResponse) => {
+
+      }
+    );
   }
 
   accept(id: number) {
     this.service.changeAcceptation(id, {flag: true}).subscribe(
       (response: Collaboration) => {
         this.invitations = this.invitations.filter((a) => a.id != response.id);
+      },
+      (error: HttpErrorResponse) => {
+
+      }
+    )
+  }
+
+  newToken() {
+    this.service.getNewToken().subscribe(
+      (response: User) => {
+        this.token = response.collaborationToken;
       },
       (error: HttpErrorResponse) => {
 

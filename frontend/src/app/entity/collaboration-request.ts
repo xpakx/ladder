@@ -1,5 +1,5 @@
 export interface CollaborationRequest {
-    collaboratorId: number;
+    collaborationToken: string;
     completionAllowed: boolean;
     editionAllowed: boolean;
 }

@@ -3,9 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { BooleanRequest } from '../entity/boolean-request';
+import { CollabToken } from '../entity/collab-token';
 import { Collaboration } from '../entity/collaboration';
 import { CollaborationDetails } from '../entity/collaboration-details';
 import { CollaborationRequest } from '../entity/collaboration-request';
+import { User } from '../entity/user';
+import { UserMin } from '../entity/user-min';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +35,15 @@ export class CollaborationService {
   public unsubscribe(projectId: number, request: BooleanRequest):  Observable<Collaboration[]> {
     let userId  = this.getUserId();
     return this.http.put<Collaboration[]>(`${this.apiServerUrl}/${userId}/collab/projects/${projectId}/subscription`, request);
+  }
+
+  public getNewToken():  Observable<User> {
+    let userId  = this.getUserId();
+    return this.http.put<User>(`${this.apiServerUrl}/${userId}/collab/token`, null);
+  }
+
+  public getToken():  Observable<CollabToken> {
+    let userId  = this.getUserId();
+    return this.http.get<CollabToken>(`${this.apiServerUrl}/${userId}/collab/token`);
   }
 }

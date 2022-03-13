@@ -61,7 +61,7 @@ export class TaskFormComponent implements OnInit {
       this.priority = this.task.priority;
       this.labels = this.task.labels;
       if(!this.project) {
-        this.project = this.task.project ? this.tree.getProjectById(this.task.project.id) : undefined;
+        this.project = this.task.project ? (this.collab ? this.tree.getCollabProjectById(this.task.project.id) : this.tree.getProjectById(this.task.project.id)) : undefined;
       }
 	  }
   }

@@ -1,3 +1,11 @@
+<div>
+    Your token: {{ token }} 
+    <button class="option-button" (click)="newToken()">
+        <i class="fa fa-refresh"></i>
+        Regenerate
+    </button>
+</div>
+
 <ul class="invitations">
     <li *ngFor="let invitation of invitations">
         <span class="permission">

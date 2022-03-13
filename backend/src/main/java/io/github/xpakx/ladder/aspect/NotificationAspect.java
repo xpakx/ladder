@@ -289,13 +289,13 @@ public class NotificationAspect {
         }
     }
 
-    @AfterReturning(value="@annotation(Notify) && args(request, ..)", argNames = "request") //TODO: better notifications
-    public void textNotificationAfterCollabInvitation(JoinPoint jp, CollaborationRequest request) {
+    @AfterReturning(value="@annotation(Notify)", returning = "response")
+    public void textNotificationAfterCollabInvitation(JoinPoint jp,Collaboration response) {
         MethodSignature signature = (MethodSignature) jp.getSignature();
         Method method = signature.getMethod();
         Notify annotation = method.getAnnotation(Notify.class);
         NotificationRequest notification = NotificationRequest.builder()
-                .userId(request.getCollaboratorId())
+                .userId(response.getOwner().getId())
                 .time(LocalDateTime.now())
                 .type("MSG " + annotation.message())
                 .build();
