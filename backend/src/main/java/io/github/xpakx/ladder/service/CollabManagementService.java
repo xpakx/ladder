@@ -37,16 +37,17 @@ public class CollabManagementService {
     }
 
     public UserAccount getNewToken(Integer userId) {
+        System.out.println("USER_ID: " + userId);
         UserAccount user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("No such user!"));
         LocalDateTime date = LocalDateTime.now();
-        String token = "" + user.getId() + date.toString();
+        String token = "" + user.getId() + "-" + date.getYear() + date.getMonth() + date.getDayOfMonth();
         user.setCollaborationToken(token);
         return userRepository.save(user);
     }
 
     public String getToken(Integer userId) {
         return userRepository.findById(userId).map(UserAccount::getCollaborationToken)
-                .orElseThrow(() -> new NotFoundException("No such user!"));
+                .orElseThrow(() -> new NotFoundException("No token!"));
     }
 }

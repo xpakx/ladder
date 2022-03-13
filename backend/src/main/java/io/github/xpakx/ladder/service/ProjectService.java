@@ -803,7 +803,7 @@ public class ProjectService {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        UserAccount user = userRepository.findByCollaborationToken(request.getCollaboratorToken())
+        UserAccount user = userRepository.findByCollaborationToken(request.getCollaborationToken())
                 .orElseThrow(() -> new NotFoundException("No user with such token!"));
         LocalDateTime now = LocalDateTime.now();
         toUpdate.getCollaborators().add(createCollabForUser(request, projectId, now, user));
