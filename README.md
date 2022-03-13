@@ -58,11 +58,11 @@ A clone of the Todoist web-app written in Java + Spring (backend) and Angular (f
 	- [x] Editing habits
 	- [x] Deleting habits
 	- [x] Adding habits above/below another habits
-- [ ] Shared projects
+- [x] Shared projects
 	- [x] Adding collaborators to project
 	- [x] Invitations
 	- [x] Different permissions for viewing, completing and editing collaborative tasks
-	- [ ] Assigning tasks to collaborator
+	- [x] Assigning tasks to collaborator
 - [ ] Gamification
 - [ ] Tasks' stats
 - [ ] Keyboard shortcuts
