@@ -42,7 +42,7 @@ public class CollabManagementService {
         UserAccount user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("No such user!"));
         LocalDateTime date = LocalDateTime.now();
-        String token = "" + user.getId() + "-" + date.getYear() + date.getMonth() + date.getDayOfMonth();
+        String token = "" + user.getId() + "-" + date.getYear() + date.getMonthValue() + date.getDayOfMonth();
         user.setCollaborationToken(token);
         return userRepository.save(user);
     }
