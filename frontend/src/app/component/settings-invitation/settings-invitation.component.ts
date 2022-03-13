@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { CollabToken } from 'src/app/entity/collab-token';
 import { Collaboration } from 'src/app/entity/collaboration';
 import { CollaborationDetails } from 'src/app/entity/collaboration-details';
 import { User } from 'src/app/entity/user';
@@ -26,8 +27,8 @@ export class SettingsInvitationComponent implements OnInit {
       }
     );
     this.service.getToken().subscribe(
-      (response: string) => {
-        this.token = response;
+      (response: CollabToken) => {
+        this.token = response.token;
       },
       (error: HttpErrorResponse) => {
 

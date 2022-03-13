@@ -4,6 +4,7 @@ import io.github.xpakx.ladder.aspect.NotifyOnCollaborationChange;
 import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
+import io.github.xpakx.ladder.entity.dto.CollabTokenResponse;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.CollaborationRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -46,8 +47,10 @@ public class CollabManagementService {
         return userRepository.save(user);
     }
 
-    public String getToken(Integer userId) {
-        return userRepository.findById(userId).map(UserAccount::getCollaborationToken)
-                .orElseThrow(() -> new NotFoundException("No token!"));
+    public CollabTokenResponse getToken(Integer userId) {
+        return new CollabTokenResponse(
+                userRepository.findById(userId).map(UserAccount::getCollaborationToken)
+                .orElseThrow(() -> new NotFoundException("No token!"))
+        );
     }
 }

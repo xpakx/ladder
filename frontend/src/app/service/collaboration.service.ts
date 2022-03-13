@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { BooleanRequest } from '../entity/boolean-request';
+import { CollabToken } from '../entity/collab-token';
 import { Collaboration } from '../entity/collaboration';
 import { CollaborationDetails } from '../entity/collaboration-details';
 import { CollaborationRequest } from '../entity/collaboration-request';
@@ -41,8 +42,8 @@ export class CollaborationService {
     return this.http.put<User>(`${this.apiServerUrl}/${userId}/collab/token`, null);
   }
 
-  public getToken():  Observable<string> {
+  public getToken():  Observable<CollabToken> {
     let userId  = this.getUserId();
-    return this.http.get<string>(`${this.apiServerUrl}/${userId}/collab/token`);
+    return this.http.get<CollabToken>(`${this.apiServerUrl}/${userId}/collab/token`);
   }
 }
