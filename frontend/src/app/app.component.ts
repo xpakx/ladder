@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
   displayAddTask: boolean = false;
 
   searchForm: FormGroup;
+  smallWindow: boolean = false;
 
   constructor(public tree : TreeService, public deleteService: DeleteService,
     private router: Router, private fb: FormBuilder) {
@@ -38,6 +39,10 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(window.innerWidth <= 767) {
+      this.smallWindow = true;
+      this.hideMenu = true;
+    }
   }
 
   //Project modal window
