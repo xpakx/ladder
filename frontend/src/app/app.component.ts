@@ -113,6 +113,8 @@ export class AppComponent implements OnInit {
     this.router.navigate(['/search'], { queryParams: {search: this.searchForm.controls.search.value}});
   }
 
+  // Listeners
+
   @HostListener('window:resize',['$event'])
   onWindowResize() {
     if(window.innerWidth <= 767) {
@@ -122,5 +124,13 @@ export class AppComponent implements OnInit {
       this.smallWindow = false;
       this.hideMenu = false;
     }
+  }
+
+  @HostListener("window:keypress", ["$event"])
+    handleKeyboardLetterEvent(event: KeyboardEvent) {
+      let letter: string = event.key;
+      if(letter == 'q') {
+        this.openAddTaskModal();
+      }
   }
 }
