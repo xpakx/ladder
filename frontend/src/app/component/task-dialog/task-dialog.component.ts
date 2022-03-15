@@ -23,7 +23,7 @@ export class TaskDialogComponent implements OnInit {
   }
 
   @HostListener("window:keydown.escape", ["$event"])
-    handleKeyboardEscapeEvent(event: KeyboardEvent) {
-      this.closeAddTaskModal();
+  handleKeyboardEscapeEvent(event: KeyboardEvent) {
+    this.closeAddTaskModal();
   }
 }
