@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { FilterDetails } from 'src/app/entity/filter-details';
 import { LabelDetails } from 'src/app/entity/label-details';
@@ -18,6 +18,9 @@ export class SidebarComponent implements OnInit {
   @Output() projectEvent = new EventEmitter<AddEvent<ProjectTreeElem>>();
   @Output() labelEvent = new EventEmitter<AddEvent<LabelDetails>>();
   @Output() filterEvent = new EventEmitter<AddEvent<FilterDetails>>();
+  @Output() closeEvent = new EventEmitter<boolean>();
+
+  @Input() mobile: boolean = false;
 
   constructor(private router: Router, public tree : TreeService) { }
 
@@ -25,17 +28,25 @@ export class SidebarComponent implements OnInit {
   }
 
   // Navigation
+  mobileNav() {
+    if (this.mobile) {
+      this.closeEvent.emit(true);
+    }
+  }
 
   toHome() {
     this.router.navigate(['/']);
+    this.mobileNav();
   }
 
   toInbox() {
     this.router.navigate(['/inbox']);
+    this.mobileNav();
   }
 
   toUpcoming() {
     this.router.navigate(['/upcoming']);
+    this.mobileNav();
   }
 
   // List collapsion

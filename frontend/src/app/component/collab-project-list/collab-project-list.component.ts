@@ -13,6 +13,7 @@ import { TreeService } from 'src/app/service/tree.service';
 })
 export class CollabProjectListComponent implements OnInit, AfterViewInit  {
   @Output() addLabel = new EventEmitter<AddEvent<CollabProjectDetails>>();
+  @Output() navEvent = new EventEmitter<boolean>();
   displayProjectModal: boolean = false;
 
   constructor(private router: Router,
@@ -61,5 +62,6 @@ export class CollabProjectListComponent implements OnInit, AfterViewInit  {
 
   toProject(id: number) {
     this.router.navigate(['/collab/'+id]);
+    this.navEvent.emit(true);
   }
 }

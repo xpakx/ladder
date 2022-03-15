@@ -49,7 +49,7 @@
 		<div class="row-container">
 			<div class="left-nav-container" [class.visibleLeftNav]="!hideMenu" [class.hiddenLeftNav]="hideMenu">
 				<div class="left-nav">
-						<app-sidebar (projectEvent)="openProjectModal($event)" (labelEvent)="openLabelModal($event)" (filterEvent)="openFilterModal($event)"></app-sidebar>
+						<app-sidebar (projectEvent)="openProjectModal($event)" (labelEvent)="openLabelModal($event)" (filterEvent)="openFilterModal($event)" (closeEvent)="switchHideMenu()" [mobile]="smallWindow"></app-sidebar>
 				</div>
 			</div>
 			<div class="main-container">
