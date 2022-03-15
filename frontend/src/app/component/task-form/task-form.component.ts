@@ -378,4 +378,9 @@ export class TaskFormComponent implements OnInit {
   handleKeyboardEscapeEvent() {
     this.closeForm();
   }
+
+  @HostListener("window:keydown.enter", ["$event"])
+  handleKeyboardEnterEvent() {
+    this.save();
+  }
 }

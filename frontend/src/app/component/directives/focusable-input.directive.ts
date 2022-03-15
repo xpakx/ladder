@@ -17,4 +17,8 @@ export class FocusableInputDirective {
   onBlur() {
     this.service.unblockLetters();
   }
+
+  ngOnDestroy() {
+    this.service.unblockLetters();
+  }
 }
