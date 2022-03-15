@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FilterDetails } from './entity/filter-details';
@@ -113,4 +113,14 @@ export class AppComponent implements OnInit {
     this.router.navigate(['/search'], { queryParams: {search: this.searchForm.controls.search.value}});
   }
 
+  @HostListener('window:resize',['$event'])
+  onWindowResize() {
+    if(window.innerWidth <= 767) {
+      this.smallWindow = true;
+      this.hideMenu = true;
+    } else {
+      this.smallWindow = false;
+      this.hideMenu = false;
+    }
+  }
 }
