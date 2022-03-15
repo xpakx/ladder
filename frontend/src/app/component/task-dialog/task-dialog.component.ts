@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-task-dialog',
@@ -20,5 +20,10 @@ export class TaskDialogComponent implements OnInit {
 
   chooseTab(num: number) {
     this.view = num;
+  }
+
+  @HostListener("window:keydown.escape", ["$event"])
+    handleKeyboardEscapeEvent(event: KeyboardEvent) {
+      this.closeAddTaskModal();
   }
 }
