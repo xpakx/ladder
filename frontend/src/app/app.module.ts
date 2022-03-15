@@ -52,7 +52,8 @@ import { ErrorInterceptor } from './utils/error.interceptor';
 import { SettingsInvitationComponent } from './component/settings-invitation/settings-invitation.component';
 import { AssignModalComponent } from './component/assign-modal/assign-modal.component';
 import { CollabSubtaskListComponent } from './component/collab-subtask-list/collab-subtask-list.component';
-import { AutofocusDirective } from './component/abstract/autofocus.directive';
+import { AutofocusDirective } from './component/directives/autofocus.directive';
+import { FocusableInputDirective } from './component/directives/focusable-input.directive';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -105,7 +106,8 @@ export function tokenGetter() {
     SettingsInvitationComponent,
     AssignModalComponent,
     CollabSubtaskListComponent,
-    AutofocusDirective
+    AutofocusDirective,
+    FocusableInputDirective
   ],
   imports: [
     BrowserModule,

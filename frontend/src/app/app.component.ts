@@ -6,6 +6,7 @@ import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
 import { AddEvent } from './entity/utils/add-event';
 import { DeleteService } from './service/delete.service';
+import { KeyboardManagerService } from './service/keyboard-manager.service';
 import { NotificationService } from './service/notification.service';
 import { TreeService } from './service/tree.service';
 
@@ -32,7 +33,7 @@ export class AppComponent implements OnInit {
   smallWindow: boolean = false;
 
   constructor(public tree : TreeService, public deleteService: DeleteService,
-    private router: Router, private fb: FormBuilder) {
+    private router: Router, private fb: FormBuilder, private keyboard: KeyboardManagerService) {
       this.searchForm = this.fb.group({
         search: ['']
       });
@@ -129,6 +130,9 @@ export class AppComponent implements OnInit {
   @HostListener("window:keypress", ["$event"])
     handleKeyboardLetterEvent(event: KeyboardEvent) {
       let letter: string = event.key;
+      if(this.keyboard.inInputMode) {
+        return;
+      }
       if(letter == 'q') {
         this.openAddTaskModal();
       }
