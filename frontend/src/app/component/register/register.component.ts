@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TokenResponse } from 'src/app/entity/token-response';
@@ -54,5 +54,11 @@ export class RegisterComponent implements OnInit {
       this.message = "Fields cannot be empty!";
       this.invalid = true;
     }
+  }
+
+
+  @HostListener("window:keydown.enter", ["$event"])
+  handleKeyboardEnterEvent() {
+    this.signUp();
   }
 }
