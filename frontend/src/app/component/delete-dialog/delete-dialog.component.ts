@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-delete-dialog',
@@ -24,4 +24,13 @@ export class DeleteDialogComponent implements OnInit {
     this.deleteEvent.emit(this.id);
   }
 
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    this.cancel();
+  }
+
+  @HostListener("window:keydown.enter", ["$event"])
+  handleKeyboardEnterEvent() {
+    this.delete();
+  }
 }

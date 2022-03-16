@@ -7,7 +7,6 @@ import { ProjectTreeElem } from './entity/project-tree-elem';
 import { AddEvent } from './entity/utils/add-event';
 import { DeleteService } from './service/delete.service';
 import { KeyboardManagerService } from './service/keyboard-manager.service';
-import { NotificationService } from './service/notification.service';
 import { TreeService } from './service/tree.service';
 
 @Component({
@@ -115,7 +114,7 @@ export class AppComponent implements OnInit {
   }
 
   get modalOpened(): boolean {
-    return this.displayAddTask || this.displayFilterModal || this.displayLabelModal || this.displayProjectModal;
+    return this.displayAddTask || this.displayFilterModal || this.displayLabelModal || this.displayProjectModal || this.deleteService.showDeleteMonit;
   }
 
   // Listeners
