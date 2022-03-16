@@ -381,6 +381,8 @@ export class TaskFormComponent implements OnInit {
 
   @HostListener("window:keydown.enter", ["$event"])
   handleKeyboardEnterEvent() {
-    this.save();
+    if(this.taskForm?.valid) {
+      this.save();
+    }
   }
 }

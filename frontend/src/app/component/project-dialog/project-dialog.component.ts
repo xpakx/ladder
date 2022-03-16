@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Project } from 'src/app/entity/project';
 import { ProjectRequest } from 'src/app/entity/project-request';
@@ -142,4 +142,15 @@ export class ProjectDialogComponent implements OnInit {
     );
   }
 
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    this.closeModal();
+  }
+
+  @HostListener("window:keydown.enter", ["$event"])
+  handleKeyboardEnterEvent() {
+    if(this.form?.valid) {
+      this.addProjectModal();
+    }
+  }
 }
