@@ -374,14 +374,20 @@ export class TaskFormComponent implements OnInit {
     this.labels = labels;
   }
 
+  get subModalOpened(): boolean {
+    return this.showSelectDateMenu || this.showSelectLabelsMenu || this.showSelectPriorityMenu || this.showSelectProjectMenu;
+  }
+
   @HostListener("window:keydown.escape", ["$event"])
   handleKeyboardEscapeEvent() {
-    this.closeForm();
+    if(!this.subModalOpened) {
+      this.closeForm();
+    }
   }
 
   @HostListener("window:keydown.enter", ["$event"])
   handleKeyboardEnterEvent() {
-    if(this.taskForm?.valid) {
+    if(!this.subModalOpened && this.taskForm?.valid) {
       this.save();
     }
   }
