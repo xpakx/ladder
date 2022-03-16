@@ -138,6 +138,8 @@ export class AppComponent implements OnInit {
       }
       if(letter == 'q') {
         this.openAddTaskModal();
+      } else if(letter == 'm') {
+        this.hideMenu = !this.hideMenu;
       }
   }
 }
