@@ -114,6 +114,10 @@ export class AppComponent implements OnInit {
     this.router.navigate(['/search'], { queryParams: {search: this.searchForm.controls.search.value}});
   }
 
+  get modalOpened(): boolean {
+    return this.displayAddTask || this.displayFilterModal || this.displayLabelModal || this.displayProjectModal;
+  }
+
   // Listeners
 
   @HostListener('window:resize',['$event'])
@@ -130,7 +134,7 @@ export class AppComponent implements OnInit {
   @HostListener("window:keypress", ["$event"])
     handleKeyboardLetterEvent(event: KeyboardEvent) {
       let letter: string = event.key;
-      if(this.keyboard.inInputMode) {
+      if(this.keyboard.inInputMode || this.modalOpened) {
         return;
       }
       if(letter == 'q') {
