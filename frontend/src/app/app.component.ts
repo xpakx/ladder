@@ -68,6 +68,14 @@ export class AppComponent implements OnInit {
   toHome() {
     this.router.navigate(['/']);
   }
+
+  toInbox() {
+    this.router.navigate(['/inbox']);
+  }
+
+  toUpcoming() {
+    this.router.navigate(['/upcoming']);
+  }
   
   toSettings() {
     this.router.navigate(['/settings']);
@@ -132,6 +140,7 @@ export class AppComponent implements OnInit {
 
 
   @ViewChild("searchInput") inputSearch?: ElementRef;
+  keyboardNavActivated: boolean = false;
 
   @HostListener("window:keypress", ["$event"])
     handleKeyboardLetterEvent(event: KeyboardEvent) {
@@ -139,6 +148,20 @@ export class AppComponent implements OnInit {
       if(this.keyboard.inInputMode || this.modalOpened) {
         return;
       }
+      if(this.keyboardNavActivated) {
+        if(letter == 'i') {
+          this.toInbox();
+        } else if(letter == 't') {
+          this.toHome();
+        } else if(letter == 'u') {
+          this.toUpcoming();
+        } else if(letter == 's') {
+          this.toSettings();
+        }
+        this.keyboardNavActivated = false;
+        return;
+      }
+
       if(letter == 'q') {
         this.openAddTaskModal();
       } else if(letter == 'm') {
@@ -147,6 +170,8 @@ export class AppComponent implements OnInit {
         event.preventDefault();
         this.inputSearch?.nativeElement.focus();
         this.inputSearch?.nativeElement.select();
+      } else if(letter == 'g') {
+        this.keyboardNavActivated = true;
       }
   }
 }
