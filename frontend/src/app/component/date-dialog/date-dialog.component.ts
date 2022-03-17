@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -61,4 +61,13 @@ export class DateDialogComponent implements OnInit {
     this.closeSelectDateMenu();
   } 
 
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    this.cancel();
+  }
+
+  @HostListener("window:keydown.enter", ["$event"])
+  handleKeyboardEnterEvent() {
+    this.selectDateFromForm();
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { TreeService } from 'src/app/service/tree.service';
@@ -55,5 +55,15 @@ export class LabelChoiceDialogComponent implements OnInit {
 
   isLabelChosen(labelId: number): boolean {
     return this.labels.find((a) => a.id == labelId) !== undefined;
+  }
+
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    this.closeSelectLabelMenu();
+  }
+
+  @HostListener("window:keydown.enter", ["$event"])
+  handleKeyboardEnterEvent() {
+    this.chooseLabels();
   }
 }

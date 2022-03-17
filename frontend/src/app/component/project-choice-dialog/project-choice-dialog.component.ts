@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { TreeService } from 'src/app/service/tree.service';
@@ -38,5 +38,8 @@ export class ProjectChoiceDialogComponent implements OnInit {
     this.closeEvent.emit(this.project);
   }
 
-
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    this.closeSelectProjectMenu();
+  }
 }
