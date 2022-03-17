@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FilterDetails } from './entity/filter-details';
@@ -130,6 +130,9 @@ export class AppComponent implements OnInit {
     }
   }
 
+
+  @ViewChild("searchInput") inputSearch?: ElementRef;
+
   @HostListener("window:keypress", ["$event"])
     handleKeyboardLetterEvent(event: KeyboardEvent) {
       let letter: string = event.key;
@@ -140,6 +143,10 @@ export class AppComponent implements OnInit {
         this.openAddTaskModal();
       } else if(letter == 'm') {
         this.hideMenu = !this.hideMenu;
+      } else if(letter == '/') {
+        event.preventDefault();
+        this.inputSearch?.nativeElement.focus();
+        this.inputSearch?.nativeElement.select();
       }
   }
 }
