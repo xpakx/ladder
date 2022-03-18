@@ -56,25 +56,27 @@
                                 </span>
                                 <span *ngFor="let label of getHabitLabels(habit)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
                                     <span>{{label.name}}</span>
-                                </span>                                
-                                <span class="task_list_item__project" *ngIf="habit.project">
-                                   <a [href]="'/project/' + habit.project.id + '#task-' + habit.id">
-                                        <span class="task_list_item__project__label">{{habit.project.name}}</span>
-                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + getProjectColor(habit.project.id) + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
-                                    </a>
-                                </span>
+                                </span> 
                             </div>
                         </div>
-                        <div class="task_list_item__actions task_list_item__actions--active">
-                            <button type="button" (click)="openEditHabitForm(habit)">
-                                <i class="fa fa-edit"></i>
-                            </button>
-                            <a class="task_list_item__comments_link">
-                                <i class="fa fa-comment-o"></i>
-                            </a>
-                            <button type="button" (click)="openContextHabitMenu($event, habit.id)">
-                                <i class="fa fa-ellipsis-h"></i>
-                            </button>
+                        <div class="task_list_item_right">
+                            <div class="task_list_item__actions task_list_item__actions--active">
+                                <button class="desktop-btn" type="button" (click)="openEditHabitForm(habit)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <a class="task_list_item__comments_link desktop-btn">
+                                    <i class="fa fa-comment-o"></i>
+                                </a>
+                                <button type="button" (click)="openContextHabitMenu($event, habit.id)">
+                                    <i class="fa fa-ellipsis-h"></i>
+                                </button>
+                            </div>                               
+                            <span class="task_list_item__project" *ngIf="habit.project">
+                               <a [href]="'/project/' + habit.project.id + '#task-' + habit.id">
+                                    <span class="task_list_item__project__label">{{habit.project.name}}</span>
+                                    <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + getProjectColor(habit.project.id) + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                </a>
+                            </span>
                         </div>
                     </div>
                 </div>
