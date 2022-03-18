@@ -62,30 +62,32 @@
                                         </ng-container>
                                     </span>
                                 </button>
-                                
-                                <span class="task_list_item__project" *ngIf="task.project">
-                                    <a [href]="'/project/' + task.project.id + '#task-' + task.id">
-                                        <span class="task_list_item__project__label">{{task.project.name}}</span>
-                                        <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + collab.project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
-                                    </a>
-                                </span>
                             </div>
                         </div>
-                        <div class="task_list_item__actions task_list_item__actions--active">
-                            <ng-container *ngIf="!blocked && collab.editionAllowed">
-                                <button type="button" (click)="openEditTaskForm(task)">
-                                    <i class="fa fa-edit"></i>
+                        <div class="task_list_item_right">
+                            <div class="task_list_item__actions task_list_item__actions--active">
+                                <ng-container *ngIf="!blocked && collab.editionAllowed">
+                                    <button class="desktop-btn" type="button" (click)="openEditTaskForm(task)">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="desktop-btn" type="button" (click)="openSelectDateModal(task)">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                    <a class="task_list_item__comments_link desktop-btn">
+                                        <i class="fa fa-comment-o"></i>
+                                    </a>
+                                </ng-container>
+                                <button type="button" (click)="openContextTaskMenu($event, task.id)" *ngIf="collab.editionAllowed">
+                                    <i class="fa fa-ellipsis-h"></i>
                                 </button>
-                                <button type="button" (click)="openSelectDateModal(task)">
-                                    <i class="fa fa-calendar"></i>
-                                </button>
-                                <a class="task_list_item__comments_link">
-                                    <i class="fa fa-comment-o"></i>
+                            </div>
+                                
+                            <span class="task_list_item__project" *ngIf="task.project">
+                                <a [href]="'/project/' + task.project.id + '#task-' + task.id">
+                                    <span class="task_list_item__project__label">{{task.project.name}}</span>
+                                    <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + collab.project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
                                 </a>
-                            </ng-container>
-                            <button type="button" (click)="openContextTaskMenu($event, task.id)" *ngIf="collab.editionAllowed">
-                                <i class="fa fa-ellipsis-h"></i>
-                            </button>
+                            </span>
                         </div>
                     </div>
                 </div>
