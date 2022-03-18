@@ -1,9 +1,11 @@
 package io.github.xpakx.ladder.service;
 
+import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.TaskComment;
 import io.github.xpakx.ladder.entity.dto.AddCommentRequest;
 import io.github.xpakx.ladder.entity.dto.TaskCommentDetails;
 import io.github.xpakx.ladder.error.NotFoundException;
+import io.github.xpakx.ladder.error.WrongOwnerException;
 import io.github.xpakx.ladder.repository.TaskCommentRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -30,6 +33,10 @@ public class TaskCommentService {
     }
 
     public TaskComment addComment(AddCommentRequest request, Integer taskId, Integer userId) {
+        Optional<Task> task = taskRepository.findByIdAndOwnerId(taskId, userId);
+        if(task.isEmpty() && !taskRepository.existsCollaboratorById(taskId, userId)) {
+            throw new WrongOwnerException("You cannot add comments to this task!");
+        }
         TaskComment commentToAdd = buildCommentToAddFromRequest(request, taskId, userId);
         return commentRepository.save(commentToAdd);
     }
