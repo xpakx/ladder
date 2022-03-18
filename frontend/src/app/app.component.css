@@ -257,7 +257,7 @@ button {
     }
 
     .top-navbar-right {
-        visibility: hidden;
+        display: none !important;
     }
 }
 

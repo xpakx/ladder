@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -372,5 +372,23 @@ export class TaskFormComponent implements OnInit {
   chooseLabel(labels: LabelDetails[]) {
     this.closeSelectLabelsMenu();
     this.labels = labels;
+  }
+
+  get subModalOpened(): boolean {
+    return this.showSelectDateMenu || this.showSelectLabelsMenu || this.showSelectPriorityMenu || this.showSelectProjectMenu;
+  }
+
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    if(!this.subModalOpened) {
+      this.closeForm();
+    }
+  }
+
+  @HostListener("window:keydown.enter", ["$event"])
+  handleKeyboardEnterEvent() {
+    if(!this.subModalOpened && this.taskForm?.valid) {
+      this.save();
+    }
   }
 }

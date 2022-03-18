@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-priority-modal',
@@ -28,5 +28,11 @@ export class PriorityModalComponent implements OnInit {
 
   closeModal() {
     this.cancelEvent.emit(true);
+  }
+
+
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    this.closeModal();
   }
 }

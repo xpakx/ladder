@@ -247,19 +247,6 @@ button {
     margin-top: 10px;
 }
 
-.task_list_item__project {
-    margin-left: auto;
-    display: flex;
-}
-
-.task_list_item__project a {
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    color: grey;
-    text-decoration: none;
-}
-
 .task_list_item__actions {
     display: flex;
     justify-content: flex-end;
@@ -601,4 +588,40 @@ button {
 
 .assigned_controls i {
     margin-right: 3px;
+}
+
+.task_list_item__project {
+    margin-left: auto;
+    display: flex;
+}
+
+.task_list_item__project a {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: grey;
+    text-decoration: none;
+}
+
+.task_list_item_right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-left: 16px;
+}
+
+
+@media (max-width: 767px) { 
+    .task_list_item {
+        margin: 5px 10px;
+    }
+
+    .task_list_item__actions .desktop-btn {
+        display: none;
+    }
+
+    .task_list_item__actions {
+        opacity: 1;
+    }
 }

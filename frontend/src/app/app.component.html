@@ -16,7 +16,7 @@
 								<i class="fa text-white mr-2 fa-search"></i>
 							</span>
 							<form class="form-inline" [formGroup]="searchForm">
-								<input class="form-control mr-sm-2" type="search" placeholder="Find" formControlName="search">
+								<input #searchInput class="form-control mr-sm-2" type="search" placeholder="Find" formControlName="search">
 								<button class="search_button" (click)="search()">
 									<i class="fa text-white mr-2 fa-arrow-right"></i>
 								</button>
@@ -49,7 +49,7 @@
 		<div class="row-container">
 			<div class="left-nav-container" [class.visibleLeftNav]="!hideMenu" [class.hiddenLeftNav]="hideMenu">
 				<div class="left-nav">
-						<app-sidebar (projectEvent)="openProjectModal($event)" (labelEvent)="openLabelModal($event)" (filterEvent)="openFilterModal($event)"></app-sidebar>
+						<app-sidebar (projectEvent)="openProjectModal($event)" (labelEvent)="openLabelModal($event)" (filterEvent)="openFilterModal($event)" (closeEvent)="switchHideMenu()" [mobile]="smallWindow"></app-sidebar>
 				</div>
 			</div>
 			<div class="main-container">

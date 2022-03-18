@@ -1,7 +1,7 @@
 <div *ngIf="taskForm" class="taskFormContainer">
     <form class="taskForm" [formGroup]="taskForm">
         <div class="taskFormInputsHolder">
-            <input placeholder="Task name" formControlName="title">
+            <input autofocus placeholder="Task name" formControlName="title">
             <textarea placeholder="Description" formControlName="description"></textarea>
         </div> 
         <div class="taskFormExtra">

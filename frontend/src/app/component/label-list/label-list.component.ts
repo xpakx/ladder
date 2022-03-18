@@ -19,6 +19,7 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
     implements OnInit, AfterViewInit 
    {
   @Output() addLabel = new EventEmitter<AddEvent<LabelDetails>>();
+  @Output() navEvent = new EventEmitter<boolean>();
 
   displayLabelModal: boolean = false;
 
@@ -37,6 +38,7 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
 
   toLabel(id: number) {
     this.router.navigate(['/label/'+id]);
+    this.navEvent.emit(true);
   }
 
   switchLabelCollapse() {

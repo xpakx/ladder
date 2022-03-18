@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FilterDetails } from './entity/filter-details';
@@ -6,7 +6,7 @@ import { LabelDetails } from './entity/label-details';
 import { ProjectTreeElem } from './entity/project-tree-elem';
 import { AddEvent } from './entity/utils/add-event';
 import { DeleteService } from './service/delete.service';
-import { NotificationService } from './service/notification.service';
+import { KeyboardManagerService } from './service/keyboard-manager.service';
 import { TreeService } from './service/tree.service';
 
 @Component({
@@ -29,15 +29,20 @@ export class AppComponent implements OnInit {
   displayAddTask: boolean = false;
 
   searchForm: FormGroup;
+  smallWindow: boolean = false;
 
   constructor(public tree : TreeService, public deleteService: DeleteService,
-    private router: Router, private fb: FormBuilder) {
+    private router: Router, private fb: FormBuilder, private keyboard: KeyboardManagerService) {
       this.searchForm = this.fb.group({
         search: ['']
       });
   }
 
   ngOnInit(): void {
+    if(window.innerWidth <= 767) {
+      this.smallWindow = true;
+      this.hideMenu = true;
+    }
   }
 
   //Project modal window
@@ -62,6 +67,14 @@ export class AppComponent implements OnInit {
 
   toHome() {
     this.router.navigate(['/']);
+  }
+
+  toInbox() {
+    this.router.navigate(['/inbox']);
+  }
+
+  toUpcoming() {
+    this.router.navigate(['/upcoming']);
   }
   
   toSettings() {
@@ -108,4 +121,57 @@ export class AppComponent implements OnInit {
     this.router.navigate(['/search'], { queryParams: {search: this.searchForm.controls.search.value}});
   }
 
+  get modalOpened(): boolean {
+    return this.displayAddTask || this.displayFilterModal || this.displayLabelModal || this.displayProjectModal || this.deleteService.showDeleteMonit;
+  }
+
+  // Listeners
+
+  @HostListener('window:resize',['$event'])
+  onWindowResize() {
+    if(window.innerWidth <= 767) {
+      this.smallWindow = true;
+      this.hideMenu = true;
+    } else {
+      this.smallWindow = false;
+      this.hideMenu = false;
+    }
+  }
+
+
+  @ViewChild("searchInput") inputSearch?: ElementRef;
+  keyboardNavActivated: boolean = false;
+
+  @HostListener("window:keypress", ["$event"])
+    handleKeyboardLetterEvent(event: KeyboardEvent) {
+      let letter: string = event.key;
+      if(this.keyboard.inInputMode || this.modalOpened) {
+        return;
+      }
+      if(this.keyboardNavActivated) {
+        if(letter == 'i') {
+          this.toInbox();
+        } else if(letter == 't') {
+          this.toHome();
+        } else if(letter == 'u') {
+          this.toUpcoming();
+        } else if(letter == 's') {
+          this.toSettings();
+        }
+        this.keyboardNavActivated = false;
+        return;
+      }
+
+      if(letter == 'q') {
+        this.openAddTaskModal();
+      } else if(letter == 'm') {
+        this.hideMenu = !this.hideMenu;
+      } else if(letter == '/') {
+        event.preventDefault();
+        this.inputSearch?.nativeElement.focus();
+        this.inputSearch?.nativeElement.select();
+      } else if(letter == 'g') {
+        this.keyboardNavActivated = true;
+      }
+  }
 }

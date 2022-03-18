@@ -51,3 +51,9 @@ a:hover {
     text-decoration: underline;
     text-decoration-style: dotted;
 }
+
+@media (max-width: 767px) { 
+    .btn {
+        padding: 10px 40px 10px 40px;
+    }
+}

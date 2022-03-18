@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Habit } from 'src/app/entity/habit';
 import { HabitDetails } from 'src/app/entity/habit-details';
@@ -242,4 +242,21 @@ export class HabitFormComponent implements OnInit {
     this.labels = labels;
   }
 
+  get subModalOpened(): boolean {
+    return this.showSelectLabelsMenu || this.showSelectPriorityMenu || this.showSelectProjectMenu;
+  }
+
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    if(!this.subModalOpened) {
+      this.closeForm();
+    }
+  }
+
+  @HostListener("window:keydown.enter", ["$event"])
+  handleKeyboardEnterEvent() {
+    if(!this.subModalOpened && this.habitForm?.valid) {
+      this.save();
+    }
+  }
 }

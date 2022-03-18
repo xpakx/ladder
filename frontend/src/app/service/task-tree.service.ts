@@ -212,6 +212,11 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     if(task) {
       task.completed = response.completed;
       task.modifiedAt =  new Date(response.modifiedAt);
+      let username = localStorage.getItem('username');
+      let id = Number(localStorage.getItem('user_id'))
+      if(username && id) {
+        task.assigned = {username: username, id: id};
+      }
     }
   }
 

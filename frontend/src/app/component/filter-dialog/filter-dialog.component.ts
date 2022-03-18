@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Filter } from 'src/app/entity/filter';
 import { FilterDetails } from 'src/app/entity/filter-details';
@@ -147,4 +147,15 @@ export class FilterDialogComponent implements OnInit {
     );
   }
 
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    this.closeFilterModal();
+  }
+
+  @HostListener("window:keydown.enter", ["$event"])
+  handleKeyboardEnterEvent() {
+    if(this.addFilterForm?.valid) {
+      this.addFilterModal();
+    }
+  }
 }

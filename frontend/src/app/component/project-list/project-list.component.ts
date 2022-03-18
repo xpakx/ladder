@@ -30,6 +30,7 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
   @ViewChild('projectContext', {read: ElementRef}) projectContextMenuElem!: ElementRef;
 
   @Output() addProject = new EventEmitter<AddEvent<ProjectTreeElem>>();
+  @Output() navEvent = new EventEmitter<boolean>();
 
   constructor(public tree : TreeService, private projectService: ProjectService,
     protected projectTreeService: ProjectTreeService, 
@@ -85,10 +86,12 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
 
   toProject(id: number) {
     this.router.navigate(['/project/'+id]);
+    this.navEvent.emit(true);
   }
 
   toArchive() {
     this.router.navigate(['/archive/']);
+    this.navEvent.emit(true);
   }
 
   // Project context menu

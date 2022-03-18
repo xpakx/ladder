@@ -18,6 +18,7 @@ import { DraggableComponent } from '../abstract/draggable-component';
 export class FilterListComponent  extends DraggableComponent<FilterDetails, Filter, FilterService, FilterTreeService>
 implements OnInit, AfterViewInit {
   @Output() addFilter = new EventEmitter<AddEvent<FilterDetails>>();
+  @Output() navEvent = new EventEmitter<boolean>();
 
   displayFilterModal: boolean = false;
 
@@ -35,6 +36,7 @@ implements OnInit, AfterViewInit {
 
   toFilter(searchString: string) {
     this.router.navigate(['/search'], { queryParams: {search: searchString}});
+    this.navEvent.emit(true);
   }
 
   switchFilterCollapse() {
