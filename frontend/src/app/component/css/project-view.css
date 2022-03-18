@@ -602,3 +602,18 @@ button {
 .assigned_controls i {
     margin-right: 3px;
 }
+
+
+@media (max-width: 767px) { 
+    .task_list_item {
+        margin: 5px 10px;
+    }
+
+    .task_list_item__actions .desktop-btn {
+        display: none;
+    }
+
+    .task_list_item__actions {
+        opacity: 1;
+    }
+}
