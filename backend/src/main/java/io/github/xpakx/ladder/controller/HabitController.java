@@ -2,8 +2,6 @@ package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Habit;
 import io.github.xpakx.ladder.entity.HabitCompletion;
-import io.github.xpakx.ladder.entity.Label;
-import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.HabitService;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,5 @@
 package io.github.xpakx.ladder.repository;
 
-import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.TaskDetails;
 import org.springframework.data.jpa.repository.EntityGraph;

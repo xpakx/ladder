@@ -1,6 +1,5 @@
 package io.github.xpakx.ladder.service;
 
-import io.github.xpakx.ladder.aspect.NotifyOnProjectChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
 import io.github.xpakx.ladder.aspect.NotifyOnTaskDeletion;
 import io.github.xpakx.ladder.aspect.NotifyOnTasksChange;
