@@ -3,7 +3,6 @@ package io.github.xpakx.ladder.aspect;
 import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.CollabNotificationRequest;
-import io.github.xpakx.ladder.entity.dto.CollaborationRequest;
 import io.github.xpakx.ladder.entity.dto.NotificationRequest;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
