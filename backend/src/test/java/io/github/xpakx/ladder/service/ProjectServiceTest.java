@@ -481,7 +481,7 @@ class ProjectServiceTest {
                 .willReturn(Optional.of(projectInDb));
         injectMocks();
 
-        projectService.updateProjectCollapsion(request, 4, 5);
+        projectService.updateProjectCollapsedState(request, 4, 5);
 
         then(projectInDb)
                 .should(times(1))

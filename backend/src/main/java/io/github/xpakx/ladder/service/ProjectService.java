@@ -22,7 +22,7 @@ public class ProjectService {
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
     private final HabitRepository habitRepository;
-    private final CollaborationRepository collabRepository;
+    private final CollaborationRepository collaborationRepository;
 
     /**
      * Getting object with project's data from repository.
@@ -181,7 +181,7 @@ public class ProjectService {
      * @return Updated project
      */
     @NotifyOnProjectChange
-    public Project updateProjectCollapsion(BooleanRequest request, Integer projectId, Integer userId) {
+    public Project updateProjectCollapsedState(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         projectToUpdate.setCollapsed(request.isFlag());
@@ -330,7 +330,7 @@ public class ProjectService {
         while(toAdd.size() > 0) {
             List<FullProjectTree> newToAdd = new ArrayList<>();
             for (FullProjectTree parent : toAdd) {
-                List<FullProjectTree> children = getAllProjectChildrenAsTreeElems(projectByParent, parent);
+                List<FullProjectTree> children = getAllProjectChildrenAsTreeElements(projectByParent, parent);
                 parent.setTasks(addTasksToTree(parent, tasksByParent, tasksByProject));
                 parent.setChildren(children);
                 newToAdd.addAll(children);
@@ -339,7 +339,7 @@ public class ProjectService {
         }
     }
 
-    private List<FullProjectTree> getAllProjectChildrenAsTreeElems(Map<Integer, List<ProjectDetails>> projectByParent, FullProjectTree parent) {
+    private List<FullProjectTree> getAllProjectChildrenAsTreeElements(Map<Integer, List<ProjectDetails>> projectByParent, FullProjectTree parent) {
         return projectByParent
                 .getOrDefault(parent.getId(), new ArrayList<>()).stream()
                         .map(FullProjectTree::new)
@@ -355,7 +355,7 @@ public class ProjectService {
         while(toAdd.size() > 0) {
             List<TaskForTree> newToAdd = new ArrayList<>();
             for (TaskForTree parent : toAdd) {
-                List<TaskForTree> children = getAllTaskChildrenAsTreeElems(tasksByParent, parent);
+                List<TaskForTree> children = getAllTaskChildrenAsTreeElements(tasksByParent, parent);
                 parent.setChildren(children);
                 newToAdd.addAll(children);
             }
@@ -364,7 +364,7 @@ public class ProjectService {
         return result;
     }
 
-    private List<TaskForTree> getAllTaskChildrenAsTreeElems(Map<Integer, List<TaskDetails>> tasksByParent, TaskForTree parent) {
+    private List<TaskForTree> getAllTaskChildrenAsTreeElements(Map<Integer, List<TaskDetails>> tasksByParent, TaskForTree parent) {
         return tasksByParent.getOrDefault(parent.getId(), new ArrayList<>()).stream()
                         .map(TaskForTree::new)
                         .collect(Collectors.toList());
@@ -673,7 +673,7 @@ public class ProjectService {
      * are attached as children to archived project's parent
      * @param userId ID of an owner of projects
      * @param projectId ID of the project to move
-     * @param request
+     * @param request request with archived state
      * @return Updated project
      */
     @Transactional
@@ -844,14 +844,14 @@ public class ProjectService {
         UserAccount user = userRepository.findByCollaborationToken(request.getCollaborationToken())
                 .orElseThrow(() -> new NotFoundException("No user with such token!"));
         LocalDateTime now = LocalDateTime.now();
-        toUpdate.getCollaborators().add(createCollabForUser(request, projectId, now, user));
+        toUpdate.getCollaborators().add(createCollaborationForUser(request, projectId, now, user));
         toUpdate.setCollaborative(true);
         toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
-        return collabRepository.findProjectedByOwnerIdAndProjectId(user.getId(), projectId).get();
+        return collaborationRepository.findProjectedByOwnerIdAndProjectId(user.getId(), projectId).get();
     }
 
-    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId, LocalDateTime now, UserAccount user) {
+    private Collaboration createCollaborationForUser(CollaborationRequest request, Integer projectId, LocalDateTime now, UserAccount user) {
         return Collaboration.builder()
                 .owner(user)
                 .project(projectRepository.getById(projectId))
@@ -863,13 +863,13 @@ public class ProjectService {
     }
 
     @NotifyOnCollaborationDeletion
-    public void deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
+    public void deleteCollaborator(Integer collaborationId, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         List<Collaboration> collaborations = toUpdate.getCollaborators();
         toUpdate.setCollaborators(collaborations.stream()
-                .filter((a) -> !collabId.equals(a.getOwner().getId()))
+                .filter((a) -> !collaborationId.equals(a.getOwner().getId()))
                 .collect(Collectors.toList())
         );
         if(toUpdate.getCollaborators().size() == 0) {
@@ -878,20 +878,20 @@ public class ProjectService {
         LocalDateTime now = LocalDateTime.now();
 		toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
-        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collabId, toUpdate.getId());
+        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collaborationId, toUpdate.getId());
         for(Task task : tasks) {
             task.setModifiedAt(now);
             task.setAssigned(null);
         }
         taskRepository.saveAll(tasks);
-        collabRepository.deleteAll(
+        collaborationRepository.deleteAll(
                 collaborations.stream()
-                        .filter((a) -> collabId.equals(a.getOwner().getId()))
+                        .filter((a) -> collaborationId.equals(a.getOwner().getId()))
                         .collect(Collectors.toSet())
         );
     }
 
     public List<CollaborationWithOwner> getCollaborators(Integer projectId, Integer ownerId) {
-        return collabRepository.findByProjectIdAndProjectOwnerId(projectId, ownerId);
+        return collaborationRepository.findByProjectIdAndProjectOwnerId(projectId, ownerId);
     }
 }

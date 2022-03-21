@@ -85,7 +85,7 @@ public class ProjectController {
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/collapse")
     public ResponseEntity<Project> updateProjectCollapsion(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.updateProjectCollapsion(request, projectId, userId), HttpStatus.OK);
+        return  new ResponseEntity<>(projectService.updateProjectCollapsedState(request, projectId, userId), HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
