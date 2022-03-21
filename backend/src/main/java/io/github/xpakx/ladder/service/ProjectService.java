@@ -693,6 +693,7 @@ public class ProjectService {
         } else {
             restoreProjectFromArchive(request, userId, project, now);
         }
+        archiveHabits(request, project.getId(), userId, now);
         return project;
     }
 
@@ -706,6 +707,15 @@ public class ProjectService {
         project.setParent(null);
         detachProjectFromTree(request, userId, project, now);
         archiveTasks(request, project.getId(), userId, now, false);
+    }
+
+    private void archiveHabits(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now) {
+        List<Habit> habits = habitRepository.findByOwnerIdAndProjectId(userId, projectId, Habit.class);
+        for(Habit habit : habits) {
+            habit.setArchived(request.isFlag());
+            habit.setModifiedAt(now);
+        }
+        habitRepository.saveAll(habits);
     }
 
     private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now, boolean onlyCompleted) {
