@@ -671,19 +671,31 @@ public class ProjectService {
     public Project archiveProject(BooleanRequest request, Integer projectId, Integer userId) {
         Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
+        changeArchivedState(request, userId, project);
+        return projectRepository.save(project);
+    }
+
+    private void changeArchivedState(BooleanRequest request, Integer userId, Project project) {
         LocalDateTime now = LocalDateTime.now();
         project.setArchived(request.isFlag());
         project.setModifiedAt(now);
         if(request.isFlag()) {
-            project.setGeneralOrder(0);
-            project.setParent(null);
-            detachProjectFromTree(request, projectId, userId, project, now);
-            archiveTasks(request, projectId, userId, now, false);
+            moveProjectToArchiveAndDetachChildren(request, userId, project, now);
         } else {
-            project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
-            archiveTasks(request, projectId, userId, now, false);
+            restoreProjectFromArchive(request, userId, project, now);
         }
-        return projectRepository.save(project);
+    }
+
+    private void restoreProjectFromArchive(BooleanRequest request, Integer userId, Project project, LocalDateTime now) {
+        project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
+        archiveTasks(request, project.getId(), userId, now, false);
+    }
+
+    private void moveProjectToArchiveAndDetachChildren(BooleanRequest request, Integer userId, Project project, LocalDateTime now) {
+        project.setGeneralOrder(0);
+        project.setParent(null);
+        detachProjectFromTree(request, userId, project, now);
+        archiveTasks(request, project.getId(), userId, now, false);
     }
 
     private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now, boolean onlyCompleted) {
@@ -703,9 +715,9 @@ public class ProjectService {
         taskRepository.saveAll(tasks);
     }
 
-    private void detachProjectFromTree(BooleanRequest request, Integer projectId, Integer userId, Project project, LocalDateTime now) {
+    private void detachProjectFromTree(BooleanRequest request, Integer userId, Project project, LocalDateTime now) {
         if(request.isFlag()) {
-            List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, projectId);
+            List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, project.getId());
             Integer order = getMaxOrderForParent(userId, project);
 
             for(Project a : children) {
