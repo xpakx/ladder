@@ -109,12 +109,17 @@ public class ProjectService {
     @NotifyOnProjectChange
     public Project updateProject(ProjectRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .map((p) -> updateFromRequest(p, request))
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setName(request.getName());
-        projectToUpdate.setColor(request.getColor());
-        projectToUpdate.setFavorite(request.isFavorite());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
+    }
+
+    private Project updateFromRequest(Project project, ProjectRequest request) {
+        project.setName(request.getName());
+        project.setColor(request.getColor());
+        project.setFavorite(request.isFavorite());
+        project.setModifiedAt(LocalDateTime.now());
+        return project;
     }
 
     /**
