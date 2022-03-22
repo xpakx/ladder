@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Service
@@ -86,11 +87,15 @@ public class ProjectService {
         if(!hasParent(request)) {
             return null;
         }
-        Integer ownerId = projectRepository.findOwnerIdById(request.getParentId());
-        if(ownerId == null ||  !ownerId.equals(userId)) {
+        testParentOwnership(request.getParentId(), userId);
+        return projectRepository.getById(request.getParentId());
+    }
+
+    private void testParentOwnership(Integer parentId, Integer userId) {
+        Integer ownerId = projectRepository.findOwnerIdById(parentId);
+        if(isNull(ownerId) ||  !ownerId.equals(userId)) {
             throw new WrongOwnerException("Cannot add nonexistent project as task!");
         }
-        return projectRepository.getById(request.getParentId());
     }
 
     /**
