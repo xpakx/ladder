@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 @Service
 @AllArgsConstructor
 public class ProjectService {
@@ -50,15 +52,19 @@ public class ProjectService {
     }
 
     private Integer getMaxGeneralOrder(ProjectRequest request, Integer userId) {
-        if(hasParent(request)) {
-            return projectRepository.getMaxOrderByOwnerIdAndParentId(userId, request.getParentId());
-        } else {
-            return projectRepository.getMaxOrderByOwnerId(userId);
-        }
+        return hasParent(request) ? getMaxOrderFromDb(userId, request.getParentId()) : getMaxOrderFromDb(userId);
+    }
+
+    private Integer getMaxOrderFromDb(Integer userId, Integer parentId) {
+        return projectRepository.getMaxOrderByOwnerIdAndParentId(userId, parentId);
+    }
+
+    private Integer getMaxOrderFromDb(Integer userId) {
+        return projectRepository.getMaxOrderByOwnerId(userId);
     }
 
     private boolean hasParent(ProjectRequest request) {
-        return request.getParentId() != null;
+        return nonNull(request.getParentId());
     }
 
     private Project buildProjectToAddFromRequest(ProjectRequest request, Integer userId) {
