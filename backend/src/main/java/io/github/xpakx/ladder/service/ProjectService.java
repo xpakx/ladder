@@ -93,8 +93,8 @@ public class ProjectService {
 
     private void testParentOwnership(Integer parentId, Integer userId) {
         Integer ownerId = projectRepository.findOwnerIdById(parentId);
-        if(isNull(ownerId) ||  !ownerId.equals(userId)) {
-            throw new WrongOwnerException("Cannot add nonexistent project as task!");
+        if(isNull(ownerId) || !ownerId.equals(userId)) {
+            throw new WrongOwnerException("Cannot add nonexistent project as parent!");
         }
     }
 
@@ -109,12 +109,12 @@ public class ProjectService {
     @NotifyOnProjectChange
     public Project updateProject(ProjectRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .map((p) -> updateFromRequest(p, request))
+                .map((p) -> transformWithRequestData(p, request))
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         return projectRepository.save(projectToUpdate);
     }
 
-    private Project updateFromRequest(Project project, ProjectRequest request) {
+    private Project transformWithRequestData(Project project, ProjectRequest request) {
         project.setName(request.getName());
         project.setColor(request.getColor());
         project.setFavorite(request.isFavorite());

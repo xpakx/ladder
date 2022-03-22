@@ -1,7 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.aspect.LogResponse;
-import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.ProjectService;
