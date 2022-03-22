@@ -75,42 +75,6 @@ public class ProjectController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/name")
-    public ResponseEntity<ProjectUpdateDto> updateProjectName(@RequestBody NameRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(
-                ProjectUpdateDto.from(projectService.updateProjectName(request, projectId, userId)),
-                HttpStatus.OK
-        );
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/parent")
-    public ResponseEntity<ProjectUpdateDto> updateProjectParent(@RequestBody IdRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(
-                ProjectUpdateDto.from(projectService.updateProjectParent(request, projectId, userId)),
-                HttpStatus.OK
-        );
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/favorite")
-    public ResponseEntity<ProjectUpdateDto> updateProjectFav(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(
-                ProjectUpdateDto.from(projectService.updateProjectFav(request, projectId, userId)),
-                HttpStatus.OK
-        );
-    }
-    
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/collapse")
-    public ResponseEntity<ProjectUpdateDto> updateProjectCollapsion(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(
-                ProjectUpdateDto.from(projectService.updateProjectCollapsedState(request, projectId, userId)),
-                HttpStatus.OK
-        );
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @DeleteMapping("/{projectId}")
     public ResponseEntity<?> deleteProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
         projectService.deleteProject(projectId, userId);

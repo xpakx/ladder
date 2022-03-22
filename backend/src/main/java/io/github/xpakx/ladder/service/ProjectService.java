@@ -134,90 +134,6 @@ public class ProjectService {
     }
 
     /**
-     * Change project's name without editing any other field.
-     * @param request request with new name
-     * @param projectId ID of the project do update
-     * @param userId ID of an owner of the project
-     * @return Updated project
-     */
-    @NotifyOnProjectChange
-    public Project updateProjectName(NameRequest request, Integer projectId, Integer userId) {
-        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .map((p) -> transformWithRequestData(p, request))
-                .orElseThrow(() -> new NotFoundException("No such project!"));
-        return projectRepository.save(projectToUpdate);
-    }
-
-    private Project transformWithRequestData(Project project, NameRequest request) {
-        project.setName(request.getName());
-        project.setModifiedAt(LocalDateTime.now());
-        return project;
-    }
-
-    /**
-     * Change project's parent without editing any other field.
-     * @param request Request with parent id
-     * @param projectId ID of the project to update
-     * @param userId ID an owner of the project
-     * @return Updated project
-     */
-    @NotifyOnProjectChange
-    public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
-        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setParent(getIdFromIdRequest(request));
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(projectToUpdate);
-    }
-
-    private Project getIdFromIdRequest(IdRequest request) {
-        return hasId(request) ? projectRepository.getById(request.getId()) : null;
-    }
-    
-    private boolean hasId(IdRequest request) {
-        return request.getId() != null;
-    }
-
-    /**
-     * Change if project is favorite without editing any other field.
-     * @param request Request with favorite flag
-     * @param projectId ID of the project to update
-     * @param userId ID of an owner of the project
-     * @return Updated project
-     */
-    @NotifyOnProjectChange
-    public Project updateProjectFav(BooleanRequest request, Integer projectId, Integer userId) {
-        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setFavorite(request.isFlag());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(projectToUpdate);
-    }
-
-    /**
-     * Change if project is collapsed without editing any other field.
-     * @param request Request with collapse flag
-     * @param projectId ID of the project to update
-     * @param userId ID of an owner of the project
-     * @return Updated project
-     */
-    @NotifyOnProjectChange
-    public Project updateProjectCollapsedState(BooleanRequest request, Integer projectId, Integer userId) {
-        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setCollapsed(request.isFlag());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(projectToUpdate);
-    }
-
-    private Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
-        if(!userId.equals(projectRepository.findOwnerIdById(projectId))) {
-            return Optional.empty();
-        }
-        return Optional.of(projectRepository.getById(projectId));
-    }
-
-    /**
      * Add new task to given project
      * @param request Request with data to build new project
      * @param projectId ID of the project for task
@@ -231,6 +147,13 @@ public class ProjectService {
         Task taskToAdd = buildTaskToAddFromRequest(request, userId, project);
         taskToAdd.setProjectOrder(getMaxProjectOrder(request, userId)+1);
         return taskRepository.save(taskToAdd);
+    }
+
+    private Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
+        if(!userId.equals(projectRepository.findOwnerIdById(projectId))) {
+            return Optional.empty();
+        }
+        return Optional.of(projectRepository.getById(projectId));
     }
 
     private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
@@ -636,6 +559,10 @@ public class ProjectService {
     
     private Optional<Project> findIdFromIdRequest(IdRequest request) {
         return hasId(request) ? projectRepository.findById(request.getId()) : Optional.empty();
+    }
+
+    private boolean hasId(IdRequest request) {
+        return request.getId() != null;
     }
 
     /**
