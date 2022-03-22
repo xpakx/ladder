@@ -143,10 +143,15 @@ public class ProjectService {
     @NotifyOnProjectChange
     public Project updateProjectName(NameRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .map((p) -> transformWithRequestData(p, request))
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setName(request.getName());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
+    }
+
+    private Project transformWithRequestData(Project project, NameRequest request) {
+        project.setName(request.getName());
+        project.setModifiedAt(LocalDateTime.now());
+        return project;
     }
 
     /**
@@ -160,7 +165,7 @@ public class ProjectService {
     public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setParent( getIdFromIdRequest(request));
+        projectToUpdate.setParent(getIdFromIdRequest(request));
         projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
     }
