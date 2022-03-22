@@ -356,34 +356,6 @@ class ProjectServiceTest {
     }
 
     @Test
-    void shouldUseProjectNameFromUpdateNameRequest() {
-        final String NAME = "Project 1";
-        NameRequest request = mock(NameRequest.class);
-        given(request.getName())
-                .willReturn(NAME);
-        Project projectInDb = mock(Project.class);
-        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
-                .willReturn(Optional.of(projectInDb));
-        injectMocks();
-
-        projectService.updateProjectName(request, 4, 5);
-
-        then(projectInDb)
-                .should(times(1))
-                .setName(eq(NAME));
-        then(projectInDb)
-                .should(times(1))
-                .setModifiedAt(any(LocalDateTime.class));
-        then(projectInDb)
-                .shouldHaveNoMoreInteractions();;
-        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
-        then(projectRepository)
-                .should()
-                .save(projectCaptor.capture());
-        assertSame(projectInDb, projectCaptor.getValue());
-    }
-
-    @Test
     void shouldUseProjectFavFromUpdateRequest() {
         final boolean FAV = true;
         ProjectRequest request = getProjectRequestWithoutParent();
@@ -399,34 +371,6 @@ class ProjectServiceTest {
         then(projectInDb)
                 .should(times(1))
                 .setFavorite(eq(FAV));
-        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
-        then(projectRepository)
-                .should()
-                .save(projectCaptor.capture());
-        assertSame(projectInDb, projectCaptor.getValue());
-    }
-
-    @Test
-    void shouldUseProjectFavFromUpdateFavRequest() {
-        final boolean FAV = true;
-        BooleanRequest request = mock(BooleanRequest.class);
-        given(request.isFlag())
-                .willReturn(FAV);
-        Project projectInDb = mock(Project.class);
-        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
-                .willReturn(Optional.of(projectInDb));
-        injectMocks();
-
-        projectService.updateProjectFav(request, 4, 5);
-
-        then(projectInDb)
-                .should(times(1))
-                .setFavorite(eq(FAV));
-        then(projectInDb)
-                .should(times(1))
-                .setModifiedAt(any(LocalDateTime.class));
-        then(projectInDb)
-                .shouldHaveNoMoreInteractions();;
         ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
         then(projectRepository)
                 .should()
@@ -468,33 +412,5 @@ class ProjectServiceTest {
         then(projectRepository)
                 .should(times(1))
                 .deleteByIdAndOwnerId(eq(PROJECT_ID), eq(USER_ID));
-    }
-
-    @Test
-    void shouldUseProjectCollapsion() {
-        final boolean COLLAPSE = true;
-        BooleanRequest request = mock(BooleanRequest.class);
-        given(request.isFlag())
-                .willReturn(COLLAPSE);
-        Project projectInDb = mock(Project.class);
-        given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
-                .willReturn(Optional.of(projectInDb));
-        injectMocks();
-
-        projectService.updateProjectCollapsion(request, 4, 5);
-
-        then(projectInDb)
-                .should(times(1))
-                .setCollapsed(eq(COLLAPSE));
-        then(projectInDb)
-                .should(times(1))
-                .setModifiedAt(any(LocalDateTime.class));
-        then(projectInDb)
-                .shouldHaveNoMoreInteractions();;
-        ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
-        then(projectRepository)
-                .should()
-                .save(projectCaptor.capture());
-        assertSame(projectInDb, projectCaptor.getValue());
     }
 }

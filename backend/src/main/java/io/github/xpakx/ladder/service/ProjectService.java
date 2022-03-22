@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 @Service
 @AllArgsConstructor
 public class ProjectService {
@@ -22,7 +25,7 @@ public class ProjectService {
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
     private final HabitRepository habitRepository;
-    private final CollaborationRepository collabRepository;
+    private final CollaborationRepository collaborationRepository;
 
     /**
      * Getting object with project's data from repository.
@@ -50,15 +53,19 @@ public class ProjectService {
     }
 
     private Integer getMaxGeneralOrder(ProjectRequest request, Integer userId) {
-        if(hasParent(request)) {
-            return projectRepository.getMaxOrderByOwnerIdAndParentId(userId, request.getParentId());
-        } else {
-            return projectRepository.getMaxOrderByOwnerId(userId);
-        }
+        return hasParent(request) ? getMaxOrderFromDb(userId, request.getParentId()) : getMaxOrderFromDb(userId);
+    }
+
+    private Integer getMaxOrderFromDb(Integer userId, Integer parentId) {
+        return projectRepository.getMaxOrderByOwnerIdAndParentId(userId, parentId);
+    }
+
+    private Integer getMaxOrderFromDb(Integer userId) {
+        return projectRepository.getMaxOrderByOwnerId(userId);
     }
 
     private boolean hasParent(ProjectRequest request) {
-        return request.getParentId() != null;
+        return nonNull(request.getParentId());
     }
 
     private Project buildProjectToAddFromRequest(ProjectRequest request, Integer userId) {
@@ -80,11 +87,15 @@ public class ProjectService {
         if(!hasParent(request)) {
             return null;
         }
-        Integer ownerId = projectRepository.findOwnerIdById(request.getParentId());
-        if(ownerId == null ||  !ownerId.equals(userId)) {
-            throw new WrongOwnerException("Cannot add nonexistent project as task!");
-        }
+        testParentOwnership(request.getParentId(), userId);
         return projectRepository.getById(request.getParentId());
+    }
+
+    private void testParentOwnership(Integer parentId, Integer userId) {
+        Integer ownerId = projectRepository.findOwnerIdById(parentId);
+        if(isNull(ownerId) || !ownerId.equals(userId)) {
+            throw new WrongOwnerException("Cannot add nonexistent project as parent!");
+        }
     }
 
     /**
@@ -98,12 +109,17 @@ public class ProjectService {
     @NotifyOnProjectChange
     public Project updateProject(ProjectRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .map((p) -> transformWithRequestData(p, request))
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setName(request.getName());
-        projectToUpdate.setColor(request.getColor());
-        projectToUpdate.setFavorite(request.isFavorite());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
+    }
+
+    private Project transformWithRequestData(Project project, ProjectRequest request) {
+        project.setName(request.getName());
+        project.setColor(request.getColor());
+        project.setFavorite(request.isFavorite());
+        project.setModifiedAt(LocalDateTime.now());
+        return project;
     }
 
     /**
@@ -115,85 +131,6 @@ public class ProjectService {
     @NotifyOnProjectDeletion
     public void deleteProject(Integer projectId, Integer userId) {
         projectRepository.deleteByIdAndOwnerId(projectId, userId);
-    }
-
-    /**
-     * Change project's name without editing any other field.
-     * @param request request with new name
-     * @param projectId ID of the project do update
-     * @param userId ID of an owner of the project
-     * @return Updated project
-     */
-    @NotifyOnProjectChange
-    public Project updateProjectName(NameRequest request, Integer projectId, Integer userId) {
-        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setName(request.getName());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(projectToUpdate);
-    }
-
-    /**
-     * Change project's parent without editing any other field.
-     * @param request Request with parent id
-     * @param projectId ID of the project to update
-     * @param userId ID an owner of the project
-     * @return Updated project
-     */
-    @NotifyOnProjectChange
-    public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
-        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setParent( getIdFromIdRequest(request));
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(projectToUpdate);
-    }
-
-    private Project getIdFromIdRequest(IdRequest request) {
-        return hasId(request) ? projectRepository.getById(request.getId()) : null;
-    }
-    
-    private boolean hasId(IdRequest request) {
-        return request.getId() != null;
-    }
-
-    /**
-     * Change if project is favorite without editing any other field.
-     * @param request Request with favorite flag
-     * @param projectId ID of the project to update
-     * @param userId ID of an owner of the project
-     * @return Updated project
-     */
-    @NotifyOnProjectChange
-    public Project updateProjectFav(BooleanRequest request, Integer projectId, Integer userId) {
-        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setFavorite(request.isFlag());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(projectToUpdate);
-    }
-
-    /**
-     * Change if project is collapsed without editing any other field.
-     * @param request Request with collapse flag
-     * @param projectId ID of the project to update
-     * @param userId ID of an owner of the project
-     * @return Updated project
-     */
-    @NotifyOnProjectChange
-    public Project updateProjectCollapsion(BooleanRequest request, Integer projectId, Integer userId) {
-        Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
-                .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setCollapsed(request.isFlag());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
-        return projectRepository.save(projectToUpdate);
-    }
-
-    private Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
-        if(!userId.equals(projectRepository.findOwnerIdById(projectId))) {
-            return Optional.empty();
-        }
-        return Optional.of(projectRepository.getById(projectId));
     }
 
     /**
@@ -210,6 +147,13 @@ public class ProjectService {
         Task taskToAdd = buildTaskToAddFromRequest(request, userId, project);
         taskToAdd.setProjectOrder(getMaxProjectOrder(request, userId)+1);
         return taskRepository.save(taskToAdd);
+    }
+
+    private Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
+        if(!userId.equals(projectRepository.findOwnerIdById(projectId))) {
+            return Optional.empty();
+        }
+        return Optional.of(projectRepository.getById(projectId));
     }
 
     private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
@@ -330,7 +274,7 @@ public class ProjectService {
         while(toAdd.size() > 0) {
             List<FullProjectTree> newToAdd = new ArrayList<>();
             for (FullProjectTree parent : toAdd) {
-                List<FullProjectTree> children = getAllProjectChildrenAsTreeElems(projectByParent, parent);
+                List<FullProjectTree> children = getAllProjectChildrenAsTreeElements(projectByParent, parent);
                 parent.setTasks(addTasksToTree(parent, tasksByParent, tasksByProject));
                 parent.setChildren(children);
                 newToAdd.addAll(children);
@@ -339,7 +283,7 @@ public class ProjectService {
         }
     }
 
-    private List<FullProjectTree> getAllProjectChildrenAsTreeElems(Map<Integer, List<ProjectDetails>> projectByParent, FullProjectTree parent) {
+    private List<FullProjectTree> getAllProjectChildrenAsTreeElements(Map<Integer, List<ProjectDetails>> projectByParent, FullProjectTree parent) {
         return projectByParent
                 .getOrDefault(parent.getId(), new ArrayList<>()).stream()
                         .map(FullProjectTree::new)
@@ -355,7 +299,7 @@ public class ProjectService {
         while(toAdd.size() > 0) {
             List<TaskForTree> newToAdd = new ArrayList<>();
             for (TaskForTree parent : toAdd) {
-                List<TaskForTree> children = getAllTaskChildrenAsTreeElems(tasksByParent, parent);
+                List<TaskForTree> children = getAllTaskChildrenAsTreeElements(tasksByParent, parent);
                 parent.setChildren(children);
                 newToAdd.addAll(children);
             }
@@ -364,7 +308,7 @@ public class ProjectService {
         return result;
     }
 
-    private List<TaskForTree> getAllTaskChildrenAsTreeElems(Map<Integer, List<TaskDetails>> tasksByParent, TaskForTree parent) {
+    private List<TaskForTree> getAllTaskChildrenAsTreeElements(Map<Integer, List<TaskDetails>> tasksByParent, TaskForTree parent) {
         return tasksByParent.getOrDefault(parent.getId(), new ArrayList<>()).stream()
                         .map(TaskForTree::new)
                         .collect(Collectors.toList());
@@ -617,6 +561,10 @@ public class ProjectService {
         return hasId(request) ? projectRepository.findById(request.getId()) : Optional.empty();
     }
 
+    private boolean hasId(IdRequest request) {
+        return request.getId() != null;
+    }
+
     /**
      * Move project as first child of given project.
      * @param request Request with id of the new parent for moved project. If ID is null project is moved at first position.
@@ -666,29 +614,60 @@ public class ProjectService {
         return moveProjectAsFirstChild(request, userId, projectToMoveId);
     }
 
+    /**
+     * Change project archived state; if request contains false flag,
+     * all project's tasks are restored from archive too.
+     * If request contains true flag, all tasks are archived and children projects
+     * are attached as children to archived project's parent
+     * @param userId ID of an owner of projects
+     * @param projectId ID of the project to move
+     * @param request request with archived state
+     * @return Updated project
+     */
     @Transactional
     @NotifyOnProjectChange
     public Project archiveProject(BooleanRequest request, Integer projectId, Integer userId) {
         Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
+        return projectRepository.save(changeArchivedState(request, userId, project));
+    }
+
+    private Project changeArchivedState(BooleanRequest request, Integer userId, Project project) {
         LocalDateTime now = LocalDateTime.now();
         project.setArchived(request.isFlag());
         project.setModifiedAt(now);
         if(request.isFlag()) {
-            project.setGeneralOrder(0);
-            project.setParent(null);
-            detachProjectFromTree(request, projectId, userId, project, now);
-            archiveTasks(request, projectId, userId, now, false);
+            moveProjectToArchiveAndDetachChildren(request, userId, project, now);
         } else {
-            project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
-            archiveTasks(request, projectId, userId, now, false);
+            restoreProjectFromArchive(request, userId, project, now);
         }
-        return projectRepository.save(project);
+        archiveHabits(request, project.getId(), userId, now);
+        return project;
+    }
+
+    private void restoreProjectFromArchive(BooleanRequest request, Integer userId, Project project, LocalDateTime now) {
+        project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
+        archiveTasks(request, project.getId(), userId, now, false);
+    }
+
+    private void moveProjectToArchiveAndDetachChildren(BooleanRequest request, Integer userId, Project project, LocalDateTime now) {
+        project.setGeneralOrder(0);
+        project.setParent(null);
+        detachProjectFromTree(request, userId, project, now);
+        archiveTasks(request, project.getId(), userId, now, false);
+    }
+
+    private void archiveHabits(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now) {
+        List<Habit> habits = habitRepository.findByOwnerIdAndProjectId(userId, projectId, Habit.class);
+        for(Habit habit : habits) {
+            habit.setArchived(request.isFlag());
+            habit.setModifiedAt(now);
+        }
+        habitRepository.saveAll(habits);
     }
 
     private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now, boolean onlyCompleted) {
-        List<Task> tasks = request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
-                taskRepository.findByOwnerIdAndProjectId(userId, projectId);
+        List<Task> tasks = getTasksForArchivedStateChange(request, projectId, userId);
         if(onlyCompleted) {
             List<Task> tasksTemp = tasks.stream()
                     .filter(Task::isCompleted)
@@ -703,17 +682,24 @@ public class ProjectService {
         taskRepository.saveAll(tasks);
     }
 
-    private void detachProjectFromTree(BooleanRequest request, Integer projectId, Integer userId, Project project, LocalDateTime now) {
-        if(request.isFlag()) {
-            List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, projectId);
-            Integer order = getMaxOrderForParent(userId, project);
+    private List<Task> getTasksForArchivedStateChange(BooleanRequest request, Integer projectId, Integer userId) {
+        return request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
+                taskRepository.findByOwnerIdAndProjectId(userId, projectId);
+    }
 
-            for(Project a : children) {
-                a.setParent(project.getParent());
-                a.setModifiedAt(now);
-                a.setGeneralOrder(order++);
-            }
+    private void detachProjectFromTree(BooleanRequest request, Integer userId, Project project, LocalDateTime now) {
+        if(request.isFlag()) {
+            List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, project.getId());
+            reassignParent(project, now, children, getMaxOrderForParent(userId, project));
             projectRepository.saveAll(children);
+        }
+    }
+
+    private void reassignParent(Project project, LocalDateTime now, List<Project> children, Integer order) {
+        for(Project a : children) {
+            a.setParent(project.getParent());
+            a.setModifiedAt(now);
+            a.setGeneralOrder(order++);
         }
     }
 
@@ -806,14 +792,14 @@ public class ProjectService {
         UserAccount user = userRepository.findByCollaborationToken(request.getCollaborationToken())
                 .orElseThrow(() -> new NotFoundException("No user with such token!"));
         LocalDateTime now = LocalDateTime.now();
-        toUpdate.getCollaborators().add(createCollabForUser(request, projectId, now, user));
+        toUpdate.getCollaborators().add(createCollaborationForUser(request, projectId, now, user));
         toUpdate.setCollaborative(true);
         toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
-        return collabRepository.findProjectedByOwnerIdAndProjectId(user.getId(), projectId).get();
+        return collaborationRepository.findProjectedByOwnerIdAndProjectId(user.getId(), projectId).get();
     }
 
-    private Collaboration createCollabForUser(CollaborationRequest request, Integer projectId, LocalDateTime now, UserAccount user) {
+    private Collaboration createCollaborationForUser(CollaborationRequest request, Integer projectId, LocalDateTime now, UserAccount user) {
         return Collaboration.builder()
                 .owner(user)
                 .project(projectRepository.getById(projectId))
@@ -825,13 +811,13 @@ public class ProjectService {
     }
 
     @NotifyOnCollaborationDeletion
-    public void deleteCollaborator(Integer collabId, Integer projectId, Integer ownerId) {
+    public void deleteCollaborator(Integer collaborationId, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         List<Collaboration> collaborations = toUpdate.getCollaborators();
         toUpdate.setCollaborators(collaborations.stream()
-                .filter((a) -> !collabId.equals(a.getOwner().getId()))
+                .filter((a) -> !collaborationId.equals(a.getOwner().getId()))
                 .collect(Collectors.toList())
         );
         if(toUpdate.getCollaborators().size() == 0) {
@@ -840,20 +826,20 @@ public class ProjectService {
         LocalDateTime now = LocalDateTime.now();
 		toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
-        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collabId, toUpdate.getId());
+        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collaborationId, toUpdate.getId());
         for(Task task : tasks) {
             task.setModifiedAt(now);
             task.setAssigned(null);
         }
         taskRepository.saveAll(tasks);
-        collabRepository.deleteAll(
+        collaborationRepository.deleteAll(
                 collaborations.stream()
-                        .filter((a) -> collabId.equals(a.getOwner().getId()))
+                        .filter((a) -> collaborationId.equals(a.getOwner().getId()))
                         .collect(Collectors.toSet())
         );
     }
 
     public List<CollaborationWithOwner> getCollaborators(Integer projectId, Integer ownerId) {
-        return collabRepository.findByProjectIdAndProjectOwnerId(projectId, ownerId);
+        return collaborationRepository.findByProjectIdAndProjectOwnerId(projectId, ownerId);
     }
 }

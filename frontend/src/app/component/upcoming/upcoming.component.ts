@@ -46,7 +46,7 @@ export class UpcomingComponent implements OnInit {
       newDate.setDate(newDate.getDate()+i)
       this.datesToShow.push(newDate)
     }
-    this.tasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
+    this.tasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index, collapsed: false}});
   }
 
   refreshTasks() {
@@ -64,7 +64,7 @@ export class UpcomingComponent implements OnInit {
       newDate.setDate(newDate.getDate()+i)
       this.datesToShow.push(newDate)
     }
-    this.tasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
+    this.tasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index, collapsed: false}});
   }
 
   prevPage() {
@@ -76,7 +76,7 @@ export class UpcomingComponent implements OnInit {
       newDate.setDate(newDate.getDate()+i)
       this.datesToShow.push(newDate)
     }
-    this.tasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index}});
+    this.tasks = this.datesToShow.map((a, index) => {return {date: a, tasks: this.tree.getByDate(a), id: index, collapsed: false}});
   }
 
   get overdue(): TaskTreeElem[] {
@@ -121,5 +121,9 @@ export class UpcomingComponent implements OnInit {
 
   onDragEnd() {
     this.activateDragNDrop = false;
+  }
+
+  collapse(day: Day) {
+    day.collapsed = !day.collapsed;
   }
 }

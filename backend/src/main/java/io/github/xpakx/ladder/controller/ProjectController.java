@@ -1,7 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.aspect.LogResponse;
-import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.ProjectService;
@@ -40,52 +39,39 @@ public class ProjectController {
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping
     @LogResponse
-    public ResponseEntity<Project> addProject(@RequestBody ProjectRequest request, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.addProject(request, userId), HttpStatus.CREATED);
+    public ResponseEntity<ProjectUpdateDto> addProject(@RequestBody ProjectRequest request, @PathVariable Integer userId) {
+        return new ResponseEntity<>(
+                ProjectUpdateDto.from(projectService.addProject(request, userId)),
+                HttpStatus.CREATED);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{projectId}/after")
-    public ResponseEntity<Project> addProjectAfter(@RequestBody ProjectRequest request, @PathVariable Integer userId,
+    public ResponseEntity<ProjectUpdateDto> addProjectAfter(@RequestBody ProjectRequest request, @PathVariable Integer userId,
                                                    @PathVariable Integer projectId) {
-        return  new ResponseEntity<>(projectService.addProjectAfter(request, userId, projectId), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                ProjectUpdateDto.from(projectService.addProjectAfter(request, userId, projectId)),
+                HttpStatus.CREATED
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{projectId}/before")
-    public ResponseEntity<Project> addProjectBefore(@RequestBody ProjectRequest request, @PathVariable Integer userId,
+    public ResponseEntity<ProjectUpdateDto> addProjectBefore(@RequestBody ProjectRequest request, @PathVariable Integer userId,
                                                    @PathVariable Integer projectId) {
-        return  new ResponseEntity<>(projectService.addProjectBefore(request, userId, projectId), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                ProjectUpdateDto.from(projectService.addProjectBefore(request, userId, projectId)),
+                HttpStatus.CREATED
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}")
-    public ResponseEntity<Project> updateProject(@RequestBody ProjectRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.updateProject(request, projectId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/name")
-    public ResponseEntity<Project> updateProjectName(@RequestBody NameRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.updateProjectName(request, projectId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/parent")
-    public ResponseEntity<Project> updateProjectParent(@RequestBody IdRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.updateProjectParent(request, projectId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/favorite")
-    public ResponseEntity<Project> updateProjectFav(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.updateProjectFav(request, projectId, userId), HttpStatus.OK);
-    }
-    
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/collapse")
-    public ResponseEntity<Project> updateProjectCollapsion(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.updateProjectCollapsion(request, projectId, userId), HttpStatus.OK);
+    public ResponseEntity<ProjectUpdateDto> updateProject(@RequestBody ProjectRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(
+                ProjectUpdateDto.from(projectService.updateProject(request, projectId, userId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
@@ -115,34 +101,49 @@ public class ProjectController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/move/after")
-    public ResponseEntity<Project> moveProjectAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
+    public ResponseEntity<ProjectUpdateDto> moveProjectAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
                                                    @PathVariable Integer projectId) {
-        return  new ResponseEntity<>(projectService.moveProjectAfter(request, userId, projectId), HttpStatus.OK);
+        return new ResponseEntity<>(
+                ProjectUpdateDto.from(projectService.moveProjectAfter(request, userId, projectId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/move/asChild")
-    public ResponseEntity<Project> moveProjectAsFirstChild(@RequestBody IdRequest request, @PathVariable Integer userId,
+    public ResponseEntity<ProjectUpdateDto> moveProjectAsFirstChild(@RequestBody IdRequest request, @PathVariable Integer userId,
                                                     @PathVariable Integer projectId) {
-        return  new ResponseEntity<>(projectService.moveProjectAsFirstChild(request, userId, projectId), HttpStatus.OK);
+        return new ResponseEntity<>(
+                ProjectUpdateDto.from(projectService.moveProjectAsFirstChild(request, userId, projectId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/move/asFirst")
-    public ResponseEntity<Project> moveProjectAsFirst(@PathVariable Integer userId, @PathVariable Integer projectId) {
-        return  new ResponseEntity<>(projectService.moveProjectAsFirst(userId, projectId), HttpStatus.OK);
+    public ResponseEntity<ProjectUpdateDto> moveProjectAsFirst(@PathVariable Integer userId, @PathVariable Integer projectId) {
+        return new ResponseEntity<>(
+                ProjectUpdateDto.from(projectService.moveProjectAsFirst(userId, projectId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/archive")
-    public ResponseEntity<Project> archiveProject(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.archiveProject(request, projectId, userId), HttpStatus.OK);
+    public ResponseEntity<ProjectUpdateDto> archiveProject(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(
+                ProjectUpdateDto.from(projectService.archiveProject(request, projectId, userId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/{projectId}/tasks/completed/archive")
-    public ResponseEntity<Project> archiveCompletedTasks(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.archiveCompletedTasks(request, projectId, userId), HttpStatus.OK);
+    public ResponseEntity<ProjectUpdateDto> archiveCompletedTasks(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(
+                ProjectUpdateDto.from(projectService.archiveCompletedTasks(request, projectId, userId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
