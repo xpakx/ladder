@@ -48,10 +48,15 @@ public class ProjectPartialUpdateService {
     @NotifyOnProjectChange
     public Project updateProjectParent(IdRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .map((p) -> transformWithRequestData(p, request))
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setParent(getIdFromIdRequest(request));
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
+    }
+
+    private Project transformWithRequestData(Project project, IdRequest request) {
+        project.setParent(getIdFromIdRequest(request));
+        project.setModifiedAt(LocalDateTime.now());
+        return project;
     }
 
     private Project getIdFromIdRequest(IdRequest request) {
@@ -72,10 +77,15 @@ public class ProjectPartialUpdateService {
     @NotifyOnProjectChange
     public Project updateProjectFav(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .map((p) -> transformWithFavData(p, request))
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setFavorite(request.isFlag());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
+    }
+
+    private Project transformWithFavData(Project project, BooleanRequest request) {
+        project.setFavorite(request.isFlag());
+        project.setModifiedAt(LocalDateTime.now());
+        return project;
     }
 
     /**
@@ -88,9 +98,14 @@ public class ProjectPartialUpdateService {
     @NotifyOnProjectChange
     public Project updateProjectCollapsedState(BooleanRequest request, Integer projectId, Integer userId) {
         Project projectToUpdate = projectRepository.findByIdAndOwnerId(projectId, userId)
+                .map((p) -> transformWithCollapseData(p, request))
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        projectToUpdate.setCollapsed(request.isFlag());
-        projectToUpdate.setModifiedAt(LocalDateTime.now());
         return projectRepository.save(projectToUpdate);
+    }
+
+    private Project transformWithCollapseData(Project project, BooleanRequest request) {
+        project.setCollapsed(request.isFlag());
+        project.setModifiedAt(LocalDateTime.now());
+        return project;
     }
 }
