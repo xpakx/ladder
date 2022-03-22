@@ -4,4 +4,5 @@ export interface Day {
     date: Date;
     id: number;
     tasks: TaskTreeElem[];
+    collapsed: boolean;
 }
