@@ -18,6 +18,7 @@ public class ProjectUpdateDto {
     private boolean archived;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private boolean collaborative;
 
     public static ProjectUpdateDto from(Project project) {
         ProjectUpdateDto newDto = new ProjectUpdateDto();
@@ -30,6 +31,7 @@ public class ProjectUpdateDto {
         newDto.setArchived(project.isArchived());
         newDto.setCreatedAt(project.getCreatedAt());
         newDto.setModifiedAt(project.getModifiedAt());
+        newDto.setCollaborative(project.isCollaborative());
         return newDto;
     }
 }
