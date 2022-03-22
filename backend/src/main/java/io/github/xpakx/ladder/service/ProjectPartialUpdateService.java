@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+import static java.util.Objects.nonNull;
+
 @Service
 @AllArgsConstructor
 public class ProjectPartialUpdateService {
@@ -40,6 +42,7 @@ public class ProjectPartialUpdateService {
 
     /**
      * Change project's parent without editing any other field.
+     * WARNING: this method doesn't actualize list order for projects.
      * @param request Request with parent id
      * @param projectId ID of the project to update
      * @param userId ID an owner of the project
@@ -64,7 +67,7 @@ public class ProjectPartialUpdateService {
     }
 
     private boolean hasId(IdRequest request) {
-        return request.getId() != null;
+        return nonNull(request.getId());
     }
 
     /**
