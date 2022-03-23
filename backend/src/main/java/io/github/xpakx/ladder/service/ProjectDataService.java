@@ -129,6 +129,12 @@ public class ProjectDataService {
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
     }
 
+    /**
+     * Get project with all unarchived tasks and habits
+     * @param projectId Project id
+     * @param userId ID of an owner of the project
+     * @return Object with project and all task and habits
+     */
     public ProjectData getProjectData(Integer projectId, Integer userId) {
         ProjectData result = new ProjectData();
         result.setProject(
@@ -144,6 +150,12 @@ public class ProjectDataService {
         return result;
     }
 
+    /**
+     * Get project with all tasks and habits, including archived objects
+     * @param projectId Project id
+     * @param userId ID of an owner of the project
+     * @return Object with project and all task and habits
+     */
     public ProjectData getProjectDataWithArchived(Integer projectId, Integer userId) {
         ProjectData result = new ProjectData();
         result.setProject(
