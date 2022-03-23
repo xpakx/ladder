@@ -24,18 +24,6 @@ public class ProjectController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/{projectId}/full")
-    public ResponseEntity<FullProjectTree> getFullProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(projectService.getFullProject(projectId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/all")
-    public ResponseEntity<List<FullProjectTree>> getFullTree(@PathVariable Integer userId) {
-        return new ResponseEntity<>(projectService.getFullTree(userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping
     @LogResponse
     public ResponseEntity<ProjectUpdateDto> addProject(@RequestBody ProjectRequest request, @PathVariable Integer userId) {
@@ -143,18 +131,6 @@ public class ProjectController {
     @GetMapping("/{projectId}/tasks/archived")
     public ResponseEntity<List<TaskDetails>> getArchivedTasks(@PathVariable Integer userId, @PathVariable Integer projectId) {
         return new ResponseEntity<>(projectService.getArchivedTasks(userId, projectId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/{projectId}/data")
-    public ResponseEntity<ProjectData> getProjectData(@PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(projectService.getProjectData(projectId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/{projectId}/data/archived")
-    public ResponseEntity<ProjectData> getProjectDataWithArchived(@PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(projectService.getProjectDataWithArchived(projectId, userId), HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
