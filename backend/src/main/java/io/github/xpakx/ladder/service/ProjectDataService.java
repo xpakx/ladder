@@ -116,18 +116,22 @@ public class ProjectDataService {
     public List<FullProjectTree> getFullTree(Integer userId) {
         List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
         List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
-        Map<Integer, List<ProjectDetails>> projectByParent = constructMapWithProjectsGroupedByParentId(projects);
-        Map<Integer, List<TaskDetails>> tasksByParent = constructMapWithTasksGroupedByParentId(tasks);
-        Map<Integer, List<TaskDetails>> tasksByProject = constructMapWithTasksGroupedByProjectId(tasks);
+        List<FullProjectTree> toAdd = transformProjectsToTreeElements(projects);
+        addProjectsToTree(
+                constructMapWithProjectsGroupedByParentId(projects),
+                constructMapWithTasksGroupedByParentId(tasks),
+                constructMapWithTasksGroupedByProjectId(tasks),
+                toAdd
+        );
 
+        return toAdd;
+    }
 
-        List<FullProjectTree> toAdd = projects.stream()
+    private List<FullProjectTree> transformProjectsToTreeElements(List<ProjectDetails> projects) {
+        return projects.stream()
                 .filter((a) -> a.getParent() == null)
                 .map(FullProjectTree::new)
                 .collect(Collectors.toList());
-        addProjectsToTree(projectByParent, tasksByParent, tasksByProject, toAdd);
-
-        return toAdd;
     }
 
     private Map<Integer, List<TaskDetails>> constructMapWithTasksGroupedByParentId(List<TaskDetails> tasks) {
