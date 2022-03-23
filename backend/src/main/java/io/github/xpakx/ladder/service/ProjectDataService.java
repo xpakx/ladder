@@ -31,15 +31,11 @@ public class ProjectDataService {
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
         List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
-        Map<Integer, List<ProjectDetails>> projectByParent = constructMapWithProjectsGroupedByParentId(projects);
-        Map<Integer, List<TaskDetails>> tasksByParent = constructMapWithTasksGroupedByParentId(tasks);
-        Map<Integer, List<TaskDetails>> tasksByProject = constructMapWithTasksGroupedByProjectId(tasks);
-
-        FullProjectTree result = new FullProjectTree(project);
-        List<FullProjectTree> toAdd = List.of(result);
-        addProjectsToTree(projectByParent, tasksByParent, tasksByProject, toAdd);
-
-        return result;
+        return addProjectsToTree(
+                constructMapWithProjectsGroupedByParentId(projects),
+                constructMapWithTasksGroupedByParentId(tasks),
+                constructMapWithTasksGroupedByProjectId(tasks),
+                project);
     }
 
     private Map<Integer, List<TaskDetails>> constructMapWithTasksGroupedByProjectId(List<TaskDetails> tasks) {
@@ -53,6 +49,13 @@ public class ProjectDataService {
         return projects.stream()
                 .filter((a) -> a.getParent() != null)
                 .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+    }
+
+    private FullProjectTree addProjectsToTree(Map<Integer, List<ProjectDetails>> projectByParent, Map<Integer,
+            List<TaskDetails>> tasksByParent, Map<Integer, List<TaskDetails>> tasksByProject, ProjectMin project) {
+        FullProjectTree tree = new FullProjectTree(project);
+        addProjectsToTree(projectByParent, tasksByParent, tasksByProject, List.of(tree));
+        return tree;
     }
 
     private void addProjectsToTree(Map<Integer, List<ProjectDetails>> projectByParent, Map<Integer,
