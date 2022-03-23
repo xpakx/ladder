@@ -33,7 +33,7 @@ public class CollabService {
 
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
         Integer ownerId = testAccessToProject(projectId, userId, true).orElse(userId);
-        return projectService.addTask(request, projectId, ownerId);
+        return taskService.addTask(request, projectId, ownerId);
     }
 
     private Optional<Integer> testAccessToProject(Integer projectId, Integer userId, boolean edit) {

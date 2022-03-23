@@ -1,7 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.aspect.LogResponse;
-import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.ProjectService;
 import lombok.AllArgsConstructor;
@@ -79,18 +78,6 @@ public class ProjectController {
     public ResponseEntity<?> deleteProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
         projectService.deleteProject(projectId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/{projectId}/tasks")
-    public ResponseEntity<Task> addTaskToProject(@RequestBody AddTaskRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.addTask(request, projectId, userId), HttpStatus.CREATED);
-    }
-    
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/inbox/tasks")
-    public ResponseEntity<Task> addTaskToInbox(@RequestBody AddTaskRequest request, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.addTask(request, null, userId), HttpStatus.CREATED);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")

@@ -667,4 +667,82 @@ public class TaskService {
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
     }
+
+    /**
+     * Add new task to given project
+     * @param request Request with data to build new project
+     * @param projectId ID of the project for task
+     * @param userId If of an owner of the project and newly created task
+     * @return Newly created task
+     */
+    @NotifyOnTaskChange
+    public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
+        Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+        Task taskToAdd = buildTaskToAddFromRequest(request, userId, project);
+        taskToAdd.setProjectOrder(getMaxProjectOrder(request, userId)+1);
+        return taskRepository.save(taskToAdd);
+    }
+
+    private Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
+        if(!userId.equals(projectRepository.findOwnerIdById(projectId))) {
+            return Optional.empty();
+        }
+        return Optional.of(projectRepository.getById(projectId));
+    }
+
+    private Task buildTaskToAddFromRequest(AddTaskRequest request, Integer userId, Project project) {
+        LocalDateTime now = LocalDateTime.now();
+        return Task.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .projectOrder(request.getProjectOrder())
+                .project(project)
+                .createdAt(now)
+                .modifiedAt(now)
+                .due(request.getDue())
+                .dailyViewOrder(getMaxDailyOrder(request, userId)+1)
+                .parent(getParentFromAddTaskRequest(request))
+                .priority(request.getPriority())
+                .completed(false)
+                .collapsed(false)
+                .archived(false)
+                .owner(userRepository.getById(userId))
+                .labels(transformLabelIdsToLabelReferences(request, userId))
+                .build();
+    }
+
+    private Task getParentFromAddTaskRequest(AddTaskRequest request) {
+        return hasParent(request) ? taskRepository.getById(request.getParentId()) : null;
+    }
+
+    private boolean hasParent(AddTaskRequest request) {
+        return request.getParentId() != null;
+    }
+
+    private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request, Integer userId) {
+        if(labelsWithDiffOwner(request.getLabelIds(), userId)) {
+            throw new NotFoundException("Cannot add labels you don't own!");
+        }
+        return request.getLabelIds() != null ? request.getLabelIds().stream()
+                .map(labelRepository::getById)
+                .collect(Collectors.toSet()) : new HashSet<>();
+
+    }
+
+    private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
+        if(hasParent(request)) {
+            if (request.getProjectId() != null) {
+                return taskRepository.getMaxOrderByOwnerIdAndProjectIdAndParentId(userId, request.getProjectId(), request.getParentId());
+            } else {
+                return taskRepository.getMaxOrderByOwnerIdAndParentId(userId, request.getParentId());
+            }
+        } else {
+            if (request.getProjectId() != null) {
+                return taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getProjectId());
+            } else {
+                return taskRepository.getMaxOrderByOwnerId(userId);
+            }
+        }
+    }
 }
