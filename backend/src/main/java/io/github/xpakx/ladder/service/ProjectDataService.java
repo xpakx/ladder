@@ -137,10 +137,7 @@ public class ProjectDataService {
      */
     public ProjectData getProjectData(Integer projectId, Integer userId) {
         ProjectData result = new ProjectData();
-        result.setProject(
-                projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
-                        .orElseThrow(() -> new NotFoundException("No such project!"))
-        );
+        result.setProject(getProjectFromDb(projectId, userId));
         result.setTasks(
                 taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false, TaskDetails.class)
         );
@@ -148,6 +145,11 @@ public class ProjectDataService {
                 habitRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false, HabitDetails.class)
         );
         return result;
+    }
+
+    private ProjectDetails getProjectFromDb(Integer projectId, Integer userId) {
+        return projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
+                .orElseThrow(() -> new NotFoundException("No such project!"));
     }
 
     /**
@@ -158,10 +160,7 @@ public class ProjectDataService {
      */
     public ProjectData getProjectDataWithArchived(Integer projectId, Integer userId) {
         ProjectData result = new ProjectData();
-        result.setProject(
-                projectRepository.findProjectedByIdAndOwnerId(projectId, userId, ProjectDetails.class)
-                        .orElseThrow(() -> new NotFoundException("No such project!"))
-        );
+        result.setProject(getProjectFromDb(projectId, userId));
         result.setTasks(
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId, TaskDetails.class)
         );
