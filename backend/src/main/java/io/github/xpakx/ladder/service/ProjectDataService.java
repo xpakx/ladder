@@ -58,19 +58,21 @@ public class ProjectDataService {
         return tree;
     }
 
-    private void addProjectsToTree(Map<Integer, List<ProjectDetails>> projectByParent, Map<Integer,
+    private List<FullProjectTree> addProjectsToTree(Map<Integer, List<ProjectDetails>> projectByParent, Map<Integer,
             List<TaskDetails>> tasksByParent, Map<Integer, List<TaskDetails>> tasksByProject,
                                    List<FullProjectTree> toAdd) {
-        while(toAdd.size() > 0) {
+        List<FullProjectTree> temp = toAdd;
+        while(temp.size() > 0) {
             List<FullProjectTree> newToAdd = new ArrayList<>();
-            for (FullProjectTree parent : toAdd) {
+            for (FullProjectTree parent : temp) {
                 List<FullProjectTree> children = getAllProjectChildrenAsTreeElements(projectByParent, parent);
                 parent.setTasks(addTasksToTree(parent, tasksByParent, tasksByProject));
                 parent.setChildren(children);
                 newToAdd.addAll(children);
             }
-            toAdd = newToAdd;
+            temp = newToAdd;
         }
+        return toAdd;
     }
 
     private List<FullProjectTree> getAllProjectChildrenAsTreeElements(Map<Integer, List<ProjectDetails>> projectByParent, FullProjectTree parent) {
@@ -116,15 +118,12 @@ public class ProjectDataService {
     public List<FullProjectTree> getFullTree(Integer userId) {
         List<ProjectDetails> projects = projectRepository.findByOwnerId(userId, ProjectDetails.class);
         List<TaskDetails> tasks = taskRepository.findByOwnerId(userId, TaskDetails.class);
-        List<FullProjectTree> toAdd = transformProjectsToTreeElements(projects);
-        addProjectsToTree(
+        return addProjectsToTree(
                 constructMapWithProjectsGroupedByParentId(projects),
                 constructMapWithTasksGroupedByParentId(tasks),
                 constructMapWithTasksGroupedByProjectId(tasks),
-                toAdd
+                transformProjectsToTreeElements(projects)
         );
-
-        return toAdd;
     }
 
     private List<FullProjectTree> transformProjectsToTreeElements(List<ProjectDetails> projects) {
