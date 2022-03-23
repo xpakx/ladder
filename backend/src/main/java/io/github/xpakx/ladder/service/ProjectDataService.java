@@ -82,9 +82,7 @@ public class ProjectDataService {
 
     private List<TaskForTree> addTasksToTree(FullProjectTree project, Map<Integer, List<TaskDetails>> tasksByParent,
                                              Map<Integer, List<TaskDetails>> tasksByProject) {
-        List<TaskForTree> toAdd = tasksByProject.getOrDefault(project.getId(), new ArrayList<>()).stream()
-                .map(TaskForTree::new)
-                .collect(Collectors.toList());
+        List<TaskForTree> toAdd = getAllProjectTasksAsTreeElements(tasksByProject, project.getId());
         List<TaskForTree> result = toAdd;
         while(toAdd.size() > 0) {
             List<TaskForTree> newToAdd = new ArrayList<>();
@@ -96,6 +94,12 @@ public class ProjectDataService {
             toAdd = newToAdd;
         }
         return result;
+    }
+
+    private List<TaskForTree> getAllProjectTasksAsTreeElements(Map<Integer, List<TaskDetails>> tasksByProject, Integer projectId) {
+        return tasksByProject.getOrDefault(projectId, new ArrayList<>()).stream()
+                .map(TaskForTree::new)
+                .collect(Collectors.toList());
     }
 
     private List<TaskForTree> getAllTaskChildrenAsTreeElements(Map<Integer, List<TaskDetails>> tasksByParent, TaskForTree parent) {
