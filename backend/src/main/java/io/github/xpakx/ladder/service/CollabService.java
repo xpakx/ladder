@@ -25,7 +25,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CollabService {
     private final TaskService taskService;
-    private final ProjectService projectService;
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
