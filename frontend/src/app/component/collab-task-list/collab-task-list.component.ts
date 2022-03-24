@@ -17,8 +17,8 @@ import { MultilevelCollabTaskComponent } from '../abstract/multilevel-collab-tas
   styleUrls: ['./collab-task-list.component.css']
 })
 export class CollabTaskListComponent extends MultilevelCollabTaskComponent<CollabTaskTreeService>  implements OnInit {
-  @Input("project") collab: CollabProjectData | undefined;
-  project: ProjectTreeElem | undefined;
+  @Input("collab") collab: CollabProjectData | undefined;
+  @Input("project") project: ProjectTreeElem | undefined;
   @Input("initTasks") initTasks: TaskTreeElem[] = [];
   @Input("blocked") blocked: boolean = false;
     
@@ -32,9 +32,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     super(taskTreeService, taskService);
   }
 
-  ngOnInit(): void {
-    
-  }
+  ngOnInit(): void { }
 
   get tasks(): TaskTreeElem[] {
     return (this.collab && this.initTasks.length == 0) ? this.taskTreeService.getTasksByProject(this.collab.project.id) : this.initTasks;

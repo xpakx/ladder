@@ -25,7 +25,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CollabService {
     private final TaskService taskService;
-    private final ProjectService projectService;
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
@@ -33,7 +32,7 @@ public class CollabService {
 
     public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
         Integer ownerId = testAccessToProject(projectId, userId, true).orElse(userId);
-        return projectService.addTask(request, projectId, ownerId);
+        return taskService.addTask(request, projectId, ownerId);
     }
 
     private Optional<Integer> testAccessToProject(Integer projectId, Integer userId, boolean edit) {
@@ -78,11 +77,6 @@ public class CollabService {
     public Task addTaskAsChild(AddTaskRequest request, Integer userId, Integer parentId) {
         Integer ownerId = testAccessToTask(parentId, userId, true, false).orElse(userId);
         return taskService.addTaskAsChild(request, ownerId, parentId);
-    }
-
-    public TasksAndProjects duplicate(Integer projectId, Integer userId) {
-        Integer ownerId = testAccessToProject(projectId, userId, false).orElse(userId);
-        return projectService.duplicate(projectId, ownerId);
     }
 
     public void deleteTask(Integer taskId, Integer userId) {

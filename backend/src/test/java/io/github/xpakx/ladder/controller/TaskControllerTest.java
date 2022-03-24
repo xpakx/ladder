@@ -92,18 +92,24 @@ class TaskControllerTest {
                 .owner(userRepository.getById(userId))
                 .title("First Task")
                 .completed(false)
+                .projectOrder(1)
+                .dailyViewOrder(0)
                 .build();
         Task subtask1 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .title("First Subtask")
                 .completed(false)
                 .parent(task)
+                .projectOrder(1)
+                .dailyViewOrder(0)
                 .build();
         Task subtask2 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .title("Second Subtask")
                 .completed(false)
                 .parent(task)
+                .projectOrder(2)
+                .dailyViewOrder(0)
                 .build();
         task.setChildren(List.of(subtask1, subtask2));
 
@@ -502,8 +508,8 @@ class TaskControllerTest {
         .then()
                 .statusCode(OK.value());
 
-        Task task = taskRepository.getByIdAndOwnerId(taskId, userId).get();
-        assertThat(task.getChildren(), everyItem(hasProperty("completed", equalTo(true))));
+        List<Task> tasks = taskRepository.findByOwnerIdAndParentId(userId, taskId);
+        assertThat(tasks, everyItem(hasProperty("completed", equalTo(true))));
     }
 
     @Test

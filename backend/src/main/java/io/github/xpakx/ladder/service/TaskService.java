@@ -590,48 +590,6 @@ public class TaskService {
         }
     }
 
-    @Transactional
-    @NotifyOnTaskChange
-    public Task archiveTask(BooleanRequest request, Integer taskId, Integer userId) {
-        Task task = taskRepository.findByIdAndOwnerId(taskId, userId)
-                .orElseThrow(() -> new NotFoundException("No such task!"));
-        LocalDateTime now = LocalDateTime.now();
-        task.setArchived(request.isFlag());
-        if(!request.isFlag()) {
-            task.setProjectOrder(
-                    task.getProject() != null ? taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, task.getProject().getId())+1 : taskRepository.getMaxOrderByOwnerId(userId)+1
-            );
-        }
-        task.setModifiedAt(now);
-        taskRepository.saveAll(
-                archiveChildren(userId, task, now, request.isFlag())
-        );
-        return taskRepository.save(task);
-    }
-
-    private List<Task> archiveChildren(Integer userId, Task task, LocalDateTime now, boolean archived) {
-        List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
-                task.getProject() != null ? task.getProject().getId() : null);
-        Map<Integer, List<Task>> tasksByParent = tasks.stream()
-                .filter((a) -> a.getParent() != null)
-                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
-
-        List<Task> toArchive = List.of(task);
-        List<Task> toReturn = new ArrayList<>();
-        while(toArchive.size() > 0) {
-            List<Task> newToArchive = new ArrayList<>();
-            for (Task parent : toArchive) {
-                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
-                parent.setArchived(archived);
-                parent.setModifiedAt(now);
-                toReturn.add(parent);
-                newToArchive.addAll(children);
-            }
-            toArchive = newToArchive;
-        }
-        return toReturn;
-    }
-
     @NotifyOnTasksChange
     public List<Task> updateDueDateForOverdue(DateRequest request, Integer userId) {
         LocalDateTime now = LocalDateTime.now();
@@ -666,5 +624,83 @@ public class TaskService {
         taskToUpdate.setAssigned(assigned);
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
+    }
+
+    /**
+     * Add new task to given project
+     * @param request Request with data to build new project
+     * @param projectId ID of the project for task
+     * @param userId If of an owner of the project and newly created task
+     * @return Newly created task
+     */
+    @NotifyOnTaskChange
+    public Task addTask(AddTaskRequest request, Integer projectId, Integer userId) {
+        Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+        Task taskToAdd = buildTaskToAddFromRequest(request, userId, project);
+        taskToAdd.setProjectOrder(getMaxProjectOrder(request, userId)+1);
+        return taskRepository.save(taskToAdd);
+    }
+
+    private Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
+        if(!userId.equals(projectRepository.findOwnerIdById(projectId))) {
+            return Optional.empty();
+        }
+        return Optional.of(projectRepository.getById(projectId));
+    }
+
+    private Task buildTaskToAddFromRequest(AddTaskRequest request, Integer userId, Project project) {
+        LocalDateTime now = LocalDateTime.now();
+        return Task.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .projectOrder(request.getProjectOrder())
+                .project(project)
+                .createdAt(now)
+                .modifiedAt(now)
+                .due(request.getDue())
+                .dailyViewOrder(getMaxDailyOrder(request, userId)+1)
+                .parent(getParentFromAddTaskRequest(request))
+                .priority(request.getPriority())
+                .completed(false)
+                .collapsed(false)
+                .archived(false)
+                .owner(userRepository.getById(userId))
+                .labels(transformLabelIdsToLabelReferences(request, userId))
+                .build();
+    }
+
+    private Task getParentFromAddTaskRequest(AddTaskRequest request) {
+        return hasParent(request) ? taskRepository.getById(request.getParentId()) : null;
+    }
+
+    private boolean hasParent(AddTaskRequest request) {
+        return request.getParentId() != null;
+    }
+
+    private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request, Integer userId) {
+        if(labelsWithDiffOwner(request.getLabelIds(), userId)) {
+            throw new NotFoundException("Cannot add labels you don't own!");
+        }
+        return request.getLabelIds() != null ? request.getLabelIds().stream()
+                .map(labelRepository::getById)
+                .collect(Collectors.toSet()) : new HashSet<>();
+
+    }
+
+    private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
+        if(hasParent(request)) {
+            if (request.getProjectId() != null) {
+                return taskRepository.getMaxOrderByOwnerIdAndProjectIdAndParentId(userId, request.getProjectId(), request.getParentId());
+            } else {
+                return taskRepository.getMaxOrderByOwnerIdAndParentId(userId, request.getParentId());
+            }
+        } else {
+            if (request.getProjectId() != null) {
+                return taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getProjectId());
+            } else {
+                return taskRepository.getMaxOrderByOwnerId(userId);
+            }
+        }
     }
 }

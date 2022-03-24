@@ -91,18 +91,23 @@ class ProjectControllerTest {
         Project project = Project.builder()
                 .owner(userRepository.getById(userId))
                 .name("Test Project")
+                .generalOrder(1)
                 .build();
         Task task1 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .title("First Task")
                 .completed(false)
                 .project(project)
+                .projectOrder(1)
+                .dailyViewOrder(0)
                 .build();
         Task task2 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .title("Second Task")
                 .completed(false)
                 .project(project)
+                .projectOrder(2)
+                .dailyViewOrder(0)
                 .build();
         project.setTasks(List.of(task1, task2));
 
@@ -160,12 +165,15 @@ class ProjectControllerTest {
         Project project = Project.builder()
                 .owner(userRepository.getById(userId))
                 .name("Test Project")
+                .generalOrder(1)
                 .build();
         Task task1 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .title("First Task")
                 .completed(false)
                 .project(project)
+                .projectOrder(1)
+                .dailyViewOrder(0)
                 .build();
         Task subtask1 = Task.builder()
                 .owner(userRepository.getById(userId))
@@ -173,6 +181,8 @@ class ProjectControllerTest {
                 .completed(false)
                 .parent(task1)
                 .project(project)
+                .projectOrder(1)
+                .dailyViewOrder(0)
                 .build();
         Task subtask2 = Task.builder()
                 .owner(userRepository.getById(userId))
@@ -180,6 +190,8 @@ class ProjectControllerTest {
                 .completed(false)
                 .parent(task1)
                 .project(project)
+                .projectOrder(2)
+                .dailyViewOrder(0)
                 .build();
         task1.setChildren(List.of(subtask1, subtask2));
         project.setTasks(List.of(task1));

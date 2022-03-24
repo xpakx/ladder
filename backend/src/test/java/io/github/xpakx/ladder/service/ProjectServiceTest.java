@@ -35,10 +35,6 @@ class ProjectServiceTest {
     @Mock
     private UserAccountRepository userRepository;
     @Mock
-    private LabelRepository labelRepository;
-    @Mock
-    private HabitRepository habitRepository;
-    @Mock
     private CollaborationRepository collabRepository;
 
     private ProjectService projectService;
@@ -52,7 +48,7 @@ class ProjectServiceTest {
     }
 
     private void injectMocks() {
-        projectService = new ProjectService(projectRepository, taskRepository, userRepository, labelRepository, habitRepository, collabRepository);
+        projectService = new ProjectService(projectRepository, taskRepository, userRepository, collabRepository);
     }
 
     @Test
@@ -119,6 +115,10 @@ class ProjectServiceTest {
         given(request.getParentId())
                 .willReturn(null);
         return request;
+    }
+
+    private ProjectRequest getProjectRequest() {
+        return mock(ProjectRequest.class);
     }
 
     @Test
@@ -320,7 +320,7 @@ class ProjectServiceTest {
     void shouldGetProjectForUpdateWithProjectIdAndUserId() {
         final Integer PROJECT_ID = 5;
         final Integer USER_ID = 16;
-        ProjectRequest request = getProjectRequestWithoutParent();
+        ProjectRequest request = getProjectRequest();
         given(projectRepository.findByIdAndOwnerId(anyInt(), anyInt()))
                 .willReturn(Optional.of(mock(Project.class)));
         injectMocks();
@@ -335,7 +335,7 @@ class ProjectServiceTest {
     @Test
     void shouldUseProjectNameFromUpdateRequest() {
         final String NAME = "Project 1";
-        ProjectRequest request = getProjectRequestWithoutParent();
+        ProjectRequest request = getProjectRequest();
         given(request.getName())
                 .willReturn(NAME);
         Project projectInDb = mock(Project.class);
@@ -358,7 +358,7 @@ class ProjectServiceTest {
     @Test
     void shouldUseProjectFavFromUpdateRequest() {
         final boolean FAV = true;
-        ProjectRequest request = getProjectRequestWithoutParent();
+        ProjectRequest request = getProjectRequest();
         given(request.isFavorite())
                 .willReturn(FAV);
         Project projectInDb = mock(Project.class);
@@ -381,7 +381,7 @@ class ProjectServiceTest {
     @Test
     void shouldUseProjectColorFromUpdateRequest() {
         final String COLOR = "#eeddaa";
-        ProjectRequest request = getProjectRequestWithoutParent();
+        ProjectRequest request = getProjectRequest();
         given(request.getColor())
                 .willReturn(COLOR);
         Project projectInDb = mock(Project.class);
