@@ -51,13 +51,6 @@ public class CollabController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/projects/{projectId}/duplicate")
-    public ResponseEntity<TasksAndProjects> duplicateProject(@PathVariable Integer projectId,
-                                                             @PathVariable Integer userId) {
-        return  new ResponseEntity<>(collabService.duplicate(projectId, userId), HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<?> deleteTask(@PathVariable Integer taskId, @PathVariable Integer userId) {
         collabService.deleteTask(taskId, userId);
