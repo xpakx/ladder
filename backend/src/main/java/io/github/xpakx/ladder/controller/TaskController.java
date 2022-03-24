@@ -143,11 +143,6 @@ public class TaskController {
     public ResponseEntity<List<Task>> updateOverdueTasksDueDate(@RequestBody DateRequest request, @PathVariable Integer userId) {
         return  new ResponseEntity<>(taskService.updateDueDateForOverdue(request, userId), HttpStatus.OK);
     }
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/tasks/{taskId}/archive")
-    public ResponseEntity<Task> archiveProject(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.archiveTask(request, taskId, userId), HttpStatus.OK);
-    }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/assigned")

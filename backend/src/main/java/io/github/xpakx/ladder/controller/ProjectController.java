@@ -48,37 +48,6 @@ public class ProjectController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/archive")
-    public ResponseEntity<ProjectUpdateDto> archiveProject(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(
-                ProjectUpdateDto.from(projectService.archiveProject(request, projectId, userId)),
-                HttpStatus.OK
-        );
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/tasks/completed/archive")
-    public ResponseEntity<ProjectUpdateDto> archiveCompletedTasks(@RequestBody BooleanRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(
-                ProjectUpdateDto.from(projectService.archiveCompletedTasks(request, projectId, userId)),
-                HttpStatus.OK
-        );
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/archived")
-    public ResponseEntity<List<ProjectDetails>> getArchivedProjects(@PathVariable Integer userId) {
-        return new ResponseEntity<>(projectService.getArchivedProjects(userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/{projectId}/tasks/archived")
-    public ResponseEntity<List<TaskDetails>> getArchivedTasks(@PathVariable Integer userId, @PathVariable Integer projectId) {
-        return new ResponseEntity<>(projectService.getArchivedTasks(userId, projectId), HttpStatus.OK);
-    }
-
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/{projectId}/collaborators")
     public ResponseEntity<CollaborationWithOwner> addCollaborator(@RequestBody CollaborationRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
