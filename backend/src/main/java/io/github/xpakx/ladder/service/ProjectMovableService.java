@@ -36,10 +36,9 @@ public class ProjectMovableService {
      */
     public TasksAndProjects duplicate(Integer projectId, Integer userId) {
         Map<Integer, Project> projectsById = generateProjectMapForUser(userId);
-        projectsById.values().stream().filter((a) -> a.getId().equals(projectId)).findAny()
-                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
+        testIfProjectExists(projectId, projectsById);
         List<Project> projects = generateProjectDuplicatesToSave(projectId, projectsById);
-        List<Task> tasks2 = generateTaskDuplicatesToSave(projectsById, projects);
+        List<Task> tasks = generateTaskDuplicatesToSave(projectsById, projects);
         projects.stream().filter((a) -> a.getId().equals(projectId))
                 .findAny()
                 .ifPresent((a) -> incrementOrderForDuplication(a, userId));
@@ -48,10 +47,15 @@ public class ProjectMovableService {
         List<Integer> projectIds = projectRepository.saveAll(projects).stream()
                 .map(Project::getId)
                 .collect(Collectors.toList());
-        List<Integer> taskIds = taskRepository.saveAll(tasks2).stream()
+        List<Integer> taskIds = taskRepository.saveAll(tasks).stream()
                 .map(Task::getId)
                 .collect(Collectors.toList());
         return constructResponseWithDuplicatedElements(projectIds, taskIds);
+    }
+
+    private void testIfProjectExists(Integer projectId, Map<Integer, Project> projectsById) {
+        projectsById.values().stream().filter((a) -> a.getId().equals(projectId)).findAny()
+                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
     }
 
     private void incrementOrderForDuplication(Project project, Integer userId) {
