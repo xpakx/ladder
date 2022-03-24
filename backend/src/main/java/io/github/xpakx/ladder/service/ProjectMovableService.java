@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @AllArgsConstructor
@@ -171,12 +172,12 @@ public class ProjectMovableService {
     @NotifyOnProjectChange
     public Project addProjectAfter(ProjectRequest request, Integer userId, Integer projectId) {
         Project projectToAdd = buildProjectToAddFromRequest(request, userId);
-        Project proj = projectRepository.findByIdAndOwnerId(projectId, userId)
+        Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent project!"));
-        projectToAdd.setParent(proj.getParent());
-        projectToAdd.setGeneralOrder(proj.getGeneralOrder()+1);
+        projectToAdd.setParent(project.getParent());
+        projectToAdd.setGeneralOrder(project.getGeneralOrder()+1);
         projectToAdd.setModifiedAt(LocalDateTime.now());
-        incrementGeneralOrderIfGreaterThan(userId, proj);
+        incrementGeneralOrderIfGreaterThan(userId, project);
         return projectRepository.save(projectToAdd);
     }
 
@@ -215,11 +216,11 @@ public class ProjectMovableService {
     }
 
     private boolean hasParent(Project project) {
-        return project.getParent() != null;
+        return nonNull(project.getParent());
     }
 
     private boolean hasParent(ProjectRequest project) {
-        return project.getParentId() != null;
+        return nonNull(project.getParentId());
     }
 
     /**
@@ -268,7 +269,7 @@ public class ProjectMovableService {
     }
 
     private boolean hasId(IdRequest request) {
-        return request.getId() != null;
+        return nonNull(request.getId());
     }
 
     /**
