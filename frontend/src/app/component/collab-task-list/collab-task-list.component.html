@@ -94,7 +94,7 @@
             </li>
             <li *ngIf="shouldEditTaskById(task.id)" class="task_list_item">
                 <span class="indent" *ngFor="let e of [].constructor(task.indent)"></span>
-                <app-task-form [project]="project" [collab]="true"  [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+                <app-task-form [collab]="true"  [data]="taskData" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
             </li>
             <li *ngIf="draggedId && !hideDropZone(task)" class="drag_list_item" [dndDropzone]="['task']"> <!-- [dndDisableDropIf]="true">-->
                 <ng-container *ngIf="calculateAdditionalDropzones(i, task); else noAdditionalDropzones">

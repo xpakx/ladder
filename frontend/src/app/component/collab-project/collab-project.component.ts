@@ -18,6 +18,7 @@ export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
   public invalid: boolean = false;
   public message: string = '';
   project: CollabProjectData | undefined;
+  collabAsProject: ProjectTreeElem | undefined;
   id!: number;
 
   constructor(private router: Router, private route: ActivatedRoute, 
@@ -47,6 +48,21 @@ export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
   loadProject(id: number) {
     this.id = id;
     this.project = this.projectTree.getCollabByProjectId(id);
+    this.collabAsProject = this.project ? {
+      id: this.project.project.id,
+      name: this.project.project.name,
+      parent: null,
+      color: this.project.project.color,
+      order: 0,
+      realOrder: 0,
+      hasChildren: false,
+      indent: 0,
+      parentList: [],
+      favorite: false,
+      collaborative: true,
+      collapsed: false,
+      modifiedAt: new Date()
+    } : undefined;
   }
 
   showContextMenu: boolean = false;
