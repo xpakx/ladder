@@ -23,7 +23,6 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
-    private final HabitRepository habitRepository;
     private final CollaborationRepository collaborationRepository;
 
     /**
