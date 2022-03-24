@@ -33,7 +33,21 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   }
 
   ngOnInit(): void {
-    
+    this.project = this.collab ? {
+      id: this.collab.project.id,
+      name: this.collab.project.name,
+      parent: null,
+      color: this.collab.project.color,
+      order: 0,
+      realOrder: 0,
+      hasChildren: false,
+      indent: 0,
+      parentList: [],
+      favorite: false,
+      collaborative: true,
+      collapsed: false,
+      modifiedAt: new Date()
+    } : undefined;
   }
 
   get tasks(): TaskTreeElem[] {
