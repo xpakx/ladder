@@ -39,18 +39,30 @@ public class ProjectMovableService {
         testIfProjectExists(projectId, projectsById);
         List<Project> projects = generateProjectDuplicatesToSave(projectId, projectsById);
         List<Task> tasks = generateTaskDuplicatesToSave(projectsById, projects);
+        prepareProjectObjectsToSave(projectId, userId, projects);
+        return constructResponseWithDuplicatedElements(
+                saveProjectsAndReturnIds(projects),
+                saveTasksAndReturnIds(tasks)
+        );
+    }
+
+    private List<Integer> saveProjectsAndReturnIds(List<Project> projects) {
+        return projectRepository.saveAll(projects).stream()
+                .map(Project::getId)
+                .collect(Collectors.toList());
+    }
+
+    private List<Integer> saveTasksAndReturnIds(List<Task> tasks) {
+        return taskRepository.saveAll(tasks).stream()
+                .map(Task::getId)
+                .collect(Collectors.toList());
+    }
+
+    private void prepareProjectObjectsToSave(Integer projectId, Integer userId, List<Project> projects) {
         projects.stream().filter((a) -> a.getId().equals(projectId))
                 .findAny()
                 .ifPresent((a) -> incrementOrderForDuplication(a, userId));
         projects.forEach((a) -> a.setId(null));
-
-        List<Integer> projectIds = projectRepository.saveAll(projects).stream()
-                .map(Project::getId)
-                .collect(Collectors.toList());
-        List<Integer> taskIds = taskRepository.saveAll(tasks).stream()
-                .map(Task::getId)
-                .collect(Collectors.toList());
-        return constructResponseWithDuplicatedElements(projectIds, taskIds);
     }
 
     private void testIfProjectExists(Integer projectId, Map<Integer, Project> projectsById) {
