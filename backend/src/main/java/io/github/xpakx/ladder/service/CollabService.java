@@ -26,6 +26,7 @@ import java.util.Optional;
 public class CollabService {
     private final TaskService taskService;
     private final ProjectService projectService;
+    private final ProjectMovableService projectMovableService;
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
@@ -82,7 +83,7 @@ public class CollabService {
 
     public TasksAndProjects duplicate(Integer projectId, Integer userId) {
         Integer ownerId = testAccessToProject(projectId, userId, false).orElse(userId);
-        return projectService.duplicate(projectId, ownerId);
+        return projectMovableService.duplicate(projectId, ownerId);
     }
 
     public void deleteTask(Integer taskId, Integer userId) {
