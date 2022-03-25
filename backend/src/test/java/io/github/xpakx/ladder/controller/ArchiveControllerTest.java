@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.withArgs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
@@ -234,7 +235,7 @@ public class ArchiveControllerTest {
 
     @Test
     void shouldRestoreProject() {
-        BooleanRequest request = getTrueBooleanRequest();
+        BooleanRequest request = getFalseBooleanRequest();
         Integer projectId = addProjectAndReturnId(true);
         given()
                 .log()
@@ -251,5 +252,62 @@ public class ArchiveControllerTest {
         assertThat(projects, everyItem(
                 hasProperty("archived", is(false))
         ));
+    }
+
+    @Test
+    void shouldRespondWith401ToGetArchivedProjectsIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .get(baseUrl + "/{userId}/projects/archived", 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWithArchivedProjects() {
+        Integer projectId = addProjectWith2ChildrenAnd2TasksAnd1HabitAndReturnId(true);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/archived", userId)
+        .then()
+                .log()
+                .body()
+                .statusCode(OK.value())
+                .body("$", hasSize(3))
+                .body("$", hasItem(hasEntry("id", projectId)));
+    }
+
+    @Test
+    void shouldRespondWith401ToGetArchivedTasksIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}/tasks/archived", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWithArchivedTasks() {
+        Integer projectId = addProjectWith2ChildrenAnd2TasksAnd1HabitAndReturnId(true);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .get(baseUrl + "/{userId}/projects/{projectId}/tasks/archived", userId, projectId)
+        .then()
+                .log()
+                .body()
+                .statusCode(OK.value())
+                .body("$", hasSize(2));
     }
 }
