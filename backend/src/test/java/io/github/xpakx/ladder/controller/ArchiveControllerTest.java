@@ -310,4 +310,94 @@ public class ArchiveControllerTest {
                 .statusCode(OK.value())
                 .body("$", hasSize(2));
     }
+
+    private Integer addProjectWith3Tasks2CompletedAndReturnId() {
+        Project project = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Test Project")
+                .generalOrder(1)
+                .archived(false)
+                .build();
+        Task task1 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Task")
+                .completed(false)
+                .project(project)
+                .projectOrder(1)
+                .dailyViewOrder(0)
+                .archived(false)
+                .build();
+        Task task2 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("Second Task")
+                .completed(true)
+                .project(project)
+                .projectOrder(2)
+                .dailyViewOrder(0)
+                .archived(false)
+                .build();
+        Task task3 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("Third Task")
+                .completed(true)
+                .project(project)
+                .projectOrder(3)
+                .dailyViewOrder(0)
+                .archived(false)
+                .build();
+
+        project.setTasks(List.of(task1, task2, task3));
+        projectRepository.save(project);
+        return project.getId();
+    }
+
+    @Test
+    void shouldRespondWith401ToArchiveCompletedTasksIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/tasks/completed/archive", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToArchiveCompletedTasksIfProjectNotFound() {
+        BooleanRequest request = getTrueBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/tasks/completed/archive", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldArchiveCompletedTasks() {
+        BooleanRequest request = getTrueBooleanRequest();
+        Integer projectId = addProjectWith3Tasks2CompletedAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/tasks/completed/archive", userId, projectId)
+        .then()
+                .statusCode(OK.value());
+        List<Task> tasks = taskRepository.findAll();
+        assertEquals(3, tasks.size());
+        assertThat(tasks, everyItem(either(
+                hasProperty("archived", is(true)))
+                .or(hasProperty("completed", is(false)))
+        ));
+    }
 }
