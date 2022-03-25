@@ -220,7 +220,6 @@ public class ArchiveService {
     private List<Task> archiveChildren(Integer userId, Task task, LocalDateTime now, boolean archived) {
         List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
                 task.getProject() != null ? task.getProject().getId() : null);
-        List<Task> toArchive = List.of(task);
-        return archiveChildren(tasks, toArchive, now, archived);
+        return archiveChildren(tasks, List.of(task), now, archived);
     }
 }
