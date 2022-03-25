@@ -99,8 +99,7 @@ public class ArchiveService {
                 .filter(Task::isCompleted)
                 .collect(Collectors.toList());
         tasksTemp.addAll(archiveChildren(tasks, tasksTemp, now, request));
-        tasks = tasksTemp;
-        return tasks;
+        return tasksTemp;
     }
 
     private List<Task> getTasksForArchivedStateChange(boolean request, Integer projectId, Integer userId) {
