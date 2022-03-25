@@ -54,7 +54,7 @@ public class ArchiveService {
         project.setArchived(archived);
         project.setModifiedAt(now);
         if(archived) {
-            moveProjectToArchiveAndDetachChildren(userId, project, now);
+            detachProjectFromTree(userId, project, now);
         } else {
             restoreProjectFromArchive(userId, project, now);
         }
@@ -67,10 +67,10 @@ public class ArchiveService {
         project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
     }
 
-    private void moveProjectToArchiveAndDetachChildren(Integer userId, Project project, LocalDateTime now) {
+    private void detachProjectFromTree(Integer userId, Project project, LocalDateTime now) {
         project.setGeneralOrder(0);
         project.setParent(null);
-        detachProjectFromTree(userId, project, now);
+        reassignChildrenProjects(userId, project, now);
     }
 
     private void archiveHabits(boolean request, Integer projectId, Integer userId, LocalDateTime now) {
@@ -103,7 +103,7 @@ public class ArchiveService {
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId);
     }
 
-    private void detachProjectFromTree(Integer userId, Project project, LocalDateTime now) {
+    private void reassignChildrenProjects(Integer userId, Project project, LocalDateTime now) {
         List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, project.getId());
         reassignParent(project, now, children, getMaxOrderForParent(userId, project));
         projectRepository.saveAll(children);
