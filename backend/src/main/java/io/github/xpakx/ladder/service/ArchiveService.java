@@ -206,15 +206,19 @@ public class ArchiveService {
         LocalDateTime now = LocalDateTime.now();
         task.setArchived(request.isFlag());
         if(!request.isFlag()) {
-            task.setProjectOrder(
-                    task.getProject() != null ? taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, task.getProject().getId())+1 : taskRepository.getMaxOrderByOwnerId(userId)+1
-            );
+            updateTaskOrder(userId, task);
         }
         task.setModifiedAt(now);
         taskRepository.saveAll(
                 archiveChildren(userId, task, now, request.isFlag())
         );
         return taskRepository.save(task);
+    }
+
+    private void updateTaskOrder(Integer userId, Task task) {
+        task.setProjectOrder(
+                task.getProject() != null ? taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, task.getProject().getId())+1 : taskRepository.getMaxOrderByOwnerId(userId)+1
+        );
     }
 
     private List<Task> archiveChildren(Integer userId, Task task, LocalDateTime now, boolean archived) {
