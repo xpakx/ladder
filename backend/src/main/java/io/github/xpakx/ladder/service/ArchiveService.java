@@ -36,8 +36,8 @@ public class ArchiveService {
      * all project's tasks are restored from archive too.
      * If request contains true flag, all tasks are archived and children projects
      * are attached as children to archived project's parent
-     * @param userId ID of an owner of projects
-     * @param projectId ID of the project to move
+     * @param userId ID of an owner of the project
+     * @param projectId ID of the project to archive
      * @param request request with archived state
      * @return Updated project
      */
@@ -131,6 +131,13 @@ public class ArchiveService {
         return isNull(project.getParent()) ? projectRepository.getMaxOrderByOwnerId(userId) : projectRepository.getMaxOrderByOwnerIdAndParentId(userId, project.getParent().getId());
     }
 
+    /**
+     * Move completed tasks in given project to archive
+     * @param userId ID of an owner of the project
+     * @param projectId ID of the project
+     * @param request request with archived state
+     * @return Updated project
+     */
     @Transactional
     @NotifyOnProjectChange
     public Project archiveCompletedTasks(BooleanRequest request, Integer projectId, Integer userId) {
@@ -162,14 +169,32 @@ public class ArchiveService {
         return toReturn;
     }
 
+    /**
+     * Return all archived projects
+     * @param userId ID of an owner of projects
+     * @return List of archived projects
+     */
     public List<ProjectDetails> getArchivedProjects(Integer userId) {
         return projectRepository.findByOwnerIdAndArchived(userId, true, ProjectDetails.class);
     }
 
+    /**
+     * Return all archived tasks in given project
+     * @param userId ID of an owner of the project
+     * @param projectId ID of the project
+     * @return List of archived projects
+     */
     public List<TaskDetails> getArchivedTasks(Integer userId, Integer projectId) {
         return taskRepository.getByOwnerIdAndProjectIdAndArchived(userId, projectId, true, TaskDetails.class);
     }
 
+    /**
+     * Change task archived state; change archived state for all task's children too
+     * @param userId ID of an owner of the task
+     * @param taskId ID of the task to archive
+     * @param request request with archived state
+     * @return Updated task
+     */
     @Transactional
     @NotifyOnTaskChange
     public Task archiveTask(BooleanRequest request, Integer taskId, Integer userId) {
