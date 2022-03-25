@@ -149,10 +149,7 @@ public class ArchiveService {
     }
 
     private List<Task> archiveChildren(List<Task> projectTasks, List<Task> parentTasks, LocalDateTime now, boolean archived) {
-        Map<Integer, List<Task>> tasksByParent = projectTasks.stream()
-                .filter((a) -> a.getParent() != null)
-                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
-
+        Map<Integer, List<Task>> tasksByParent = generateMapOfTasksByParentId(projectTasks);
         List<Task> toArchive = parentTasks;
         List<Task> toReturn = new ArrayList<>();
         while(toArchive.size() > 0) {
@@ -167,6 +164,12 @@ public class ArchiveService {
             toArchive = newToArchive;
         }
         return toReturn;
+    }
+
+    private Map<Integer, List<Task>> generateMapOfTasksByParentId(List<Task> projectTasks) {
+        return projectTasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
     }
 
     /**
@@ -217,23 +220,7 @@ public class ArchiveService {
     private List<Task> archiveChildren(Integer userId, Task task, LocalDateTime now, boolean archived) {
         List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
                 task.getProject() != null ? task.getProject().getId() : null);
-        Map<Integer, List<Task>> tasksByParent = tasks.stream()
-                .filter((a) -> a.getParent() != null)
-                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
-
         List<Task> toArchive = List.of(task);
-        List<Task> toReturn = new ArrayList<>();
-        while(toArchive.size() > 0) {
-            List<Task> newToArchive = new ArrayList<>();
-            for (Task parent : toArchive) {
-                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
-                parent.setArchived(archived);
-                parent.setModifiedAt(now);
-                toReturn.add(parent);
-                newToArchive.addAll(children);
-            }
-            toArchive = newToArchive;
-        }
-        return toReturn;
+        return archiveChildren(tasks, toArchive, now, archived);
     }
 }
