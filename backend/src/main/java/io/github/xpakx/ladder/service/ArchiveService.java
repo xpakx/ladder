@@ -113,8 +113,10 @@ public class ArchiveService {
 
     private void reassignChildrenProjects(Integer userId, Project project, LocalDateTime now) {
         List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, project.getId());
-        reassignParent(project, now, children, getMaxOrderForParent(userId, project));
-        projectRepository.saveAll(children);
+        if(children.size() > 0) {
+            reassignParent(project, now, children, getMaxOrderForParent(userId, project));
+            projectRepository.saveAll(children);
+        }
     }
 
     private void reassignParent(Project project, LocalDateTime now, List<Project> children, Integer order) {
