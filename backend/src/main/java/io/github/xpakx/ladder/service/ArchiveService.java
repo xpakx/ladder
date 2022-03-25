@@ -58,20 +58,19 @@ public class ArchiveService {
         } else {
             restoreProjectFromArchive(userId, project, now);
         }
+        archiveTasks(archived, project.getId(), userId, now, false);
         archiveHabits(archived, project.getId(), userId, now);
         return project;
     }
 
     private void restoreProjectFromArchive(Integer userId, Project project, LocalDateTime now) {
         project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
-        archiveTasks(true, project.getId(), userId, now, false);
     }
 
     private void moveProjectToArchiveAndDetachChildren(Integer userId, Project project, LocalDateTime now) {
         project.setGeneralOrder(0);
         project.setParent(null);
         detachProjectFromTree(userId, project, now);
-        archiveTasks(false, project.getId(), userId, now, false);
     }
 
     private void archiveHabits(boolean request, Integer projectId, Integer userId, LocalDateTime now) {
