@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+
 @Service
 @AllArgsConstructor
 public class ArchiveService {
@@ -117,13 +119,7 @@ public class ArchiveService {
     }
 
     private Integer getMaxOrderForParent(Integer userId, Project project) {
-        Integer order;
-        if(project.getParent() == null) {
-            order = projectRepository.getMaxOrderByOwnerId(userId);
-        } else {
-            order = projectRepository.getMaxOrderByOwnerIdAndParentId(userId, project.getParent().getId());
-        }
-        return order;
+        return isNull(project.getParent()) ? projectRepository.getMaxOrderByOwnerId(userId) : projectRepository.getMaxOrderByOwnerIdAndParentId(userId, project.getParent().getId());
     }
 
     @Transactional
