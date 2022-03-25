@@ -85,17 +85,22 @@ public class ArchiveService {
     private void archiveTasks(boolean request, Integer projectId, Integer userId, LocalDateTime now, boolean onlyCompleted) {
         List<Task> tasks = getTasksForArchivedStateChange(request, projectId, userId);
         if(onlyCompleted) {
-            List<Task> tasksTemp = tasks.stream()
-                    .filter(Task::isCompleted)
-                    .collect(Collectors.toList());
-            tasksTemp.addAll(archiveChildren(tasks, tasksTemp, now, request));
-            tasks = tasksTemp;
+            tasks = prepareCompletedTasks(request, now, tasks);
         }
         tasks.forEach((a) -> {
             a.setArchived(request);
             a.setModifiedAt(now);
         });
         taskRepository.saveAll(tasks);
+    }
+
+    private List<Task> prepareCompletedTasks(boolean request, LocalDateTime now, List<Task> tasks) {
+        List<Task> tasksTemp = tasks.stream()
+                .filter(Task::isCompleted)
+                .collect(Collectors.toList());
+        tasksTemp.addAll(archiveChildren(tasks, tasksTemp, now, request));
+        tasks = tasksTemp;
+        return tasks;
     }
 
     private List<Task> getTasksForArchivedStateChange(boolean request, Integer projectId, Integer userId) {
