@@ -56,14 +56,14 @@ public class ArchiveService {
         if(archived) {
             detachProjectFromTree(userId, project, now);
         } else {
-            restoreProjectFromArchive(userId, project, now);
+            restoreProjectFromArchive(userId, project);
         }
         archiveTasks(archived, project.getId(), userId, now, false);
         archiveHabits(archived, project.getId(), userId, now);
         return project;
     }
 
-    private void restoreProjectFromArchive(Integer userId, Project project, LocalDateTime now) {
+    private void restoreProjectFromArchive(Integer userId, Project project) {
         project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
     }
 
