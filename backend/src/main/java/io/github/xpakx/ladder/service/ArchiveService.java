@@ -52,24 +52,24 @@ public class ArchiveService {
         project.setArchived(archived);
         project.setModifiedAt(now);
         if(archived) {
-            moveProjectToArchiveAndDetachChildren(archived, userId, project, now);
+            moveProjectToArchiveAndDetachChildren(userId, project, now);
         } else {
-            restoreProjectFromArchive(archived, userId, project, now);
+            restoreProjectFromArchive(userId, project, now);
         }
         archiveHabits(archived, project.getId(), userId, now);
         return project;
     }
 
-    private void restoreProjectFromArchive(boolean request, Integer userId, Project project, LocalDateTime now) {
+    private void restoreProjectFromArchive(Integer userId, Project project, LocalDateTime now) {
         project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
-        archiveTasks(request, project.getId(), userId, now, false);
+        archiveTasks(true, project.getId(), userId, now, false);
     }
 
-    private void moveProjectToArchiveAndDetachChildren(boolean request, Integer userId, Project project, LocalDateTime now) {
+    private void moveProjectToArchiveAndDetachChildren(Integer userId, Project project, LocalDateTime now) {
         project.setGeneralOrder(0);
         project.setParent(null);
-        detachProjectFromTree(request, userId, project, now);
-        archiveTasks(request, project.getId(), userId, now, false);
+        detachProjectFromTree(userId, project, now);
+        archiveTasks(false, project.getId(), userId, now, false);
     }
 
     private void archiveHabits(boolean request, Integer projectId, Integer userId, LocalDateTime now) {
@@ -102,12 +102,10 @@ public class ArchiveService {
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId);
     }
 
-    private void detachProjectFromTree(boolean request, Integer userId, Project project, LocalDateTime now) {
-        if(request) {
-            List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, project.getId());
-            reassignParent(project, now, children, getMaxOrderForParent(userId, project));
-            projectRepository.saveAll(children);
-        }
+    private void detachProjectFromTree(Integer userId, Project project, LocalDateTime now) {
+        List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, project.getId());
+        reassignParent(project, now, children, getMaxOrderForParent(userId, project));
+        projectRepository.saveAll(children);
     }
 
     private void reassignParent(Project project, LocalDateTime now, List<Project> children, Integer order) {
