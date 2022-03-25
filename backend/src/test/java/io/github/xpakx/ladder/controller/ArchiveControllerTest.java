@@ -1,10 +1,10 @@
 package io.github.xpakx.ladder.controller;
 
+import io.github.xpakx.ladder.entity.Habit;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
-import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.repository.HabitRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -115,7 +115,7 @@ public class ArchiveControllerTest {
         return request;
     }
 
-    private Integer addProjectWith2ChildrenAnd2TasksAndReturnId(boolean archived) {
+    private Integer addProjectWith2ChildrenAnd2TasksAnd1HabitAndReturnId(boolean archived) {
         Project project = Project.builder()
                 .owner(userRepository.getById(userId))
                 .name("Test Project")
@@ -140,7 +140,16 @@ public class ArchiveControllerTest {
                 .dailyViewOrder(0)
                 .archived(archived)
                 .build();
+        Habit habit = Habit.builder()
+                .owner(userRepository.getById(userId))
+                .title("Habit")
+                .project(project)
+                .generalOrder(2)
+                .archived(archived)
+                .build();
+
         project.setTasks(List.of(task1, task2));
+        project.setHabits(List.of(habit));
 
         Project subProject1 = Project.builder()
                 .owner(userRepository.getById(userId))
@@ -190,6 +199,57 @@ public class ArchiveControllerTest {
         List<Project> projects = projectRepository.findAll();
         assertThat(projects, everyItem(
                 hasProperty("archived", is(true))
+        ));
+    }
+
+    @Test
+    void shouldArchiveProjectWithTasksHabitsAndSubprojects() {
+        BooleanRequest request = getTrueBooleanRequest();
+        Integer projectId = addProjectWith2ChildrenAnd2TasksAnd1HabitAndReturnId(false);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/archive", userId, projectId)
+                .then()
+                .statusCode(OK.value());
+        List<Project> projects = projectRepository.findAll();
+        List<Habit> habits = habitRepository.findAll();
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(projects, everyItem(either(
+                hasProperty("archived", is(false)))
+                .or(hasProperty("id", is(projectId)))
+        ));
+        assertThat(habits, everyItem(
+                hasProperty("archived", is(true))
+        ));
+        assertThat(tasks, everyItem(
+                hasProperty("archived", is(true))
+        ));
+    }
+
+    @Test
+    void shouldRestoreProject() {
+        BooleanRequest request = getTrueBooleanRequest();
+        Integer projectId = addProjectAndReturnId(true);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .put(baseUrl + "/{userId}/projects/{projectId}/archive", userId, projectId)
+                .then()
+                .statusCode(OK.value());
+        List<Project> projects = projectRepository.findAll();
+        assertThat(projects, everyItem(
+                hasProperty("archived", is(false))
         ));
     }
 }
