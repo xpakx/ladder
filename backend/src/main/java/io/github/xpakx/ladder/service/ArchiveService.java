@@ -53,14 +53,18 @@ public class ArchiveService {
         LocalDateTime now = LocalDateTime.now();
         project.setArchived(archived);
         project.setModifiedAt(now);
+        rearrangeProjectTreeAfterArchiveStateChanged(archived, userId, project, now);
+        archiveTasks(archived, project.getId(), userId, now, false);
+        archiveHabits(archived, project.getId(), userId, now);
+        return project;
+    }
+
+    private void rearrangeProjectTreeAfterArchiveStateChanged(boolean archived, Integer userId, Project project, LocalDateTime now) {
         if(archived) {
             detachProjectFromTree(userId, project, now);
         } else {
             restoreProjectFromArchiveAtTheEndOfTree(userId, project);
         }
-        archiveTasks(archived, project.getId(), userId, now, false);
-        archiveHabits(archived, project.getId(), userId, now);
-        return project;
     }
 
     private void restoreProjectFromArchiveAtTheEndOfTree(Integer userId, Project project) {
