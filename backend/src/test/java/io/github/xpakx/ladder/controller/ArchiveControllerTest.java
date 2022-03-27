@@ -423,7 +423,7 @@ public class ArchiveControllerTest {
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
-                .put(baseUrl + "/{userId}/tasks/taskId}/archive", userId, 1)
+                .put(baseUrl + "/{userId}/tasks/{taskId}/archive", userId, 1)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
