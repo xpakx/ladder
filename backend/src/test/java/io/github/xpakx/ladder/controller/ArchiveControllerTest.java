@@ -400,4 +400,31 @@ public class ArchiveControllerTest {
                 .or(hasProperty("completed", is(false)))
         ));
     }
+
+    @Test
+    void shouldRespondWith401ToArchiveTaskIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/archive", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToArchiveTaskIfTaskNotFound() {
+        BooleanRequest request = getTrueBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/taskId}/archive", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
 }
