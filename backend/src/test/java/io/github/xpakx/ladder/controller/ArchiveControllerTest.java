@@ -427,4 +427,111 @@ public class ArchiveControllerTest {
         .then()
                 .statusCode(NOT_FOUND.value());
     }
+
+    @Test
+    void shouldArchiveTask() {
+        BooleanRequest request = getTrueBooleanRequest();
+        Integer taskId = addTaskAndReturnId(false);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/archive", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, everyItem(
+                hasProperty("archived", is(true))
+        ));
+    }
+
+    private Integer addTaskAndReturnId(boolean archived) {
+        Task task = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Task")
+                .completed(false)
+                .project(null)
+                .projectOrder(1)
+                .dailyViewOrder(0)
+                .archived(archived)
+                .build();
+        return taskRepository.save(task).getId();
+    }
+
+    @Test
+    void shouldArchiveTaskWith2Subtasks() {
+        BooleanRequest request = getTrueBooleanRequest();
+        Integer taskId = addTaskWith2SubtasksAndReturnId(false);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/archive", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, everyItem(
+                hasProperty("archived", is(true))
+        ));
+    }
+
+    private Integer addTaskWith2SubtasksAndReturnId(boolean archived) {
+        Task task = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Task")
+                .completed(false)
+                .projectOrder(1)
+                .archived(archived)
+                .dailyViewOrder(0)
+                .build();
+        Task subtask1 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("First Subtask")
+                .completed(false)
+                .parent(task)
+                .projectOrder(1)
+                .archived(archived)
+                .dailyViewOrder(0)
+                .build();
+        Task subtask2 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .title("Second Subtask")
+                .completed(false)
+                .parent(task)
+                .projectOrder(2)
+                .archived(archived)
+                .dailyViewOrder(0)
+                .build();
+        task.setChildren(List.of(subtask1, subtask2));
+        return taskRepository.save(task).getId();
+    }
+
+    @Test
+    void shouldRestoreTask() {
+        BooleanRequest request = getFalseBooleanRequest();
+        Integer taskId = addTaskAndReturnId(true);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/archive", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, everyItem(
+                hasProperty("archived", is(false))
+        ));
+    }
 }
