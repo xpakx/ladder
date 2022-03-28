@@ -30,6 +30,13 @@ public class ProjectCollaborationService {
     private final UserAccountRepository userRepository;
     private final CollaborationRepository collaborationRepository;
 
+    /**
+     * Add user as a collaborator to project.
+     * @param projectId ID of the project
+     * @param ownerId ID of an owner of the project
+     * @param request Request with collaboration token of new collaborator and permissions
+     * @return Object with project's details
+     */
     @NotifyOnProjectChange
     @Transactional
     @Notify(message = "You have an invitation to project")
@@ -58,6 +65,12 @@ public class ProjectCollaborationService {
                 .build();
     }
 
+    /**
+     * Delete user from collaborators in the project.
+     * @param projectId ID of the project
+     * @param ownerId ID of an owner of the project
+     * @param collaborationId ID of a user to delete from collaborator list
+     */
     @NotifyOnCollaborationDeletion
     public void deleteCollaborator(Integer collaborationId, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
@@ -87,6 +100,12 @@ public class ProjectCollaborationService {
         );
     }
 
+    /**
+     * Get list of collaborators for given project.
+     * @param projectId ID of the project
+     * @param ownerId ID of an owner of the project
+     * @return List of collaborators with permissions
+     */
     public List<CollaborationWithOwner> getCollaborators(Integer projectId, Integer ownerId) {
         return collaborationRepository.findByProjectIdAndProjectOwnerId(projectId, ownerId);
     }
