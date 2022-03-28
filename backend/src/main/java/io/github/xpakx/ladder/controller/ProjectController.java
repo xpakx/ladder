@@ -47,23 +47,4 @@ public class ProjectController {
         projectService.deleteProject(projectId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/{projectId}/collaborators")
-    public ResponseEntity<CollaborationWithOwner> addCollaborator(@RequestBody CollaborationRequest request, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(projectService.addCollaborator(request, projectId, userId), HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @DeleteMapping("/{projectId}/collaborators/{collabId}")
-    public ResponseEntity<?> addCollaborator(@PathVariable Integer collabId, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        projectService.deleteCollaborator(collabId, projectId, userId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @GetMapping("/{projectId}/collaborators")
-    public ResponseEntity<List<CollaborationWithOwner>> getCollaborators(@PathVariable Integer projectId, @PathVariable Integer userId) {
-        return new ResponseEntity<>(projectService.getCollaborators(projectId, userId), HttpStatus.OK);
-    }
 }
