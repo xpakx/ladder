@@ -69,16 +69,16 @@ public class ProjectCollaborationService {
      * Delete user from collaborators in the project.
      * @param projectId ID of the project
      * @param ownerId ID of an owner of the project
-     * @param collaborationId ID of a user to delete from collaborator list
+     * @param collaboratorId ID of a user to delete from collaborator list
      */
     @NotifyOnCollaborationDeletion
-    public void deleteCollaborator(Integer collaborationId, Integer projectId, Integer ownerId) {
+    public void deleteCollaborator(Integer collaboratorId, Integer projectId, Integer ownerId) {
         Project toUpdate = projectRepository
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         List<Collaboration> collaborations = toUpdate.getCollaborators();
         toUpdate.setCollaborators(collaborations.stream()
-                .filter((a) -> !collaborationId.equals(a.getOwner().getId()))
+                .filter((a) -> !collaboratorId.equals(a.getOwner().getId()))
                 .collect(Collectors.toList())
         );
         if(toUpdate.getCollaborators().size() == 0) {
@@ -87,7 +87,7 @@ public class ProjectCollaborationService {
         LocalDateTime now = LocalDateTime.now();
         toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
-        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collaborationId, toUpdate.getId());
+        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collaboratorId, toUpdate.getId());
         for(Task task : tasks) {
             task.setModifiedAt(now);
             task.setAssigned(null);
@@ -95,7 +95,7 @@ public class ProjectCollaborationService {
         taskRepository.saveAll(tasks);
         collaborationRepository.deleteAll(
                 collaborations.stream()
-                        .filter((a) -> collaborationId.equals(a.getOwner().getId()))
+                        .filter((a) -> collaboratorId.equals(a.getOwner().getId()))
                         .collect(Collectors.toSet())
         );
     }
