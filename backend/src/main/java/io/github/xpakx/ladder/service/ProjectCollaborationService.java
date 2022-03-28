@@ -46,12 +46,18 @@ public class ProjectCollaborationService {
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         UserAccount user = userRepository.findByCollaborationToken(request.getCollaborationToken())
                 .orElseThrow(() -> new NotFoundException("No user with such token!"));
+        projectRepository.save(
+            updateProject(request, projectId, toUpdate, user)
+        );
+        return collaborationRepository.findProjectedByOwnerIdAndProjectId(user.getId(), projectId).get();
+    }
+
+    private Project updateProject(CollaborationRequest request, Integer projectId, Project toUpdate, UserAccount user) {
         LocalDateTime now = LocalDateTime.now();
         toUpdate.getCollaborators().add(createCollaborationForUser(request, projectId, now, user));
         toUpdate.setCollaborative(true);
         toUpdate.setModifiedAt(now);
-        projectRepository.save(toUpdate);
-        return collaborationRepository.findProjectedByOwnerIdAndProjectId(user.getId(), projectId).get();
+        return toUpdate;
     }
 
     private Collaboration createCollaborationForUser(CollaborationRequest request, Integer projectId, LocalDateTime now, UserAccount user) {
