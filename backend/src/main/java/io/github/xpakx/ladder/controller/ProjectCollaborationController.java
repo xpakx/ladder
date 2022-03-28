@@ -24,9 +24,9 @@ public class ProjectCollaborationController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @DeleteMapping("/{projectId}/collaborators/{collabId}")
-    public ResponseEntity<?> addCollaborator(@PathVariable Integer collabId, @PathVariable Integer projectId, @PathVariable Integer userId) {
-        projectService.deleteCollaborator(collabId, projectId, userId);
+    @DeleteMapping("/{projectId}/collaborators/{collaboratorId}")
+    public ResponseEntity<?> addCollaborator(@PathVariable Integer collaboratorId, @PathVariable Integer projectId, @PathVariable Integer userId) {
+        projectService.deleteCollaborator(collaboratorId, projectId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
