@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+
 @Service
 @AllArgsConstructor
 public class ArchiveService {
@@ -34,8 +36,8 @@ public class ArchiveService {
      * all project's tasks are restored from archive too.
      * If request contains true flag, all tasks are archived and children projects
      * are attached as children to archived project's parent
-     * @param userId ID of an owner of projects
-     * @param projectId ID of the project to move
+     * @param userId ID of an owner of the project
+     * @param projectId ID of the project to archive
      * @param request request with archived state
      * @return Updated project
      */
@@ -44,67 +46,74 @@ public class ArchiveService {
     public Project archiveProject(BooleanRequest request, Integer projectId, Integer userId) {
         Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        return projectRepository.save(changeArchivedState(request, userId, project));
+        return projectRepository.save(changeArchivedState(request.isFlag(), userId, project));
     }
 
-    private Project changeArchivedState(BooleanRequest request, Integer userId, Project project) {
+    private Project changeArchivedState(boolean archived, Integer userId, Project project) {
         LocalDateTime now = LocalDateTime.now();
-        project.setArchived(request.isFlag());
+        project.setArchived(archived);
         project.setModifiedAt(now);
-        if(request.isFlag()) {
-            moveProjectToArchiveAndDetachChildren(request, userId, project, now);
-        } else {
-            restoreProjectFromArchive(request, userId, project, now);
-        }
-        archiveHabits(request, project.getId(), userId, now);
+        rearrangeProjectTreeAfterArchiveStateChanged(archived, userId, project, now);
+        archiveTasks(archived, project.getId(), userId, now, false);
+        archiveHabits(archived, project.getId(), userId, now);
         return project;
     }
 
-    private void restoreProjectFromArchive(BooleanRequest request, Integer userId, Project project, LocalDateTime now) {
-        project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
-        archiveTasks(request, project.getId(), userId, now, false);
+    private void rearrangeProjectTreeAfterArchiveStateChanged(boolean archived, Integer userId, Project project, LocalDateTime now) {
+        if(archived) {
+            detachProjectFromTree(userId, project, now);
+        } else {
+            restoreProjectFromArchiveAtTheEndOfTree(userId, project);
+        }
     }
 
-    private void moveProjectToArchiveAndDetachChildren(BooleanRequest request, Integer userId, Project project, LocalDateTime now) {
+    private void restoreProjectFromArchiveAtTheEndOfTree(Integer userId, Project project) {
+        project.setGeneralOrder(projectRepository.getMaxOrderByOwnerId(userId));
+    }
+
+    private void detachProjectFromTree(Integer userId, Project project, LocalDateTime now) {
         project.setGeneralOrder(0);
         project.setParent(null);
-        detachProjectFromTree(request, userId, project, now);
-        archiveTasks(request, project.getId(), userId, now, false);
+        reassignChildrenProjects(userId, project, now);
     }
 
-    private void archiveHabits(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now) {
+    private void archiveHabits(boolean request, Integer projectId, Integer userId, LocalDateTime now) {
         List<Habit> habits = habitRepository.findByOwnerIdAndProjectId(userId, projectId, Habit.class);
         for(Habit habit : habits) {
-            habit.setArchived(request.isFlag());
+            habit.setArchived(request);
             habit.setModifiedAt(now);
         }
         habitRepository.saveAll(habits);
     }
 
-    private void archiveTasks(BooleanRequest request, Integer projectId, Integer userId, LocalDateTime now, boolean onlyCompleted) {
+    private void archiveTasks(boolean request, Integer projectId, Integer userId, LocalDateTime now, boolean onlyCompleted) {
         List<Task> tasks = getTasksForArchivedStateChange(request, projectId, userId);
         if(onlyCompleted) {
-            List<Task> tasksTemp = tasks.stream()
-                    .filter(Task::isCompleted)
-                    .collect(Collectors.toList());
-            tasksTemp.addAll(archiveChildren(tasks, tasksTemp, now, request.isFlag()));
-            tasks = tasksTemp;
+            tasks = prepareCompletedTasks(request, now, tasks);
         }
         tasks.forEach((a) -> {
-            a.setArchived(request.isFlag());
+            a.setArchived(request);
             a.setModifiedAt(now);
         });
         taskRepository.saveAll(tasks);
     }
 
-    private List<Task> getTasksForArchivedStateChange(BooleanRequest request, Integer projectId, Integer userId) {
-        return request.isFlag() ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
+    private List<Task> prepareCompletedTasks(boolean request, LocalDateTime now, List<Task> tasks) {
+        List<Task> tasksTemp = tasks.stream()
+                .filter(Task::isCompleted)
+                .collect(Collectors.toList());
+        tasksTemp.addAll(archiveChildren(tasks, tasksTemp, now, request));
+        return tasksTemp;
+    }
+
+    private List<Task> getTasksForArchivedStateChange(boolean request, Integer projectId, Integer userId) {
+        return request ? taskRepository.findByOwnerIdAndProjectIdAndArchived(userId, projectId, false) :
                 taskRepository.findByOwnerIdAndProjectId(userId, projectId);
     }
 
-    private void detachProjectFromTree(BooleanRequest request, Integer userId, Project project, LocalDateTime now) {
-        if(request.isFlag()) {
-            List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, project.getId());
+    private void reassignChildrenProjects(Integer userId, Project project, LocalDateTime now) {
+        List<Project> children = projectRepository.findByOwnerIdAndParentId(userId, project.getId());
+        if(children.size() > 0) {
             reassignParent(project, now, children, getMaxOrderForParent(userId, project));
             projectRepository.saveAll(children);
         }
@@ -119,30 +128,28 @@ public class ArchiveService {
     }
 
     private Integer getMaxOrderForParent(Integer userId, Project project) {
-        Integer order;
-        if(project.getParent() == null) {
-            order = projectRepository.getMaxOrderByOwnerId(userId);
-        } else {
-            order = projectRepository.getMaxOrderByOwnerIdAndParentId(userId, project.getParent().getId());
-        }
-        return order;
+        return isNull(project.getParent()) ? projectRepository.getMaxOrderByOwnerId(userId) : projectRepository.getMaxOrderByOwnerIdAndParentId(userId, project.getParent().getId());
     }
 
+    /**
+     * Move completed tasks in given project to archive
+     * @param userId ID of an owner of the project
+     * @param projectId ID of the project
+     * @param request request with archived state
+     * @return Updated project
+     */
     @Transactional
     @NotifyOnProjectChange
     public Project archiveCompletedTasks(BooleanRequest request, Integer projectId, Integer userId) {
         Project project = projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         LocalDateTime now = LocalDateTime.now();
-        archiveTasks(request, projectId, userId, now, true);
+        archiveTasks(request.isFlag(), projectId, userId, now, true);
         return projectRepository.save(project);
     }
 
     private List<Task> archiveChildren(List<Task> projectTasks, List<Task> parentTasks, LocalDateTime now, boolean archived) {
-        Map<Integer, List<Task>> tasksByParent = projectTasks.stream()
-                .filter((a) -> a.getParent() != null)
-                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
-
+        Map<Integer, List<Task>> tasksByParent = generateMapOfTasksByParentId(projectTasks);
         List<Task> toArchive = parentTasks;
         List<Task> toReturn = new ArrayList<>();
         while(toArchive.size() > 0) {
@@ -159,14 +166,38 @@ public class ArchiveService {
         return toReturn;
     }
 
+    private Map<Integer, List<Task>> generateMapOfTasksByParentId(List<Task> projectTasks) {
+        return projectTasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+    }
+
+    /**
+     * Return all archived projects
+     * @param userId ID of an owner of projects
+     * @return List of archived projects
+     */
     public List<ProjectDetails> getArchivedProjects(Integer userId) {
         return projectRepository.findByOwnerIdAndArchived(userId, true, ProjectDetails.class);
     }
 
+    /**
+     * Return all archived tasks in given project
+     * @param userId ID of an owner of the project
+     * @param projectId ID of the project
+     * @return List of archived projects
+     */
     public List<TaskDetails> getArchivedTasks(Integer userId, Integer projectId) {
         return taskRepository.getByOwnerIdAndProjectIdAndArchived(userId, projectId, true, TaskDetails.class);
     }
 
+    /**
+     * Change task archived state; change archived state for all task's children too
+     * @param userId ID of an owner of the task
+     * @param taskId ID of the task to archive
+     * @param request request with archived state
+     * @return Updated task
+     */
     @Transactional
     @NotifyOnTaskChange
     public Task archiveTask(BooleanRequest request, Integer taskId, Integer userId) {
@@ -175,9 +206,7 @@ public class ArchiveService {
         LocalDateTime now = LocalDateTime.now();
         task.setArchived(request.isFlag());
         if(!request.isFlag()) {
-            task.setProjectOrder(
-                    task.getProject() != null ? taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, task.getProject().getId())+1 : taskRepository.getMaxOrderByOwnerId(userId)+1
-            );
+            updateTaskOrder(userId, task);
         }
         task.setModifiedAt(now);
         taskRepository.saveAll(
@@ -186,26 +215,15 @@ public class ArchiveService {
         return taskRepository.save(task);
     }
 
+    private void updateTaskOrder(Integer userId, Task task) {
+        task.setProjectOrder(
+                task.getProject() != null ? taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, task.getProject().getId())+1 : taskRepository.getMaxOrderByOwnerId(userId)+1
+        );
+    }
+
     private List<Task> archiveChildren(Integer userId, Task task, LocalDateTime now, boolean archived) {
         List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
                 task.getProject() != null ? task.getProject().getId() : null);
-        Map<Integer, List<Task>> tasksByParent = tasks.stream()
-                .filter((a) -> a.getParent() != null)
-                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
-
-        List<Task> toArchive = List.of(task);
-        List<Task> toReturn = new ArrayList<>();
-        while(toArchive.size() > 0) {
-            List<Task> newToArchive = new ArrayList<>();
-            for (Task parent : toArchive) {
-                List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
-                parent.setArchived(archived);
-                parent.setModifiedAt(now);
-                toReturn.add(parent);
-                newToArchive.addAll(children);
-            }
-            toArchive = newToArchive;
-        }
-        return toReturn;
+        return archiveChildren(tasks, List.of(task), now, archived);
     }
 }

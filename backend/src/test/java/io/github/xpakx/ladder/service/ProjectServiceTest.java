@@ -31,11 +31,7 @@ class ProjectServiceTest {
     @Mock
     private ProjectRepository projectRepository;
     @Mock
-    private TaskRepository taskRepository;
-    @Mock
     private UserAccountRepository userRepository;
-    @Mock
-    private CollaborationRepository collabRepository;
 
     private ProjectService projectService;
 
@@ -48,7 +44,7 @@ class ProjectServiceTest {
     }
 
     private void injectMocks() {
-        projectService = new ProjectService(projectRepository, taskRepository, userRepository, collabRepository);
+        projectService = new ProjectService(projectRepository, userRepository);
     }
 
     @Test
