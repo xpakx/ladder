@@ -110,7 +110,9 @@ public class ProjectCollaborationControllerTest {
                 .log()
                 .body()
                 .statusCode(OK.value())
-                .body("$", hasSize(2));
+                .body("$", hasSize(2))
+                .body("owner.username", hasItem(equalTo("user2")))
+                .body("owner.username", hasItem(equalTo("user3")));
     }
 
     private Integer addProjectWith2CollaboratorsAndReturnId() {
