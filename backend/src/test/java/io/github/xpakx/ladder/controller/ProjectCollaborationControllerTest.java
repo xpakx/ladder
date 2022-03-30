@@ -179,8 +179,7 @@ public class ProjectCollaborationControllerTest {
         .when()
                 .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, 1)
         .then()
-                .statusCode(OK.value())
-                .body("$", hasSize(0));
+                .statusCode(NOT_FOUND.value());
     }
 
     private CollaborationRequest getCollaborationRequest(String token, boolean completion, boolean edition) {
