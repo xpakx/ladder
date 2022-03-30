@@ -11,7 +11,6 @@ import io.github.xpakx.ladder.repository.UserAccountRepository;
 import io.github.xpakx.ladder.security.JwtTokenUtil;
 import io.github.xpakx.ladder.service.UserService;
 import io.restassured.http.ContentType;
-import org.hamcrest.beans.HasProperty;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -217,5 +216,36 @@ public class ProjectCollaborationControllerTest {
                 .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, projectId)
         .then()
                 .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldAddCollaboration() {
+        String token = addUserAndReturnToken();
+        CollaborationRequest request = getCollaborationRequest(token, true, true);
+        Integer projectId = addProjectAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, projectId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("taskCompletionAllowed", is(true))
+                .body("editionAllowed", is(true))
+                .body("owner.username", is("user2"));
+    }
+
+    private String addUserAndReturnToken() {
+        UserAccount user = UserAccount.builder()
+                .username("user2")
+                .password("password")
+                .collaborationToken("token")
+                .roles(new HashSet<>())
+                .build();
+        return userRepository.save(user).getCollaborationToken();
     }
 }
