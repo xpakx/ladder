@@ -155,6 +155,15 @@ public class ProjectCollaborationControllerTest {
         return id;
     }
 
+    private Integer addProjectAndReturnId() {
+        Project project = Project.builder()
+                .owner(userRepository.getById(userId))
+                .name("Test Project")
+                .generalOrder(1)
+                .build();
+        return projectRepository.save(project).getId();
+    }
+
     @Test
     void shouldRespondWith401ToAddCollaboratorIfUserUnauthorized() {
         given()
@@ -191,5 +200,22 @@ public class ProjectCollaborationControllerTest {
     }
     private CollaborationRequest getCollaborationRequest() {
         return getCollaborationRequest("token", true, true);
+    }
+
+    @Test
+    void shouldRespondWith404ToAddCollaboratorIfWrongToken() {
+        CollaborationRequest request = getCollaborationRequest();
+        Integer projectId = addProjectAndReturnId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, projectId)
+        .then()
+                .statusCode(NOT_FOUND.value());
     }
 }
