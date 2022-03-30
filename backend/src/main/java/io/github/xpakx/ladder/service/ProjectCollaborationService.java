@@ -84,10 +84,10 @@ public class ProjectCollaborationService {
         LocalDateTime now = LocalDateTime.now();
         updateProject(collaboratorId, toUpdate, collaborations, now);
         deassignTasks(collaboratorId, toUpdate, now);
-        deleteCollaborationEntity(collaboratorId, collaborations);
+        deleteCollaborations(collaboratorId, collaborations);
     }
 
-    private void deleteCollaborationEntity(Integer collaboratorId, List<Collaboration> collaborations) {
+    private void deleteCollaborations(Integer collaboratorId, List<Collaboration> collaborations) {
         collaborationRepository.deleteAll(
                 collaborations.stream()
                         .filter((a) -> collaboratorId.equals(a.getOwner().getId()))
