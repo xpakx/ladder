@@ -3,6 +3,7 @@ package io.github.xpakx.ladder.controller;
 import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.CollaborationRequest;
 import io.github.xpakx.ladder.repository.CollaborationRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -152,5 +153,44 @@ public class ProjectCollaborationControllerTest {
         collaborationRepository.saveAll(List.of(collaboration1, collaboration2));
 
         return id;
+    }
+
+    @Test
+    void shouldRespondWith401ToAddCollaboratorIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToAddCollaboratorIfProjectNotFound() {
+        CollaborationRequest request = getCollaborationRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, 1)
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(0));
+    }
+
+    private CollaborationRequest getCollaborationRequest(String token, boolean completion, boolean edition) {
+        CollaborationRequest request = new CollaborationRequest();
+        request.setCollaborationToken(token);
+        request.setCompletionAllowed(completion);
+        request.setEditionAllowed(edition);
+        return request;
+    }
+    private CollaborationRequest getCollaborationRequest() {
+        return getCollaborationRequest("token", true, true);
     }
 }
