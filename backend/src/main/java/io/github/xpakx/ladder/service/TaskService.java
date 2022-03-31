@@ -320,7 +320,7 @@ public class TaskService {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
         Task parentTask = findIdFromIdRequest(request)
-                .orElseThrow(() -> new NotFoundException("Cannot move anything as child of non-existent task!"));
+                .orElse(null);
         taskToMove.setParent(parentTask);
         taskToMove.setProjectOrder(1);
         incrementTasksOrder(request, userId, taskToMove.getProject());
