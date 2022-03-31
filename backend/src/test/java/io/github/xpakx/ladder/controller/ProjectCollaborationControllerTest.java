@@ -171,7 +171,7 @@ public class ProjectCollaborationControllerTest {
                 .log()
                 .uri()
         .when()
-                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, 1)
+                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", userId, 1)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -187,7 +187,7 @@ public class ProjectCollaborationControllerTest {
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
-                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, 1)
+                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", userId, 1)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
@@ -215,7 +215,7 @@ public class ProjectCollaborationControllerTest {
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
-                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, projectId)
+                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", userId, projectId)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
@@ -233,7 +233,7 @@ public class ProjectCollaborationControllerTest {
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
-                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, projectId)
+                .post(baseUrl + "/{userId}/projects/{projectId}/collaborators", userId, projectId)
         .then()
                 .statusCode(CREATED.value())
                 .body("taskCompletionAllowed", is(true))
@@ -257,7 +257,7 @@ public class ProjectCollaborationControllerTest {
                 .log()
                 .uri()
         .when()
-                .delete(baseUrl + "/{userId}/projects/{projectId}/collaborators/{collaboratorId}", 1, 1, 1)
+                .delete(baseUrl + "/{userId}/projects/{projectId}/collaborators/{collaboratorId}", userId, 1, 1)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -271,7 +271,7 @@ public class ProjectCollaborationControllerTest {
                 .oauth2(tokenFor("user1"))
                 .contentType(ContentType.JSON)
         .when()
-                .delete(baseUrl + "/{userId}/projects/{projectId}/collaborators/{collaboratorId}", 1, 1, 1)
+                .delete(baseUrl + "/{userId}/projects/{projectId}/collaborators/{collaboratorId}", userId, 1, 1)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
