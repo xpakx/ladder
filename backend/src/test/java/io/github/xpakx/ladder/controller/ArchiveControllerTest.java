@@ -289,7 +289,7 @@ public class ArchiveControllerTest {
                 .log()
                 .uri()
         .when()
-                .get(baseUrl + "/{userId}/projects/{projectId}/tasks/archived", 1, 1)
+                .get(baseUrl + "/{userId}/projects/{projectId}/tasks/archived", userId, 1)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -357,7 +357,7 @@ public class ArchiveControllerTest {
                 .log()
                 .uri()
         .when()
-                .put(baseUrl + "/{userId}/projects/{projectId}/tasks/completed/archive", 1, 1)
+                .put(baseUrl + "/{userId}/projects/{projectId}/tasks/completed/archive", userId, 1)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -407,7 +407,7 @@ public class ArchiveControllerTest {
                 .log()
                 .uri()
         .when()
-                .put(baseUrl + "/{userId}/tasks/{taskId}/archive", 1, 1)
+                .put(baseUrl + "/{userId}/tasks/{taskId}/archive", userId, 1)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
