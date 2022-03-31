@@ -294,7 +294,8 @@ public class TaskService {
     public Task moveTaskAfter(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
-        Task afterTask = findIdFromIdRequest(request);
+        Task afterTask = findIdFromIdRequest(request)
+                .orElseThrow(() -> new NotFoundException("Cannot move anything after non-existent task!"));
         taskToMove.setParent(afterTask.getParent());
         taskToMove.setProjectOrder(afterTask.getProjectOrder()+1);
         incrementOrderOfTasksAfter(userId, afterTask);
@@ -302,8 +303,8 @@ public class TaskService {
         return taskRepository.save(taskToMove);
     }
 
-    private Task findIdFromIdRequest(IdRequest request) {
-        return hasId(request) ? taskRepository.findById(request.getId()).orElse(null) : null;
+    private Optional<Task> findIdFromIdRequest(IdRequest request) {
+        return hasId(request) ? taskRepository.findById(request.getId()) : Optional.empty();
     }
 
     private boolean hasId(IdRequest request) {
@@ -318,7 +319,8 @@ public class TaskService {
     public Task moveTaskAsFirstChild(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
-        Task parentTask = findIdFromIdRequest(request);
+        Task parentTask = findIdFromIdRequest(request)
+                .orElseThrow(() -> new NotFoundException("Cannot move anything as child of non-existent task!"));
         taskToMove.setParent(parentTask);
         taskToMove.setProjectOrder(1);
         incrementTasksOrder(request, userId, taskToMove.getProject());
@@ -560,7 +562,8 @@ public class TaskService {
     public Task moveTaskAfterInDailyView(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent task!"));
-        Task afterTask = findIdFromIdRequest(request);
+        Task afterTask = findIdFromIdRequest(request)
+                .orElseThrow(() -> new NotFoundException("Cannot move anything after non-existent task!"));
         taskToMove.setDue(afterTask.getDue());
         taskToMove.setDailyViewOrder(afterTask.getDailyViewOrder()+1);
         incrementDailyOrderOfTasksAfter(userId, afterTask);
