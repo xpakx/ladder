@@ -348,7 +348,7 @@ public class TaskService {
     }
 
     @NotifyOnTaskChange
-    public Task updateTaskCollapsion(BooleanRequest request, Integer taskId, Integer userId) {
+    public Task updateTaskCollapsedState(BooleanRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         taskToUpdate.setCollapsed(request.isFlag());
