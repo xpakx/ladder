@@ -92,7 +92,7 @@ public class ProjectCollaborationControllerTest {
                 .oauth2(tokenFor("user1"))
                 .contentType(ContentType.JSON)
         .when()
-                .get(baseUrl + "/{userId}/projects/{projectId}/collaborators", 1, 1)
+                .get(baseUrl + "/{userId}/projects/{projectId}/collaborators", userId, 1)
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(0));
