@@ -2,6 +2,7 @@ package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.Project;
+import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.CollaborationRequest;
 import io.github.xpakx.ladder.repository.CollaborationRepository;
@@ -277,7 +278,7 @@ public class ProjectCollaborationControllerTest {
     }
 
     @Test
-    void shouldDeleteAddCollaboration() {
+    void shouldDeleteCollaboration() {
         Integer collaboratorId = addUserAndReturnId();
         Integer projectId = addProjectWithCollaboratorAndReturnId(collaboratorId);
         given()
@@ -325,5 +326,40 @@ public class ProjectCollaborationControllerTest {
         project.setCollaborators(List.of(collaboration));
         projectRepository.save(project);
         return project.getId();
+    }
+
+    @Test
+    void shouldDeassignTasksWhileDeletingCollaboration() {
+        Integer collaboratorId = addUserAndReturnId();
+        Integer projectId = addProjectWithCollaboratorAndReturnId(collaboratorId);
+        add2AssignedTasks(projectId, collaboratorId);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .when()
+                .delete(baseUrl + "/{userId}/projects/{projectId}/collaborators/{collaboratorId}", userId, projectId, collaboratorId)
+                .then()
+                .statusCode(OK.value());
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, everyItem(hasProperty("assigned", is(equalTo(null)))));
+    }
+
+    private void add2AssignedTasks(Integer projectId, Integer collaboratorId) {
+        Task task1 = Task.builder()
+                .project(projectRepository.getById(projectId))
+                .owner(userRepository.getById(userId))
+                .title("Task 1")
+                .assigned(userRepository.getById(collaboratorId))
+                .build();
+        Task task2 = Task.builder()
+                .project(projectRepository.getById(projectId))
+                .owner(userRepository.getById(userId))
+                .title("Task 2")
+                .assigned(userRepository.getById(collaboratorId))
+                .build();
+        taskRepository.saveAll(List.of(task1, task2));
     }
 }
