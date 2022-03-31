@@ -20,8 +20,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -247,5 +249,81 @@ public class ProjectCollaborationControllerTest {
                 .roles(new HashSet<>())
                 .build();
         return userRepository.save(user).getCollaborationToken();
+    }
+
+    @Test
+    void shouldRespondWith401ToDeleteCollaboratorIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .delete(baseUrl + "/{userId}/projects/{projectId}/collaborators/{collaboratorId}", 1, 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToDeleteCollaboratorIfProjectNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+        .when()
+                .delete(baseUrl + "/{userId}/projects/{projectId}/collaborators/{collaboratorId}", 1, 1, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldDeleteAddCollaboration() {
+        Integer collaboratorId = addUserAndReturnId();
+        Integer projectId = addProjectWithCollaboratorAndReturnId(collaboratorId);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+        .when()
+                .delete(baseUrl + "/{userId}/projects/{projectId}/collaborators/{collaboratorId}", userId, projectId, collaboratorId)
+        .then()
+                .statusCode(OK.value());
+        Integer collaborationsInDb = collaborationRepository.findAll().size();
+        Optional<Project> project = projectRepository.findById(projectId);
+        assertThat(collaborationsInDb, is(equalTo(0)));
+        assertThat(project.isPresent(), is(true));
+        assertThat(project.get().isCollaborative(), is(false));
+    }
+
+    private Integer addUserAndReturnId() {
+        UserAccount user = UserAccount.builder()
+                .username("user2")
+                .password("password")
+                .collaborationToken("token")
+                .roles(new HashSet<>())
+                .build();
+        return userRepository.save(user).getId();
+    }
+
+    private Integer addProjectWithCollaboratorAndReturnId(Integer userId) {
+        Project project = Project.builder()
+                .owner(userRepository.getById(this.userId))
+                .name("Test Project")
+                .generalOrder(1)
+                .build();
+        project = projectRepository.save(project);
+        Collaboration collaboration = Collaboration.builder()
+                .owner(userRepository.getById(userId))
+                .project(project)
+                .editionAllowed(true)
+                .taskCompletionAllowed(true)
+                .build();
+        collaborationRepository.save(collaboration);
+        project.setCollaborative(true);
+        project.setCollaborators(List.of(collaboration));
+        projectRepository.save(project);
+        return project.getId();
     }
 }
