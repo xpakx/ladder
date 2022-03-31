@@ -579,17 +579,6 @@ public class TaskService {
         }
     }
 
-    private void incrementDailyOrderOfTasksBefore(Integer userId, Task task) {
-        if(task.getDue() != null) {
-            taskRepository.incrementOrderByOwnerIdAndDateAndOrderGreaterThanEqual(
-                    userId,
-                    task.getDue(),
-                    task.getDailyViewOrder(),
-                    LocalDateTime.now()
-            );
-        }
-    }
-
     @NotifyOnTasksChange
     public List<Task> updateDueDateForOverdue(DateRequest request, Integer userId) {
         LocalDateTime now = LocalDateTime.now();
