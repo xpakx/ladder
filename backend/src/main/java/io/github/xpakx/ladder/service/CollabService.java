@@ -134,7 +134,7 @@ public class CollabService {
 
     public Task updateTaskCollapsion(BooleanRequest request, Integer taskId, Integer userId) {
         Integer ownerId = testAccessToTask(taskId, userId, true, false).orElse(userId);
-        return taskService.updateTaskCollapsion(request, taskId, ownerId);
+        return taskService.updateTaskCollapsedState(request, taskId, ownerId);
     }
 
     public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {

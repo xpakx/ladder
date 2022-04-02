@@ -83,7 +83,7 @@ public class TaskController {
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/collapse")
     public ResponseEntity<Task> updateTaskCollapsion(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskCollapsion(request, taskId, userId), HttpStatus.OK);
+        return  new ResponseEntity<>(taskService.updateTaskCollapsedState(request, taskId, userId), HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")

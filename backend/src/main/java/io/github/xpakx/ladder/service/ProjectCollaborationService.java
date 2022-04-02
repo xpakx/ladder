@@ -81,6 +81,30 @@ public class ProjectCollaborationService {
                 .getByIdAndOwnerId(projectId, ownerId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
         List<Collaboration> collaborations = toUpdate.getCollaborators();
+        LocalDateTime now = LocalDateTime.now();
+        updateProject(collaboratorId, toUpdate, collaborations, now);
+        deassignTasks(collaboratorId, toUpdate, now);
+        deleteCollaborations(collaboratorId, collaborations);
+    }
+
+    private void deleteCollaborations(Integer collaboratorId, List<Collaboration> collaborations) {
+        collaborationRepository.deleteAll(
+                collaborations.stream()
+                        .filter((a) -> collaboratorId.equals(a.getOwner().getId()))
+                        .collect(Collectors.toSet())
+        );
+    }
+
+    private void deassignTasks(Integer collaboratorId, Project toUpdate, LocalDateTime now) {
+        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collaboratorId, toUpdate.getId());
+        for(Task task : tasks) {
+            task.setModifiedAt(now);
+            task.setAssigned(null);
+        }
+        taskRepository.saveAll(tasks);
+    }
+
+    private void updateProject(Integer collaboratorId, Project toUpdate, List<Collaboration> collaborations, LocalDateTime now) {
         toUpdate.setCollaborators(collaborations.stream()
                 .filter((a) -> !collaboratorId.equals(a.getOwner().getId()))
                 .collect(Collectors.toList())
@@ -88,20 +112,8 @@ public class ProjectCollaborationService {
         if(toUpdate.getCollaborators().size() == 0) {
             toUpdate.setCollaborative(false);
         }
-        LocalDateTime now = LocalDateTime.now();
         toUpdate.setModifiedAt(now);
         projectRepository.save(toUpdate);
-        List<Task> tasks = taskRepository.findByAssignedIdAndProjectId(collaboratorId, toUpdate.getId());
-        for(Task task : tasks) {
-            task.setModifiedAt(now);
-            task.setAssigned(null);
-        }
-        taskRepository.saveAll(tasks);
-        collaborationRepository.deleteAll(
-                collaborations.stream()
-                        .filter((a) -> collaboratorId.equals(a.getOwner().getId()))
-                        .collect(Collectors.toSet())
-        );
     }
 
     /**
