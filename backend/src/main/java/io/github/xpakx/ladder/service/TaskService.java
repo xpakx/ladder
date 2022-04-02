@@ -55,30 +55,50 @@ public class TaskService {
      */
     @NotifyOnTaskChange
     public Task updateTask(AddTaskRequest request, Integer taskId, Integer userId) {
-        Project project = request.getProjectId() != null ? projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
-                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
-        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
+        Project project = getProjectFromRequest(request, userId);
+        Task taskToUpdate = getTaskFromDb(taskId, userId);
+        updateFields(request, userId, project, taskToUpdate);
+        return taskRepository.save(taskToUpdate);
+    }
+
+    private Task getTaskFromDb(Integer taskId, Integer userId) {
+        return taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
+    }
+
+    private Project getProjectFromRequest(AddTaskRequest request, Integer userId) {
+        return request.getProjectId() != null ? projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+    }
+
+    private void updateFields(AddTaskRequest request, Integer userId, Project project, Task taskToUpdate) {
         taskToUpdate.setTitle(request.getTitle());
         taskToUpdate.setDescription(request.getDescription());
-        taskToUpdate.setProjectOrder(request.getProjectOrder());
-        if(haveDifferentDueDate(request.getDue(), taskToUpdate.getDue())) {
-            taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
-        }
-        taskToUpdate.setDue(request.getDue());
-        if(!haveSameProject(taskToUpdate, project)) {
-            List<Task> childrenWithUpdatedProject = updateChildrenProject(project, taskToUpdate, userId);
-            taskRepository.saveAll(childrenWithUpdatedProject);
-            taskToUpdate.setParent(null);
-        }
-        taskToUpdate.setProject(project);
+        changeDate(request, userId, taskToUpdate);
+        changeProject(request, userId, project, taskToUpdate);
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setCompletedAt(request.getCompletedAt());
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setOwner(userRepository.getById(userId));
         taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
         taskToUpdate.setModifiedAt(LocalDateTime.now());
-        return taskRepository.save(taskToUpdate);
+    }
+
+    private void changeProject(AddTaskRequest request, Integer userId, Project project, Task taskToUpdate) {
+        taskToUpdate.setProjectOrder(request.getProjectOrder());
+        if(!haveSameProject(taskToUpdate, project)) {
+            List<Task> childrenWithUpdatedProject = updateChildrenProject(project, taskToUpdate, userId);
+            taskRepository.saveAll(childrenWithUpdatedProject);
+            taskToUpdate.setParent(null);
+        }
+        taskToUpdate.setProject(project);
+    }
+
+    private void changeDate(AddTaskRequest request, Integer userId, Task taskToUpdate) {
+        if(haveDifferentDueDate(request.getDue(), taskToUpdate.getDue())) {
+            taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
+        }
+        taskToUpdate.setDue(request.getDue());
     }
 
     /**
@@ -90,8 +110,7 @@ public class TaskService {
      */
     @NotifyOnTaskChange
     public Task updateTaskWithoutProjectChange(AddTaskRequest request, Integer taskId, Integer userId) {
-        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
-                .orElseThrow(() -> new NotFoundException("No such task!"));
+        Task taskToUpdate = getTaskFromDb(taskId, userId);
         taskToUpdate.setTitle(request.getTitle());
         taskToUpdate.setDescription(request.getDescription());
         taskToUpdate.setProjectOrder(request.getProjectOrder());
@@ -127,8 +146,7 @@ public class TaskService {
      */
     @NotifyOnTaskChange
     public Task updateTaskDueDate(DateRequest request, Integer taskId, Integer userId) {
-        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
-                        .orElseThrow(() -> new NotFoundException("No such task!"));
+        Task taskToUpdate = getTaskFromDb(taskId, userId);
         if(haveDifferentDueDate(request.getDate(), taskToUpdate.getDue())) {
             taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
         }
@@ -146,8 +164,7 @@ public class TaskService {
      */
     @NotifyOnTaskChange
     public Task updateTaskPriority(PriorityRequest request, Integer taskId, Integer userId) {
-        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
-                .orElseThrow(() -> new NotFoundException("No such task!"));
+        Task taskToUpdate = getTaskFromDb(taskId, userId);
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
@@ -162,8 +179,7 @@ public class TaskService {
      */
     @NotifyOnTaskChange
     public Task updateTaskProject(IdRequest request, Integer taskId, Integer userId) {
-        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
-                .orElseThrow(() -> new NotFoundException("No such task!"));
+        Task taskToUpdate = getTaskFromDb(taskId, userId);
         Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
         if(!haveSameProject(taskToUpdate, project)) {
@@ -425,8 +441,7 @@ public class TaskService {
      */
     @NotifyOnTaskChange
     public Task updateTaskCollapsedState(BooleanRequest request, Integer taskId, Integer userId) {
-        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
-                .orElseThrow(() -> new NotFoundException("No such task!"));
+        Task taskToUpdate = getTaskFromDb(taskId, userId);
         taskToUpdate.setCollapsed(request.isFlag());
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
@@ -441,8 +456,7 @@ public class TaskService {
      */
     @NotifyOnTaskChange
     public Task updateTaskLabels(IdCollectionRequest request, Integer taskId, Integer userId) {
-        Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
-                .orElseThrow(() -> new NotFoundException("No such task!"));
+        Task taskToUpdate = getTaskFromDb(taskId, userId);
         taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getIds(), userId));
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
