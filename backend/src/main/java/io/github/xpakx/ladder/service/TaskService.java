@@ -30,6 +30,11 @@ public class TaskService {
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
 
+    /**
+     * Delete task from repository.
+     * @param taskId ID of the task to delete
+     * @param userId ID of an owner of the task
+     */
     @Transactional
     @NotifyOnTaskDeletion
     public void deleteTask(Integer taskId, Integer userId) {
@@ -41,6 +46,13 @@ public class TaskService {
                 .orElseThrow(() -> new NotFoundException("No such task!"));
     }
 
+    /**
+     * Updating task in repository.
+     * @param request Data to update the task
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Task with updated data
+     */
     @NotifyOnTaskChange
     public Task updateTask(AddTaskRequest request, Integer taskId, Integer userId) {
         Project project = request.getProjectId() != null ? projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
@@ -69,6 +81,13 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
+    /**
+     * Updating task in repository, but ignore project changes.
+     * @param request Data to update the task
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Task with updated data
+     */
     @NotifyOnTaskChange
     public Task updateTaskWithoutProjectChange(AddTaskRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
@@ -99,6 +118,13 @@ public class TaskService {
         return dueDate1.getYear() != dueDate2.getYear() || dueDate1.getDayOfYear() != dueDate2.getDayOfYear();
     }
 
+    /**
+     * Change task due date and add at the end of daily list.
+     * @param request Request with new due date
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Updated task
+     */
     @NotifyOnTaskChange
     public Task updateTaskDueDate(DateRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
@@ -111,6 +137,13 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
+    /**
+     * Change task priority
+     * @param request Request with new priority
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Updated task
+     */
     @NotifyOnTaskChange
     public Task updateTaskPriority(PriorityRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
@@ -120,6 +153,13 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
+    /**
+     * Change task's project and add at the end of project's task list.
+     * @param request Request with new project ID
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Updated task
+     */
     @NotifyOnTaskChange
     public Task updateTaskProject(IdRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
@@ -179,6 +219,13 @@ public class TaskService {
         }
    }
 
+    /**
+     * Change task completion state (if task is completed, all subtasks will become completed too).
+     * @param request Request with completion state
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Updated task
+     */
     @NotifyOnTaskChange
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.getByIdAndOwnerId(taskId, userId)
@@ -230,6 +277,12 @@ public class TaskService {
         return toReturn;
     }
 
+    /**
+     * Duplicate given task, and its subtasks
+     * @param taskId ID of the task to duplicate
+     * @param userId ID of an owner of the task
+     * @return All created tasks
+     */
     public List<TaskDetails> duplicate(Integer taskId, Integer userId) {
         Task taskToDuplicate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
@@ -290,6 +343,13 @@ public class TaskService {
                 .build();
     }
 
+    /**
+     * Move task after given task
+     * @param request Request with id of the task which should be before moved task
+     * @param userId ID of an owner of tasks
+     * @param taskToMoveId ID of the task to move
+     * @return Moved task
+     */
     @NotifyOnTaskChange
     public Task moveTaskAfter(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
@@ -315,6 +375,13 @@ public class TaskService {
         return task.getParent() != null;
     }
 
+    /**
+     * Move task as first child of given task.
+     * @param request Request with id of the new parent for moved task. If ID is null task is moved at first position.
+     * @param userId ID of an owner of tasks
+     * @param taskToMoveId ID of the task to move
+     * @return Moved task
+     */
     @NotifyOnTaskChange
     public Task moveTaskAsFirstChild(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
@@ -349,6 +416,13 @@ public class TaskService {
         }
     }
 
+    /**
+     * Change task collapsed state.
+     * @param request Request with collapsed state
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Updated task
+     */
     @NotifyOnTaskChange
     public Task updateTaskCollapsedState(BooleanRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
@@ -358,6 +432,13 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
+    /**
+     * Change task's labels.
+     * @param request Request with ids of labels
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Updated task
+     */
     @NotifyOnTaskChange
     public Task updateTaskLabels(IdCollectionRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
@@ -367,6 +448,12 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
+    /**
+     * Move task at first position
+     * @param userId ID of an owner of task
+     * @param taskToMoveId ID of the task to move
+     * @return Moved task
+     */
     @NotifyOnTaskChange
     public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {
         IdRequest request = new IdRequest();
@@ -426,6 +513,13 @@ public class TaskService {
         return !labelsWithDifferentOwner.equals(0L);
     }
 
+    /**
+     * Add new task with order after given task
+     * @param request Request with data to build new task
+     * @param userId ID of an owner of tasks
+     * @param afterId ID of the task which should be before newly created task
+     * @return Newly created task
+     */
     @NotifyOnTaskChange
     public Task addTaskAfter(AddTaskRequest request, Integer userId, Integer afterId) {
         Task afterTask = taskRepository.findByIdAndOwnerId(afterId, userId)
@@ -437,6 +531,13 @@ public class TaskService {
         return taskRepository.save(taskToAdd);
     }
 
+    /**
+     * Add new task with order before given task
+     * @param request Request with data to build new task
+     * @param userId ID of an owner of tasks
+     * @param beforeId ID of the task which should be after newly created task
+     * @return Newly created task
+     */
     @NotifyOnTaskChange
     public Task addTaskBefore(AddTaskRequest request, Integer userId, Integer beforeId) {
         Task beforeTask = taskRepository.findByIdAndOwnerId(beforeId, userId)
