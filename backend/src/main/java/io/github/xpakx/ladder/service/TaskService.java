@@ -22,6 +22,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+
 @Service
 @AllArgsConstructor
 public class TaskService {
@@ -129,13 +131,21 @@ public class TaskService {
     }
 
     private boolean haveDifferentDueDate(LocalDateTime dueDate1, LocalDateTime dueDate2) {
-        if(dueDate1 == null && dueDate2 == null) {
+        if(bothNull(dueDate1, dueDate2)) {
             return false;
         }
-        if(dueDate1 == null || dueDate2 == null) {
+        if(atLeastOneNull(dueDate1, dueDate2)) {
             return true;
         }
         return dueDate1.getYear() != dueDate2.getYear() || dueDate1.getDayOfYear() != dueDate2.getDayOfYear();
+    }
+
+    private boolean bothNull(Object a, Object b) {
+        return isNull(a) && isNull(b);
+    }
+
+    private boolean atLeastOneNull(Object a, Object b) {
+        return isNull(a) || isNull(b);
     }
 
     /**
