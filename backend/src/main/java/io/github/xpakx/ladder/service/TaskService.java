@@ -43,6 +43,13 @@ public class TaskService {
         this.taskRepository.deleteByIdAndOwnerId(taskId, userId);
     }
 
+
+    /**
+     * Get task details by ID.
+     * @param taskId ID of the task
+     * @param userId ID of an owner of the task
+     * @return Task details
+     */
     public TaskDetails getTaskById(Integer taskId, Integer userId) {
         return taskRepository.findProjectedByIdAndOwnerId(taskId, userId, TaskDetails.class)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
