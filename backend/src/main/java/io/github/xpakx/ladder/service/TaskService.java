@@ -111,20 +111,21 @@ public class TaskService {
     @NotifyOnTaskChange
     public Task updateTaskWithoutProjectChange(AddTaskRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = getTaskFromDb(taskId, userId);
+        updateFieldsWithoutProjectChange(request, userId, taskToUpdate);
+        return taskRepository.save(taskToUpdate);
+    }
+
+    private void updateFieldsWithoutProjectChange(AddTaskRequest request, Integer userId, Task taskToUpdate) {
         taskToUpdate.setTitle(request.getTitle());
         taskToUpdate.setDescription(request.getDescription());
         taskToUpdate.setProjectOrder(request.getProjectOrder());
-        if(haveDifferentDueDate(request.getDue(), taskToUpdate.getDue())) {
-            taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
-        }
-        taskToUpdate.setDue(request.getDue());
+        changeDate(request, userId, taskToUpdate);
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setCompletedAt(request.getCompletedAt());
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setOwner(userRepository.getById(userId));
         taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
         taskToUpdate.setModifiedAt(LocalDateTime.now());
-        return taskRepository.save(taskToUpdate);
     }
 
     private boolean haveDifferentDueDate(LocalDateTime dueDate1, LocalDateTime dueDate2) {
