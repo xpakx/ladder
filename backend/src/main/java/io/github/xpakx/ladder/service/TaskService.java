@@ -74,16 +74,8 @@ public class TaskService {
     }
 
     private void updateFields(AddTaskRequest request, Integer userId, Project project, Task taskToUpdate) {
-        taskToUpdate.setTitle(request.getTitle());
-        taskToUpdate.setDescription(request.getDescription());
-        changeDate(request, userId, taskToUpdate);
         changeProject(request, userId, project, taskToUpdate);
-        taskToUpdate.setPriority(request.getPriority());
-        taskToUpdate.setCompletedAt(request.getCompletedAt());
-        taskToUpdate.setPriority(request.getPriority());
-        taskToUpdate.setOwner(userRepository.getById(userId));
-        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
-        taskToUpdate.setModifiedAt(LocalDateTime.now());
+        updateFieldsWithoutProjectChange(request, userId, taskToUpdate);
     }
 
     private void changeProject(AddTaskRequest request, Integer userId, Project project, Task taskToUpdate) {
@@ -118,10 +110,10 @@ public class TaskService {
     }
 
     private void updateFieldsWithoutProjectChange(AddTaskRequest request, Integer userId, Task taskToUpdate) {
-        taskToUpdate.setTitle(request.getTitle());
-        taskToUpdate.setDescription(request.getDescription());
         taskToUpdate.setProjectOrder(request.getProjectOrder());
         changeDate(request, userId, taskToUpdate);
+        taskToUpdate.setTitle(request.getTitle());
+        taskToUpdate.setDescription(request.getDescription());
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setCompletedAt(request.getCompletedAt());
         taskToUpdate.setPriority(request.getPriority());
