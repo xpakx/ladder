@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @AllArgsConstructor
@@ -179,7 +180,7 @@ public class TaskService {
     }
 
     private boolean hasParent(AddTaskRequest request) {
-        return isNull(request.getParentId());
+        return nonNull(request.getParentId());
     }
 
     private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
