@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 @Service
 @AllArgsConstructor
 public class TaskPartialUpdateService {
@@ -110,16 +112,21 @@ public class TaskPartialUpdateService {
     }
 
     private boolean isTaskInCollaborativeProject(Task task) {
-        return task.getProject() != null && task.getProject().isCollaborative();
+        return hasProject(task) && task.getProject().isCollaborative();
+    }
+
+    private boolean hasProject(Task task) {
+        return nonNull(task.getProject());
     }
 
     private List<Task> completeTask(Integer userId, Task task) {
-        List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
-                task.getProject() != null ? task.getProject().getId() : null);
-        Map<Integer, List<Task>> tasksByParent = tasks.stream()
-                .filter((a) -> a.getParent() != null)
-                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
+        Map<Integer, List<Task>> tasksByParent = generateMapOfTasksByParentId(
+                taskRepository.findByOwnerIdAndProjectId(userId, getProjectId(task))
+        );
+        return transformAllSubtasksToCompleted(task, tasksByParent);
+    }
 
+    private List<Task> transformAllSubtasksToCompleted(Task task, Map<Integer, List<Task>> tasksByParent) {
         List<Task> toComplete = List.of(task);
         List<Task> toReturn = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
@@ -136,6 +143,16 @@ public class TaskPartialUpdateService {
             toComplete = newToComplete;
         }
         return toReturn;
+    }
+
+    private Integer getProjectId(Task task) {
+        return hasProject(task) ? task.getProject().getId() : null;
+    }
+
+    private Map<Integer, List<Task>> generateMapOfTasksByParentId(List<Task> tasks) {
+        return tasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
     }
 
     /**
