@@ -197,14 +197,23 @@ public class TaskPartialUpdateService {
     public Task updateAssigned(IdRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.findByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!"));
-        UserAccount assigned = !userId.equals(request.getId()) ?
-                userRepository.getCollaboratorByTaskIdAndId(taskId, request.getId())
-                        .orElseThrow(() -> new WrongOwnerException("Given user isn't collaborator on this project!"))
-                :
-                userRepository.getById(userId);
-        taskToUpdate.setAssigned(assigned);
+        taskToUpdate.setAssigned(getAssignedUserFromRequest(request, taskId, userId));
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
+    }
+
+    private UserAccount getAssignedUserFromRequest(IdRequest request, Integer taskId, Integer userId) {
+        return isAssignedUserDifferentThanOwner(request, userId) ?
+                getCollaboratorFromDb(request, taskId) : userRepository.getById(userId);
+    }
+
+    private UserAccount getCollaboratorFromDb(IdRequest request, Integer taskId) {
+        return userRepository.getCollaboratorByTaskIdAndId(taskId, request.getId())
+                .orElseThrow(() -> new WrongOwnerException("Given user isn't collaborator on this project!"));
+    }
+
+    private boolean isAssignedUserDifferentThanOwner(IdRequest request, Integer userId) {
+        return !userId.equals(request.getId());
     }
 
     /**
