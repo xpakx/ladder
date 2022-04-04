@@ -75,26 +75,30 @@ public class TaskPartialUpdateService {
     public Task completeTask(BooleanRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = taskRepository.getByIdAndOwnerId(taskId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
-        if(request.isFlag()) {
-            taskToUpdate.setAssigned(userRepository.getById(userId));
-            if(taskToUpdate.getProject()!=null && taskToUpdate.getProject().isCollaborative()) {
-                LocalDateTime now = LocalDateTime.now();
-                taskToUpdate.setCompleted(true);
-                taskToUpdate.setCompletedAt(now);
-                taskToUpdate.setModifiedAt(now);
-                return taskRepository.save(taskToUpdate);
-            } else {
-                return taskRepository.saveAll(completeTask(userId, taskToUpdate)).stream()
-                        .filter((a) -> a.getId().equals(taskId))
-                        .findAny()
-                        .orElse(null);
-            }
-        } else {
-            taskToUpdate.setCompleted(false);
-            taskToUpdate.setCompletedAt(null);
-            taskToUpdate.setModifiedAt(LocalDateTime.now());
-        }
+        return request.isFlag() ? makeTaskCompleted(taskId, userId, taskToUpdate) : makeTaskUncompleted(taskToUpdate);
+    }
+
+    private Task makeTaskUncompleted(Task taskToUpdate) {
+        taskToUpdate.setCompleted(false);
+        taskToUpdate.setCompletedAt(null);
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
+    }
+
+    private Task makeTaskCompleted(Integer taskId, Integer userId, Task taskToUpdate) {
+        taskToUpdate.setAssigned(userRepository.getById(userId));
+        if(taskToUpdate.getProject()!=null && taskToUpdate.getProject().isCollaborative()) {
+            LocalDateTime now = LocalDateTime.now();
+            taskToUpdate.setCompleted(true);
+            taskToUpdate.setCompletedAt(now);
+            taskToUpdate.setModifiedAt(now);
+            return taskRepository.save(taskToUpdate);
+        } else {
+            return taskRepository.saveAll(completeTask(userId, taskToUpdate)).stream()
+                    .filter((a) -> a.getId().equals(taskId))
+                    .findAny()
+                    .orElse(null);
+        }
     }
 
     private List<Task> completeTask(Integer userId, Task task) {
