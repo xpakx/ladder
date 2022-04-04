@@ -226,8 +226,7 @@ public class TaskPartialUpdateService {
     @NotifyOnTaskChange
     public Task updateTaskProject(IdRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = getTaskFromDb(taskId, userId);
-        Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
-                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+        Project project = getProjectFromDb(request, userId);
         if(!utils.haveSameProject(taskToUpdate, project)) {
             List<Task> childrenWithUpdatedProject = utils.updateChildrenProject(project, taskToUpdate, userId);
             taskRepository.saveAll(childrenWithUpdatedProject);
@@ -237,6 +236,11 @@ public class TaskPartialUpdateService {
         taskToUpdate.setProjectOrder(getMaxProjectOrder(request, userId)+1);
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
+    }
+
+    private Project getProjectFromDb(IdRequest request, Integer userId) {
+        return nonNull(request.getId()) ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
     }
 
     private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
