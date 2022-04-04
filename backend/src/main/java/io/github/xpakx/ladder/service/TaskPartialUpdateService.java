@@ -87,18 +87,30 @@ public class TaskPartialUpdateService {
 
     private Task makeTaskCompleted(Integer taskId, Integer userId, Task taskToUpdate) {
         taskToUpdate.setAssigned(userRepository.getById(userId));
-        if(taskToUpdate.getProject()!=null && taskToUpdate.getProject().isCollaborative()) {
-            LocalDateTime now = LocalDateTime.now();
-            taskToUpdate.setCompleted(true);
-            taskToUpdate.setCompletedAt(now);
-            taskToUpdate.setModifiedAt(now);
-            return taskRepository.save(taskToUpdate);
+        if(isTaskInCollaborativeProject(taskToUpdate)) {
+            return saveCompletedTask(taskToUpdate);
         } else {
-            return taskRepository.saveAll(completeTask(userId, taskToUpdate)).stream()
-                    .filter((a) -> a.getId().equals(taskId))
-                    .findAny()
-                    .orElse(null);
+            return saveCompletedTaskAndSubtasks(taskId, userId, taskToUpdate);
         }
+    }
+
+    private Task saveCompletedTask(Task taskToUpdate) {
+        LocalDateTime now = LocalDateTime.now();
+        taskToUpdate.setCompleted(true);
+        taskToUpdate.setCompletedAt(now);
+        taskToUpdate.setModifiedAt(now);
+        return taskRepository.save(taskToUpdate);
+    }
+
+    private Task saveCompletedTaskAndSubtasks(Integer taskId, Integer userId, Task taskToUpdate) {
+        return taskRepository.saveAll(completeTask(userId, taskToUpdate)).stream()
+                .filter((a) -> a.getId().equals(taskId))
+                .findAny()
+                .orElse(null);
+    }
+
+    private boolean isTaskInCollaborativeProject(Task task) {
+        return task.getProject() != null && task.getProject().isCollaborative();
     }
 
     private List<Task> completeTask(Integer userId, Task task) {
