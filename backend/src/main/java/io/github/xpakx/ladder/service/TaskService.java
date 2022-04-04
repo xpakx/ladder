@@ -149,7 +149,7 @@ public class TaskService {
 
     /**
      * Add new task to given project
-     * @param request Request with data to build new project
+     * @param request Request with data to build new task
      * @param projectId ID of the project for task
      * @param userId If of an owner of the project and newly created task
      * @return Newly created task
