@@ -37,30 +37,6 @@ public class TaskController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/tasks/{taskId}/due")
-    public ResponseEntity<Task> updateTaskDueDate(@RequestBody DateRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskDueDate(request, taskId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/tasks/{taskId}/priority")
-    public ResponseEntity<Task> updateTaskPriority(@RequestBody PriorityRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskPriority(request, taskId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/tasks/{taskId}/project")
-    public ResponseEntity<Task> updateTaskProject(@RequestBody IdRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskProject(request, taskId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/tasks/{taskId}/completed")
-    public ResponseEntity<Task> completeTask(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.completeTask(request, taskId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/tasks/{taskId}/duplicate")
     public ResponseEntity<List<TaskDetails>> duplicateTask(@PathVariable Integer taskId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(taskService.duplicate(taskId, userId), HttpStatus.CREATED);
@@ -78,18 +54,6 @@ public class TaskController {
     public ResponseEntity<Task> moveTaskAsFirstChild(@RequestBody IdRequest request, @PathVariable Integer userId,
                                                            @PathVariable Integer taskId) {
         return new ResponseEntity<>(taskService.moveTaskAsFirstChild(request, userId, taskId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/tasks/{taskId}/collapse")
-    public ResponseEntity<Task> updateTaskCollapsion(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskCollapsedState(request, taskId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/tasks/{taskId}/labels")
-    public ResponseEntity<Task> updateTaskLabels(@RequestBody IdCollectionRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskLabels(request, taskId, userId), HttpStatus.OK);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
@@ -143,14 +107,6 @@ public class TaskController {
     public ResponseEntity<List<Task>> updateOverdueTasksDueDate(@RequestBody DateRequest request, @PathVariable Integer userId) {
         return  new ResponseEntity<>(taskService.updateDueDateForOverdue(request, userId), HttpStatus.OK);
     }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/tasks/{taskId}/assigned")
-    public ResponseEntity<Task> updateAssigned(@RequestBody IdRequest request, @PathVariable Integer userId,
-                                                   @PathVariable Integer taskId) {
-        return new ResponseEntity<>(taskService.updateAssigned(request, taskId, userId), HttpStatus.OK);
-    }
-
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/projects/{projectId}/tasks")
