@@ -196,7 +196,7 @@ public class TaskService {
     }
 
     private boolean hasParent(AddTaskRequest request) {
-        return request.getParentId() != null;
+        return isNull(request.getParentId());
     }
 
     private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request, Integer userId) {
