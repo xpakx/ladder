@@ -25,6 +25,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CollabService {
     private final TaskService taskService;
+    private final TaskPartialUpdateService taskUpdateService;
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
@@ -91,12 +92,12 @@ public class CollabService {
 
     public Task updateTaskDueDate(DateRequest request, Integer taskId, Integer userId) {
         Integer ownerId = testAccessToTask(taskId, userId, true, false).orElse(userId);
-        return taskService.updateTaskDueDate(request, taskId, ownerId);
+        return taskUpdateService.updateTaskDueDate(request, taskId, ownerId);
     }
 
     public Task updateTaskPriority(PriorityRequest request, Integer taskId, Integer userId) {
         Integer ownerId = testAccessToTask(taskId, userId, true, false).orElse(userId);
-        return taskService.updateTaskPriority(request, taskId, ownerId);
+        return taskUpdateService.updateTaskPriority(request, taskId, ownerId);
     }
 
     @NotifyOnTaskChange
@@ -134,7 +135,7 @@ public class CollabService {
 
     public Task updateTaskCollapsion(BooleanRequest request, Integer taskId, Integer userId) {
         Integer ownerId = testAccessToTask(taskId, userId, true, false).orElse(userId);
-        return taskService.updateTaskCollapsedState(request, taskId, ownerId);
+        return taskUpdateService.updateTaskCollapsedState(request, taskId, ownerId);
     }
 
     public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {
