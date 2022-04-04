@@ -34,10 +34,22 @@ public class TaskUpdateUtilsService {
         return isNull(a) || isNull(b);
     }
 
+    /**
+     * Gat maximal daily order for given date and user
+     * @param request Request with date
+     * @param userId ID of an owner of the task
+     * @return Maximal daily order
+     */
     public Integer getMaxDailyOrder(DateRequest request, Integer userId) {
         return getMaxDailyOrder(request.getDate(), userId);
     }
 
+    /**
+     * Gat maximal daily order for given date and user
+     * @param request Request with date
+     * @param userId ID of an owner of the task
+     * @return Maximal daily order
+     */
     public Integer getMaxDailyOrder(AddTaskRequest request, Integer userId) {
         return getMaxDailyOrder(request.getDue(), userId);
     }
@@ -50,6 +62,12 @@ public class TaskUpdateUtilsService {
         }
     }
 
+    /**
+     * Test if two due dates are different.
+     * @param dueDate1 First date
+     * @param dueDate2 Second date
+     * @return Result of the test
+     */
     public boolean haveDifferentDueDate(LocalDateTime dueDate1, LocalDateTime dueDate2) {
         if(bothNull(dueDate1, dueDate2)) {
             return false;
@@ -60,6 +78,12 @@ public class TaskUpdateUtilsService {
         return dueDate1.getYear() != dueDate2.getYear() || dueDate1.getDayOfYear() != dueDate2.getDayOfYear();
     }
 
+    /**
+     * Transform list of IDs to list of label references.
+     * @param labelIds List od IDs
+     * @param userId ID of an owner of the task
+     * @return List of references
+     */
     public Set<Label> transformLabelIdsToLabelReferences(List<Integer> labelIds, Integer userId) {
         if(labelsWithDiffOwner(labelIds, userId)) {
             throw new NotFoundException("Cannot add labels you don't own!");
@@ -80,6 +104,13 @@ public class TaskUpdateUtilsService {
         return !labelsWithDifferentOwner.equals(0L);
     }
 
+    /**
+     * Reassign task's children to new project.
+     * @param project New project for tasks
+     * @param parent Task  which children should be updated
+     * @param userId ID of an owner of the task
+     * @return Maximal daily order
+     */
     public List<Task> updateChildrenProject(Project project, Task parent, Integer userId) {
         List<Task> tasksForProject = getTasksForProjectOrInbox(parent, userId)
                 .stream().filter((a) -> a.getParent() != null)
@@ -106,6 +137,12 @@ public class TaskUpdateUtilsService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Test if task is assigned to given project.
+     * @param taskToUpdate Task to test
+     * @param project Project to test
+     * @return Result of the test
+     */
     public boolean haveSameProject(Task taskToUpdate, Project project) {
         return (
                 (hasProject(taskToUpdate) && project != null && taskToUpdate.getProject().getId().equals(project.getId()))

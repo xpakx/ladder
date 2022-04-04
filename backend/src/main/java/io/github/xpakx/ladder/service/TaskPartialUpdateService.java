@@ -152,6 +152,13 @@ public class TaskPartialUpdateService {
         return taskRepository.save(taskToUpdate);
     }
 
+    /**
+     * Change task's assigned user.
+     * @param request Request with id of newly assigned user
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Updated task
+     */
     @Transactional
     @NotifyOnTaskChange
     public Task updateAssigned(IdRequest request, Integer taskId, Integer userId) {
@@ -190,7 +197,6 @@ public class TaskPartialUpdateService {
         return taskRepository.save(taskToUpdate);
     }
 
-
     private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
         if(hasId(request)) {
             return taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getId());
@@ -198,6 +204,7 @@ public class TaskPartialUpdateService {
             return taskRepository.getMaxOrderByOwnerId(userId);
         }
     }
+
     private boolean hasId(IdRequest request) {
         return request.getId() != null;
     }
