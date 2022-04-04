@@ -1,13 +1,13 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.aspect.NotifyOnTaskChange;
-import io.github.xpakx.ladder.entity.Label;
+import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.error.WrongOwnerException;
-import io.github.xpakx.ladder.repository.LabelRepository;
+import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
 import lombok.AllArgsConstructor;
@@ -18,14 +18,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.isNull;
-
 @Service
 @AllArgsConstructor
 public class TaskPartialUpdateService {
     private final TaskRepository taskRepository;
     private final UserAccountRepository userRepository;
-    private final LabelRepository labelRepository;
+    private final ProjectRepository projectRepository;
+    private final TaskUpdateUtilsService utils;
 
     private Task getTaskFromDb(Integer taskId, Integer userId) {
         return taskRepository.findByIdAndOwnerId(taskId, userId)
@@ -42,41 +41,12 @@ public class TaskPartialUpdateService {
     @NotifyOnTaskChange
     public Task updateTaskDueDate(DateRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = getTaskFromDb(taskId, userId);
-        if(haveDifferentDueDate(request.getDate(), taskToUpdate.getDue())) {
-            taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
+        if(utils.haveDifferentDueDate(request.getDate(), taskToUpdate.getDue())) {
+            taskToUpdate.setDailyViewOrder(utils.getMaxDailyOrder(request, userId)+1);
         }
         taskToUpdate.setDue(request.getDate());
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
-    }
-
-    private boolean bothNull(Object a, Object b) {
-        return isNull(a) && isNull(b);
-    }
-
-    private boolean atLeastOneNull(Object a, Object b) {
-        return isNull(a) || isNull(b);
-    }
-
-    private Integer getMaxDailyOrder(DateRequest request, Integer userId) {
-        return getMaxDailyOrder(request.getDate(), userId);
-    }
-
-    private Integer getMaxDailyOrder(LocalDateTime date, Integer userId) {
-        if(date == null) {
-            return 0;
-        } else {
-            return taskRepository.getMaxOrderByOwnerIdAndDate(userId, date);
-        }
-    }
-    private boolean haveDifferentDueDate(LocalDateTime dueDate1, LocalDateTime dueDate2) {
-        if(bothNull(dueDate1, dueDate2)) {
-            return false;
-        }
-        if(atLeastOneNull(dueDate1, dueDate2)) {
-            return true;
-        }
-        return dueDate1.getYear() != dueDate2.getYear() || dueDate1.getDayOfYear() != dueDate2.getDayOfYear();
     }
 
     /**
@@ -177,29 +147,9 @@ public class TaskPartialUpdateService {
     @NotifyOnTaskChange
     public Task updateTaskLabels(IdCollectionRequest request, Integer taskId, Integer userId) {
         Task taskToUpdate = getTaskFromDb(taskId, userId);
-        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getIds(), userId));
+        taskToUpdate.setLabels(utils.transformLabelIdsToLabelReferences(request.getIds(), userId));
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
-    }
-
-    private Set<Label> transformLabelIdsToLabelReferences(List<Integer> labelIds, Integer userId) {
-        if(labelsWithDiffOwner(labelIds, userId)) {
-            throw new NotFoundException("Cannot add labels you don't own!");
-        }
-        return labelIds != null ? labelIds.stream()
-                .map(labelRepository::getById)
-                .collect(Collectors.toSet()) : new HashSet<>();
-
-    }
-
-    private boolean labelsWithDiffOwner(List<Integer> labelIds, Integer userId) {
-        if(labelIds == null || labelIds.size() == 0) {
-            return false;
-        }
-        Long labelsWithDifferentOwner = labelRepository.findOwnerIdById(labelIds).stream()
-                .filter((a) -> !a.equals(userId))
-                .count();
-        return !labelsWithDifferentOwner.equals(0L);
     }
 
     @Transactional
@@ -215,5 +165,40 @@ public class TaskPartialUpdateService {
         taskToUpdate.setAssigned(assigned);
         taskToUpdate.setModifiedAt(LocalDateTime.now());
         return taskRepository.save(taskToUpdate);
+    }
+
+    /**
+     * Change task's project and add at the end of project's task list.
+     * @param request Request with new project ID
+     * @param taskId ID of the task to update
+     * @param userId ID of an owner of the task
+     * @return Updated task
+     */
+    @NotifyOnTaskChange
+    public Task updateTaskProject(IdRequest request, Integer taskId, Integer userId) {
+        Task taskToUpdate = getTaskFromDb(taskId, userId);
+        Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+        if(!utils.haveSameProject(taskToUpdate, project)) {
+            List<Task> childrenWithUpdatedProject = utils.updateChildrenProject(project, taskToUpdate, userId);
+            taskRepository.saveAll(childrenWithUpdatedProject);
+        }
+        taskToUpdate.setParent(null);
+        taskToUpdate.setProject(project);
+        taskToUpdate.setProjectOrder(getMaxProjectOrder(request, userId)+1);
+        taskToUpdate.setModifiedAt(LocalDateTime.now());
+        return taskRepository.save(taskToUpdate);
+    }
+
+
+    private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
+        if(hasId(request)) {
+            return taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getId());
+        } else {
+            return taskRepository.getMaxOrderByOwnerId(userId);
+        }
+    }
+    private boolean hasId(IdRequest request) {
+        return request.getId() != null;
     }
 }

@@ -31,6 +31,7 @@ public class TaskService {
     private final ProjectRepository projectRepository;
     private final UserAccountRepository userRepository;
     private final LabelRepository labelRepository;
+    private final TaskUpdateUtilsService utils;
 
     /**
      * Delete task from repository.
@@ -87,8 +88,8 @@ public class TaskService {
 
     private void changeProject(AddTaskRequest request, Integer userId, Project project, Task taskToUpdate) {
         taskToUpdate.setProjectOrder(request.getProjectOrder());
-        if(!haveSameProject(taskToUpdate, project)) {
-            List<Task> childrenWithUpdatedProject = updateChildrenProject(project, taskToUpdate, userId);
+        if(!utils.haveSameProject(taskToUpdate, project)) {
+            List<Task> childrenWithUpdatedProject = utils.updateChildrenProject(project, taskToUpdate, userId);
             taskRepository.saveAll(childrenWithUpdatedProject);
             taskToUpdate.setParent(null);
         }
@@ -96,8 +97,8 @@ public class TaskService {
     }
 
     private void changeDate(AddTaskRequest request, Integer userId, Task taskToUpdate) {
-        if(haveDifferentDueDate(request.getDue(), taskToUpdate.getDue())) {
-            taskToUpdate.setDailyViewOrder(getMaxDailyOrder(request, userId)+1);
+        if(utils.haveDifferentDueDate(request.getDue(), taskToUpdate.getDue())) {
+            taskToUpdate.setDailyViewOrder(utils.getMaxDailyOrder(request, userId)+1);
         }
         taskToUpdate.setDue(request.getDue());
     }
@@ -125,26 +126,8 @@ public class TaskService {
         taskToUpdate.setCompletedAt(request.getCompletedAt());
         taskToUpdate.setPriority(request.getPriority());
         taskToUpdate.setOwner(userRepository.getById(userId));
-        taskToUpdate.setLabels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
+        taskToUpdate.setLabels(utils.transformLabelIdsToLabelReferences(request.getLabelIds(), userId));
         taskToUpdate.setModifiedAt(LocalDateTime.now());
-    }
-
-    private boolean haveDifferentDueDate(LocalDateTime dueDate1, LocalDateTime dueDate2) {
-        if(bothNull(dueDate1, dueDate2)) {
-            return false;
-        }
-        if(atLeastOneNull(dueDate1, dueDate2)) {
-            return true;
-        }
-        return dueDate1.getYear() != dueDate2.getYear() || dueDate1.getDayOfYear() != dueDate2.getDayOfYear();
-    }
-
-    private boolean bothNull(Object a, Object b) {
-        return isNull(a) && isNull(b);
-    }
-
-    private boolean atLeastOneNull(Object a, Object b) {
-        return isNull(a) || isNull(b);
     }
 
     /**
@@ -180,14 +163,14 @@ public class TaskService {
                 .createdAt(now)
                 .modifiedAt(now)
                 .due(request.getDue())
-                .dailyViewOrder(getMaxDailyOrder(request, userId)+1)
+                .dailyViewOrder(utils.getMaxDailyOrder(request, userId)+1)
                 .parent(getParentFromAddTaskRequest(request))
                 .priority(request.getPriority())
                 .completed(false)
                 .collapsed(false)
                 .archived(false)
                 .owner(userRepository.getById(userId))
-                .labels(transformLabelIdsToLabelReferences(request, userId))
+                .labels(utils.transformLabelIdsToLabelReferences(request.getLabelIds(), userId))
                 .build();
     }
 
@@ -197,16 +180,6 @@ public class TaskService {
 
     private boolean hasParent(AddTaskRequest request) {
         return isNull(request.getParentId());
-    }
-
-    private Set<Label> transformLabelIdsToLabelReferences(AddTaskRequest request, Integer userId) {
-        if(labelsWithDiffOwner(request.getLabelIds(), userId)) {
-            throw new NotFoundException("Cannot add labels you don't own!");
-        }
-        return request.getLabelIds() != null ? request.getLabelIds().stream()
-                .map(labelRepository::getById)
-                .collect(Collectors.toSet()) : new HashSet<>();
-
     }
 
     private Integer getMaxProjectOrder(AddTaskRequest request, Integer userId) {
@@ -224,71 +197,6 @@ public class TaskService {
             }
         }
     }
-
-    /**
-     * Change task's project and add at the end of project's task list.
-     * @param request Request with new project ID
-     * @param taskId ID of the task to update
-     * @param userId ID of an owner of the task
-     * @return Updated task
-     */
-    @NotifyOnTaskChange
-    public Task updateTaskProject(IdRequest request, Integer taskId, Integer userId) {
-        Task taskToUpdate = getTaskFromDb(taskId, userId);
-        Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
-                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
-        if(!haveSameProject(taskToUpdate, project)) {
-            List<Task> childrenWithUpdatedProject = updateChildrenProject(project, taskToUpdate, userId);
-            taskRepository.saveAll(childrenWithUpdatedProject);
-        }
-        taskToUpdate.setParent(null);
-        taskToUpdate.setProject(project);
-        taskToUpdate.setProjectOrder(getMaxProjectOrder(request, userId)+1);
-        taskToUpdate.setModifiedAt(LocalDateTime.now());
-        return taskRepository.save(taskToUpdate);
-    }
-
-    private boolean haveSameProject(Task taskToUpdate, Project project) {
-        return (
-                (hasProject(taskToUpdate) && project != null && taskToUpdate.getProject().getId().equals(project.getId()))
-                ||
-                (!hasProject(taskToUpdate) && project == null)
-        );
-    }
-
-    private List<Task> updateChildrenProject(Project project, Task parent, Integer userId) {
-        List<Task> tasksForProject = getTasksForProjectOrInbox(parent, userId)
-                .stream().filter((a) -> a.getParent() != null)
-                .collect(Collectors.toList());
-        List<Task> children = getImminentChildren(List.of(parent), tasksForProject);
-        List<Task> toUpdate = new ArrayList<>();
-        while(children.size() > 0) {
-            children.forEach((a) -> a.setProject(project));
-            toUpdate.addAll(children);
-            children = getImminentChildren(children, tasksForProject);
-        }
-        return toUpdate;
-    }
-
-    private List<Task> getTasksForProjectOrInbox(Task parent, Integer userId) {
-        return parent.getProject() != null ? taskRepository.findByOwnerIdAndProjectId(userId, parent.getProject().getId()) :
-                taskRepository.findByOwnerIdAndProjectIsNull(userId);
-    }
-
-    private List<Task> getImminentChildren(List<Task> parentList, List<Task> tasksForProject) {
-        List<Integer> ids = parentList.stream().map(Task::getId).collect(Collectors.toList());
-        return tasksForProject.stream()
-                .filter((a) -> ids.contains(a.getParent().getId()))
-                .collect(Collectors.toList());
-    }
-
-    private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
-        if(hasId(request)) {
-            return taskRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getId());
-        } else {
-            return taskRepository.getMaxOrderByOwnerId(userId);
-        }
-   }
 
     /**
      * Duplicate given task, and its subtasks
@@ -449,49 +357,13 @@ public class TaskService {
                 .createdAt(LocalDateTime.now())
                 .due(request.getDue())
                 .priority(request.getPriority())
-                .dailyViewOrder(getMaxDailyOrder(request, userId)+1)
+                .dailyViewOrder(utils.getMaxDailyOrder(request, userId)+1)
                 .completed(false)
                 .collapsed(false)
                 .archived(false)
                 .owner(userRepository.getById(userId))
-                .labels(transformLabelIdsToLabelReferences(request.getLabelIds(), userId))
+                .labels(utils.transformLabelIdsToLabelReferences(request.getLabelIds(), userId))
                 .build();
-    }
-
-    private Integer getMaxDailyOrder(AddTaskRequest request, Integer userId) {
-        return getMaxDailyOrder(request.getDue(), userId);
-    }
-
-    private Integer getMaxDailyOrder(DateRequest request, Integer userId) {
-        return getMaxDailyOrder(request.getDate(), userId);
-    }
-
-    private Integer getMaxDailyOrder(LocalDateTime date, Integer userId) {
-        if(date == null) {
-            return 0;
-        } else {
-            return taskRepository.getMaxOrderByOwnerIdAndDate(userId, date);
-        }
-    }
-
-    private Set<Label> transformLabelIdsToLabelReferences(List<Integer> labelIds, Integer userId) {
-        if(labelsWithDiffOwner(labelIds, userId)) {
-            throw new NotFoundException("Cannot add labels you don't own!");
-        }
-        return labelIds != null ? labelIds.stream()
-                .map(labelRepository::getById)
-                .collect(Collectors.toSet()) : new HashSet<>();
-
-    }
-
-    private boolean labelsWithDiffOwner(List<Integer> labelIds, Integer userId) {
-        if(labelIds == null || labelIds.size() == 0) {
-            return false;
-        }
-        Long labelsWithDifferentOwner = labelRepository.findOwnerIdById(labelIds).stream()
-                        .filter((a) -> !a.equals(userId))
-                        .count();
-        return !labelsWithDifferentOwner.equals(0L);
     }
 
     /**
@@ -670,7 +542,7 @@ public class TaskService {
         LocalDateTime today = now.minusHours(now.getHour()).minusMinutes(now.getMinute()).minusSeconds(now.getSecond());
         List<Task> tasksToUpdate = taskRepository.findByOwnerIdAndDueBeforeAndCompletedIsFalse(userId, today);
         if(request.getDate() != null) {
-            int order = getMaxDailyOrder(request, userId) + 1;
+            int order = utils.getMaxDailyOrder(request, userId) + 1;
             for (Task task : tasksToUpdate) {
                 task.setDue(request.getDate());
                 task.setModifiedAt(now);

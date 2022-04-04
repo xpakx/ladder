@@ -37,12 +37,6 @@ public class TaskController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/tasks/{taskId}/project")
-    public ResponseEntity<Task> updateTaskProject(@RequestBody IdRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskProject(request, taskId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/tasks/{taskId}/duplicate")
     public ResponseEntity<List<TaskDetails>> duplicateTask(@PathVariable Integer taskId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(taskService.duplicate(taskId, userId), HttpStatus.CREATED);

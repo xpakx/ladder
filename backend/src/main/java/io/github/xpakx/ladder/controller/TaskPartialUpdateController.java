@@ -51,4 +51,10 @@ public class TaskPartialUpdateController {
                                                @PathVariable Integer taskId) {
         return new ResponseEntity<>(taskService.updateAssigned(request, taskId, userId), HttpStatus.OK);
     }
+
+    @PreAuthorize("#userId.toString() == authentication.principal.username")
+    @PutMapping("/tasks/{taskId}/project")
+    public ResponseEntity<Task> updateTaskProject(@RequestBody IdRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+        return  new ResponseEntity<>(taskService.updateTaskProject(request, taskId, userId), HttpStatus.OK);
+    }
 }
