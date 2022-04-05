@@ -241,6 +241,13 @@ public class TaskMovableService {
         return taskRepository.save(taskToAdd);
     }
 
+    /**
+     * Add task as child of given task.
+     * @param request Request with data to build new task
+     * @param userId ID of an owner of tasks
+     * @param parentId ID of the task which should be parent of new task
+     * @return Newly created task
+     */
     @NotifyOnTaskChange
     public Task addTaskAsChild(AddTaskRequest request, Integer userId, Integer parentId) {
         Task parentTask = taskRepository.findByIdAndOwnerId(parentId, userId)
