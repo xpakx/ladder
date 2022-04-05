@@ -33,17 +33,35 @@ public class TaskMovableService {
      * @return All created tasks
      */
     public List<TaskDetails> duplicate(Integer taskId, Integer userId) {
-        Task taskToDuplicate = taskRepository.findByIdAndOwnerId(taskId, userId)
-                .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
-
-        List<Task> tasks = taskRepository.findByOwnerIdAndProjectId(userId,
-                taskToDuplicate.getProject() != null ? taskToDuplicate.getProject().getId() : null);
-        Map<Integer, List<Task>> tasksByParent = tasks.stream()
-                .filter((a) -> a.getParent() != null)
-                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
-
+        Task taskToDuplicate = getTaskFromDb(taskId, userId);
+        List<Task> tasks = getAllTasksFromProject(userId, taskToDuplicate.getProject());
         Task duplicatedTask = duplicate(taskToDuplicate, taskToDuplicate.getParent());
+        List<Task> allDuplicated = duplicateChildren(generateTaskMapForUser(tasks), duplicatedTask);
+        updateOrders(userId, duplicatedTask);
+        List<Integer> ids = taskRepository.saveAll(allDuplicated).stream()
+                .map(Task::getId)
+                .collect(Collectors.toList());
+        return taskRepository.findByIdIn(ids);
+    }
 
+    private List<Task> getAllTasksFromProject(Integer userId, Project project) {
+        return taskRepository.findByOwnerIdAndProjectId(userId,
+                project != null ? project.getId() : null);
+    }
+
+    private Task getTaskFromDb(Integer taskId, Integer userId) {
+        return taskRepository.findByIdAndOwnerId(taskId, userId)
+                .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
+    }
+
+    private void updateOrders(Integer userId, Task duplicatedTask) {
+        incrementOrderOfTasksAfter(userId, duplicatedTask);
+        duplicatedTask.setProjectOrder(duplicatedTask.getProjectOrder()+1);
+        incrementDailyOrderOfTasksAfter(userId, duplicatedTask);
+        duplicatedTask.setDailyViewOrder(duplicatedTask.getDailyViewOrder()+1);
+    }
+
+    private List<Task> duplicateChildren(Map<Integer, List<Task>> tasksByParent, Task duplicatedTask) {
         List<Task> toDuplicate = List.of(duplicatedTask);
         List<Task> allDuplicated = new ArrayList<>();
         allDuplicated.add(duplicatedTask);
@@ -62,16 +80,13 @@ public class TaskMovableService {
             toDuplicate = newToDuplicate;
             allDuplicated.addAll(newToDuplicate);
         }
+        return allDuplicated;
+    }
 
-        incrementOrderOfTasksAfter(userId, duplicatedTask);
-        duplicatedTask.setProjectOrder(duplicatedTask.getProjectOrder()+1);
-        incrementDailyOrderOfTasksAfter(userId, duplicatedTask);
-        duplicatedTask.setDailyViewOrder(duplicatedTask.getDailyViewOrder()+1);
-
-        List<Integer> ids = taskRepository.saveAll(allDuplicated).stream()
-                .map(Task::getId)
-                .collect(Collectors.toList());
-        return taskRepository.findByIdIn(ids);
+    private Map<Integer, List<Task>> generateTaskMapForUser(List<Task> tasks) {
+        return tasks.stream()
+                .filter((a) -> a.getParent() != null)
+                .collect(Collectors.groupingBy((a) -> a.getParent().getId()));
     }
 
     private Task duplicate(Task originalTask, Task parent) {
