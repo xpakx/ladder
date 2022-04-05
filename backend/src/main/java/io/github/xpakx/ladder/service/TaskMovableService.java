@@ -70,7 +70,6 @@ public class TaskMovableService {
             for (Task parent : toDuplicate) {
                 List<Task> children = tasksByParent.getOrDefault(parent.getId(), new ArrayList<>());
                 parent.setId(null);
-
                 children = children.stream()
                         .map((a) -> duplicate(a, parent))
                         .collect(Collectors.toList());
@@ -260,7 +259,7 @@ public class TaskMovableService {
      * Add task as child of given task.
      * @param request Request with data to build new task
      * @param userId ID of an owner of tasks
-     * @param parentId ID of the task which should be parent of new task
+     * @param parentId ID of the task which should be a parent of new task
      * @return Newly created task
      */
     @NotifyOnTaskChange
