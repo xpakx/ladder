@@ -551,4 +551,52 @@ class TaskControllerTest {
                 .statusCode(CREATED.value());
         assertEquals(2*tasks, taskRepository.findAll().size());
     }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskAssignationIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/assigned", userId, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskAssignationIfTaskNotFound() {
+        IdRequest request = getValidIdRequest(0);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/assigned", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldAssignOwnerToTask() {
+        Integer taskId = addTaskAndReturnId();
+        IdRequest request = getValidIdRequest(userId);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/assigned", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+        Task task = taskRepository.findById(taskId).orElse(null);
+        assertNotNull(task);
+        assertNotNull(task.getAssigned());
+        assertThat(task.getAssigned().getUsername(), is(equalTo("user1")));
+    }
 }
