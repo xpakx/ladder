@@ -42,7 +42,7 @@ public class TaskPartialUpdateController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/collapse")
-    public ResponseEntity<TaskUpdateDto> updateTaskCollapsion(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+    public ResponseEntity<TaskUpdateDto> updateTaskCollapsedState(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
         return new ResponseEntity<>(
                 TaskUpdateDto.from(taskService.updateTaskCollapsedState(request, taskId, userId)),
                 HttpStatus.OK
