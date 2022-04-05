@@ -1,6 +1,5 @@
 package io.github.xpakx.ladder.controller;
 
-import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.TaskService;
 import lombok.AllArgsConstructor;

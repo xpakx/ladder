@@ -1,9 +1,9 @@
 package io.github.xpakx.ladder.controller;
 
-import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.AddTaskRequest;
 import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.entity.dto.TaskDetails;
+import io.github.xpakx.ladder.entity.dto.TaskUpdateDto;
 import io.github.xpakx.ladder.service.TaskMovableService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,47 +22,65 @@ public class TaskMovableController {
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/tasks/{taskId}/duplicate")
     public ResponseEntity<List<TaskDetails>> duplicateTask(@PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.duplicate(taskId, userId), HttpStatus.CREATED);
+        return new ResponseEntity<>(taskService.duplicate(taskId, userId), HttpStatus.CREATED);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/move/after")
-    public ResponseEntity<Task> moveTaskAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
-                                              @PathVariable Integer taskId) {
-        return new ResponseEntity<>(taskService.moveTaskAfter(request, userId, taskId), HttpStatus.OK);
+    public ResponseEntity<TaskUpdateDto> moveTaskAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
+                                                       @PathVariable Integer taskId) {
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.moveTaskAfter(request, userId, taskId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/move/asChild")
-    public ResponseEntity<Task> moveTaskAsFirstChild(@RequestBody IdRequest request, @PathVariable Integer userId,
+    public ResponseEntity<TaskUpdateDto> moveTaskAsFirstChild(@RequestBody IdRequest request, @PathVariable Integer userId,
                                                      @PathVariable Integer taskId) {
-        return new ResponseEntity<>(taskService.moveTaskAsFirstChild(request, userId, taskId), HttpStatus.OK);
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.moveTaskAsFirstChild(request, userId, taskId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/move/asFirst")
-    public ResponseEntity<Task> moveTaskAsFirst(@PathVariable Integer userId, @PathVariable Integer taskId) {
-        return  new ResponseEntity<>(taskService.moveTaskAsFirst(userId, taskId), HttpStatus.OK);
+    public ResponseEntity<TaskUpdateDto> moveTaskAsFirst(@PathVariable Integer userId, @PathVariable Integer taskId) {
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.moveTaskAsFirst(userId, taskId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/tasks/{taskId}/after")
-    public ResponseEntity<Task> addTaskAfter(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
+    public ResponseEntity<TaskUpdateDto> addTaskAfter(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
                                              @PathVariable Integer taskId) {
-        return  new ResponseEntity<>(taskService.addTaskAfter(request, userId, taskId), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.addTaskAfter(request, userId, taskId)),
+                HttpStatus.CREATED
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/tasks/{taskId}/children")
-    public ResponseEntity<Task> addTaskAsChild(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
+    public ResponseEntity<TaskUpdateDto> addTaskAsChild(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
                                                @PathVariable Integer taskId) {
-        return  new ResponseEntity<>(taskService.addTaskAsChild(request, userId, taskId), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.addTaskAsChild(request, userId, taskId)),
+                HttpStatus.CREATED
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/tasks/{taskId}/before")
-    public ResponseEntity<Task> addTaskBefore(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
+    public ResponseEntity<TaskUpdateDto> addTaskBefore(@RequestBody AddTaskRequest request, @PathVariable Integer userId,
                                               @PathVariable Integer taskId) {
-        return  new ResponseEntity<>(taskService.addTaskBefore(request, userId, taskId), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.addTaskBefore(request, userId, taskId)),
+                HttpStatus.CREATED
+        );
     }
 }
