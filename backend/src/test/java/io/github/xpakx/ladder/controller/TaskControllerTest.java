@@ -680,4 +680,49 @@ class TaskControllerTest {
                 .build();
         return taskRepository.save(task).getId();
     }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskCollapsedStateIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/collapsed", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskCollapsedStateIfTaskNotFound() {
+        BooleanRequest request = getValidBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/collapsed", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldCollapseTask() {
+        Integer taskId = addTaskAndReturnId();
+        BooleanRequest request = getValidBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/collapsed", userId, taskId)
+        .then()
+                .statusCode(OK.value())
+                .body("collapsed", equalTo(true));
+    }
 }
