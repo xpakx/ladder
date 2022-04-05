@@ -1,7 +1,5 @@
 package io.github.xpakx.ladder.controller;
 
-
-import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.service.TaskPartialUpdateService;
 import lombok.AllArgsConstructor;
@@ -17,44 +15,65 @@ public class TaskPartialUpdateController {
     private final TaskPartialUpdateService taskService;
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/due")
-    public ResponseEntity<Task> updateTaskDueDate(@RequestBody DateRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskDueDate(request, taskId, userId), HttpStatus.OK);
+    public ResponseEntity<TaskUpdateDto> updateTaskDueDate(@RequestBody DateRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.updateTaskDueDate(request, taskId, userId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/priority")
-    public ResponseEntity<Task> updateTaskPriority(@RequestBody PriorityRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskPriority(request, taskId, userId), HttpStatus.OK);
+    public ResponseEntity<TaskUpdateDto> updateTaskPriority(@RequestBody PriorityRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.updateTaskPriority(request, taskId, userId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/completed")
-    public ResponseEntity<Task> completeTask(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.completeTask(request, taskId, userId), HttpStatus.OK);
+    public ResponseEntity<TaskUpdateDto> completeTask(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.completeTask(request, taskId, userId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/collapse")
-    public ResponseEntity<Task> updateTaskCollapsion(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskCollapsedState(request, taskId, userId), HttpStatus.OK);
+    public ResponseEntity<TaskUpdateDto> updateTaskCollapsedState(@RequestBody BooleanRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.updateTaskCollapsedState(request, taskId, userId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/labels")
-    public ResponseEntity<Task> updateTaskLabels(@RequestBody IdCollectionRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskLabels(request, taskId, userId), HttpStatus.OK);
+    public ResponseEntity<TaskUpdateDto> updateTaskLabels(@RequestBody IdCollectionRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.updateTaskLabels(request, taskId, userId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/assigned")
-    public ResponseEntity<Task> updateAssigned(@RequestBody IdRequest request, @PathVariable Integer userId,
+    public ResponseEntity<TaskUpdateDto> updateAssigned(@RequestBody IdRequest request, @PathVariable Integer userId,
                                                @PathVariable Integer taskId) {
-        return new ResponseEntity<>(taskService.updateAssigned(request, taskId, userId), HttpStatus.OK);
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.updateAssigned(request, taskId, userId)),
+                HttpStatus.OK
+        );
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PutMapping("/tasks/{taskId}/project")
-    public ResponseEntity<Task> updateTaskProject(@RequestBody IdRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(taskService.updateTaskProject(request, taskId, userId), HttpStatus.OK);
+    public ResponseEntity<TaskUpdateDto> updateTaskProject(@RequestBody IdRequest request, @PathVariable Integer taskId, @PathVariable Integer userId) {
+        return new ResponseEntity<>(
+                TaskUpdateDto.from(taskService.updateTaskProject(request, taskId, userId)),
+                HttpStatus.OK
+        );
     }
 }

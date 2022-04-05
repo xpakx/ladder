@@ -1,9 +1,11 @@
 package io.github.xpakx.ladder.controller;
 
+import io.github.xpakx.ladder.entity.Collaboration;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.*;
+import io.github.xpakx.ladder.repository.CollaborationRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -47,6 +49,8 @@ class TaskControllerTest {
     ProjectRepository projectRepository;
     @Autowired
     TaskRepository taskRepository;
+    @Autowired
+    CollaborationRepository collaborationRepository;
 
     @BeforeEach
     void setUp() {
@@ -62,6 +66,7 @@ class TaskControllerTest {
 
     @AfterEach
     void tearDown() {
+        collaborationRepository.deleteAll();
         taskRepository.deleteAll();
         projectRepository.deleteAll();
         userRepository.deleteAll();
@@ -550,5 +555,174 @@ class TaskControllerTest {
         .then()
                 .statusCode(CREATED.value());
         assertEquals(2*tasks, taskRepository.findAll().size());
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskAssignationIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/assigned", userId, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskAssignationIfTaskNotFound() {
+        IdRequest request = getValidIdRequest(0);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/assigned", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldAssignOwnerToTask() {
+        Integer taskId = addTaskAndReturnId();
+        IdRequest request = getValidIdRequest(userId);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/assigned", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+        Task task = taskRepository.findById(taskId).orElse(null);
+        assertNotNull(task);
+        assertNotNull(task.getAssigned());
+        assertThat(task.getAssigned().getUsername(), is(equalTo("user1")));
+    }
+
+    @Test
+    void shouldNotAssignNonCollaboratorToTask() {
+        Integer taskId = addTaskAndReturnId();
+        IdRequest request = getValidIdRequest(addUser("user2"));
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/assigned", userId, taskId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+        Task task = taskRepository.findById(taskId).orElse(null);
+        assertNotNull(task);
+        assertNull(task.getAssigned());
+    }
+
+    private Integer addUser(String username) {
+        UserAccount user = UserAccount.builder()
+                .username(username)
+                .password("password")
+                .roles(new HashSet<>())
+                .build();
+        return userRepository.save(user).getId();
+    }
+
+    @Test
+    void shouldAssignCollaboratorToTask() {
+        Integer collaboratorId = addUser("collaborator");
+        Integer taskId = addTaskAndProjectWithCollaboratorAndReturnTaskId(collaboratorId);
+        IdRequest request = getValidIdRequest(collaboratorId);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/assigned", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+        Task task = taskRepository.findById(taskId).orElse(null);
+        assertNotNull(task);
+        assertNotNull(task.getAssigned());
+        assertThat(task.getAssigned().getUsername(), is(equalTo("collaborator")));
+    }
+
+    private Integer addTaskAndProjectWithCollaboratorAndReturnTaskId(Integer collaboratorId) {
+        Project project = Project.builder()
+                .owner(userRepository.getById(this.userId))
+                .name("Test Project")
+                .generalOrder(1)
+                .build();
+        project = projectRepository.save(project);
+        Collaboration collaboration = Collaboration.builder()
+                .owner(userRepository.getById(collaboratorId))
+                .project(project)
+                .editionAllowed(true)
+                .taskCompletionAllowed(true)
+                .build();
+        collaborationRepository.save(collaboration);
+        project.setCollaborative(true);
+        project.setCollaborators(List.of(collaboration));
+        Integer projectId = projectRepository.save(project).getId();
+        Task task = Task.builder()
+                .owner(userRepository.getById(userId))
+                .project(projectRepository.getById(projectId))
+                .title("Test Task")
+                .build();
+        return taskRepository.save(task).getId();
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskCollapsedStateIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/collapse", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskCollapsedStateIfTaskNotFound() {
+        BooleanRequest request = getValidBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/collapse", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldCollapseTask() {
+        Integer taskId = addTaskAndReturnId();
+        BooleanRequest request = getValidBooleanRequest();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/collapse", userId, taskId)
+        .then()
+                .statusCode(OK.value())
+                .body("collapsed", equalTo(true));
     }
 }

@@ -26,6 +26,7 @@ import java.util.Optional;
 public class CollabService {
     private final TaskService taskService;
     private final TaskPartialUpdateService taskUpdateService;
+    private final TaskMovableService taskMovableService;
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
@@ -67,17 +68,17 @@ public class CollabService {
 
     public Task addTaskAfter(AddTaskRequest request, Integer userId, Integer afterId) {
         Integer ownerId = testAccessToTask(afterId, userId, true, false).orElse(userId);
-        return taskService.addTaskAfter(request, ownerId, afterId);
+        return taskMovableService.addTaskAfter(request, ownerId, afterId);
     }
 
     public Task addTaskBefore(AddTaskRequest request, Integer userId, Integer beforeId) {
         Integer ownerId = testAccessToTask(beforeId, userId, true, false).orElse(userId);
-        return taskService.addTaskBefore(request, ownerId, beforeId);
+        return taskMovableService.addTaskBefore(request, ownerId, beforeId);
     }
 
     public Task addTaskAsChild(AddTaskRequest request, Integer userId, Integer parentId) {
         Integer ownerId = testAccessToTask(parentId, userId, true, false).orElse(userId);
-        return taskService.addTaskAsChild(request, ownerId, parentId);
+        return taskMovableService.addTaskAsChild(request, ownerId, parentId);
     }
 
     public void deleteTask(Integer taskId, Integer userId) {
@@ -125,12 +126,12 @@ public class CollabService {
 
     public Task moveTaskAfter(IdRequest request, Integer userId, Integer taskToMoveId) {
         Integer ownerId = testAccessToTask(taskToMoveId, userId, true, false).orElse(userId);
-        return taskService.moveTaskAfter(request, ownerId, taskToMoveId);
+        return taskMovableService.moveTaskAfter(request, ownerId, taskToMoveId);
     }
 
     public Task moveTaskAsFirstChild(IdRequest request, Integer userId, Integer taskToMoveId) {
         Integer ownerId = testAccessToTask(taskToMoveId, userId, true, false).orElse(userId);
-        return taskService.moveTaskAsFirstChild(request, ownerId, taskToMoveId);
+        return taskMovableService.moveTaskAsFirstChild(request, ownerId, taskToMoveId);
     }
 
     public Task updateTaskCollapsion(BooleanRequest request, Integer taskId, Integer userId) {
@@ -140,7 +141,7 @@ public class CollabService {
 
     public Task moveTaskAsFirst(Integer userId, Integer taskToMoveId) {
         Integer ownerId = testAccessToTask(taskToMoveId, userId, true, false).orElse(userId);
-        return  taskService.moveTaskAsFirst(ownerId, taskToMoveId);
+        return  taskMovableService.moveTaskAsFirst(ownerId, taskToMoveId);
     }
 
     public List<CollaborationDetails> getNotAcceptedCollaborations(Integer userId) {
