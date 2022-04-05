@@ -687,7 +687,7 @@ class TaskControllerTest {
                 .log()
                 .uri()
         .when()
-                .put(baseUrl + "/{userId}/tasks/{taskId}/collapsed", 1, 1)
+                .put(baseUrl + "/{userId}/tasks/{taskId}/collapse", 1, 1)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -703,7 +703,7 @@ class TaskControllerTest {
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
-                .put(baseUrl + "/{userId}/tasks/{taskId}/collapsed", userId, 1)
+                .put(baseUrl + "/{userId}/tasks/{taskId}/collapse", userId, 1)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
@@ -720,7 +720,7 @@ class TaskControllerTest {
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
-                .put(baseUrl + "/{userId}/tasks/{taskId}/collapsed", userId, taskId)
+                .put(baseUrl + "/{userId}/tasks/{taskId}/collapse", userId, taskId)
         .then()
                 .statusCode(OK.value())
                 .body("collapsed", equalTo(true));
