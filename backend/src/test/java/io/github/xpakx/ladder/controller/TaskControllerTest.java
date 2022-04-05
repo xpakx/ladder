@@ -599,4 +599,33 @@ class TaskControllerTest {
         assertNotNull(task.getAssigned());
         assertThat(task.getAssigned().getUsername(), is(equalTo("user1")));
     }
+
+    @Test
+    void shouldNotAssignNonCollaboratorToTask() {
+        Integer taskId = addTaskAndReturnId();
+        IdRequest request = getValidIdRequest(addUser("user2"));
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/assigned", userId, taskId)
+                .then()
+                .statusCode(BAD_REQUEST.value());
+        Task task = taskRepository.findById(taskId).orElse(null);
+        assertNotNull(task);
+        assertNull(task.getAssigned());
+    }
+
+    private Integer addUser(String username) {
+        UserAccount user = UserAccount.builder()
+                .username(username)
+                .password("password")
+                .roles(new HashSet<>())
+                .build();
+        return userRepository.save(user).getId();
+    }
 }
