@@ -277,7 +277,7 @@ public class TaskMovableService {
         taskToAdd.setParent(parent);
         taskToAdd.setProject(parent.getProject());
         taskToAdd.setProjectOrder(
-                taskRepository.getMaxOrderByOwnerIdAndParentId(userId, parent.getId())
+                taskRepository.getMaxOrderByOwnerIdAndParentId(userId, parent.getId())+1
         );
         return taskToAdd;
     }
