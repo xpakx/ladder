@@ -259,4 +259,47 @@ public class TaskMovableControllerTest {
                 hasProperty("projectOrder", is(1))
         )));
     }
+
+    @Test
+    void shouldRespondWith401ToMoveTaskAsFirstIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/move/asFirst", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldMoveTaskAsFirst() {
+        List<Integer> ids = add3TasksInOrderAndReturnListOfIds();
+
+        Integer taskId = ids.get(2);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/move/asFirst", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, hasSize(3));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 1")),
+                hasProperty("projectOrder", is(2))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 2")),
+                hasProperty("projectOrder", is(3))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 3")),
+                hasProperty("projectOrder", is(1))
+        )));
+    }
 }
