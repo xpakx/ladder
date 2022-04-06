@@ -434,4 +434,67 @@ public class TaskMovableControllerTest {
                 hasProperty("projectOrder", is(3))
         )));
     }
+
+    @Test
+    void shouldRespondWith401ToAddTaskAsChildIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/tasks/{taskId}/children", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddTaskAsChild() {
+        AddTaskRequest request = getValidAddTaskRequest();
+        Integer parentId = addTaskWithParentAndReturnParentId();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/tasks/{parentId}/children", userId, parentId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()))
+                .body("description", equalTo(request.getDescription()));
+
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, hasSize(3));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Added Task")),
+                hasProperty("projectOrder", is(2)),
+                hasProperty("parent", hasProperty("id", is(parentId)))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 1")),
+                hasProperty("projectOrder", is(1))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Parent")),
+                hasProperty("projectOrder", is(1))
+        )));
+    }
+
+    private Integer addTaskWithParentAndReturnParentId() {
+        Task parent = Task.builder()
+                .owner(userRepository.getById(userId))
+                .projectOrder(1)
+                .title("Parent")
+                .build();
+        parent = taskRepository.save(parent);
+        Task task1 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .projectOrder(1)
+                .parent(parent)
+                .title("Task 1")
+                .build();
+        taskRepository.save(task1);
+        return parent.getId();
+    }
 }
