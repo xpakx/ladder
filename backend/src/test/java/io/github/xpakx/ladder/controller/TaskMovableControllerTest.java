@@ -385,4 +385,53 @@ public class TaskMovableControllerTest {
         request.setPriority(0);
         return request;
     }
+
+    @Test
+    void shouldRespondWith401ToAddTaskBeforeIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/tasks/{taskId}/before", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddTaskBefore() {
+        AddTaskRequest request = getValidAddTaskRequest();
+        Integer taskId = add3TasksInOrderAndReturnIdOfMiddleOne();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/tasks/{taskId}/before", userId, taskId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()))
+                .body("description", equalTo(request.getDescription()));
+
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, hasSize(4));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Added Task")),
+                hasProperty("projectOrder", is(1))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 1")),
+                hasProperty("projectOrder", is(0))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 2")),
+                hasProperty("projectOrder", is(2))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 3")),
+                hasProperty("projectOrder", is(3))
+        )));
+    }
 }
