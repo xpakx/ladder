@@ -3,7 +3,9 @@ package io.github.xpakx.ladder.controller;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.dto.AddTaskRequest;
 import io.github.xpakx.ladder.entity.dto.IdRequest;
+import io.github.xpakx.ladder.entity.dto.ProjectRequest;
 import io.github.xpakx.ladder.repository.CollaborationRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -27,8 +29,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TaskMovableControllerTest {
@@ -301,5 +302,87 @@ public class TaskMovableControllerTest {
                 hasProperty("title", is("Task 3")),
                 hasProperty("projectOrder", is(1))
         )));
+    }
+
+    @Test
+    void shouldRespondWith401ToAddTaskAfterIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/tasks/{taskId}/after", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddTaskAfter() {
+        AddTaskRequest request = getValidAddTaskRequest();
+        Integer taskId = add3TasksInOrderAndReturnIdOfMiddleOne();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/tasks/{taskId}/after", userId, taskId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()))
+                .body("description", equalTo(request.getDescription()))
+                .body("priority", equalTo(request.getPriority()));
+
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, hasSize(4));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Added Task")),
+                hasProperty("projectOrder", is(2))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 1")),
+                hasProperty("projectOrder", is(0))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 2")),
+                hasProperty("projectOrder", is(1))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 3")),
+                hasProperty("projectOrder", is(3))
+        )));
+    }
+
+    private Integer add3TasksInOrderAndReturnIdOfMiddleOne() {
+        Task task1 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .projectOrder(0)
+                .title("Task 1")
+                .build();
+        Task task2 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .projectOrder(1)
+                .title("Task 2")
+                .build();
+        Task task3 = Task.builder()
+                .owner(userRepository.getById(userId))
+                .projectOrder(2)
+                .title("Task 3")
+                .build();
+        return taskRepository.saveAll(List.of(task1, task2, task3)).stream()
+                .filter(a -> a.getProjectOrder().equals(1))
+                .map(Task::getId)
+                .findAny()
+                .orElse(-1);
+    }
+
+    private AddTaskRequest getValidAddTaskRequest() {
+        AddTaskRequest request = new AddTaskRequest();
+        request.setTitle("Added Task");
+        request.setDescription("Newly added task.");
+        request.setProjectOrder(0);
+        request.setPriority(0);
+        return request;
     }
 }
