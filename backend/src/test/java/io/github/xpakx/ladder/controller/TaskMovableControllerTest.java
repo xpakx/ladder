@@ -1,5 +1,6 @@
 package io.github.xpakx.ladder.controller;
 
+import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.IdRequest;
@@ -211,5 +212,51 @@ public class TaskMovableControllerTest {
                 .sorted(Comparator.comparingInt(Task::getProjectOrder))
                 .map(Task::getId)
                 .collect(Collectors.toList());
+    }
+
+    @Test
+    void shouldRespondWith401ToMoveTaskAsFirstChildIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/move/asChild", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldMoveTaskAsFirstChild() {
+        List<Integer> ids = add3TasksWithParentInOrderAndReturnListOfIds();
+        IdRequest request = getValidIdRequest(
+                taskRepository.findById(ids.get(0)).get().getParent().getId()
+        );
+        Integer taskId = ids.get(2);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/move/asChild", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, hasSize(4));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 1")),
+                hasProperty("projectOrder", is(2))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 2")),
+                hasProperty("projectOrder", is(3))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 3")),
+                hasProperty("projectOrder", is(1))
+        )));
     }
 }
