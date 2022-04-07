@@ -2,7 +2,7 @@ package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
-import io.github.xpakx.ladder.entity.dto.IdRequest;
+import io.github.xpakx.ladder.entity.dto.DateRequest;
 import io.github.xpakx.ladder.repository.CollaborationRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -89,7 +90,7 @@ public class TaskDailyControllerTest {
     @Test
     @Disabled
     void shouldMoveTaskAsFirst() {
-        List<Integer> ids = add3TasksInOrderAndReturnListOfIds();
+        List<Integer> ids = add3TasksWithDueDateInOrderAndReturnListOfIds(LocalDateTime.now());
 
         Integer taskId = ids.get(2);
         given()
@@ -119,25 +120,80 @@ public class TaskDailyControllerTest {
         )));
     }
 
-    private List<Integer> add3TasksInOrderAndReturnListOfIds() {
+    private List<Integer> add3TasksWithDueDateInOrderAndReturnListOfIds(LocalDateTime date) {
         Task project1 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .dailyViewOrder(1)
+                .due(date)
                 .title("Task 1")
                 .build();
         Task project2 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .dailyViewOrder(2)
+                .due(date)
                 .title("Task 2")
                 .build();
         Task project3 = Task.builder()
                 .owner(userRepository.getById(userId))
                 .dailyViewOrder(3)
+                .due(date)
                 .title("Task 3")
                 .build();
         return taskRepository.saveAll(List.of(project1, project2, project3)).stream()
                 .sorted(Comparator.comparingInt(Task::getDailyViewOrder))
                 .map(Task::getId)
                 .collect(Collectors.toList());
+    }
+
+    @Test
+    void shouldRespondWith401ToMoveTaskAsFirstForDateIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/daily/move/asFirstWithDate", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    @Disabled
+    void shouldMoveTaskAsFirstForDate() {
+        DateRequest request = getValidDateRequest();
+        List<Integer> ids = add3TasksWithDueDateInOrderAndReturnListOfIds(request.getDate());
+
+        Integer taskId = ids.get(2);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/daily/move/asFirstWithDate", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, hasSize(3));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 1")),
+                hasProperty("dailyViewOrder", is(2))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 2")),
+                hasProperty("dailyViewOrder", is(3))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 3")),
+                hasProperty("dailyViewOrder", is(1))
+        )));
+    }
+
+    private DateRequest getValidDateRequest() {
+        DateRequest request = new DateRequest();
+        request.setDate(LocalDateTime.of(2022, 1, 12, 12, 32));
+        return request;
     }
 }
