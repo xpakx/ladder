@@ -3,6 +3,7 @@ package io.github.xpakx.ladder.controller;
 import io.github.xpakx.ladder.entity.Task;
 import io.github.xpakx.ladder.entity.UserAccount;
 import io.github.xpakx.ladder.entity.dto.DateRequest;
+import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.repository.CollaborationRepository;
 import io.github.xpakx.ladder.repository.ProjectRepository;
 import io.github.xpakx.ladder.repository.TaskRepository;
@@ -194,6 +195,59 @@ public class TaskDailyControllerTest {
     private DateRequest getValidDateRequest() {
         DateRequest request = new DateRequest();
         request.setDate(LocalDateTime.of(2022, 1, 12, 12, 32));
+        return request;
+    }
+
+    @Test
+    void shouldRespondWith401ToMoveTaskAfterIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/daily/move/after", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    @Disabled
+    void shouldMoveTaskAfter() {
+        List<Integer> ids = add3TasksWithDueDateInOrderAndReturnListOfIds(LocalDateTime.now());
+        IdRequest request = getValidIdRequest(ids.get(0));
+        Integer taskId = ids.get(2);
+
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/daily/move/after", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+
+
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, hasSize(3));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 1")),
+                hasProperty("dailyViewOrder", is(1))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 2")),
+                hasProperty("dailyViewOrder", is(3))
+        )));
+        assertThat(tasks, hasItem(allOf(
+                hasProperty("title", is("Task 3")),
+                hasProperty("dailyViewOrder", is(2))
+        )));
+    }
+
+    private IdRequest getValidIdRequest(Integer id) {
+        IdRequest request = new IdRequest();
+        request.setId(id);
         return request;
     }
 }
