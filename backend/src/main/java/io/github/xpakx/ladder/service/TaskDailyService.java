@@ -113,18 +113,25 @@ public class TaskDailyService {
         LocalDateTime today = now.minusHours(now.getHour()).minusMinutes(now.getMinute()).minusSeconds(now.getSecond());
         List<Task> tasksToUpdate = taskRepository.findByOwnerIdAndDueBeforeAndCompletedIsFalse(userId, today);
         if(request.getDate() != null) {
-            int order = utils.getMaxDailyOrder(request, userId) + 1;
-            for (Task task : tasksToUpdate) {
-                task.setDue(request.getDate());
-                task.setModifiedAt(now);
-                task.setDailyViewOrder(order++);
-            }
+            updateOverdueTasksWithNewDueDate(request, now, tasksToUpdate, utils.getMaxDailyOrder(request, userId) + 1);
         } else {
-            for (Task task : tasksToUpdate) {
-                task.setDue(request.getDate());
-                task.setModifiedAt(now);
-            }
+            updateOverdueTasksWithoutNewDueDate(now, tasksToUpdate);
         }
         return taskRepository.saveAll(tasksToUpdate);
+    }
+
+    private void updateOverdueTasksWithoutNewDueDate(LocalDateTime now, List<Task> tasksToUpdate) {
+        for (Task task : tasksToUpdate) {
+            task.setDue(null);
+            task.setModifiedAt(now);
+        }
+    }
+
+    private void updateOverdueTasksWithNewDueDate(DateRequest request, LocalDateTime now, List<Task> tasksToUpdate, int order) {
+        for (Task task : tasksToUpdate) {
+            task.setDue(request.getDate());
+            task.setModifiedAt(now);
+            task.setDailyViewOrder(order++);
+        }
     }
 }
