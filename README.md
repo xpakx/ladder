@@ -63,7 +63,7 @@ A clone of the Todoist web-app written in Java + Spring (backend) and Angular (f
 	- [x] Invitations
 	- [x] Different permissions for viewing, completing and editing collaborative tasks
 	- [x] Assigning tasks to collaborator
+- [x] Keyboard shortcuts
 - [ ] Gamification
 - [ ] Tasks' stats
-- [ ] Keyboard shortcuts
 - [ ] Themes

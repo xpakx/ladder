@@ -1,14 +1,8 @@
 package io.github.xpakx.ladder.controller;
 
-import io.github.xpakx.ladder.entity.Collaboration;
-import io.github.xpakx.ladder.entity.Project;
-import io.github.xpakx.ladder.entity.Task;
-import io.github.xpakx.ladder.entity.UserAccount;
+import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.*;
-import io.github.xpakx.ladder.repository.CollaborationRepository;
-import io.github.xpakx.ladder.repository.ProjectRepository;
-import io.github.xpakx.ladder.repository.TaskRepository;
-import io.github.xpakx.ladder.repository.UserAccountRepository;
+import io.github.xpakx.ladder.repository.*;
 import io.github.xpakx.ladder.security.JwtTokenUtil;
 import io.github.xpakx.ladder.service.UserService;
 import io.restassured.http.ContentType;
@@ -23,6 +17,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,6 +47,8 @@ class TaskControllerTest {
     TaskRepository taskRepository;
     @Autowired
     CollaborationRepository collaborationRepository;
+    @Autowired
+    LabelRepository labelRepository;
 
     @BeforeEach
     void setUp() {
@@ -68,6 +66,7 @@ class TaskControllerTest {
     void tearDown() {
         collaborationRepository.deleteAll();
         taskRepository.deleteAll();
+        labelRepository.deleteAll();
         projectRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -724,5 +723,76 @@ class TaskControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("collapsed", equalTo(true));
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateTaskLabelsIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/labels", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateTaskLabelsIfTaskNotFound() {
+        IdCollectionRequest request = getValidIdCollectionRequest(List.of(1,2));
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/labels", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private IdCollectionRequest getValidIdCollectionRequest(List<Integer> ids) {
+        IdCollectionRequest request = new IdCollectionRequest();
+        request.setIds(ids);
+        return request;
+    }
+
+    @Test
+    @Disabled
+    void shouldUpdateTaskLabels() {
+        Integer taskId = addTaskAndReturnId();
+        IdCollectionRequest request = getValidIdCollectionRequest(add2Labels());
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/{taskId}/labels", userId, taskId)
+        .then()
+                .statusCode(OK.value());
+
+        Task task = taskRepository.findByOwnerId(userId, Task.class).get(0);
+        Set<Label> labels = task.getLabels();
+        assertThat(labels, hasSize(2));
+        assertThat(labels, hasItem(hasProperty("name", is("label1"))));
+        assertThat(labels, hasItem(hasProperty("name", is("label2"))));
+    }
+
+    private List<Integer> add2Labels() {
+        Label label1 = Label.builder()
+                .name("label1")
+                .owner(userRepository.getById(userId))
+                .build();
+        Label label2 = Label.builder()
+                .name("label2")
+                .owner(userRepository.getById(userId))
+                .build();
+        return labelRepository.saveAll(List.of(label1, label2)).stream()
+                .map(Label::getId)
+                .collect(Collectors.toList());
     }
 }
