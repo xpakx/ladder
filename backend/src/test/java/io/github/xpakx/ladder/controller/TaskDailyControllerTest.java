@@ -146,6 +146,16 @@ public class TaskDailyControllerTest {
                 .collect(Collectors.toList());
     }
 
+    private Integer addTaskAndReturnId(LocalDateTime date) {
+        Task task = Task.builder()
+                .owner(userRepository.getById(userId))
+                .dailyViewOrder(1)
+                .due(date)
+                .title("Future Task")
+                .build();
+        return taskRepository.save(task).getId();
+    }
+
     @Test
     void shouldRespondWith401ToMoveTaskAsFirstForDateIfUserUnauthorized() {
         given()
@@ -249,5 +259,44 @@ public class TaskDailyControllerTest {
         IdRequest request = new IdRequest();
         request.setId(id);
         return request;
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateOverdueTasksDueDateIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/tasks/overdue/due", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    @Disabled
+    void shouldUpdateOverdueTasksDueDate() {
+        add3TasksWithDueDateInOrderAndReturnListOfIds(LocalDateTime.now().minusMonths(1));
+        Integer futureTaskId = addTaskAndReturnId(LocalDateTime.now().plusDays(1));
+        DateRequest request = getValidDateRequest();
+
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/tasks/overdue/due", userId)
+        .then()
+                .statusCode(OK.value());
+
+
+        List<Task> tasks = taskRepository.findAll();
+        assertThat(tasks, hasSize(3));
+        assertThat(tasks, everyItem(
+                either(hasProperty("due", is(equalTo(request.getDate()))))
+                .or(hasProperty("id", is(equalTo(futureTaskId))
+        ))));
     }
 }
