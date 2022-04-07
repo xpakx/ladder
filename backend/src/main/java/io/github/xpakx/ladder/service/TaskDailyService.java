@@ -20,6 +20,12 @@ public class TaskDailyService {
     private final TaskRepository taskRepository;
     private final TaskUpdateUtilsService utils;
 
+    /**
+     * Move task at first position in today's list
+     * @param userId ID of an owner of task
+     * @param taskToMoveId ID of the task to move
+     * @return Moved task
+     */
     @NotifyOnTaskChange
     public Task moveTaskAsFirstInDailyView(Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
@@ -34,6 +40,13 @@ public class TaskDailyService {
         return taskRepository.save(taskToMove);
     }
 
+    /**
+     * Move task at first position in list for given day
+     * @param userId ID of an owner of task
+     * @param taskToMoveId ID of the task to move
+     * @param request Request with new date
+     * @return Moved task
+     */
     @NotifyOnTaskChange
     public Task moveTaskAsFirstForDate(Integer userId, Integer taskToMoveId, DateRequest request) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
@@ -49,6 +62,13 @@ public class TaskDailyService {
         return taskRepository.save(taskToMove);
     }
 
+    /**
+     * Move task after given task in daily view
+     * @param request Request with id of the task which should be before moved task
+     * @param userId ID of an owner of tasks
+     * @param taskToMoveId ID of the task to move
+     * @return Moved task
+     */
     @NotifyOnTaskChange
     public Task moveTaskAfterInDailyView(IdRequest request, Integer userId, Integer taskToMoveId) {
         Task taskToMove = taskRepository.findByIdAndOwnerId(taskToMoveId, userId)
@@ -81,6 +101,12 @@ public class TaskDailyService {
         }
     }
 
+    /**
+     * Change due date for all overdue tasks and append them at the end of list for given day.
+     * @param request Request with new date
+     * @param userId ID of an owner of tasks
+     * @return Moved task
+     */
     @NotifyOnTasksChange
     public List<Task> updateDueDateForOverdue(DateRequest request, Integer userId) {
         LocalDateTime now = LocalDateTime.now();
