@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -29,7 +30,8 @@ public class LabelMovableService {
     public Label moveLabelAfter(IdRequest request, Integer userId, Integer labelToMoveId) {
         Label labelToMove = labelRepository.findByIdAndOwnerId(labelToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent label!"));
-        Label afterLabel = findIdFromIdRequest(request);
+        Label afterLabel = findIdFromIdRequest(request)
+                .orElseThrow(() -> new NotFoundException("Cannot move label after non-existent label!"));
         labelRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
                 userId,
                 afterLabel.getGeneralOrder(),
@@ -103,8 +105,8 @@ public class LabelMovableService {
         return labelRepository.save(labelToAdd);
     }
 
-    private Label findIdFromIdRequest(IdRequest request) {
-        return hasId(request) ? labelRepository.findById(request.getId()).orElse(null) : null;
+    private Optional<Label> findIdFromIdRequest(IdRequest request) {
+        return hasId(request) ? labelRepository.findById(request.getId()) : Optional.empty();
     }
 
     private boolean hasId(IdRequest request) {
