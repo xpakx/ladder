@@ -18,6 +18,13 @@ public class LabelMovableService {
     private final LabelRepository labelRepository;
     private final UserAccountRepository userRepository;
 
+    /**
+     * Move label after given label
+     * @param request Request with id of the label which should be before moved label
+     * @param userId ID of an owner of labels
+     * @param labelToMoveId ID of the label to move
+     * @return Moved label
+     */
     @NotifyOnLabelChange
     public Label moveLabelAfter(IdRequest request, Integer userId, Integer labelToMoveId) {
         Label labelToMove = labelRepository.findByIdAndOwnerId(labelToMoveId, userId)
@@ -33,6 +40,12 @@ public class LabelMovableService {
         return labelRepository.save(labelToMove);
     }
 
+    /**
+     * Move label at first position
+     * @param userId ID of an owner of labels
+     * @param labelToMoveId ID of the label to move
+     * @return Moved label
+     */
     @NotifyOnLabelChange
     public Label moveLabelAsFirst(Integer userId, Integer labelToMoveId) {
         Label labelToMove = labelRepository.findByIdAndOwnerId(labelToMoveId, userId)
@@ -46,6 +59,13 @@ public class LabelMovableService {
         return labelRepository.save(labelToMove);
     }
 
+    /**
+     * Add new label with order after given label
+     * @param request Request with data to build new label
+     * @param userId ID of an owner of labels
+     * @param labelId ID of the label which should be before newly created label
+     * @return Newly created label
+     */
     @NotifyOnLabelChange
     public Label addLabelAfter(LabelRequest request, Integer userId, Integer labelId) {
         Label labelToAdd = buildLabelToAddFromRequest(request, userId);
@@ -61,6 +81,13 @@ public class LabelMovableService {
         return labelRepository.save(labelToAdd);
     }
 
+    /**
+     * Add new label with order before given label
+     * @param request Request with data to build new label
+     * @param userId ID of an owner of labels
+     * @param labelId ID of the label which should be after newly created label
+     * @return Newly created label
+     */
     @NotifyOnLabelChange
     public Label addLabelBefore(LabelRequest request, Integer userId, Integer labelId) {
         Label labelToAdd = buildLabelToAddFromRequest(request, userId);
