@@ -4,7 +4,6 @@ import io.github.xpakx.ladder.aspect.NotifyOnLabelChange;
 import io.github.xpakx.ladder.aspect.NotifyOnLabelDeletion;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
-import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.entity.dto.LabelRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.LabelRepository;
