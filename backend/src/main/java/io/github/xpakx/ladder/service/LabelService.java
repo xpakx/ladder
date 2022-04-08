@@ -20,6 +20,12 @@ public class LabelService {
     private final LabelRepository labelRepository;
     private final UserAccountRepository userRepository;
 
+    /**
+     * Add new label.
+     * @param request Request with data to build new label
+     * @param userId ID of an owner of the newly created label
+     * @return Newly created label
+     */
     @NotifyOnLabelChange
     public Label addLabel(LabelRequest request, Integer userId) {
         Label labelToAdd = buildLabelToAddFromRequest(request, userId);
@@ -37,6 +43,13 @@ public class LabelService {
                 .build();
     }
 
+    /**
+     * Updating label in repository.
+     * @param request Data to update the label
+     * @param labelId ID of the label to update
+     * @param userId ID of an owner of the label
+     * @return Label with updated data
+     */
     @NotifyOnLabelChange
     public Label updateLabel(LabelRequest request, Integer userId, Integer labelId) {
         Label labelToUpdate = labelRepository.findByIdAndOwnerId(labelId, userId)
@@ -48,11 +61,23 @@ public class LabelService {
         return labelRepository.save(labelToUpdate);
     }
 
+    /**
+     * Delete label from repository.
+     * @param labelId ID of the label to delete
+     * @param userId ID of an owner of the label
+     */
     @NotifyOnLabelDeletion
     public void deleteLabel(Integer labelId, Integer userId) {
         labelRepository.deleteByIdAndOwnerId(labelId, userId);
     }
 
+    /**
+     * Change if label is favorite.
+     * @param request Request with favorite flag
+     * @param labelId ID of the label to update
+     * @param userId ID of an owner of the label
+     * @return Updated label
+     */
     @NotifyOnLabelChange
     public Label updateLabelFav(BooleanRequest request, Integer labelId, Integer userId) {
         Label labelToUpdate = labelRepository.findByIdAndOwnerId(labelId, userId)
