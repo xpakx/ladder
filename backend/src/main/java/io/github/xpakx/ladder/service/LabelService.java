@@ -4,7 +4,6 @@ import io.github.xpakx.ladder.aspect.NotifyOnLabelChange;
 import io.github.xpakx.ladder.aspect.NotifyOnLabelDeletion;
 import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
-import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.entity.dto.LabelRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.LabelRepository;
@@ -20,6 +19,12 @@ public class LabelService {
     private final LabelRepository labelRepository;
     private final UserAccountRepository userRepository;
 
+    /**
+     * Add new label.
+     * @param request Request with data to build new label
+     * @param userId ID of an owner of the newly created label
+     * @return Newly created label
+     */
     @NotifyOnLabelChange
     public Label addLabel(LabelRequest request, Integer userId) {
         Label labelToAdd = buildLabelToAddFromRequest(request, userId);
@@ -37,6 +42,13 @@ public class LabelService {
                 .build();
     }
 
+    /**
+     * Updating label in repository.
+     * @param request Data to update the label
+     * @param labelId ID of the label to update
+     * @param userId ID of an owner of the label
+     * @return Label with updated data
+     */
     @NotifyOnLabelChange
     public Label updateLabel(LabelRequest request, Integer userId, Integer labelId) {
         Label labelToUpdate = labelRepository.findByIdAndOwnerId(labelId, userId)
@@ -48,34 +60,23 @@ public class LabelService {
         return labelRepository.save(labelToUpdate);
     }
 
+    /**
+     * Delete label from repository.
+     * @param labelId ID of the label to delete
+     * @param userId ID of an owner of the label
+     */
     @NotifyOnLabelDeletion
     public void deleteLabel(Integer labelId, Integer userId) {
         labelRepository.deleteByIdAndOwnerId(labelId, userId);
     }
 
-    private Label findIdFromIdRequest(IdRequest request) {
-        return hasId(request) ? labelRepository.findById(request.getId()).orElse(null) : null;
-    }
-
-    private boolean hasId(IdRequest request) {
-        return request.getId() != null;
-    }
-
-    @NotifyOnLabelChange
-    public Label moveLabelAfter(IdRequest request, Integer userId, Integer labelToMoveId) {
-        Label labelToMove = labelRepository.findByIdAndOwnerId(labelToMoveId, userId)
-                .orElseThrow(() -> new NotFoundException("Cannot move non-existent label!"));
-        Label afterLabel = findIdFromIdRequest(request);
-        labelRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
-                userId,
-                afterLabel.getGeneralOrder(),
-                LocalDateTime.now()
-        );
-        labelToMove.setGeneralOrder(afterLabel.getGeneralOrder() + 1);
-        labelToMove.setModifiedAt(LocalDateTime.now());
-        return labelRepository.save(labelToMove);
-    }
-
+    /**
+     * Change if label is favorite.
+     * @param request Request with favorite flag
+     * @param labelId ID of the label to update
+     * @param userId ID of an owner of the label
+     * @return Updated label
+     */
     @NotifyOnLabelChange
     public Label updateLabelFav(BooleanRequest request, Integer labelId, Integer userId) {
         Label labelToUpdate = labelRepository.findByIdAndOwnerId(labelId, userId)
@@ -83,48 +84,5 @@ public class LabelService {
         labelToUpdate.setFavorite(request.isFlag());
         labelToUpdate.setModifiedAt(LocalDateTime.now());
         return labelRepository.save(labelToUpdate);
-    }
-
-    @NotifyOnLabelChange
-    public Label moveLabelAsFirst(Integer userId, Integer labelToMoveId) {
-        Label labelToMove = labelRepository.findByIdAndOwnerId(labelToMoveId, userId)
-                .orElseThrow(() -> new NotFoundException("Cannot move non-existent label!"));
-        labelRepository.incrementGeneralOrderByOwnerId(
-                userId,
-                LocalDateTime.now()
-        );
-        labelToMove.setGeneralOrder(1);
-        labelToMove.setModifiedAt(LocalDateTime.now());
-        return labelRepository.save(labelToMove);
-    }
-
-    @NotifyOnLabelChange
-    public Label addLabelAfter(LabelRequest request, Integer userId, Integer labelId) {
-        Label labelToAdd = buildLabelToAddFromRequest(request, userId);
-        Label label = labelRepository.findByIdAndOwnerId(labelId, userId)
-                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent label!"));
-        labelToAdd.setGeneralOrder(label.getGeneralOrder()+1);
-        labelToAdd.setModifiedAt(LocalDateTime.now());
-        labelRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
-                userId,
-                label.getGeneralOrder(),
-                LocalDateTime.now()
-        );
-        return labelRepository.save(labelToAdd);
-    }
-
-    @NotifyOnLabelChange
-    public Label addLabelBefore(LabelRequest request, Integer userId, Integer labelId) {
-        Label labelToAdd = buildLabelToAddFromRequest(request, userId);
-        Label label = labelRepository.findByIdAndOwnerId(labelId, userId)
-                .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent label!"));
-        labelToAdd.setGeneralOrder(label.getGeneralOrder());
-        labelToAdd.setModifiedAt(LocalDateTime.now());
-        labelRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(
-                userId,
-                label.getGeneralOrder(),
-                LocalDateTime.now()
-        );
-        return labelRepository.save(labelToAdd);
     }
 }

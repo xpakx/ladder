@@ -41,31 +41,4 @@ public class LabelController {
     public ResponseEntity<Label> updateLabelFav(@RequestBody BooleanRequest request, @PathVariable Integer labelId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(labelService.updateLabelFav(request, labelId, userId), HttpStatus.OK);
     }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{labelId}/move/asFirst")
-    public ResponseEntity<Label> moveLabelAsFirst(@PathVariable Integer userId, @PathVariable Integer labelId) {
-        return  new ResponseEntity<>(labelService.moveLabelAsFirst(userId, labelId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/{labelId}/after")
-    public ResponseEntity<Label> addLabelAfter(@RequestBody LabelRequest request, @PathVariable Integer userId,
-                                               @PathVariable Integer labelId) {
-        return  new ResponseEntity<>(labelService.addLabelAfter(request, userId, labelId), HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/{labelId}/before")
-    public ResponseEntity<Label> addLabelBefore(@RequestBody LabelRequest request, @PathVariable Integer userId,
-                                                @PathVariable Integer labelId) {
-        return  new ResponseEntity<>(labelService.addLabelBefore(request, userId, labelId), HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{labelId}/move/after")
-    public ResponseEntity<Label> moveLabelAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
-                                                @PathVariable Integer labelId) {
-        return new ResponseEntity<>(labelService.moveLabelAfter(request, userId, labelId), HttpStatus.OK);
-    }
 }

@@ -20,6 +20,12 @@ public class FilterService {
     private final FilterRepository filterRepository;
     private final UserAccountRepository userRepository;
 
+    /**
+     * Add new filter.
+     * @param request Request with data to build new filter
+     * @param userId ID of an owner of the newly created filter
+     * @return Newly created filter
+     */
     @NotifyOnFilterChange
     public Filter addFilter(FilterRequest request, Integer userId) {
         Filter filterToAdd = buildFilterToAddFromRequest(request, userId);
@@ -38,6 +44,13 @@ public class FilterService {
                 .build();
     }
 
+    /**
+     * Updating filter in repository.
+     * @param request Data to update the filter
+     * @param filterId ID of the dilter to update
+     * @param userId ID of an owner of the filter
+     * @return Filter with updated data
+     */
     @NotifyOnFilterChange
     public Filter updateFilter(FilterRequest request, Integer userId, Integer filterId) {
         Filter filterToUpdate = filterRepository.findByIdAndOwnerId(filterId, userId)
@@ -50,11 +63,23 @@ public class FilterService {
         return filterRepository.save(filterToUpdate);
     }
 
+    /**
+     * Delete filter from repository.
+     * @param filterId ID of the label to delete
+     * @param userId ID of an owner of the label
+     */
     @NotifyOnFilterDeletion
     public void deleteFilter(Integer filterId, Integer userId) {
         filterRepository.deleteByIdAndOwnerId(filterId, userId);
     }
 
+    /**
+     * Change if filter is favorite.
+     * @param request Request with favorite flag
+     * @param filterId ID of the filter to update
+     * @param userId ID of an owner of the filter
+     * @return Updated filter
+     */
     @NotifyOnFilterChange
     public Filter updateFilterFav(BooleanRequest request, Integer filterId, Integer userId) {
         Filter filterToUpdate = filterRepository.findByIdAndOwnerId(filterId, userId)
@@ -62,70 +87,5 @@ public class FilterService {
         filterToUpdate.setFavorite(request.isFlag());
         filterToUpdate.setModifiedAt(LocalDateTime.now());
         return filterRepository.save(filterToUpdate);
-    }
-
-    @NotifyOnFilterChange
-    public Filter moveFilterAsFirst(Integer userId, Integer filterToMoveId) {
-        Filter filterToMove = filterRepository.findByIdAndOwnerId(filterToMoveId, userId)
-                .orElseThrow(() -> new NotFoundException("Cannot move non-existent filter!"));
-        filterRepository.incrementGeneralOrderByOwnerId(
-                userId,
-                LocalDateTime.now()
-        );
-        filterToMove.setGeneralOrder(1);
-        filterToMove.setModifiedAt(LocalDateTime.now());
-        return filterRepository.save(filterToMove);
-    }
-
-    @NotifyOnFilterChange
-    public Filter addFilterAfter(FilterRequest request, Integer userId, Integer filterId) {
-        Filter filterToAdd = buildFilterToAddFromRequest(request, userId);
-        Filter filter = filterRepository.findByIdAndOwnerId(filterId, userId)
-                .orElseThrow(() -> new NotFoundException("Cannot add nothing after non-existent filter!"));
-        filterToAdd.setGeneralOrder(filter.getGeneralOrder()+1);
-        filterToAdd.setModifiedAt(LocalDateTime.now());
-        filterRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
-                userId,
-                filter.getGeneralOrder(),
-                LocalDateTime.now()
-        );
-        return filterRepository.save(filterToAdd);
-    }
-
-    @NotifyOnFilterChange
-    public Filter addFilterBefore(FilterRequest request, Integer userId, Integer filterId) {
-        Filter filterToAdd = buildFilterToAddFromRequest(request, userId);
-        Filter filter = filterRepository.findByIdAndOwnerId(filterId, userId)
-                .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent filter!"));
-        filterToAdd.setGeneralOrder(filter.getGeneralOrder());
-        filterToAdd.setModifiedAt(LocalDateTime.now());
-        filterRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThanEqual(
-                userId,
-                filter.getGeneralOrder(),
-                LocalDateTime.now()
-        );
-        return filterRepository.save(filterToAdd);
-    }
-
-    public Filter moveFilterAfter(IdRequest request, Integer userId, Integer filterToMoveId) {
-        Filter filterToMove = filterRepository.findByIdAndOwnerId(filterToMoveId, userId)
-                .orElseThrow(() -> new NotFoundException("Cannot move non-existent filter!"));
-        Filter afterFilter = findIdFromIdRequest(request);
-        filterRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
-                userId,
-                afterFilter.getGeneralOrder(),
-                LocalDateTime.now()
-        );
-        filterToMove.setGeneralOrder(afterFilter.getGeneralOrder() + 1);
-        filterToMove.setModifiedAt(LocalDateTime.now());
-        return filterRepository.save(filterToMove);
-    }
-
-    private Filter findIdFromIdRequest(IdRequest request) {
-        return hasId(request) ? filterRepository.findById(request.getId()).orElse(null) : null;
-    }
-
-    private boolean hasId(IdRequest request) {
-        return request.getId() != null;
     }
 }
