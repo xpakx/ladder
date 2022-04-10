@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -91,7 +92,8 @@ public class FilterMovableService {
     public Filter moveFilterAfter(IdRequest request, Integer userId, Integer filterToMoveId) {
         Filter filterToMove = filterRepository.findByIdAndOwnerId(filterToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent filter!"));
-        Filter afterFilter = findIdFromIdRequest(request);
+        Filter afterFilter = findIdFromIdRequest(request)
+                .orElseThrow(() -> new NotFoundException("Cannot move filter after non-existent filter!"));
         filterRepository.incrementGeneralOrderByOwnerIdAndGeneralOrderGreaterThan(
                 userId,
                 afterFilter.getGeneralOrder(),
@@ -102,8 +104,8 @@ public class FilterMovableService {
         return filterRepository.save(filterToMove);
     }
 
-    private Filter findIdFromIdRequest(IdRequest request) {
-        return hasId(request) ? filterRepository.findById(request.getId()).orElse(null) : null;
+    private Optional<Filter> findIdFromIdRequest(IdRequest request) {
+        return hasId(request) ? filterRepository.findById(request.getId()) : Optional.empty();
     }
 
     private boolean hasId(IdRequest request) {
