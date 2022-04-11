@@ -1,12 +1,10 @@
 package io.github.xpakx.ladder.service;
 
 import io.github.xpakx.ladder.aspect.NotifyOnHabitChange;
-import io.github.xpakx.ladder.aspect.NotifyOnHabitCompletion;
 import io.github.xpakx.ladder.aspect.NotifyOnHabitDeletion;
 import io.github.xpakx.ladder.entity.*;
 import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.error.NotFoundException;
-import io.github.xpakx.ladder.error.WrongCompletionTypeException;
 import io.github.xpakx.ladder.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class HabitService {
     private final HabitRepository habitRepository;
-    private final HabitCompletionRepository habitCompletionRepository;
     private final UserAccountRepository userRepository;
     private final ProjectRepository projectRepository;
     private final LabelRepository labelRepository;
