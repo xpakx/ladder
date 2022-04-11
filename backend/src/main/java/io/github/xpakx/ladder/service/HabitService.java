@@ -28,6 +28,11 @@ public class HabitService {
     private final ProjectRepository projectRepository;
     private final LabelRepository labelRepository;
 
+    public HabitDetails getHabitById(Integer habitId, Integer userId) {
+        return habitRepository.findProjectedByIdAndOwnerId(habitId, userId, HabitDetails.class)
+                .orElseThrow(() -> new NotFoundException("No such habit!"));
+    }
+
     /**
      * Add new habit.
      * @param request Request with data to build new habit
@@ -167,27 +172,6 @@ public class HabitService {
     }
 
     /**
-     * Change habit priority
-     * @param request Request with new priority
-     * @param habitId ID of the habit to update
-     * @param userId ID of an owner of the habit
-     * @return Updated habit
-     */
-    @NotifyOnHabitChange
-    public Habit updateHabitPriority(PriorityRequest request, Integer habitId, Integer userId) {
-        Habit habitToUpdate = habitRepository.findByIdAndOwnerId(habitId, userId)
-                .orElseThrow(() -> new NotFoundException("No such habit!"));
-        habitToUpdate.setPriority(request.getPriority());
-        habitToUpdate.setModifiedAt(LocalDateTime.now());
-        return habitRepository.save(habitToUpdate);
-    }
-
-    public HabitDetails getHabitById(Integer habitId, Integer userId) {
-        return habitRepository.findProjectedByIdAndOwnerId(habitId, userId, HabitDetails.class)
-                .orElseThrow(() -> new NotFoundException("No such habit!"));
-    }
-
-    /**
      * Updating habit in repository.
      * @param request Data to update the habit
      * @param habitId ID of the habit to update
@@ -232,34 +216,6 @@ public class HabitService {
     }
 
     /**
-     * Add completion to the habit
-     * @param request Request with completion state
-     * @param habitId ID of the habit to update
-     * @param userId ID of an owner of the habit
-     * @return Added habit completion
-     */
-    @NotifyOnHabitCompletion
-    public HabitCompletion completeHabit(BooleanRequest request, Integer habitId, Integer userId) {
-        Habit habit = habitRepository.findByIdAndOwnerId(habitId, userId)
-                .orElseThrow(() -> new NotFoundException("No habit with id " + habitId));
-        if(isCompletionTypeNotAllowed(request, habit)) {
-            throw new WrongCompletionTypeException("Wrong type of completion!");
-        }
-        HabitCompletion habitCompletion = HabitCompletion.builder()
-                .habit(habit)
-                .date(LocalDateTime.now())
-                .positive(request.isFlag())
-                .owner(userRepository.getById(userId))
-                .build();
-        return habitCompletionRepository.save(habitCompletion);
-    }
-
-    private boolean isCompletionTypeNotAllowed(BooleanRequest request, Habit habit) {
-        return (!habit.isAllowNegative() && !request.isFlag()) ||
-                (!habit.isAllowPositive() && request.isFlag());
-    }
-
-    /**
      * Add new habit with order after given habit
      * @param request Request with data to build new habit
      * @param userId ID of an owner of habits
@@ -295,34 +251,6 @@ public class HabitService {
         habitToAdd.setModifiedAt(LocalDateTime.now());
         incrementOrderForProjectGreaterThanEqual(userId, habit.getProject(), habit.getGeneralOrder());
         return habitRepository.save(habitToAdd);
-    }
-
-    /**
-     * Change habit's project and add at the end of project's habit list.
-     * @param request Request with new project ID
-     * @param habitId ID of the habit to update
-     * @param userId ID of an owner of the habit
-     * @return Updated habit
-     */
-    @NotifyOnHabitChange
-    public Habit updateHabitProject(IdRequest request, Integer habitId, Integer userId) {
-        Habit habitToUpdate = habitRepository.findByIdAndOwnerId(habitId, userId)
-                .orElseThrow(() -> new NotFoundException("No such task!"));
-        Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
-                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
-
-        habitToUpdate.setProject(project);
-        habitToUpdate.setGeneralOrder(getMaxProjectOrder(request, userId)+1);
-        habitToUpdate.setModifiedAt(LocalDateTime.now());
-        return habitRepository.save(habitToUpdate);
-    }
-
-    private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
-        if(hasId(request)) {
-            return habitRepository.getMaxOrderByOwnerIdAndProjectId(userId, request.getId());
-        } else {
-            return habitRepository.getMaxOrderByOwnerId(userId);
-        }
     }
 
     /**
