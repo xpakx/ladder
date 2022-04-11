@@ -44,10 +44,14 @@ public class HabitService {
      */
     @NotifyOnHabitChange
     public Habit addHabit(HabitRequest request, Integer userId, Integer projectId) {
-        Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
+        return habitRepository.save(
+                buildHabitToAddFromRequest(request, userId, getProjectFromRequest(userId, projectId))
+        );
+    }
+
+    private Project getProjectFromRequest(Integer userId, Integer projectId) {
+        return projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
-        Habit habitToAdd = buildHabitToAddFromRequest(request, userId, project);
-        return habitRepository.save(habitToAdd);
     }
 
     private Habit buildHabitToAddFromRequest(HabitRequest request, Integer userId, Project project) {
