@@ -5,7 +5,6 @@ import io.github.xpakx.ladder.aspect.NotifyOnFilterDeletion;
 import io.github.xpakx.ladder.entity.Filter;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
 import io.github.xpakx.ladder.entity.dto.FilterRequest;
-import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
 import io.github.xpakx.ladder.repository.FilterRepository;
 import io.github.xpakx.ladder.repository.UserAccountRepository;
@@ -47,7 +46,7 @@ public class FilterService {
     /**
      * Updating filter in repository.
      * @param request Data to update the filter
-     * @param filterId ID of the dilter to update
+     * @param filterId ID of the filter to update
      * @param userId ID of an owner of the filter
      * @return Filter with updated data
      */

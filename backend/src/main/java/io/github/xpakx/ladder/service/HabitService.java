@@ -28,6 +28,12 @@ public class HabitService {
     private final ProjectRepository projectRepository;
     private final LabelRepository labelRepository;
 
+    /**
+     * Add new habit.
+     * @param request Request with data to build new habit
+     * @param userId ID of an owner of the newly created habit
+     * @return Newly created habit
+     */
     @NotifyOnHabitChange
     public Habit addHabit(HabitRequest request, Integer userId, Integer projectId) {
         Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
@@ -58,12 +64,23 @@ public class HabitService {
         return Optional.of(projectRepository.getById(projectId));
     }
 
+    /**
+     * Delete habit from repository.
+     * @param habitId ID of the habit to delete
+     * @param userId ID of an owner of the habit
+     */
     @Transactional
     @NotifyOnHabitDeletion
     public void deleteHabit(Integer habitId, Integer userId) {
         habitRepository.deleteByIdAndOwnerId(habitId, userId);
     }
 
+    /**
+     * Move habit at first position
+     * @param userId ID of an owner of habits
+     * @param habitToMoveId ID of the habit to move
+     * @return Moved habit
+     */
     @NotifyOnHabitChange
     public Habit moveHabitAsFirst(Integer userId, Integer habitToMoveId) {
         Habit habitToMove = habitRepository.findByIdAndOwnerId(habitToMoveId, userId)
@@ -89,6 +106,13 @@ public class HabitService {
         }
     }
 
+    /**
+     * Move habit after given habit
+     * @param request Request with id of the habit which should be before moved habit
+     * @param userId ID of an owner of habits
+     * @param habitToMoveId ID of the habit to move
+     * @return Moved habit
+     */
     @NotifyOnHabitChange
     public Habit moveHabitAfter(IdRequest request, Integer userId, Integer habitToMoveId) {
         Habit habitToMove = habitRepository.findByIdAndOwnerId(habitToMoveId, userId)
@@ -142,6 +166,13 @@ public class HabitService {
         return request.getId() != null;
     }
 
+    /**
+     * Change habit priority
+     * @param request Request with new priority
+     * @param habitId ID of the habit to update
+     * @param userId ID of an owner of the habit
+     * @return Updated habit
+     */
     @NotifyOnHabitChange
     public Habit updateHabitPriority(PriorityRequest request, Integer habitId, Integer userId) {
         Habit habitToUpdate = habitRepository.findByIdAndOwnerId(habitId, userId)
@@ -156,6 +187,13 @@ public class HabitService {
                 .orElseThrow(() -> new NotFoundException("No such habit!"));
     }
 
+    /**
+     * Updating habit in repository.
+     * @param request Data to update the habit
+     * @param habitId ID of the habit to update
+     * @param userId ID of an owner of the habit
+     * @return Habit with updated data
+     */
     @NotifyOnHabitChange
     public Habit updateHabit(HabitRequest request, Integer habitId, Integer userId) {
         Project project = request.getProjectId() != null ? projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
@@ -193,10 +231,17 @@ public class HabitService {
         return !labelsWithDifferentOwner.equals(0L);
     }
 
+    /**
+     * Add completion to the habit
+     * @param request Request with completion state
+     * @param habitId ID of the habit to update
+     * @param userId ID of an owner of the habit
+     * @return Added habit completion
+     */
     @NotifyOnHabitCompletion
-    public HabitCompletion completeHabit(BooleanRequest request, Integer taskId, Integer userId) {
-        Habit habit = habitRepository.findByIdAndOwnerId(taskId, userId)
-                .orElseThrow(() -> new NotFoundException("No habit with id " + taskId));
+    public HabitCompletion completeHabit(BooleanRequest request, Integer habitId, Integer userId) {
+        Habit habit = habitRepository.findByIdAndOwnerId(habitId, userId)
+                .orElseThrow(() -> new NotFoundException("No habit with id " + habitId));
         if(isCompletionTypeNotAllowed(request, habit)) {
             throw new WrongCompletionTypeException("Wrong type of completion!");
         }
@@ -214,6 +259,13 @@ public class HabitService {
                 (!habit.isAllowPositive() && request.isFlag());
     }
 
+    /**
+     * Add new habit with order after given habit
+     * @param request Request with data to build new habit
+     * @param userId ID of an owner of habits
+     * @param habitId ID of the habit which should be before newly created habit
+     * @return Newly created habit
+     */
     @NotifyOnHabitChange
     public Habit addHabitAfter(HabitRequest request, Integer userId, Integer habitId) {
         Habit habitToAdd = buildHabitToAddFromRequest(request, userId);
@@ -226,10 +278,17 @@ public class HabitService {
         return habitRepository.save(habitToAdd);
     }
 
+    /**
+     * Add new habit with order before given habit
+     * @param request Request with data to build new habit
+     * @param userId ID of an owner of habits
+     * @param habitId ID of the habit which should be after newly created habit
+     * @return Newly created habit
+     */
     @NotifyOnHabitChange
-    public Habit addHabitBefore(HabitRequest request, Integer userId, Integer labelId) {
+    public Habit addHabitBefore(HabitRequest request, Integer userId, Integer habitId) {
         Habit habitToAdd = buildHabitToAddFromRequest(request, userId);
-        Habit habit = habitRepository.findByIdAndOwnerId(labelId, userId)
+        Habit habit = habitRepository.findByIdAndOwnerId(habitId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot add nothing before non-existent habit!"));
         habitToAdd.setGeneralOrder(habit.getGeneralOrder());
         habitToAdd.setProject(habit.getProject());
@@ -238,9 +297,16 @@ public class HabitService {
         return habitRepository.save(habitToAdd);
     }
 
+    /**
+     * Change habit's project and add at the end of project's habit list.
+     * @param request Request with new project ID
+     * @param habitId ID of the habit to update
+     * @param userId ID of an owner of the habit
+     * @return Updated habit
+     */
     @NotifyOnHabitChange
-    public Habit updateHabitProject(IdRequest request, Integer taskId, Integer userId) {
-        Habit habitToUpdate = habitRepository.findByIdAndOwnerId(taskId, userId)
+    public Habit updateHabitProject(IdRequest request, Integer habitId, Integer userId) {
+        Habit habitToUpdate = habitRepository.findByIdAndOwnerId(habitId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
@@ -259,10 +325,16 @@ public class HabitService {
         }
     }
 
+    /**
+     * Duplicate given habit
+     * @param habitId ID of the task to duplicate
+     * @param userId ID of an owner of the task
+     * @return All created tasks
+     */
     @NotifyOnHabitChange
-    public Habit duplicate(Integer taskId, Integer userId) {
-        Habit habitToDuplicate = habitRepository.findByIdAndOwnerId(taskId, userId)
-                .orElseThrow(() -> new NotFoundException("No task with id " + taskId));
+    public Habit duplicate(Integer habitId, Integer userId) {
+        Habit habitToDuplicate = habitRepository.findByIdAndOwnerId(habitId, userId)
+                .orElseThrow(() -> new NotFoundException("No task with id " + habitId));
         Habit habitToAdd = Habit.builder()
                 .title(habitToDuplicate.getTitle())
                 .description(habitToDuplicate.getDescription())
