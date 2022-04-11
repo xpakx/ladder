@@ -49,7 +49,7 @@ public class HabitService {
     }
 
     private Project getProjectFromRequest(Integer userId, Integer projectId) {
-        return nonNull(projectId) ? checkProjectOwnerAndGetReference(projectId, userId)
+        return nonNull(projectId) ? projectRepository.findByIdAndOwnerId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
     }
 
@@ -66,13 +66,6 @@ public class HabitService {
                 .project(project)
                 .generalOrder(habitRepository.getMaxOrderByOwnerId(userId)+1)
                 .build();
-    }
-
-    private Optional<Project> checkProjectOwnerAndGetReference(Integer projectId, Integer userId) {
-        if(!userId.equals(projectRepository.findOwnerIdById(projectId))) {
-            return Optional.empty();
-        }
-        return Optional.of(projectRepository.getById(projectId));
     }
 
     /**
