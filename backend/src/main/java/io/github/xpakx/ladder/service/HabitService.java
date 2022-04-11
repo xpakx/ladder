@@ -46,13 +46,11 @@ public class HabitService {
     public Habit addHabit(HabitRequest request, Integer userId, Integer projectId) {
         Project project = projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
-        Habit habitToAdd = buildHabitToAddFromRequest(request, userId);
-        habitToAdd.setProject(project);
-        habitToAdd.setGeneralOrder(habitRepository.getMaxOrderByOwnerId(userId)+1);
+        Habit habitToAdd = buildHabitToAddFromRequest(request, userId, project);
         return habitRepository.save(habitToAdd);
     }
 
-    private Habit buildHabitToAddFromRequest(HabitRequest request, Integer userId) {
+    private Habit buildHabitToAddFromRequest(HabitRequest request, Integer userId, Project project) {
         return Habit.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -62,6 +60,8 @@ public class HabitService {
                 .allowNegative(request.isAllowNegative())
                 .modifiedAt(LocalDateTime.now())
                 .archived(false)
+                .project(project)
+                .generalOrder(habitRepository.getMaxOrderByOwnerId(userId)+1)
                 .build();
     }
 
