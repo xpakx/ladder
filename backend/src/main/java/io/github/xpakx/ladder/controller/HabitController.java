@@ -29,19 +29,6 @@ public class HabitController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/habits/{habitId}/move/asFirst")
-    public ResponseEntity<Habit> moveHabitAsFirst(@PathVariable Integer userId, @PathVariable Integer habitId) {
-        return  new ResponseEntity<>(habitService.moveHabitAsFirst(userId, habitId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/habits/{habitId}/move/after")
-    public ResponseEntity<Habit> moveHabitAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
-                                                @PathVariable Integer habitId) {
-        return new ResponseEntity<>(habitService.moveHabitAfter(request, userId, habitId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
     @GetMapping("/habits/{habitId}")
     public ResponseEntity<HabitDetails> getHabit(@PathVariable Integer habitId, @PathVariable Integer userId) {
         return new ResponseEntity<>(habitService.getHabitById(habitId, userId), HttpStatus.OK);
@@ -51,25 +38,5 @@ public class HabitController {
     @PutMapping("/habits/{habitId}")
     public ResponseEntity<Habit> updateHabit(@RequestBody HabitRequest request, @PathVariable Integer habitId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(habitService.updateHabit(request, habitId, userId), HttpStatus.OK);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/habits/{habitId}/after")
-    public ResponseEntity<Habit> addHabitAfter(@RequestBody HabitRequest request, @PathVariable Integer userId,
-                                               @PathVariable Integer habitId) {
-        return  new ResponseEntity<>(habitService.addHabitAfter(request, userId, habitId), HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/habits/{habitId}/before")
-    public ResponseEntity<Habit> addHabitBefore(@RequestBody HabitRequest request, @PathVariable Integer userId,
-                                                @PathVariable Integer habitId) {
-        return  new ResponseEntity<>(habitService.addHabitBefore(request, userId, habitId), HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/habits/{habitId}/duplicate")
-    public ResponseEntity<Habit> duplicateTask(@PathVariable Integer habitId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(habitService.duplicate(habitId, userId), HttpStatus.CREATED);
     }
 }
