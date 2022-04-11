@@ -11,11 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 @Service
 @AllArgsConstructor
@@ -50,7 +49,7 @@ public class HabitService {
     }
 
     private Project getProjectFromRequest(Integer userId, Integer projectId) {
-        return projectId != null ? checkProjectOwnerAndGetReference(projectId, userId)
+        return nonNull(projectId) ? checkProjectOwnerAndGetReference(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("No such project!")) : null;
     }
 
