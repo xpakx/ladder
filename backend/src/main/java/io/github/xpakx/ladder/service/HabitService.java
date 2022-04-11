@@ -28,6 +28,12 @@ public class HabitService {
     private final ProjectRepository projectRepository;
     private final LabelRepository labelRepository;
 
+    /**
+     * Get habit details by ID.
+     * @param habitId ID of the habit
+     * @param userId ID of an owner of the habit
+     * @return Habit details
+     */
     public HabitDetails getHabitById(Integer habitId, Integer userId) {
         return habitRepository.findProjectedByIdAndOwnerId(habitId, userId, HabitDetails.class)
                 .orElseThrow(() -> new NotFoundException("No such habit!"));
