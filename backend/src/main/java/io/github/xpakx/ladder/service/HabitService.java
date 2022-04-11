@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Service
@@ -88,8 +89,7 @@ public class HabitService {
      */
     @NotifyOnHabitChange
     public Habit updateHabit(HabitRequest request, Integer habitId, Integer userId) {
-        Project project = request.getProjectId() != null ? projectRepository.findByIdAndOwnerId(request.getProjectId(), userId)
-                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
+        Project project = getProjectFromRequest(userId, request.getProjectId());
         Habit habitToUpdate = habitRepository.findByIdAndOwnerId(habitId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
         habitToUpdate.setTitle(request.getTitle());
@@ -108,13 +108,13 @@ public class HabitService {
         if(labelsWithDiffOwner(labelIds, userId)) {
             throw new NotFoundException("Cannot add labels you don't own!");
         }
-        return labelIds != null ? labelIds.stream()
+        return nonNull(labelIds) ? labelIds.stream()
                 .map(labelRepository::getById)
                 .collect(Collectors.toSet()) : new HashSet<>();
     }
 
     private boolean labelsWithDiffOwner(List<Integer> labelIds, Integer userId) {
-        if(labelIds == null || labelIds.size() == 0) {
+        if(isNull(labelIds) || labelIds.isEmpty()) {
             return false;
         }
         Long labelsWithDifferentOwner = labelRepository.findOwnerIdById(labelIds).stream()
