@@ -21,6 +21,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
@@ -487,4 +488,55 @@ class HabitControllerTest {
         Integer completions = habitCompletionRepository.findAll().size();
         assertThat(completions, equalTo(0));
     }
+
+    @Test
+    void shouldRespondWith401ToUpdateHabitProjectUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/project", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToUpdateHabitProjectIfTaskNotFound() {
+        IdRequest request = getValidIdRequest(5);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/project", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldUpdateTaskHabit() {
+        Integer habitId = addHabitAndReturnId();
+        IdRequest request = getValidIdRequest(
+                addProjectAndReturnId()
+        );
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .put(baseUrl + "/{userId}/habits/{habitId}/project", userId, habitId)
+        .then()
+                .statusCode(OK.value());
+
+        Optional<Habit> habit = habitRepository.findByIdAndOwnerId(habitId, userId);
+        assertThat(habit.isPresent(), is(true));
+        assertThat(habit.get().getProject().getId(), is(equalTo(request.getId())));
+    }
+
 }
