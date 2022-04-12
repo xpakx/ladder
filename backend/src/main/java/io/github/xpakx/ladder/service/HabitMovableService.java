@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static java.util.Objects.nonNull;
 
@@ -63,7 +64,8 @@ public class HabitMovableService {
     public Habit moveHabitAfter(IdRequest request, Integer userId, Integer habitToMoveId) {
         Habit habitToMove = habitRepository.findByIdAndOwnerId(habitToMoveId, userId)
                 .orElseThrow(() -> new NotFoundException("Cannot move non-existent habit!"));
-        Habit afterHabit = findIdFromIdRequest(request);
+        Habit afterHabit = findIdFromIdRequest(request)
+                .orElseThrow(() -> new NotFoundException("Cannot move nothing after non-existent habit!"));
         incrementOrderForProjectGreaterThan(userId, afterHabit.getProject(), afterHabit.getGeneralOrder());
         habitToMove.setGeneralOrder(afterHabit.getGeneralOrder() + 1);
         habitToMove.setModifiedAt(LocalDateTime.now());
@@ -104,8 +106,8 @@ public class HabitMovableService {
         }
     }
 
-    private Habit findIdFromIdRequest(IdRequest request) {
-        return hasId(request) ? habitRepository.findById(request.getId()).orElse(null) : null;
+    private Optional<Habit> findIdFromIdRequest(IdRequest request) {
+        return hasId(request) ? habitRepository.findById(request.getId()) : Optional.empty();
     }
 
     private boolean hasId(IdRequest request) {
