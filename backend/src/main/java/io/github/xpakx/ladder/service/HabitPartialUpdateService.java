@@ -6,7 +6,6 @@ import io.github.xpakx.ladder.entity.Habit;
 import io.github.xpakx.ladder.entity.HabitCompletion;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.dto.BooleanRequest;
-import io.github.xpakx.ladder.entity.dto.HabitDetails;
 import io.github.xpakx.ladder.entity.dto.IdRequest;
 import io.github.xpakx.ladder.entity.dto.PriorityRequest;
 import io.github.xpakx.ladder.error.NotFoundException;
@@ -16,7 +15,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import static java.util.Objects.nonNull;
 
