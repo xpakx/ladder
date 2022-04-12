@@ -162,7 +162,13 @@ public class HabitMovableService {
     public Habit duplicate(Integer habitId, Integer userId) {
         Habit habitToDuplicate = habitRepository.findByIdAndOwnerId(habitId, userId)
                 .orElseThrow(() -> new NotFoundException("No task with id " + habitId));
-        Habit habitToAdd = Habit.builder()
+        Habit habitToAdd = buildDuplicatedHabit(userId, habitToDuplicate);
+        incrementOrderForProjectGreaterThan(userId, habitToDuplicate.getProject(), habitToDuplicate.getGeneralOrder());
+        return habitRepository.save(habitToAdd);
+    }
+
+    private Habit buildDuplicatedHabit(Integer userId, Habit habitToDuplicate) {
+        return Habit.builder()
                 .title(habitToDuplicate.getTitle())
                 .description(habitToDuplicate.getDescription())
                 .owner(userRepository.getById(userId))
@@ -170,12 +176,10 @@ public class HabitMovableService {
                 .allowPositive(habitToDuplicate.isAllowPositive())
                 .allowNegative(habitToDuplicate.isAllowNegative())
                 .modifiedAt(LocalDateTime.now())
+                .generalOrder(habitToDuplicate.getGeneralOrder()+1)
+                .project(habitToDuplicate.getProject())
                 .archived(false)
                 .build();
-        habitToAdd.setProject(habitToDuplicate.getProject());
-        habitToAdd.setGeneralOrder(habitToDuplicate.getGeneralOrder()+1);
-        incrementOrderForProjectGreaterThan(userId, habitToDuplicate.getProject(), habitToDuplicate.getGeneralOrder());
-        return habitRepository.save(habitToAdd);
     }
 
     private Habit buildHabitToAddFromRequest(HabitRequest request, Integer userId) {
