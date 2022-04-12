@@ -55,13 +55,16 @@ public class HabitPartialUpdateService {
         if(isCompletionTypeNotAllowed(request, habit)) {
             throw new WrongCompletionTypeException("Wrong type of completion!");
         }
-        HabitCompletion habitCompletion = HabitCompletion.builder()
+        return habitCompletionRepository.save(createCompletionForHabit(request, userId, habit));
+    }
+
+    private HabitCompletion createCompletionForHabit(BooleanRequest request, Integer userId, Habit habit) {
+        return HabitCompletion.builder()
                 .habit(habit)
                 .date(LocalDateTime.now())
                 .positive(request.isFlag())
                 .owner(userRepository.getById(userId))
                 .build();
-        return habitCompletionRepository.save(habitCompletion);
     }
 
     private boolean isCompletionTypeNotAllowed(BooleanRequest request, Habit habit) {
