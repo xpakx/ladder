@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+import static java.util.Objects.nonNull;
+
 @Service
 @AllArgsConstructor
 public class HabitMovableService {
@@ -36,7 +38,7 @@ public class HabitMovableService {
     }
 
     private void incrementOrderForProject(Integer userId, Project project) {
-        if(project != null) {
+        if(nonNull(project)) {
             habitRepository.incrementGeneralOrderByOwnerIdAndProjectId(
                     userId,
                     project.getId(),
@@ -69,7 +71,7 @@ public class HabitMovableService {
     }
 
     private void incrementOrderForProjectGreaterThan(Integer userId, Project project, Integer generalOrder) {
-        if(project != null) {
+        if(nonNull(project)) {
             habitRepository.incrementGeneralOrderByOwnerIdAndProjectIdAndGeneralOrderGreaterThan(
                     userId,
                     project.getId(),
@@ -86,7 +88,7 @@ public class HabitMovableService {
     }
 
     private void incrementOrderForProjectGreaterThanEqual(Integer userId, Project project, Integer generalOrder) {
-        if(project != null) {
+        if(nonNull(project)) {
             habitRepository.incrementGeneralOrderByOwnerIdAndProjectIdAndGeneralOrderGreaterThanEqual(
                     userId,
                     project.getId(),
@@ -107,7 +109,7 @@ public class HabitMovableService {
     }
 
     private boolean hasId(IdRequest request) {
-        return request.getId() != null;
+        return nonNull(request.getId());
     }
 
     /**
