@@ -16,6 +16,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+
+import static java.util.Objects.nonNull;
 
 @Service
 @AllArgsConstructor
@@ -83,13 +86,16 @@ public class HabitPartialUpdateService {
     public Habit updateHabitProject(IdRequest request, Integer habitId, Integer userId) {
         Habit habitToUpdate = habitRepository.findByIdAndOwnerId(habitId, userId)
                 .orElseThrow(() -> new NotFoundException("No such task!"));
-        Project project = request.getId() != null ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
-                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
-
+        Project project = getProjectFromRequest(request, userId);
         habitToUpdate.setProject(project);
         habitToUpdate.setGeneralOrder(getMaxProjectOrder(request, userId)+1);
         habitToUpdate.setModifiedAt(LocalDateTime.now());
         return habitRepository.save(habitToUpdate);
+    }
+
+    private Project getProjectFromRequest(IdRequest request, Integer userId) {
+        return nonNull(request.getId()) ? projectRepository.findByIdAndOwnerId(request.getId(), userId)
+                .orElseThrow(() -> new NotFoundException("No such project!")) : null;
     }
 
     private Integer getMaxProjectOrder(IdRequest request, Integer userId) {
