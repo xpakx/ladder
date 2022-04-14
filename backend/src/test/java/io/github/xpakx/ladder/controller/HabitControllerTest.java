@@ -517,7 +517,7 @@ class HabitControllerTest {
     }
 
     @Test
-    void shouldUpdateTaskHabit() {
+    void shouldUpdateHabitProject() {
         Integer habitId = addHabitAndReturnId();
         IdRequest request = getValidIdRequest(
                 addProjectAndReturnId()
