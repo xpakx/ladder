@@ -35,11 +35,11 @@
                         </div>
                         <div class="task_list_item_content">
                             <div [id]="'habit-' + habit.id + '-content'" class="task_list_item__content_wrapper">
-                                <div markdown class="markdown_content task_content">
-                                    {{habit.title}}
+                                <div class="markdown_content task_content">
+                                    <span markdown class="markdown_text">{{habit.title}}</span>
                                 </div>
-                                <div markdown class="markdown_content task_description" *ngIf="habit.description">
-                                    {{habit.description}} 
+                                <div class="markdown_content task_description" *ngIf="habit.description">
+                                    <span markdown class="markdown_text">{{habit.description}}</span>
                                 </div>
                             </div>
                             <div class="task_list_item__info_tags" data-layout="list">
