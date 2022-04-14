@@ -33,10 +33,10 @@
                         </button>
                         <div class="task_list_item_content">
                             <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
-                                <div class="markdown_content task_content" (click)="openTaskView(task)">
+                                <div markdown class="markdown_content task_content" (click)="openTaskView(task)">
                                     {{task.title}}
                                 </div>
-                                <div class="markdown_content task_description" *ngIf="task.description">
+                                <div markdown  class="markdown_content task_description" *ngIf="task.description">
                                     {{task.description}} 
                                 </div>
                             </div>

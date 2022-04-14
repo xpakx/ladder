@@ -54,6 +54,7 @@ import { AssignModalComponent } from './component/assign-modal/assign-modal.comp
 import { CollabSubtaskListComponent } from './component/collab-subtask-list/collab-subtask-list.component';
 import { AutofocusDirective } from './component/directives/autofocus.directive';
 import { FocusableInputDirective } from './component/directives/focusable-input.directive';
+import { MarkdownModule } from 'ngx-markdown';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -121,7 +122,8 @@ export function tokenGetter() {
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    DndModule
+    DndModule,
+    MarkdownModule.forRoot()
   ],
   providers: [
     {
