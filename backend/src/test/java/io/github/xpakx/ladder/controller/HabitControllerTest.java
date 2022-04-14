@@ -26,6 +26,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -633,5 +634,45 @@ class HabitControllerTest {
                 hasProperty("title", is("Habit 3")),
                 hasProperty("generalOrder", is(4))
         )));
+    }
+
+    @Test
+    void shouldRespondWith401ToDuplicateHabitRequestIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/duplicate", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToDuplicateHabitRequestIfHabitNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/duplicate", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldDuplicateHabit() {
+        Integer habitId = addHabitAndReturnId();
+        int habits = habitRepository.findAll().size();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/duplicate", userId, habitId)
+        .then()
+                .statusCode(CREATED.value());
+        assertEquals(2*habits, habitRepository.findAll().size());
     }
 }
