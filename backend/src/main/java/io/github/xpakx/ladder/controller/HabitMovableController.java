@@ -40,12 +40,12 @@ public class HabitMovableController {
     @PostMapping("/habits/{habitId}/before")
     public ResponseEntity<Habit> addHabitBefore(@RequestBody HabitRequest request, @PathVariable Integer userId,
                                                 @PathVariable Integer habitId) {
-        return  new ResponseEntity<>(habitService.addHabitBefore(request, userId, habitId), HttpStatus.CREATED);
+        return new ResponseEntity<>(habitService.addHabitBefore(request, userId, habitId), HttpStatus.CREATED);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/habits/{habitId}/duplicate")
     public ResponseEntity<Habit> duplicateTask(@PathVariable Integer habitId, @PathVariable Integer userId) {
-        return  new ResponseEntity<>(habitService.duplicate(habitId, userId), HttpStatus.CREATED);
+        return new ResponseEntity<>(habitService.duplicate(habitId, userId), HttpStatus.CREATED);
     }
 }

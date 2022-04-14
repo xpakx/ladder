@@ -1,12 +1,10 @@
 package io.github.xpakx.ladder.controller;
 
 import io.github.xpakx.ladder.entity.Habit;
+import io.github.xpakx.ladder.entity.Label;
 import io.github.xpakx.ladder.entity.Project;
 import io.github.xpakx.ladder.entity.UserAccount;
-import io.github.xpakx.ladder.entity.dto.BooleanRequest;
-import io.github.xpakx.ladder.entity.dto.HabitRequest;
-import io.github.xpakx.ladder.entity.dto.IdRequest;
-import io.github.xpakx.ladder.entity.dto.PriorityRequest;
+import io.github.xpakx.ladder.entity.dto.*;
 import io.github.xpakx.ladder.repository.*;
 import io.github.xpakx.ladder.security.JwtTokenUtil;
 import io.github.xpakx.ladder.service.UserService;
@@ -28,6 +26,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -81,6 +80,7 @@ class HabitControllerTest {
         Habit habit = Habit.builder()
                 .owner(userRepository.getById(userId))
                 .title("Test Habit")
+                .generalOrder(0)
                 .build();
         return habitRepository.save(habit).getId();
     }
@@ -517,7 +517,7 @@ class HabitControllerTest {
     }
 
     @Test
-    void shouldUpdateTaskHabit() {
+    void shouldUpdateHabitProject() {
         Integer habitId = addHabitAndReturnId();
         IdRequest request = getValidIdRequest(
                 addProjectAndReturnId()
@@ -539,4 +539,141 @@ class HabitControllerTest {
         assertThat(habit.get().getProject().getId(), is(equalTo(request.getId())));
     }
 
+    @Test
+    void shouldRespondWith401ToAddHabitAfterIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/after", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddHabitAfter() {
+        HabitRequest request = getValidAddHabitRequest();
+        Integer habitId = add3HabitsInOrderAndReturnListOfIds().get(1);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/after", userId, habitId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()))
+                .body("description", equalTo(request.getDescription()));
+
+        List<Habit> habits = habitRepository.findAll();
+        assertThat(habits, hasSize(4));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Added Habit")),
+                hasProperty("generalOrder", is(3))
+        )));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Habit 1")),
+                hasProperty("generalOrder", is(1))
+        )));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Habit 2")),
+                hasProperty("generalOrder", is(2))
+        )));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Habit 3")),
+                hasProperty("generalOrder", is(4))
+        )));
+    }
+
+    @Test
+    void shouldRespondWith401ToAddHabitBeforeIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/before", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddHabitBefore() {
+        HabitRequest request = getValidAddHabitRequest();
+        Integer habitId = add3HabitsInOrderAndReturnListOfIds().get(1);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/before", userId, habitId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()))
+                .body("description", equalTo(request.getDescription()));
+
+        List<Habit> habits = habitRepository.findAll();
+        assertThat(habits, hasSize(4));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Added Habit")),
+                hasProperty("generalOrder", is(2))
+        )));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Habit 1")),
+                hasProperty("generalOrder", is(1))
+        )));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Habit 2")),
+                hasProperty("generalOrder", is(3))
+        )));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Habit 3")),
+                hasProperty("generalOrder", is(4))
+        )));
+    }
+
+    @Test
+    void shouldRespondWith401ToDuplicateHabitRequestIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/duplicate", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToDuplicateHabitRequestIfHabitNotFound() {
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/duplicate", userId, 1)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldDuplicateHabit() {
+        Integer habitId = addHabitAndReturnId();
+        int habits = habitRepository.findAll().size();
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/duplicate", userId, habitId)
+        .then()
+                .statusCode(CREATED.value());
+        assertEquals(2*habits, habitRepository.findAll().size());
+    }
 }
