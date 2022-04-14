@@ -585,4 +585,53 @@ class HabitControllerTest {
                 hasProperty("generalOrder", is(4))
         )));
     }
+
+    @Test
+    void shouldRespondWith401ToAddHabitBeforeIfUserUnauthorized() {
+        given()
+                .log()
+                .uri()
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/before", 1, 1)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldAddHabitBefore() {
+        HabitRequest request = getValidAddHabitRequest();
+        Integer habitId = add3HabitsInOrderAndReturnListOfIds().get(1);
+        given()
+                .log()
+                .uri()
+                .auth()
+                .oauth2(tokenFor("user1"))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/{userId}/habits/{habitId}/before", userId, habitId)
+        .then()
+                .statusCode(CREATED.value())
+                .body("title", equalTo(request.getTitle()))
+                .body("description", equalTo(request.getDescription()));
+
+        List<Habit> habits = habitRepository.findAll();
+        assertThat(habits, hasSize(4));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Added Habit")),
+                hasProperty("generalOrder", is(2))
+        )));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Habit 1")),
+                hasProperty("generalOrder", is(1))
+        )));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Habit 2")),
+                hasProperty("generalOrder", is(3))
+        )));
+        assertThat(habits, hasItem(allOf(
+                hasProperty("title", is("Habit 3")),
+                hasProperty("generalOrder", is(4))
+        )));
+    }
 }
