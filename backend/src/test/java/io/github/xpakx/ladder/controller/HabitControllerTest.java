@@ -80,6 +80,7 @@ class HabitControllerTest {
         Habit habit = Habit.builder()
                 .owner(userRepository.getById(userId))
                 .title("Test Habit")
+                .generalOrder(0)
                 .build();
         return habitRepository.save(habit).getId();
     }
