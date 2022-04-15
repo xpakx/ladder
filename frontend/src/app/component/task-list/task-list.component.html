@@ -34,10 +34,10 @@
                         <div class="task_list_item_content">
                             <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
                                 <div class="markdown_content task_content" (click)="openTaskView(task)">
-                                    <span markdown class="markdown_text">{{task.title}}</span>
+                                    <span markdown class="markdown_text" [data]='task.title'></span>
                                 </div>
                                 <div class="markdown_content task_description" *ngIf="task.description">
-                                    <span markdown class="markdown_text">{{task.description}}</span>
+                                    <span markdown class="markdown_text" [data]='task.description'></span>
                                 </div>
                             </div>
                             <div class="task_list_item__info_tags" data-layout="list">
