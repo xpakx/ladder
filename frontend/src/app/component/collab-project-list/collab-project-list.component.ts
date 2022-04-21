@@ -14,9 +14,9 @@ import { TreeService } from 'src/app/service/tree.service';
   animations: [
     trigger('collapse', [
       transition(':enter', [
-        style({ maxHeight: '0px' }),
+        style({ height: '0' }),
         group([
-          animate('.375s', style({ maxHeight: '!' })),
+          animate('.375s', style({ height: '*' })),
           query('.projects_list_container',[
             style({ transform: 'translateY(-100%)' }),
             animate('.375s', style({ transform: 'translateY(0)' }))
