@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { animate, style, transition, trigger, group, query } from '@angular/animations';
 import { Filter } from 'src/app/entity/filter';
 import { FilterDetails } from 'src/app/entity/filter-details';
 import { AddEvent } from 'src/app/entity/utils/add-event';
@@ -10,35 +9,13 @@ import { FilterTreeService } from 'src/app/service/filter-tree.service';
 import { FilterService } from 'src/app/service/filter.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { DraggableComponent } from '../abstract/draggable-component';
+import { Animations } from '../common/animations';
 
 @Component({
   selector: 'app-filter-list',
   templateUrl: './filter-list.component.html',
   styleUrls: ['./filter-list.component.css'],
-  animations: [
-    trigger('collapse', [
-      transition(':enter', [
-        style({ height: '0' }),
-        group([
-          animate('.375s', style({ height: '*' })),
-          query('.projects_list_container',[
-            style({ transform: 'translateY(-100%)' }),
-            animate('.375s', style({ transform: 'translateY(0)' }))
-          ])
-        ])
-      ]),
-      transition(':leave', [
-        style({ overflow: 'hidden' }),
-        group([
-          animate('.375s', style({ height: '0' })),
-          query('.projects_list_container',[
-            style({ transform: 'translateY(0)' }),
-            animate('.375s', style({ transform: 'translateY(-100%)' }))
-          ])
-        ])
-      ]),
-    ])
-  ]
+  animations: [Animations.collapseTrigger]
 })
 export class FilterListComponent  extends DraggableComponent<FilterDetails, Filter, FilterService, FilterTreeService>
 implements OnInit, AfterViewInit {

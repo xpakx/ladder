@@ -2,7 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
-import { animate, style, transition, trigger, group, query } from '@angular/animations';
 import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { ProjectWithNameAndId } from 'src/app/entity/project-with-name-and-id';
@@ -15,35 +14,13 @@ import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { MultilevelDraggableComponent } from '../abstract/multilevel-draggable-component';
+import { Animations } from '../common/animations';
 
 @Component({
   selector: 'app-project-list',
   templateUrl: './project-list.component.html',
   styleUrls: ['./project-list.component.css'],
-  animations: [
-    trigger('collapse', [
-      transition(':enter', [
-        style({ height: '0' }),
-        group([
-          animate('.375s', style({ height: '*' })),
-          query('.projects_list_container',[
-            style({ transform: 'translateY(-100%)' }),
-            animate('.375s', style({ transform: 'translateY(0)' }))
-          ])
-        ])
-      ]),
-      transition(':leave', [
-        style({ overflow: 'hidden' }),
-        group([
-          animate('.375s', style({ height: '0' })),
-          query('.projects_list_container',[
-            style({ transform: 'translateY(0)' }),
-            animate('.375s', style({ transform: 'translateY(-100%)' }))
-          ])
-        ])
-      ]),
-    ])
-  ]
+  animations: [Animations.collapseTrigger]
 })
 export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWithNameAndId, ProjectTreeElem, Project, ProjectService, ProjectTreeService>
  implements OnInit, AfterViewInit {
