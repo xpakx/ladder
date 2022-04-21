@@ -189,7 +189,12 @@ implements OnInit, AfterViewInit {
     this.showContextTaskMenu = true;
     this.contextTaskMenuJustOpened = true;
     this.taskContextMenuX = event.clientX-250;
-    this.taskContextMenuY = event.clientY;
+    let menuHeight: number = 9*24+20;
+    if(event.clientY+menuHeight > window.innerHeight) {
+      this.taskContextMenuY = event.clientY-menuHeight;
+    } else {
+      this.taskContextMenuY = event.clientY;
+    }
   }
 
   getTaskById(taskId: number): TaskTreeElem | undefined {
