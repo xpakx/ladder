@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { animate, style, transition, trigger, group, query } from '@angular/animations';
 import { Filter } from 'src/app/entity/filter';
 import { FilterDetails } from 'src/app/entity/filter-details';
 import { AddEvent } from 'src/app/entity/utils/add-event';
@@ -13,7 +14,31 @@ import { DraggableComponent } from '../abstract/draggable-component';
 @Component({
   selector: 'app-filter-list',
   templateUrl: './filter-list.component.html',
-  styleUrls: ['./filter-list.component.css']
+  styleUrls: ['./filter-list.component.css'],
+  animations: [
+    trigger('collapse', [
+      transition(':enter', [
+        style({ maxHeight: '0px' }),
+        group([
+          animate('.375s', style({ maxHeight: '!' })),
+          query('.projects_list_container',[
+            style({ transform: 'translateY(-100%)' }),
+            animate('.375s', style({ transform: 'translateY(0)' }))
+          ])
+        ])
+      ]),
+      transition(':leave', [
+        style({ overflow: 'hidden' }),
+        group([
+          animate('.375s', style({ height: '0' })),
+          query('.projects_list_container',[
+            style({ transform: 'translateY(0)' }),
+            animate('.375s', style({ transform: 'translateY(-100%)' }))
+          ])
+        ])
+      ]),
+    ])
+  ]
 })
 export class FilterListComponent  extends DraggableComponent<FilterDetails, Filter, FilterService, FilterTreeService>
 implements OnInit, AfterViewInit {

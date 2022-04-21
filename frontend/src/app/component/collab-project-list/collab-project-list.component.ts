@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { animate, style, transition, trigger, group, query } from '@angular/animations';
 import { CollabProjectDetails } from 'src/app/entity/collab-project-details';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { CollabProjectTreeService } from 'src/app/service/collab-project-tree.service';
@@ -9,7 +10,31 @@ import { TreeService } from 'src/app/service/tree.service';
 @Component({
   selector: 'app-collab-project-list',
   templateUrl: './collab-project-list.component.html',
-  styleUrls: ['./collab-project-list.component.css']
+  styleUrls: ['./collab-project-list.component.css'],
+  animations: [
+    trigger('collapse', [
+      transition(':enter', [
+        style({ maxHeight: '0px' }),
+        group([
+          animate('.375s', style({ maxHeight: '!' })),
+          query('.projects_list_container',[
+            style({ transform: 'translateY(-100%)' }),
+            animate('.375s', style({ transform: 'translateY(0)' }))
+          ])
+        ])
+      ]),
+      transition(':leave', [
+        style({ overflow: 'hidden' }),
+        group([
+          animate('.375s', style({ height: '0' })),
+          query('.projects_list_container',[
+            style({ transform: 'translateY(0)' }),
+            animate('.375s', style({ transform: 'translateY(-100%)' }))
+          ])
+        ])
+      ]),
+    ])
+  ]
 })
 export class CollabProjectListComponent implements OnInit, AfterViewInit  {
   @Output() addLabel = new EventEmitter<AddEvent<CollabProjectDetails>>();

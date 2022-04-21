@@ -15,7 +15,7 @@
             </button>
         </div>
     </div>
-    <div class="projects" style="min-height: 0px;" [class.hidden]="tree.projectCollapsed">
+    <div class="projects" *ngIf="!tree.projectCollapsed" @collapse>
         <div class="projects_list_container">
             <ul class="items generic_left_list projects_list">
                 <li *ngIf="draggedId" [dndDropzone]="['project']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item"  [dndDropzone]="['project']"></li>

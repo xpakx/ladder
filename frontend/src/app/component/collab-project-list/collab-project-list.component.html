@@ -7,7 +7,7 @@
             Collaborative
         </button>
     </div>
-    <div class="projects" style="min-height: 0px;" [class.hidden]="tree.collapsed">
+    <div class="projects" *ngIf="!tree.collapsed" @collapse>
         <div class="projects_list_container">
             <ul class="items generic_left_list projects_list">
                 <ng-container *ngFor="let project of tree.getProjects()">

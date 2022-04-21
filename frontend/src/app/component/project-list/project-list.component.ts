@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DndDropEvent } from 'ngx-drag-drop';
+import { animate, style, transition, trigger, group, query } from '@angular/animations';
 import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { ProjectWithNameAndId } from 'src/app/entity/project-with-name-and-id';
@@ -18,7 +19,31 @@ import { MultilevelDraggableComponent } from '../abstract/multilevel-draggable-c
 @Component({
   selector: 'app-project-list',
   templateUrl: './project-list.component.html',
-  styleUrls: ['./project-list.component.css']
+  styleUrls: ['./project-list.component.css'],
+  animations: [
+    trigger('collapse', [
+      transition(':enter', [
+        style({ maxHeight: '0px' }),
+        group([
+          animate('.375s', style({ maxHeight: '!' })),
+          query('.projects_list_container',[
+            style({ transform: 'translateY(-100%)' }),
+            animate('.375s', style({ transform: 'translateY(0)' }))
+          ])
+        ])
+      ]),
+      transition(':leave', [
+        style({ overflow: 'hidden' }),
+        group([
+          animate('.375s', style({ height: '0' })),
+          query('.projects_list_container',[
+            style({ transform: 'translateY(0)' }),
+            animate('.375s', style({ transform: 'translateY(-100%)' }))
+          ])
+        ])
+      ]),
+    ])
+  ]
 })
 export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWithNameAndId, ProjectTreeElem, Project, ProjectService, ProjectTreeService>
  implements OnInit, AfterViewInit {
