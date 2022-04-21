@@ -190,6 +190,9 @@ implements OnInit, AfterViewInit {
     this.contextTaskMenuJustOpened = true;
     this.taskContextMenuX = event.clientX-250;
     let menuHeight: number = 9*24+20;
+    if(this.project && this.project.collaborative) {
+      menuHeight += 1;
+    }
     if(event.clientY+menuHeight > window.innerHeight) {
       this.taskContextMenuY = event.clientY-menuHeight;
     } else {
