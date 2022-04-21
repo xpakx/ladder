@@ -9,11 +9,13 @@ import { LabelTreeService } from 'src/app/service/label-tree.service';
 import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { DraggableComponent } from '../abstract/draggable-component';
+import { Animations } from '../common/animations';
 
 @Component({
   selector: 'app-label-list',
   templateUrl: './label-list.component.html',
-  styleUrls: ['./label-list.component.css']
+  styleUrls: ['./label-list.component.css'],
+  animations: [Animations.collapseTrigger]
 })
 export class LabelListComponent extends DraggableComponent<LabelDetails, Label, LabelService, LabelTreeService>
     implements OnInit, AfterViewInit 

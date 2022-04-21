@@ -27,11 +27,11 @@
                             </button>
                             <div class="task_list_item_content">
                                 <div [id]="'task-' + task.id + '-content'" class="task_list_item__content_wrapper">
-                                    <div markdown class="markdown_content task_content">
-                                        {{task.title}}
+                                    <div class="markdown_content task_content">
+                                        <span markdown class="markdown_text" [data]='task.title'></span>
                                     </div>
-                                    <div markdown class="markdown_content task_description" *ngIf="task.description">
-                                        {{task.description}} 
+                                    <div class="markdown_content task_description" *ngIf="task.description">
+                                        <span markdown class="markdown_text" [data]='task.description'></span>
                                     </div>
                                 </div>
                                 <div class="task_list_item__info_tags" data-layout="list">

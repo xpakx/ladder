@@ -12,14 +12,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/{userId}/projects")
+@RequestMapping("/{userId}/projects/{projectId}")
 @AllArgsConstructor
 public class ProjectMovableController {
     private final ProjectMovableService projectService;
 
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/{projectId}/after")
+    @PostMapping("/after")
     public ResponseEntity<ProjectUpdateDto> addProjectAfter(@RequestBody ProjectRequest request, @PathVariable Integer userId,
                                                             @PathVariable Integer projectId) {
         return new ResponseEntity<>(
@@ -29,7 +29,7 @@ public class ProjectMovableController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/{projectId}/before")
+    @PostMapping("/before")
     public ResponseEntity<ProjectUpdateDto> addProjectBefore(@RequestBody ProjectRequest request, @PathVariable Integer userId,
                                                              @PathVariable Integer projectId) {
         return new ResponseEntity<>(
@@ -39,13 +39,13 @@ public class ProjectMovableController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PostMapping("/{projectId}/duplicate")
+    @PostMapping("/duplicate")
     public ResponseEntity<TasksAndProjects> duplicateProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
         return  new ResponseEntity<>(projectService.duplicate(projectId, userId), HttpStatus.CREATED);
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/move/after")
+    @PutMapping("/move/after")
     public ResponseEntity<ProjectUpdateDto> moveProjectAfter(@RequestBody IdRequest request, @PathVariable Integer userId,
                                                              @PathVariable Integer projectId) {
         return new ResponseEntity<>(
@@ -55,7 +55,7 @@ public class ProjectMovableController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/move/asChild")
+    @PutMapping("/move/asChild")
     public ResponseEntity<ProjectUpdateDto> moveProjectAsFirstChild(@RequestBody IdRequest request, @PathVariable Integer userId,
                                                                     @PathVariable Integer projectId) {
         return new ResponseEntity<>(
@@ -65,7 +65,7 @@ public class ProjectMovableController {
     }
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
-    @PutMapping("/{projectId}/move/asFirst")
+    @PutMapping("/move/asFirst")
     public ResponseEntity<ProjectUpdateDto> moveProjectAsFirst(@PathVariable Integer userId, @PathVariable Integer projectId) {
         return new ResponseEntity<>(
                 ProjectUpdateDto.from(projectService.moveProjectAsFirst(userId, projectId)),

@@ -9,11 +9,13 @@ import { FilterTreeService } from 'src/app/service/filter-tree.service';
 import { FilterService } from 'src/app/service/filter.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { DraggableComponent } from '../abstract/draggable-component';
+import { Animations } from '../common/animations';
 
 @Component({
   selector: 'app-filter-list',
   templateUrl: './filter-list.component.html',
-  styleUrls: ['./filter-list.component.css']
+  styleUrls: ['./filter-list.component.css'],
+  animations: [Animations.collapseTrigger]
 })
 export class FilterListComponent  extends DraggableComponent<FilterDetails, Filter, FilterService, FilterTreeService>
 implements OnInit, AfterViewInit {

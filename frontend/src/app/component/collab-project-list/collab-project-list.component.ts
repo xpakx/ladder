@@ -5,11 +5,13 @@ import { AddEvent } from 'src/app/entity/utils/add-event';
 import { CollabProjectTreeService } from 'src/app/service/collab-project-tree.service';
 import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
+import { Animations } from '../common/animations';
 
 @Component({
   selector: 'app-collab-project-list',
   templateUrl: './collab-project-list.component.html',
-  styleUrls: ['./collab-project-list.component.css']
+  styleUrls: ['./collab-project-list.component.css'],
+  animations: [Animations.collapseTrigger]
 })
 export class CollabProjectListComponent implements OnInit, AfterViewInit  {
   @Output() addLabel = new EventEmitter<AddEvent<CollabProjectDetails>>();

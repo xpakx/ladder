@@ -14,11 +14,13 @@ import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { MultilevelDraggableComponent } from '../abstract/multilevel-draggable-component';
+import { Animations } from '../common/animations';
 
 @Component({
   selector: 'app-project-list',
   templateUrl: './project-list.component.html',
-  styleUrls: ['./project-list.component.css']
+  styleUrls: ['./project-list.component.css'],
+  animations: [Animations.collapseTrigger]
 })
 export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWithNameAndId, ProjectTreeElem, Project, ProjectService, ProjectTreeService>
  implements OnInit, AfterViewInit {
