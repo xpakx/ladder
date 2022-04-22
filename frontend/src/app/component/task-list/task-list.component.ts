@@ -14,6 +14,8 @@ import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
+import { ContextMenuElem } from '../context-menu/context-menu-elem';
+import { Codes, MenuElems } from './task-list-context-codes';
 
 @Component({
   selector: 'app-task-list',
@@ -29,6 +31,7 @@ implements OnInit, AfterViewInit {
   todayDate: Date | undefined;
   showAddTaskForm: boolean = false;
   taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
+  contextMenu: ContextMenuElem[] = [];
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService, private taskService: TaskService,
@@ -39,6 +42,23 @@ implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    if(!this.blocked) {
+      this.contextMenu.push(MenuElems.addTaskAbove);
+      this.contextMenu.push(MenuElems.addTaskBelow);
+      this.contextMenu.push(MenuElems.editTask);
+      this.contextMenu.push(MenuElems.moveToProject);
+      this.contextMenu.push(MenuElems.schedule);
+      this.contextMenu.push(MenuElems.priority);
+      this.contextMenu.push(MenuElems.duplicate);
+      this.contextMenu.push(MenuElems.archiveTask);
+    }
+    if(this.project && this.project.collaborative) {
+      this.contextMenu.push(MenuElems.assign);
+    }
+    if(this.blocked) {
+      this.contextMenu.push(MenuElems.restoreTask);
+    }
+    this.contextMenu.push(MenuElems.deleteTask);
   }
 
   get tasks(): TaskTreeElem[] {
@@ -188,17 +208,28 @@ implements OnInit, AfterViewInit {
 	  this.contextTaskMenu = this.getTaskById(taskId);
     this.showContextTaskMenu = true;
     this.contextTaskMenuJustOpened = true;
-    this.taskContextMenuX = event.clientX-250;
-    let menuHeight: number = (this.project && this.project.collaborative ? 10 : 9)*24+20;
-    if(event.clientY+menuHeight > window.innerHeight) {
-      this.taskContextMenuY = event.clientY-menuHeight;
-    } else {
-      this.taskContextMenuY = event.clientY;
-    }
+    this.taskContextMenuX = event.clientX;
+    this.taskContextMenuY = event.clientY;
   }
 
   getTaskById(taskId: number): TaskTreeElem | undefined {
     return this.initTasks.length == 0 ? this.tree.getTaskById(taskId) : this.initTasks.find((a) => a.id == taskId);
+  }
+
+
+  closeContextMenu(code: number) {
+    if(code == Codes.addTaskAbove) { this.openEditTaskAbove() }
+    else if(code == Codes.addTaskBelow) { this.openEditTaskBelow() }
+    else if(code == Codes.editTask) { this.openEditTaskFromContextMenu() }
+    else if(code == Codes.moveToProject) { this.openSelectProjectModalFormContextMenu() }
+    else if(code == Codes.schedule) { this.openSelectDateModalFormContextMenu() }
+    else if(code == Codes.priority) { this.openSelectPriorityModalFormContextMenu() }
+    else if(code == Codes.duplicate) { this.duplicate() }
+    else if(code == Codes.archiveTask) { this.archiveTask() }
+    else if(code == Codes.assign) { this.openAssignModal() }
+    else if(code == Codes.restoreTask) { this.restoreTask() }
+    else if(code == Codes.deleteTask) { this.askForDelete() }
+    this.closeContextTaskMenu();
   }
 
   closeContextTaskMenu() {

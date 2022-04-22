@@ -1,10 +1,10 @@
 
 <div class="ist-menu context" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
-	<ul class="context-menu-project" #taskContext>
+	<ul class="context-menu-project" #contextList>
         <li class="context-menu-project-item" *ngFor="let elem of elems">
 			<button (click)="emit(elem.code)">
 				<span class="menu_icon">
-					<i class="fa fa-trash-o"></i>
+					<i class="fa" [class]="elem.icon"></i>
 				</span>
 				<div class="menu_label">{{ elem.name }}</div>
 			</button>

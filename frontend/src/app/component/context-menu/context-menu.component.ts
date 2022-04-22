@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { ContextMenuElem } from './context-menu-elem';
 
 @Component({
@@ -8,35 +8,51 @@ import { ContextMenuElem } from './context-menu-elem';
 })
 export class ContextMenuComponent implements OnInit {
   @Input() elems: ContextMenuElem[] = [];
+  @Input() x: number = 0;
+  @Input() y: number = 0;
   contextMenuX: number = 0;
   contextMenuY: number = 0;
-  justOpened: boolean = false;
+  justOpened: boolean = true;
 
   @Output() actionEvent = new EventEmitter<number>();
   @Output() closeEvent = new EventEmitter<boolean>();
 
-  constructor() { }
+  @ViewChild('contextList', {read: ElementRef}) listElem!: ElementRef;
+
+  constructor(private renderer: Renderer2) { }
 
   ngOnInit(): void {
+    this.openContextMenu();
+  }
+
+  ngAfterViewInit() {
+    this.renderer.listen('window', 'click',(e:Event)=>{
+      if(!this.listElem.nativeElement.contains(e.target)){
+        if(this.justOpened) {
+          this.justOpened = false
+        } else {
+          this.closeEvent.emit(true);
+        }
+      }
+    })
   }
 
   emit(code: number) {
     this.actionEvent.emit(code);
   }
 
-  openContextMenu(event: MouseEvent) {
-    this.justOpened = true;
-    if(event.clientY+250 > window.innerWidth) {
-      this.contextMenuX = event.clientX-250;
+  openContextMenu() {
+    if(this.x+250 > window.innerWidth) {
+      this.contextMenuX = this.x-250;
     } else {
-      this.contextMenuX = event.clientX;
+      this.contextMenuX = this.x;
     }
     
     let menuHeight: number = (this.elems.length)*24+20;
-    if(event.clientY+menuHeight > window.innerHeight) {
-      this.contextMenuY = event.clientY-menuHeight;
+    if(this.y+menuHeight > window.innerHeight) {
+      this.contextMenuY = this.y-menuHeight;
     } else {
-      this.contextMenuY = event.clientY;
+      this.contextMenuY = this.y;
     }
   }
 
