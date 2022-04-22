@@ -1,1 +1,13 @@
-<p>context-menu works!</p>
+
+<div class="ist-menu context" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
+	<ul class="context-menu-project" #taskContext>
+        <li class="context-menu-project-item" *ngFor="let elem of elems">
+			<button (click)="emit(elem.code)">
+				<span class="menu_icon">
+					<i class="fa fa-trash-o"></i>
+				</span>
+				<div class="menu_label">{{ elem.name }}</div>
+			</button>
+		</li>
+	</ul>
+</div>
