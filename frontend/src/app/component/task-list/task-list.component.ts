@@ -72,28 +72,19 @@ implements OnInit {
     this.taskData = new AddEvent<TaskTreeElem>();
   }
 
-  openEditTaskFromContextMenu() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
+  openEditTaskFromContextMenu(task: TaskTreeElem) {
+    this.closeAddTaskForm();
+    this.taskData = new AddEvent<TaskTreeElem>(task);
   }
 
-  openEditTaskAbove() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, false, true);
-    }
-    this.closeContextTaskMenu();
+  openEditTaskAbove(task: TaskTreeElem) {
+    this.closeAddTaskForm();
+    this.taskData = new AddEvent<TaskTreeElem>(task, false, true);
   }
 
-  openEditTaskBelow() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, true, false);
-    }
-    this.closeContextTaskMenu();
+  openEditTaskBelow(task: TaskTreeElem) {
+    this.closeAddTaskForm();
+    this.taskData = new AddEvent<TaskTreeElem>(task, true, false);
   }
 
   shouldEditTaskById(taskId: number): boolean {
@@ -205,17 +196,18 @@ implements OnInit {
   }
 
   closeContextMenu(code: number) {
-    if(code == Codes.addTaskAbove) { this.openEditTaskAbove() }
-    else if(code == Codes.addTaskBelow) { this.openEditTaskBelow() }
-    else if(code == Codes.editTask) { this.openEditTaskFromContextMenu() }
-    else if(code == Codes.moveToProject) { this.openSelectProjectModalFormContextMenu() }
-    else if(code == Codes.schedule) { this.openSelectDateModalFormContextMenu() }
-    else if(code == Codes.priority) { this.openSelectPriorityModalFormContextMenu() }
-    else if(code == Codes.duplicate) { this.duplicate() }
-    else if(code == Codes.archiveTask) { this.archiveTask() }
-    else if(code == Codes.assign) { this.openAssignModal() }
-    else if(code == Codes.restoreTask) { this.restoreTask() }
-    else if(code == Codes.deleteTask) { this.askForDelete() }
+    if(!this.contextTaskMenu) {return}
+    if(code == Codes.addTaskAbove) { this.openEditTaskAbove(this.contextTaskMenu) }
+    else if(code == Codes.addTaskBelow) { this.openEditTaskBelow(this.contextTaskMenu) }
+    else if(code == Codes.editTask) { this.openEditTaskFromContextMenu(this.contextTaskMenu) }
+    else if(code == Codes.moveToProject) { this.openSelectProjectModal(this.contextTaskMenu) }
+    else if(code == Codes.schedule) { this.openSelectDateModal(this.contextTaskMenu) }
+    else if(code == Codes.priority) { this.openSelectPriorityModal(this.contextTaskMenu) }
+    else if(code == Codes.duplicate) { this.duplicate(this.contextTaskMenu) }
+    else if(code == Codes.archiveTask) { this.archiveTask(this.contextTaskMenu) }
+    else if(code == Codes.assign) { this.openAssignModal(this.contextTaskMenu) }
+    else if(code == Codes.restoreTask) { this.restoreTask(this.contextTaskMenu) }
+    else if(code == Codes.deleteTask) { this.askForDelete(this.contextTaskMenu) }
     this.closeContextTaskMenu();
   }
 
@@ -232,11 +224,8 @@ implements OnInit {
     return this.tree.getNumOfTasksByParent(parentId);
   }
 
-  askForDelete() {
-    if(this.contextTaskMenu) {
-      this.deleteService.openModalForTask(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
+  askForDelete(task: TaskTreeElem) {
+    this.deleteService.openModalForTask(task);
   }
 
   showSelectDateModal: boolean = false;
@@ -271,13 +260,6 @@ implements OnInit {
     this.showSelectDateModal = true;
   }
 
-  openSelectDateModalFormContextMenu() {
-    if(this.contextTaskMenu) {
-      this.openSelectDateModal(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
-  }
-
   showSelectProjectModal: boolean = false;
   projectForProjectModal: ProjectTreeElem | undefined;
   taskIdForProjectModal: number | undefined;
@@ -308,13 +290,6 @@ implements OnInit {
     this.taskIdForProjectModal = task.id;
     this.projectForProjectModal = this.project;
     this.showSelectProjectModal = true;
-  }
-
-  openSelectProjectModalFormContextMenu() {
-    if(this.contextTaskMenu) {
-      this.openSelectProjectModal(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
   }
 
   showSelectPriorityModal: boolean = false;
@@ -349,13 +324,6 @@ implements OnInit {
     this.showSelectPriorityModal = true;
   }
 
-  openSelectPriorityModalFormContextMenu() {
-    if(this.contextTaskMenu) {
-      this.openSelectPriorityModal(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
-  }
-
   getTaskLabels(task: TaskTreeElem): LabelDetails[] {
     let labels: LabelDetails[] = [];
     for(let label of task.labels) {
@@ -367,20 +335,16 @@ implements OnInit {
     return labels;
   }
 
-  duplicate() {
-    if(this.contextTaskMenu) {
-      let id: number = this.contextTaskMenu.id;
-      this.taskService.duplicateTask(id).subscribe(
+  duplicate(task: TaskTreeElem) {
+    let id: number = task.id;
+    this.taskService.duplicateTask(id).subscribe(
         (response: TaskDetails[], mainId: number = id) => {
         this.tree.duplicateTask(response, mainId);
       },
       (error: HttpErrorResponse) => {
-       
+        
       }
     );
-    }
-
-    this.closeContextTaskMenu();
   }
 
   openTask?: TaskTreeElem;
@@ -393,9 +357,8 @@ implements OnInit {
     this.openTask = undefined;
   }
 
-  archiveTask() {
-    if(this.contextTaskMenu) {
-      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:true}).subscribe(
+  archiveTask(task: TaskTreeElem) {
+    this.taskService.archiveTask(task.id, {flag:true}).subscribe(
         (response: Task) => {
         this.tree.archiveTask(response);
       },
@@ -403,14 +366,10 @@ implements OnInit {
        
       }
     );
-    }
-
-    this.closeContextTaskMenu();
   }
 
-  restoreTask() {
-    if(this.contextTaskMenu) {
-      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:false}).subscribe(
+  restoreTask(task: TaskTreeElem) {
+    this.taskService.archiveTask(task.id, {flag:false}).subscribe(
           (response: Task, tasks: TaskTreeElem[] = this.initTasks) => {
           this.tree.restoreTask(response ,tasks);
         },
@@ -418,9 +377,6 @@ implements OnInit {
         
         }
      );
-    }
-
-    this.closeContextTaskMenu();
   }
 
   showAssignModal: boolean = false;
@@ -440,10 +396,9 @@ implements OnInit {
     this.closeAssignModal();
   }
 
-  openAssignModal() {
+  openAssignModal(task: TaskTreeElem) {
     this.showAssignModal = true;
-    this.taskIdForAssignation = this.contextTaskMenu?.id;
-    this.closeContextTaskMenu();
+    this.taskIdForAssignation = task.id;
   }
 
   closeAssignModal() {
