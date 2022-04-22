@@ -72,11 +72,6 @@ implements OnInit {
     this.taskData = new AddEvent<TaskTreeElem>();
   }
 
-  openEditTaskFromContextMenu(task: TaskTreeElem) {
-    this.closeAddTaskForm();
-    this.taskData = new AddEvent<TaskTreeElem>(task);
-  }
-
   openEditTaskAbove(task: TaskTreeElem) {
     this.closeAddTaskForm();
     this.taskData = new AddEvent<TaskTreeElem>(task, false, true);
@@ -197,18 +192,22 @@ implements OnInit {
 
   closeContextMenu(code: number) {
     if(!this.contextTaskMenu) {return}
-    if(code == Codes.addTaskAbove) { this.openEditTaskAbove(this.contextTaskMenu) }
-    else if(code == Codes.addTaskBelow) { this.openEditTaskBelow(this.contextTaskMenu) }
-    else if(code == Codes.editTask) { this.openEditTaskFromContextMenu(this.contextTaskMenu) }
-    else if(code == Codes.moveToProject) { this.openSelectProjectModal(this.contextTaskMenu) }
-    else if(code == Codes.schedule) { this.openSelectDateModal(this.contextTaskMenu) }
-    else if(code == Codes.priority) { this.openSelectPriorityModal(this.contextTaskMenu) }
-    else if(code == Codes.duplicate) { this.duplicate(this.contextTaskMenu) }
-    else if(code == Codes.archiveTask) { this.archiveTask(this.contextTaskMenu) }
-    else if(code == Codes.assign) { this.openAssignModal(this.contextTaskMenu) }
-    else if(code == Codes.restoreTask) { this.restoreTask(this.contextTaskMenu) }
-    else if(code == Codes.deleteTask) { this.askForDelete(this.contextTaskMenu) }
+    let task = this.contextTaskMenu;
     this.closeContextTaskMenu();
+    
+    switch(code) {
+      case(Codes.addTaskAbove): { this.openEditTaskAbove(task); break }
+      case(Codes.addTaskBelow): { this.openEditTaskBelow(task); break }
+      case(Codes.editTask): { this.openEditTaskForm(task); break }
+      case(Codes.moveToProject): { this.openSelectProjectModal(task); break }
+      case(Codes.schedule): { this.openSelectDateModal(task); break }
+      case(Codes.priority): { this.openSelectPriorityModal(task); break }
+      case(Codes.duplicate): { this.duplicate(task); break }
+      case(Codes.archiveTask): { this.archiveTask(task); break }
+      case(Codes.assign): { this.openAssignModal(task); break }
+      case(Codes.restoreTask): { this.restoreTask(task); break }
+      case(Codes.deleteTask): { this.askForDelete(task); break }
+    }
   }
 
   closeContextTaskMenu() {
