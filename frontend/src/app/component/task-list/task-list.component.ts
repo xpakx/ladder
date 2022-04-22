@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -23,7 +23,7 @@ import { Codes, MenuElems } from './task-list-context-codes';
   styleUrls: ['./task-list.component.css']
 })
 export class TaskListComponent extends MultilevelTaskComponent<TaskTreeService> 
-implements OnInit, AfterViewInit {
+implements OnInit {
   @Input("project") project: ProjectTreeElem | undefined;
   @Input("initTasks") initTasks: TaskTreeElem[] = [];
   @Input("blocked") blocked: boolean = false;
@@ -35,30 +35,13 @@ implements OnInit, AfterViewInit {
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService, private taskService: TaskService,
-    private taskTreeService: TaskTreeService,
-    private renderer: Renderer2, private deleteService: DeleteService,
+    private taskTreeService: TaskTreeService, private deleteService: DeleteService,
     private redirService: RedirectionService) {
     super(taskTreeService, taskService);
   }
 
   ngOnInit(): void {
-    if(!this.blocked) {
-      this.contextMenu.push(MenuElems.addTaskAbove);
-      this.contextMenu.push(MenuElems.addTaskBelow);
-      this.contextMenu.push(MenuElems.editTask);
-      this.contextMenu.push(MenuElems.moveToProject);
-      this.contextMenu.push(MenuElems.schedule);
-      this.contextMenu.push(MenuElems.priority);
-      this.contextMenu.push(MenuElems.duplicate);
-      this.contextMenu.push(MenuElems.archiveTask);
-    }
-    if(this.project && this.project.collaborative) {
-      this.contextMenu.push(MenuElems.assign);
-    }
-    if(this.blocked) {
-      this.contextMenu.push(MenuElems.restoreTask);
-    }
-    this.contextMenu.push(MenuElems.deleteTask);
+    this.prepareContextMenu();
   }
 
   get tasks(): TaskTreeElem[] {
@@ -183,31 +166,36 @@ implements OnInit, AfterViewInit {
     return today.getFullYear() == date.getFullYear();
   }
 
+  // Context menu
+
   contextTaskMenu: TaskTreeElem | undefined;
   showContextTaskMenu: boolean = false;
-  contextTaskMenuJustOpened: boolean = false;
   taskContextMenuX: number = 0;
   taskContextMenuY: number = 0;
-  @ViewChild('taskContext', {read: ElementRef}) taskContextMenuElem!: ElementRef;
 
-
-  ngAfterViewInit() {
-    this.renderer.listen('window', 'click',(e:Event)=>{
-      if(this.showContextTaskMenu && 
-        !this.taskContextMenuElem.nativeElement.contains(e.target)){
-        if(this.contextTaskMenuJustOpened) {
-          this.contextTaskMenuJustOpened = false
-        } else {
-          this.showContextTaskMenu = false;
-        }
-      }
-    })
+  prepareContextMenu() {
+    if (!this.blocked) {
+      this.contextMenu.push(MenuElems.addTaskAbove);
+      this.contextMenu.push(MenuElems.addTaskBelow);
+      this.contextMenu.push(MenuElems.editTask);
+      this.contextMenu.push(MenuElems.moveToProject);
+      this.contextMenu.push(MenuElems.schedule);
+      this.contextMenu.push(MenuElems.priority);
+      this.contextMenu.push(MenuElems.duplicate);
+      this.contextMenu.push(MenuElems.archiveTask);
+    }
+    if (this.project && this.project.collaborative) {
+      this.contextMenu.push(MenuElems.assign);
+    }
+    if (this.blocked) {
+      this.contextMenu.push(MenuElems.restoreTask);
+    }
+    this.contextMenu.push(MenuElems.deleteTask);
   }
 
   openContextTaskMenu(event: MouseEvent, taskId: number) {
 	  this.contextTaskMenu = this.getTaskById(taskId);
     this.showContextTaskMenu = true;
-    this.contextTaskMenuJustOpened = true;
     this.taskContextMenuX = event.clientX;
     this.taskContextMenuY = event.clientY;
   }
@@ -215,7 +203,6 @@ implements OnInit, AfterViewInit {
   getTaskById(taskId: number): TaskTreeElem | undefined {
     return this.initTasks.length == 0 ? this.tree.getTaskById(taskId) : this.initTasks.find((a) => a.id == taskId);
   }
-
 
   closeContextMenu(code: number) {
     if(code == Codes.addTaskAbove) { this.openEditTaskAbove() }
