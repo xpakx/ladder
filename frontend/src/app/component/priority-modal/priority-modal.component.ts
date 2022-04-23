@@ -30,7 +30,6 @@ export class PriorityModalComponent implements OnInit {
     this.cancelEvent.emit(true);
   }
 
-
   @HostListener("window:keydown.escape", ["$event"])
   handleKeyboardEscapeEvent() {
     this.closeModal();

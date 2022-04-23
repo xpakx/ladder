@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { ContextMenuElem } from './context-menu-elem';
 
 @Component({
@@ -6,7 +6,7 @@ import { ContextMenuElem } from './context-menu-elem';
   templateUrl: './context-menu.component.html',
   styleUrls: ['./context-menu.component.css']
 })
-export class ContextMenuComponent implements OnInit {
+export class ContextMenuComponent implements OnInit, AfterViewInit {
   @Input() elems: ContextMenuElem[] = [];
   @Input() x: number = 0;
   @Input() y: number = 0;
@@ -27,14 +27,14 @@ export class ContextMenuComponent implements OnInit {
 
   ngAfterViewInit() {
     this.renderer.listen('window', 'click',(e:Event)=>{
-      if(!this.listElem.nativeElement.contains(e.target)){
+      if(!this.listElem.nativeElement.contains(e.target)) {
         if(this.justOpened) {
-          this.justOpened = false
+          this.justOpened = false;
         } else {
           this.closeEvent.emit(true);
         }
       }
-    })
+    });
   }
 
   emit(code: number) {

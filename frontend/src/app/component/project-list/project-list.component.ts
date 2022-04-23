@@ -49,7 +49,7 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
       if(this.showContextProjectMenu &&
         !this.projectContextMenuElem.nativeElement.contains(e.target)){
           if(this.contextProjectMenuJustOpened) {
-            this.contextProjectMenuJustOpened = false
+            this.contextProjectMenuJustOpened = false;
           } else {
             this.showContextProjectMenu = false;
           }
@@ -175,7 +175,6 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
       }
     );
     }
-
     this.closeContextProjectMenu();
   }
 }
