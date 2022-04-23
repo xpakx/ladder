@@ -15,6 +15,8 @@ import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { MultilevelDraggableComponent } from '../abstract/multilevel-draggable-component';
 import { Animations } from '../common/animations';
+import { ContextMenuElem } from '../context-menu/context-menu-elem';
+import { Codes, MenuElems } from './project-list-context-doces';
 
 @Component({
   selector: 'app-project-list',
@@ -34,6 +36,9 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
   @Output() addProject = new EventEmitter<AddEvent<ProjectTreeElem>>();
   @Output() navEvent = new EventEmitter<boolean>();
 
+  contextMenu: ContextMenuElem[] = [];
+  favElem: ContextMenuElem = {name: MenuElems.addToFavs.name, icon: MenuElems.addToFavs.icon, code: MenuElems.addToFavs.code};
+
   constructor(public tree : TreeService, private projectService: ProjectService,
     protected projectTreeService: ProjectTreeService, 
     private renderer: Renderer2, private router: Router, 
@@ -42,6 +47,7 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
      }
 
   ngOnInit(): void {
+    this.prepareContextMenu();
   }
 
   ngAfterViewInit() {
@@ -63,19 +69,16 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
     this.addProject.emit(new AddEvent<ProjectTreeElem>());
   }
 
-  openProjectModalWithProject() {
-    this.addProject.emit(new AddEvent<ProjectTreeElem>(this.contextProjectMenu));
-    this.closeContextProjectMenu();
+  openProjectModalWithProject(project: ProjectTreeElem) {
+    this.addProject.emit(new AddEvent<ProjectTreeElem>(project));
   }
 
-  openProjectModalAbove() {
-    this.addProject.emit(new AddEvent<ProjectTreeElem>(this.contextProjectMenu, false, true));
-    this.closeContextProjectMenu();
+  openProjectModalAbove(project: ProjectTreeElem) {
+    this.addProject.emit(new AddEvent<ProjectTreeElem>(project, false, true));
   }
 
-  openProjectModalBelow() {
-    this.addProject.emit(new AddEvent<ProjectTreeElem>(this.contextProjectMenu, true, false));
-    this.closeContextProjectMenu();
+  openProjectModalBelow(project: ProjectTreeElem) {
+    this.addProject.emit(new AddEvent<ProjectTreeElem>(project, true, false));
   }
 
   // List collapsion
@@ -97,13 +100,45 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
   }
 
   // Project context menu
+  prepareContextMenu() {
+      this.contextMenu.push(MenuElems.addProjectAbove);
+      this.contextMenu.push(MenuElems.addProjectBelow);
+      this.contextMenu.push(MenuElems.editProject);
+      this.contextMenu.push(this.favElem);
+      this.contextMenu.push(MenuElems.duplicate);
+      this.contextMenu.push(MenuElems.archiveProject);
+      this.contextMenu.push(MenuElems.deleteProject);
+  }
 
   openContextProjectMenu(event: MouseEvent, projectId: number) {
 	  this.contextProjectMenu = this.tree.getProjectById(projectId);
     this.showContextProjectMenu = true;
+    if(this.contextProjectMenu?.favorite) {
+      this.favElem.name =  MenuElems.deleteFromFavs.name;
+      this.favElem.icon =  MenuElems.deleteFromFavs.icon;
+    } else {
+      this.favElem.name =  MenuElems.addToFavs.name;
+      this.favElem.icon =  MenuElems.addToFavs.icon;
+    }
     this.contextProjectMenuJustOpened = true;
     this.projectContextMenuX = event.clientX;
     this.projectContextMenuY = event.clientY;
+  }
+
+  closeContextMenu(code: number) {
+    if(!this.contextProjectMenu) {return}
+    let project = this.contextProjectMenu;
+    this.closeContextProjectMenu();
+    
+    switch(code) {
+      case(Codes.addProjectAbove): { this.openProjectModalAbove(project); break }
+      case(Codes.addProjectBelow): { this.openProjectModalBelow(project); break }
+      case(Codes.editProject): { this.openProjectModalWithProject(project); break }
+      case(Codes.addToFavs): { this.updateProjectFav(project); break }
+      case(Codes.duplicate): { this.duplicateProject(project); break }
+      case(Codes.archiveProject): { this.archiveProject(project); break }
+      case(Codes.deleteProject): { this.askForDelete(project); break }
+    }
   }
 
   closeContextProjectMenu() {
@@ -112,16 +147,12 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
   }
 
 
-  askForDelete() {
-    if(this.contextProjectMenu) {
-      this.deleteService.openModalForProject(this.contextProjectMenu);
-    }
-    this.closeContextProjectMenu();
+  askForDelete(project: ProjectTreeElem) {
+    this.deleteService.openModalForProject(project);
   }
 
-  updateProjectFav() {
-    if(this.contextProjectMenu) {
-      this.projectService.updateProjectFav(this.contextProjectMenu.id, {flag: !this.contextProjectMenu.favorite}).subscribe(
+  updateProjectFav(project: ProjectTreeElem) {
+    this.projectService.updateProjectFav(project.id, {flag: !project.favorite}).subscribe(
         (response: Project) => {
         this.tree.changeFav(response);
       },
@@ -129,25 +160,17 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
        
       }
     );
-    }
-
-    this.closeContextProjectMenu();
   }
 
-  duplicateProject() {
-    if(this.contextProjectMenu) {
-      let id: number = this.contextProjectMenu.id;
-      this.projectService.duplicateProject(id).subscribe(
-        (response: TasksWithProjects, mainId: number = id) => {
+  duplicateProject(project: ProjectTreeElem) {
+    this.projectService.duplicateProject(project.id).subscribe(
+        (response: TasksWithProjects, mainId: number = project.id) => {
         this.tree.duplicateProject(response, mainId);
       },
       (error: HttpErrorResponse) => {
        
       }
     );
-    }
-
-    this.closeContextProjectMenu();
   }
 
   // Drag'n'drop
@@ -164,9 +187,8 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
     );
   }
 
-  archiveProject() {
-    if(this.contextProjectMenu) {
-      this.projectService.archiveProject(this.contextProjectMenu.id, {flag:true}).subscribe(
+  archiveProject(project: ProjectTreeElem) {
+    this.projectService.archiveProject(project.id, {flag:true}).subscribe(
         (response: Project) => {
         this.tree.archiveProject(response);
       },
@@ -174,7 +196,5 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
        
       }
     );
-    }
-    this.closeContextProjectMenu();
   }
 }
