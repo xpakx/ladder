@@ -25,7 +25,7 @@ import { Codes, MenuElems } from './project-list-context-doces';
   animations: [Animations.collapseTrigger]
 })
 export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWithNameAndId, ProjectTreeElem, Project, ProjectService, ProjectTreeService>
- implements OnInit, AfterViewInit {
+ implements OnInit {
   contextProjectMenu: ProjectTreeElem | undefined;
   showContextProjectMenu: boolean = false;
   contextProjectMenuJustOpened: boolean = false;
@@ -40,27 +40,13 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
   favElem: ContextMenuElem = {name: MenuElems.addToFavs.name, icon: MenuElems.addToFavs.icon, code: MenuElems.addToFavs.code};
 
   constructor(public tree : TreeService, private projectService: ProjectService,
-    protected projectTreeService: ProjectTreeService, 
-    private renderer: Renderer2, private router: Router, 
+    protected projectTreeService: ProjectTreeService, private router: Router, 
     private taskService: TaskService, private deleteService: DeleteService) {
       super(projectTreeService, projectService);
      }
 
   ngOnInit(): void {
     this.prepareContextMenu();
-  }
-
-  ngAfterViewInit() {
-    this.renderer.listen('window', 'click',(e:Event)=>{
-      if(this.showContextProjectMenu &&
-        !this.projectContextMenuElem.nativeElement.contains(e.target)){
-          if(this.contextProjectMenuJustOpened) {
-            this.contextProjectMenuJustOpened = false;
-          } else {
-            this.showContextProjectMenu = false;
-          }
-      }
-    });
   }
 
   //Project modal window
