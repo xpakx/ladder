@@ -10,6 +10,8 @@ import { LabelService } from 'src/app/service/label.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { DraggableComponent } from '../abstract/draggable-component';
 import { Animations } from '../common/animations';
+import { ContextMenuElem } from '../context-menu/context-menu-elem';
+import { Codes, MenuElems } from './label-list-context-codes';
 
 @Component({
   selector: 'app-label-list',
@@ -25,6 +27,9 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
 
   displayLabelModal: boolean = false;
 
+  contextMenu: ContextMenuElem[] = [];
+  favElem: ContextMenuElem = {name: MenuElems.addToFavs.name, icon: MenuElems.addToFavs.icon, code: MenuElems.addToFavs.code};
+
   constructor(public tree : TreeService, private router: Router,
     private renderer: Renderer2, private labelService: LabelService, 
     private deleteService: DeleteService, protected treeService: LabelTreeService) {
@@ -32,6 +37,7 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
      }
 
   ngOnInit(): void {
+    this.prepareContextMenu();
   }
 
   openLabelModal() {
@@ -67,45 +73,66 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
     });
   }
 
+  prepareContextMenu() {
+    this.contextMenu.push(MenuElems.addLabelAbove);
+    this.contextMenu.push(MenuElems.addLabelBelow);
+    this.contextMenu.push(MenuElems.editLabel);
+    this.contextMenu.push(this.favElem);
+    this.contextMenu.push(MenuElems.deleteLabel);
+  }
+
+  closeContextMenu(code: number) {
+    if(!this.contextMenuLabel) {return}
+    let label = this.contextMenuLabel;
+    this.closeContextLabelMenu();
+    
+    switch(code) {
+      case(Codes.addLabelAbove): { this.openLabelModalAbove(label); break }
+      case(Codes.addLabelBelow): { this.openLabelModalBelow(label); break }
+      case(Codes.editLabel): { this.openLabelModalWithLabel(label); break }
+      case(Codes.addToFavs): { this.updateLabelFav(label); break }
+      case(Codes.deleteLabel): { this.askForDelete(label); break }
+    }
+  }
+
   openContextMenu(event: MouseEvent, label: LabelDetails) {
-	  this.contextMenuLabel = label;
+    this.contextMenuLabel = label;
     this.showContextMenu = true;
+    if(this.contextMenuLabel?.favorite) {
+      this.favElem.name =  MenuElems.deleteFromFavs.name;
+      this.favElem.icon =  MenuElems.deleteFromFavs.icon;
+    } else {
+      this.favElem.name =  MenuElems.addToFavs.name;
+      this.favElem.icon =  MenuElems.addToFavs.icon;
+    }
     this.contextMenuJustOpened = true;
     this.contextMenuX = event.clientX;
     this.contextMenuY = event.clientY;
   }
 
-  closeContextMenu() {
+  closeContextLabelMenu() {
     this.contextMenuLabel = undefined;
     this.showContextMenu = false;
   }
 
-  askForDelete() {
-    if(this.contextMenuLabel) {
-      this.deleteService.openModalForLabel(this.contextMenuLabel);
-    }
-    this.closeContextMenu();
+  askForDelete(label: LabelDetails) {
+    this.deleteService.openModalForLabel(label);
   }
 
-  openLabelModalWithLabel() {
-    this.addLabel.emit(new AddEvent<LabelDetails>(this.contextMenuLabel));
-    this.closeContextMenu();
+  openLabelModalWithLabel(label: LabelDetails) {
+    this.addLabel.emit(new AddEvent<LabelDetails>(label));
   }
 
-  openProjectModalAbove() {
-    this.addLabel.emit(new AddEvent<LabelDetails>(this.contextMenuLabel, false, true));
-    this.closeContextMenu();
+  openLabelModalAbove(label: LabelDetails) {
+    this.addLabel.emit(new AddEvent<LabelDetails>(label, false, true));
   }
 
-  openProjectModalBelow() {
-    this.addLabel.emit(new AddEvent<LabelDetails>(this.contextMenuLabel, true, false));
-    this.closeContextMenu();
+  openLabelModalBelow(label: LabelDetails) {
+    this.addLabel.emit(new AddEvent<LabelDetails>(label, true, false));
   }
 
-
-  updateLabelFav() {
-    if(this.contextMenuLabel) {
-      this.labelService.updateLabelFav(this.contextMenuLabel.id, {flag: !this.contextMenuLabel.favorite}).subscribe(
+  updateLabelFav(label: LabelDetails) {
+    this.labelService.updateLabelFav(label.id, {flag: !label.favorite}).subscribe(
         (response: Label) => {
         this.treeService.changeLabelFav(response);
       },
@@ -113,8 +140,5 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
        
       }
     );
-    }
-
-    this.closeContextMenu();
   }
 }

@@ -16,7 +16,7 @@ import { TreeService } from 'src/app/service/tree.service';
 import { MultilevelDraggableComponent } from '../abstract/multilevel-draggable-component';
 import { Animations } from '../common/animations';
 import { ContextMenuElem } from '../context-menu/context-menu-elem';
-import { Codes, MenuElems } from './project-list-context-doces';
+import { Codes, MenuElems } from './project-list-context-codes';
 
 @Component({
   selector: 'app-project-list',
@@ -28,7 +28,6 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
  implements OnInit {
   contextProjectMenu: ProjectTreeElem | undefined;
   showContextProjectMenu: boolean = false;
-  contextProjectMenuJustOpened: boolean = false;
   projectContextMenuX: number = 0;
   projectContextMenuY: number = 0;
   @ViewChild('projectContext', {read: ElementRef}) projectContextMenuElem!: ElementRef;
@@ -106,7 +105,6 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
       this.favElem.name =  MenuElems.addToFavs.name;
       this.favElem.icon =  MenuElems.addToFavs.icon;
     }
-    this.contextProjectMenuJustOpened = true;
     this.projectContextMenuX = event.clientX;
     this.projectContextMenuY = event.clientY;
   }
