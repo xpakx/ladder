@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Filter } from 'src/app/entity/filter';
 import { FilterDetails } from 'src/app/entity/filter-details';
@@ -20,7 +20,7 @@ import { Codes, MenuElems } from './filter-list-context-codes';
   animations: [Animations.collapseTrigger]
 })
 export class FilterListComponent  extends DraggableComponent<FilterDetails, Filter, FilterService, FilterTreeService>
-implements OnInit, AfterViewInit {
+implements OnInit {
   @Output() addFilter = new EventEmitter<AddEvent<FilterDetails>>();
   @Output() navEvent = new EventEmitter<boolean>();
 
@@ -29,8 +29,7 @@ implements OnInit, AfterViewInit {
   contextMenu: ContextMenuElem[] = [];
   favElem: ContextMenuElem = {name: MenuElems.addToFavs.name, icon: MenuElems.addToFavs.icon, code: MenuElems.addToFavs.code};
 
-  constructor(public tree : TreeService, private router: Router,
-  private renderer: Renderer2, private filterService: FilterService, 
+  constructor(public tree : TreeService, private router: Router, private filterService: FilterService, 
   private deleteService: DeleteService, protected treeService: FilterTreeService) {
     super(treeService, filterService);
   }
@@ -57,20 +56,6 @@ implements OnInit, AfterViewInit {
   contextMenuX: number = 0;
   contextMenuY: number = 0;
   contextMenuFilter: FilterDetails | undefined;
-  @ViewChild('labelContext', {read: ElementRef}) contextMenuElem!: ElementRef;
-
-  ngAfterViewInit() {
-    this.renderer.listen('window', 'click',(e:Event)=>{
-      if(this.showContextMenu &&
-        !this.contextMenuElem.nativeElement.contains(e.target)){
-          if(this.contextMenuJustOpened) {
-            this.contextMenuJustOpened = false
-          } else {
-            this.showContextMenu = false;
-          }
-      }
-    });
-  }
 
   prepareContextMenu() {
     this.contextMenu.push(MenuElems.addFilterAbove);

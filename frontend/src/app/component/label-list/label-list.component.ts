@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Label } from 'src/app/entity/label';
 import { LabelDetails } from 'src/app/entity/label-details';
@@ -20,8 +20,7 @@ import { Codes, MenuElems } from './label-list-context-codes';
   animations: [Animations.collapseTrigger]
 })
 export class LabelListComponent extends DraggableComponent<LabelDetails, Label, LabelService, LabelTreeService>
-    implements OnInit, AfterViewInit 
-   {
+    implements OnInit {
   @Output() addLabel = new EventEmitter<AddEvent<LabelDetails>>();
   @Output() navEvent = new EventEmitter<boolean>();
 
@@ -31,7 +30,7 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
   favElem: ContextMenuElem = {name: MenuElems.addToFavs.name, icon: MenuElems.addToFavs.icon, code: MenuElems.addToFavs.code};
 
   constructor(public tree : TreeService, private router: Router,
-    private renderer: Renderer2, private labelService: LabelService, 
+    private labelService: LabelService, 
     private deleteService: DeleteService, protected treeService: LabelTreeService) {
       super(treeService, labelService);
      }
@@ -58,20 +57,6 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
   contextMenuX: number = 0;
   contextMenuY: number = 0;
   contextMenuLabel: LabelDetails | undefined;
-  @ViewChild('labelContext', {read: ElementRef}) contextMenuElem!: ElementRef;
-
-  ngAfterViewInit() {
-    this.renderer.listen('window', 'click',(e:Event)=>{
-      if(this.showContextMenu &&
-        !this.contextMenuElem.nativeElement.contains(e.target)){
-          if(this.contextMenuJustOpened) {
-            this.contextMenuJustOpened = false
-          } else {
-            this.showContextMenu = false;
-          }
-      }
-    });
-  }
 
   prepareContextMenu() {
     this.contextMenu.push(MenuElems.addLabelAbove);
