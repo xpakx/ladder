@@ -98,15 +98,19 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
   openContextProjectMenu(event: MouseEvent, projectId: number) {
 	  this.contextProjectMenu = this.tree.getProjectById(projectId);
     this.showContextProjectMenu = true;
-    if(this.contextProjectMenu?.favorite) {
-      this.favElem.name =  MenuElems.deleteFromFavs.name;
-      this.favElem.icon =  MenuElems.deleteFromFavs.icon;
-    } else {
-      this.favElem.name =  MenuElems.addToFavs.name;
-      this.favElem.icon =  MenuElems.addToFavs.icon;
-    }
+    this.updateFavElem();
     this.projectContextMenuX = event.clientX;
     this.projectContextMenuY = event.clientY;
+  }
+
+  private updateFavElem() {
+    if (this.contextProjectMenu?.favorite) {
+      this.favElem.name = MenuElems.deleteFromFavs.name;
+      this.favElem.icon = MenuElems.deleteFromFavs.icon;
+    } else {
+      this.favElem.name = MenuElems.addToFavs.name;
+      this.favElem.icon = MenuElems.addToFavs.icon;
+    }
   }
 
   closeContextMenu(code: number) {
