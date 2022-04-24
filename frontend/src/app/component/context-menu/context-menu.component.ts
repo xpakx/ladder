@@ -55,5 +55,4 @@ export class ContextMenuComponent implements OnInit, AfterViewInit {
       this.contextMenuY = this.y;
     }
   }
-
 }

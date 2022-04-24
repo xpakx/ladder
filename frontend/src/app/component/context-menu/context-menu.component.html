@@ -1,7 +1,7 @@
 
-<div class="ist-menu context" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
-	<ul class="context-menu-project" #contextList>
-        <li class="context-menu-project-item" *ngFor="let elem of elems">
+<div class="context-menu context" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
+	<ul class="context-menu-list" #contextList>
+        <li class="context-menu-list-item" *ngFor="let elem of elems">
 			<button (click)="emit(elem.code)">
 				<span class="menu_icon">
 					<i class="fa" [class]="elem.icon"></i>

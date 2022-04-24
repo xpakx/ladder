@@ -5,7 +5,7 @@ button {
     margin: 0;
 }
 
-.ist-menu {
+.context-menu {
     background-color: #fff;
     color: #333;
     border-collapse: separate;
@@ -17,24 +17,24 @@ button {
     z-index: 999;
 }
 
-.ist-menu ul {
+.context-menu ul {
     list-style: none;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.ist-menu ul li {
+.context-menu ul li {
     display: flex;
 }
 
-.ist-menu ul li button{
+.context-menu ul li button{
     display: flex;
     align-items: center;
     padding: 0;
     margin: 0;
 }
 
-.ist-menu ul li .menu_icon {
+.context-menu ul li .menu_icon {
     color: grey;
     height: 24px;
     width: 24px;
@@ -44,7 +44,7 @@ button {
     align-items: center;
 }
 
-.ist-menu ul li .menu_label {
+.context-menu ul li .menu_label {
     font-size: 13px;
 }
 
