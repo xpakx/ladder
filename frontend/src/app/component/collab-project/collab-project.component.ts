@@ -45,7 +45,7 @@ export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
     }
   }
 
-  loadProject(id: number) {
+  loadProject(id: number): void {
     this.id = id;
     this.project = this.projectTree.getCollabByProjectId(id);
     this.collabAsProject = this.project ? {
@@ -72,7 +72,7 @@ export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
   @ViewChild('taskContext', {read: ElementRef}) taskContextMenuElem!: ElementRef;
 
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.renderer.listen('window', 'click',(e:Event)=>{
       if(this.showContextMenu && 
         !this.taskContextMenuElem.nativeElement.contains(e.target)){
@@ -85,18 +85,18 @@ export class CollabProjectComponent implements OnInit, AfterViewInit, DoCheck {
     })
   }
 
-  openContextMenu(event: MouseEvent) {
+  openContextMenu(event: MouseEvent): void {
     this.showContextMenu = true;
     this.contextMenuJustOpened = true;
     this.contextMenuX = event.clientX-250;
     this.contextMenuY = event.clientY;
   }
 
-  closeContextTaskMenu() {
+  closeContextTaskMenu(): void {
     this.showContextMenu = false;
   }
 
-  unsubscribe() {
+  unsubscribe(): void {
     if(this.id) {
       this.collabService.unsubscribe(this.id, {flag: false}).subscribe(
         (collabs: Collaboration[]) => {

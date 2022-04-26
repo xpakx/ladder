@@ -32,7 +32,7 @@ export class CollabProjectListComponent implements OnInit, AfterViewInit  {
   contextMenuProject: CollabProjectDetails | undefined;
   @ViewChild('projectContext', {read: ElementRef}) contextMenuElem!: ElementRef;
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.renderer.listen('window', 'click',(e:Event)=>{
       if(this.showContextMenu &&
         !this.contextMenuElem.nativeElement.contains(e.target)){
@@ -45,7 +45,7 @@ export class CollabProjectListComponent implements OnInit, AfterViewInit  {
     });
   }
 
-  openContextMenu(event: MouseEvent, project: CollabProjectDetails) {
+  openContextMenu(event: MouseEvent, project: CollabProjectDetails): void {
 	  this.contextMenuProject = project;
     this.showContextMenu = true;
     this.contextMenuJustOpened = true;
@@ -53,16 +53,16 @@ export class CollabProjectListComponent implements OnInit, AfterViewInit  {
     this.contextMenuY = event.clientY;
   }
 
-  closeContextMenu() {
+  closeContextMenu(): void {
     this.contextMenuProject = undefined;
     this.showContextMenu = false;
   }
 
-  switchCollapse() {
+  switchCollapse(): void {
     this.tree.collapsed = !this.tree.collapsed;
   }
 
-  toProject(id: number) {
+  toProject(id: number): void {
     this.router.navigate(['/collab/'+id]);
     this.navEvent.emit(true);
   }

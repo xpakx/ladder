@@ -10,23 +10,23 @@ import { MultilevelDraggableComponent } from "./multilevel-draggable-component";
 
 export class MultilevelTaskComponent<U extends MovableTaskTreeService<Task, TaskTreeElem>>
 extends MultilevelDraggableComponent<ParentWithId, TaskTreeElem, Task, TaskService, U>  {
-    project: ProjectTreeElem | undefined;
+  project: ProjectTreeElem | undefined;
+  
+  constructor(protected treeService : U, protected service: TaskService) { 
+    super(treeService, service) 
+  }
     
-    constructor(protected treeService : U, protected service: TaskService) { 
-      super(treeService, service) 
-    }
-    
-    onDropFirst(event: DndDropEvent): void {
-        let id = Number(event.data);
-        this.service.moveAsFirst(id).subscribe(
-          (response: Task, project: ProjectTreeElem | undefined = this.project) => {
-          this.treeService.moveTaskAsFirst(response, project);
-        },
-        (error: HttpErrorResponse) => {
-        
-        }
-      );
-    }   
+  onDropFirst(event: DndDropEvent): void {
+      let id = Number(event.data);
+      this.service.moveAsFirst(id).subscribe(
+        (response: Task, project: ProjectTreeElem | undefined = this.project) => {
+        this.treeService.moveTaskAsFirst(response, project);
+      },
+      (error: HttpErrorResponse) => {
+      
+      }
+    );
+  }   
 
   getListForDropzones(i: number, elem: TaskTreeElem): TaskTreeElem[] {
       let dropzones = elem.indent - this.amountOfDropzones(i, elem);

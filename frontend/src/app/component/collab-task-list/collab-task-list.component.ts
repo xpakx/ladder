@@ -43,26 +43,26 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   }
 
   // Task form
-  openAddTaskForm() {
+  openAddTaskForm(): void {
     this.closeEditTaskForm();
     this.showAddTaskForm = true;
     this.taskData = new AddEvent<TaskTreeElem>();
   }
 
-  closeAddTaskForm() {
+  closeAddTaskForm(): void {
     this.showAddTaskForm = false;
   }
 
-  openEditTaskForm(task: TaskTreeElem) {
+  openEditTaskForm(task: TaskTreeElem): void {
     this.closeAddTaskForm();
     this.taskData = new AddEvent<TaskTreeElem>(task);
   }
 
-  closeEditTaskForm() {
+  closeEditTaskForm(): void {
     this.taskData = new AddEvent<TaskTreeElem>();
   }
 
-  openEditTaskFromContextMenu() {
+  openEditTaskFromContextMenu(): void {
     if(this.contextTaskMenu) {
       this.closeAddTaskForm();
       this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu);
@@ -70,7 +70,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     this.closeContextTaskMenu();
   }
 
-  openEditTaskAbove() {
+  openEditTaskAbove(): void {
     if(this.contextTaskMenu) {
       this.closeAddTaskForm();
       this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, false, true);
@@ -78,7 +78,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     this.closeContextTaskMenu();
   }
 
-  openEditTaskBelow() {
+  openEditTaskBelow(): void {
     if(this.contextTaskMenu) {
       this.closeAddTaskForm();
       this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, true, false);
@@ -90,7 +90,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     return this.taskObjectContains(taskId) && this.taskData.isInEditMode();
   }
 
-  taskObjectContains(taskId: number) {
+  taskObjectContains(taskId: number): boolean {
    return taskId == this.taskData.object?.id;
   }
 
@@ -102,7 +102,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
    return this.taskObjectContains(taskId) && this.taskData.before;
   }
 
-  completeTask(id: number) {
+  completeTask(id: number): void {
     if(!this.collab?.taskCompletionAllowed) {return;}
     if(!this.blocked) {
       let task = this.tree.getCollabTaskById(id);
@@ -165,7 +165,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   @ViewChild('taskContext', {read: ElementRef}) taskContextMenuElem!: ElementRef;
 
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.renderer.listen('window', 'click',(e:Event)=>{
       if(this.showContextTaskMenu && 
         !this.taskContextMenuElem.nativeElement.contains(e.target)){
@@ -178,7 +178,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     })
   }
 
-  openContextTaskMenu(event: MouseEvent, taskId: number) {
+  openContextTaskMenu(event: MouseEvent, taskId: number): void {
 	  this.contextTaskMenu = this.getTaskById(taskId);
     this.showContextTaskMenu = true;
     this.contextTaskMenuJustOpened = true;
@@ -190,7 +190,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     return this.initTasks.length == 0 ? this.tree.getCollabTaskById(taskId) : this.initTasks.find((a) => a.id == taskId);
   }
 
-  closeContextTaskMenu() {
+  closeContextTaskMenu(): void {
     this.contextTaskMenu = undefined;
     this.showContextTaskMenu = false;
   }
@@ -203,7 +203,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     return this.tree.getNumOfCollabTasksByParent(parentId);
   }
 
-  askForDelete() {
+  askForDelete(): void {
     if(this.contextTaskMenu) {
       this.deleteService.openModalForCollabTask(this.contextTaskMenu);
     }
@@ -214,7 +214,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   dateForDateModal: Date | undefined;
   taskIdForDateModal: number | undefined;
 
-  closeSelectDateModal(date: Date | undefined) {
+  closeSelectDateModal(date: Date | undefined): void {
     this.showSelectDateModal = false;
     if(this.taskIdForDateModal) {
       this.taskService.updateTaskDueDate({date: date}, this.taskIdForDateModal).subscribe(
@@ -230,19 +230,19 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     this.taskIdForDateModal = undefined;
   }
 
-  cancelDateSelection() {
+  cancelDateSelection(): void {
     this.showSelectDateModal = false;
     this.dateForDateModal = undefined;
     this.taskIdForDateModal = undefined;
   }
 
-  openSelectDateModal(task: TaskTreeElem) {
+  openSelectDateModal(task: TaskTreeElem): void {
     this.taskIdForDateModal = task.id;
     this.dateForDateModal = task.due ? task.due : undefined;
     this.showSelectDateModal = true;
   }
 
-  openSelectDateModalFormContextMenu() {
+  openSelectDateModalFormContextMenu(): void {
     if(this.contextTaskMenu) {
       this.openSelectDateModal(this.contextTaskMenu);
     }
@@ -253,7 +253,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   priorityForPriorityModal: number = 0;
   taskIdForPriorityModal: number | undefined;
 
-  closeSelectPriorityModal(priority: number) {
+  closeSelectPriorityModal(priority: number): void {
     this.showSelectPriorityModal = false;
     if(this.taskIdForPriorityModal) {
       this.taskService.updateTaskPriority({priority: priority}, this.taskIdForPriorityModal).subscribe(
@@ -269,19 +269,19 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     this.taskIdForPriorityModal = undefined;
   }
 
-  cancelPrioritySelection() {
+  cancelPrioritySelection(): void {
     this.showSelectPriorityModal = false;
     this.priorityForPriorityModal = 0;
     this.taskIdForPriorityModal = undefined;
   }
 
-  openSelectPriorityModal(task: TaskTreeElem) {
+  openSelectPriorityModal(task: TaskTreeElem): void {
     this.taskIdForPriorityModal = task.id;
     this.priorityForPriorityModal = task.priority;
     this.showSelectPriorityModal = true;
   }
 
-  openSelectPriorityModalFormContextMenu() {
+  openSelectPriorityModalFormContextMenu(): void {
     if(this.contextTaskMenu) {
       this.openSelectPriorityModal(this.contextTaskMenu);
     }
@@ -290,11 +290,11 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
 
   openTask?: TaskTreeElem;
 
-  openTaskView(task: TaskTreeElem) {
+  openTaskView(task: TaskTreeElem): void {
     this.openTask = task;
   }
 
-  closeTaskView() {
+  closeTaskView(): void {
     this.openTask = undefined;
   }
 }
