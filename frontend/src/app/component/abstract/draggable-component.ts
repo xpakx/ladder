@@ -9,11 +9,11 @@ export class DraggableComponent<R extends EntityWithId, T, S extends MovableServ
     
     constructor(protected treeService : U, private service: S) { }
   
-    onDragStart(id: number) {
+    onDragStart(id: number): void {
         this.draggedId = id;
     }
   
-    onDragEnd() {
+    onDragEnd(): void {
         this.draggedId = undefined;
     }
   
@@ -21,7 +21,7 @@ export class DraggableComponent<R extends EntityWithId, T, S extends MovableServ
       return this.draggedId == id;
     }
     
-    onDrop(event: DndDropEvent, target: R) {
+    onDrop(event: DndDropEvent, target: R): void {
       let id = Number(event.data);
       
       this.service.moveAfter({id: target.id}, id).subscribe(
@@ -34,7 +34,7 @@ export class DraggableComponent<R extends EntityWithId, T, S extends MovableServ
       );
     }
   
-    onDropFirst(event: DndDropEvent) {
+    onDropFirst(event: DndDropEvent): void {
       let id = Number(event.data);
       this.service.moveAsFirst(id).subscribe(
           (response: T) => {

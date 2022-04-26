@@ -16,7 +16,7 @@ extends MultilevelDraggableComponent<ParentWithId, TaskTreeElem, Task, TaskServi
       super(treeService, service) 
     }
     
-    onDropFirst(event: DndDropEvent) {
+    onDropFirst(event: DndDropEvent): void {
         let id = Number(event.data);
         this.service.moveAsFirst(id).subscribe(
           (response: Task, project: ProjectTreeElem | undefined = this.project) => {
@@ -28,12 +28,12 @@ extends MultilevelDraggableComponent<ParentWithId, TaskTreeElem, Task, TaskServi
       );
     }   
 
-    getListForDropzones(i: number, elem: TaskTreeElem): TaskTreeElem[] {
+  getListForDropzones(i: number, elem: TaskTreeElem): TaskTreeElem[] {
       let dropzones = elem.indent - this.amountOfDropzones(i, elem);
       return elem.parentList.slice(-dropzones);
   }
 
-  collapseInTree(elem: Task) {
+  collapseInTree(elem: Task): void {
         this.treeService.collapse(elem);
   } 
 }
