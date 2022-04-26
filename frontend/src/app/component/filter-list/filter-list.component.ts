@@ -38,16 +38,16 @@ implements OnInit {
     this.prepareContextMenu();
   }
 
-  openFilterModal() {
+  openFilterModal(): void {
     this.addFilter.emit(new AddEvent<FilterDetails>());
   }
 
-  toFilter(searchString: string) {
+  toFilter(searchString: string): void {
     this.router.navigate(['/search'], { queryParams: {search: searchString}});
     this.navEvent.emit(true);
   }
 
-  switchFilterCollapse() {
+  switchFilterCollapse(): void {
     this.tree.filterCollapsed = !this.tree.filterCollapsed;
   }
 
@@ -57,7 +57,7 @@ implements OnInit {
   contextMenuY: number = 0;
   contextMenuFilter: FilterDetails | undefined;
 
-  prepareContextMenu() {
+  prepareContextMenu(): void {
     this.contextMenu.push(MenuElems.addFilterAbove);
     this.contextMenu.push(MenuElems.addFilterBelow);
     this.contextMenu.push(MenuElems.editFilter);
@@ -65,7 +65,7 @@ implements OnInit {
     this.contextMenu.push(MenuElems.deleteFilter);
   }
 
-  closeContextMenu(code: number) {
+  closeContextMenu(code: number): void {
     if(!this.contextMenuFilter) {return}
     let filter = this.contextMenuFilter;
     this.closeContextFilterMenu();
@@ -79,7 +79,7 @@ implements OnInit {
     }
   }
 
-  openContextMenu(event: MouseEvent, filter: FilterDetails) {
+  openContextMenu(event: MouseEvent, filter: FilterDetails): void {
     this.contextMenuFilter = filter;
     this.showContextMenu = true;
     if(this.contextMenuFilter?.favorite) {
@@ -94,29 +94,29 @@ implements OnInit {
     this.contextMenuY = event.clientY;
   }
 
-  closeContextFilterMenu() {
+  closeContextFilterMenu(): void {
     this.contextMenuFilter = undefined;
     this.showContextMenu = false;
   }
 
-  askForDelete(filter: FilterDetails) {
+  askForDelete(filter: FilterDetails): void {
     this.deleteService.openModalForFilter(filter);
   }
 
-  openFilterModalWithFilter(filter: FilterDetails) {
+  openFilterModalWithFilter(filter: FilterDetails): void {
     this.addFilter.emit(new AddEvent<FilterDetails>(filter));
   }
 
-  openFilterModalAbove(filter: FilterDetails) {
+  openFilterModalAbove(filter: FilterDetails): void {
     this.addFilter.emit(new AddEvent<FilterDetails>(filter, false, true));
   }
 
-  openFilterModalBelow(filter: FilterDetails) {
+  openFilterModalBelow(filter: FilterDetails): void {
     this.addFilter.emit(new AddEvent<FilterDetails>(filter, true, false));
   }
 
 
-  updateFilterFav(filter: FilterDetails) {
+  updateFilterFav(filter: FilterDetails): void {
     this.filterService.updateFilterFav(filter.id, {flag: !filter.favorite}).subscribe(
         (response: Filter) => {
         this.treeService.changeFilterFav(response);
