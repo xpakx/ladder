@@ -63,26 +63,26 @@ export class HabitFormComponent implements OnInit {
 	  }
   }
 
-  openSelectProjectMenu() {
+  openSelectProjectMenu(): void {
     this.showSelectProjectMenu = true;
   }
 
-  closeSelectProjectMenu() {
+  closeSelectProjectMenu(): void {
     this.showSelectProjectMenu = false;
   }
 
-  chooseProject(project: ProjectTreeElem | undefined) {
+  chooseProject(project: ProjectTreeElem | undefined): void {
     this.closeSelectProjectMenu();
     this.project = project;
     this.after = false;
     this.before = false;
   }
 
-  closeForm() {
+  closeForm(): void {
     this.closeEvent.emit(true);
   }
 
-  save() {
+  save(): void {
     if(this.habit) {
       this.makeRequestWithTask();
     } else {
@@ -92,7 +92,7 @@ export class HabitFormComponent implements OnInit {
     this.closeEvent.emit(true);
   }
   
-  addHabit() {
+  addHabit(): void {
     if(this.habitForm && this.habitForm.valid) {
       let lbls = this.labels.map((a) => a.id);
       this.habitService.addHabit({
@@ -114,15 +114,15 @@ export class HabitFormComponent implements OnInit {
     }
   }
 
-  switchAllowPositive() {
+  switchAllowPositive(): void {
     this.allowPositive = !this.allowPositive;
   }
 
-  switchAllowNegative() {
+  switchAllowNegative(): void {
     this.allowNegative = !this.allowNegative;
   }
 
-  makeRequestWithTask() {
+  makeRequestWithTask(): void {
     if(this.asChild) {
       this.addTaskAsChild();
     } else if(this.before) {
@@ -134,7 +134,7 @@ export class HabitFormComponent implements OnInit {
     }
   }
 
-  updateHabit() {
+  updateHabit(): void {
     if(this.habit && this.habitForm && this.habitForm.valid) {
       let lbls = this.labels.map((a) => a.id);
       this.habitService.updateHabit({
@@ -156,7 +156,7 @@ export class HabitFormComponent implements OnInit {
     }
   }
 
-  addTaskAfter() {
+  addTaskAfter(): void {
     if(this.habit && this.habitForm && this.habitForm.valid) {
       let idAfter = this.habit.id;
       let lbls = this.labels.map((a) => a.id);
@@ -179,7 +179,7 @@ export class HabitFormComponent implements OnInit {
     }
   }
 
-  addTaskBefore() {
+  addTaskBefore(): void {
     if(this.habit && this.habitForm && this.habitForm.valid) {
       let idBefore = this.habit.id;
       let lbls = this.labels.map((a) => a.id);
@@ -202,7 +202,7 @@ export class HabitFormComponent implements OnInit {
     }
   }
 
-  addTaskAsChild() {
+  addTaskAsChild(): void {
     
   }
 
@@ -210,16 +210,16 @@ export class HabitFormComponent implements OnInit {
   priorityForModal: number = 0;
   showSelectPriorityMenu: boolean = false;
 
-  openSelectPriorityMenu() {
+  openSelectPriorityMenu(): void {
     this.priorityForModal = this.priority;
     this.showSelectPriorityMenu = true;
   }
 
-  closeSelectPriorityMenu() {
+  closeSelectPriorityMenu(): void {
     this.showSelectPriorityMenu = false;
   }
 
-  choosePriority(priority: number) {
+  choosePriority(priority: number): void {
     this.closeSelectPriorityMenu();
     this.priority = priority;
   }
@@ -228,16 +228,16 @@ export class HabitFormComponent implements OnInit {
   labelsForModal: LabelDetails[] = [];
   showSelectLabelsMenu: boolean = false;
 
-  openSelectLabelsMenu() {
+  openSelectLabelsMenu(): void {
     this.labelsForModal = [...this.labels];
     this.showSelectLabelsMenu = true;
   }
 
-  closeSelectLabelsMenu() {
+  closeSelectLabelsMenu(): void {
     this.showSelectLabelsMenu = false;
   }
 
-  chooseLabel(labels: LabelDetails[]) {
+  chooseLabel(labels: LabelDetails[]): void {
     this.closeSelectLabelsMenu();
     this.labels = labels;
   }
@@ -247,14 +247,14 @@ export class HabitFormComponent implements OnInit {
   }
 
   @HostListener("window:keydown.escape", ["$event"])
-  handleKeyboardEscapeEvent() {
+  handleKeyboardEscapeEvent(): void {
     if(!this.subModalOpened) {
       this.closeForm();
     }
   }
 
   @HostListener("window:keydown.enter", ["$event"])
-  handleKeyboardEnterEvent() {
+  handleKeyboardEnterEvent(): void {
     if(!this.subModalOpened && this.habitForm?.valid) {
       this.save();
     }
