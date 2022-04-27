@@ -25,7 +25,7 @@ export class ContextMenuComponent implements OnInit, AfterViewInit {
     this.openContextMenu();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.renderer.listen('window', 'click',(e:Event)=>{
       if(!this.listElem.nativeElement.contains(e.target)) {
         if(this.justOpened) {
@@ -37,11 +37,11 @@ export class ContextMenuComponent implements OnInit, AfterViewInit {
     });
   }
 
-  emit(code: number) {
+  emit(code: number): void {
     this.actionEvent.emit(code);
   }
 
-  openContextMenu() {
+  openContextMenu(): void {
     if(this.x+250 > window.innerWidth) {
       this.contextMenuX = this.x-250;
     } else {

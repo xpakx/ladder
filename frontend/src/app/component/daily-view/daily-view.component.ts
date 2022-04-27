@@ -60,19 +60,19 @@ implements OnInit {
   taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
 
   // Task form
-  openAddTaskForm() {
+  openAddTaskForm(): void {
     this.closeChildrenEditTaskForms();
     this.showAddTaskForm = true;
     this.taskData = new AddEvent<TaskTreeElem>();
   }
 
-  closeChildrenEditTaskForms() {
+  closeChildrenEditTaskForms(): void {
     for(let child of this.listComponents) {
       child.closeEditTaskForm();
     }
   }
 
-  closeAddTaskForm() {
+  closeAddTaskForm(): void {
     this.showAddTaskForm = false;
   }
 
@@ -83,9 +83,7 @@ implements OnInit {
   taskContextMenuY: number = 0;
   @ViewChild('taskContext', {read: ElementRef}) taskContextMenuElem!: ElementRef;
 
-
-
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.renderer.listen('window', 'click',(e:Event)=>{
       if(this.showContextTaskMenu && 
         !this.taskContextMenuElem.nativeElement.contains(e.target)){
@@ -98,7 +96,7 @@ implements OnInit {
     })
   }
 
-  openContextTaskMenu(event: MouseEvent, taskId: number) {
+  openContextTaskMenu(event: MouseEvent, taskId: number): void {
     this.contextTaskMenu = this.tree.getTaskById(taskId);
     this.showContextTaskMenu = true;
     this.contextTaskMenuJustOpened = true;
@@ -106,14 +104,14 @@ implements OnInit {
     this.taskContextMenuY = event.clientY;
   }
 
-  closeContextTaskMenu() {
+  closeContextTaskMenu(): void {
     this.contextTaskMenu = undefined;
     this.showContextTaskMenu = false;
   }
 
   showSelectDateModal: boolean = false;
 
-  closeSelectDateModal(date: Date | undefined) {
+  closeSelectDateModal(date: Date | undefined): void {
     this.showSelectDateModal = false;
     this.taskService.rescheduleOverdueTasks({date: date}).subscribe(
       (response: Task[]) => {
@@ -124,20 +122,21 @@ implements OnInit {
     });
   }
 
-  cancelDateSelection() {
+  cancelDateSelection(): void {
     this.showSelectDateModal = false;
   }
 
-  openSelectDateModal() {
+  openSelectDateModal(): void {
     this.showSelectDateModal = true;
   }
 
   activateDragNDrop: boolean = false;
-  onDragStart() {
+
+  onDragStart(): void {
     this.activateDragNDrop = true;
   }
 
-  onDragEnd() {
+  onDragEnd(): void {
     this.activateDragNDrop = false;
   }
 }
