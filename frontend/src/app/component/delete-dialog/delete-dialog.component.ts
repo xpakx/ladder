@@ -16,21 +16,21 @@ export class DeleteDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  cancel() {
+  cancel(): void {
     this.closeEvent.emit(true);
   }
 
-  delete() {
+  delete(): void {
     this.deleteEvent.emit(this.id);
   }
 
   @HostListener("window:keydown.escape", ["$event"])
-  handleKeyboardEscapeEvent() {
+  handleKeyboardEscapeEvent(): void {
     this.cancel();
   }
 
   @HostListener("window:keydown.enter", ["$event"])
-  handleKeyboardEnterEvent() {
+  handleKeyboardEnterEvent(): void {
     this.delete();
   }
 }
