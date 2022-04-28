@@ -5,6 +5,7 @@ import { Filter } from '../entity/filter';
 import { FilterDetails } from '../entity/filter-details';
 import { Habit } from '../entity/habit';
 import { HabitCompletion } from '../entity/habit-completion';
+import { HabitCompletionDetails } from '../entity/habit-completion-details';
 import { HabitDetails } from '../entity/habit-details';
 import { Label } from '../entity/label';
 import { LabelDetails } from '../entity/label-details';
@@ -47,7 +48,7 @@ export class TreeService {
     return this.loaded;
   }
 
-  load(tree: UserWithData) {
+  load(tree: UserWithData): void {
     this.loaded = true;
     this.projectCollapsed = tree.projectCollapsed;
     this.projects.load(tree.projects);
@@ -68,35 +69,35 @@ export class TreeService {
     return this.projects.transformAndReturn(project);
   }
 
-  getProjects() {
+  getProjects(): ProjectTreeElem[] {
     return this.projects.list;
   }
 
-  addNewProject(project: Project, indent: number, parent: ProjectWithNameAndId | null = null) {
+  addNewProject(project: Project, indent: number, parent: ProjectWithNameAndId | null = null): void {
     this.projects.addNewProject(project, indent, parent);
   }
 
-  addNewProjectAfter(project: Project, indent: number, afterId: number) {
+  addNewProjectAfter(project: Project, indent: number, afterId: number): void {
     this.projects.addNewProjectAfter(project, indent, afterId);
   }
 
-  moveProjectAfter(project: Project, indent: number, afterId: number) {
+  moveProjectAfter(project: Project, indent: number, afterId: number): void {
     this.projects.moveAfter(project, indent, afterId);
   }
 
-  moveProjectAsChild(project: Project, indent: number, parentId: number) {
+  moveProjectAsChild(project: Project, indent: number, parentId: number): void {
     this.projects.moveAsChild(project, indent, parentId);
   }
 
-  moveProjectAsFirst(project: Project) {
+  moveProjectAsFirst(project: Project): void {
     this.projects.moveAsFirst(project);
   }
 
-  addNewProjectBefore(project: Project, indent: number, beforeId: number) {
+  addNewProjectBefore(project: Project, indent: number, beforeId: number): void {
     this.projects.addNewProjectBefore(project, indent, beforeId);
   }
   
-  updateProject(project: Project, id: number) {
+  updateProject(project: Project, id: number): void {
     this.projects.updateProject(project, id);
   }
 
@@ -123,25 +124,25 @@ export class TreeService {
     } : undefined;
   }
 
-  deleteProject(projectId: number) {
+  deleteProject(projectId: number): void {
     let ids = this.projects.deleteProject(projectId);
     for(let id of ids) {
       this.tasks.deleteAllTasksFromProject(id);
     }
   }
 
-  deleteCollabProject(projectId: number) {
+  deleteCollabProject(projectId: number): void {
     this.collabs.deleteProject(projectId);
     this.collabTasks.deleteAllTasksFromProject(projectId);
     
   }
 
-  archiveProject(project: Project) {
+  archiveProject(project: Project): void {
     this.projects.archiveProject(project);
     this.tasks.deleteAllTasksFromProject(project.id);
   }
 
-  changeFav(response: Project) {
+  changeFav(response: Project): void {
     this.projects.changeFav(response);
   }
 
@@ -149,7 +150,7 @@ export class TreeService {
     return this.projects.filterProjects(text);
   }
 
-  getTasks() {
+  getTasks(): TaskTreeElem[] {
     return this.tasks.list;
   }
   
@@ -213,17 +214,17 @@ export class TreeService {
     return this.tasks.getTasksByProject(projectId);
   }
 
-  addNewTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
+  addNewTask(response: Task, projectId: number | undefined, labelIds: number[] = []): void {
     let project = projectId ? this.getProjectById(projectId) : undefined;
     this.tasks.addNewTask(response, project, 0, null, this.getLabelsFromIds(labelIds));
   }
 
-  addNewCollabTask(response: Task, projectId: number | undefined) {
+  addNewCollabTask(response: Task, projectId: number | undefined): void {
     let project = projectId ? this.getCollabProjectById(projectId) : undefined;
     this.collabTasks.addNewTask(response, project, 0, null);
   }
 
-  addNewHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []) {
+  addNewHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []): void {
     let project = projectId ? this.getProjectById(projectId) : undefined;
     this.habits.addNewHabit(response, project, this.getLabelsFromIds(labelIds));
   }
@@ -237,50 +238,50 @@ export class TreeService {
     return labels;
   }
 
-  updateTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
+  updateTask(response: Task, projectId: number | undefined, labelIds: number[] = []): void {
     let project = projectId ? this.getProjectById(projectId) : undefined;
     this.tasks.updateTask(response, project, this.getLabelsFromIds(labelIds));
   }
 
-  updateCollabTask(response: Task, projectId: number | undefined, labelIds: number[] = []) {
+  updateCollabTask(response: Task, projectId: number | undefined, labelIds: number[] = []): void {
     let project = projectId ? this.getCollabProjectById(projectId) : undefined;
     this.collabTasks.updateTask(response, project);
   }
 
-  updateHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []) {
+  updateHabit(response: Habit, projectId: number | undefined, labelIds: number[] = []): void {
     let project = projectId ? this.getProjectById(projectId) : undefined;
     this.habits.updateHabit(response, project, this.getLabelsFromIds(labelIds));
   }
 
-  changeTaskCompletion(response: Task) {
+  changeTaskCompletion(response: Task): void {
     this.tasks.changeTaskCompletion(response);
   }
 
-  changeCollabTaskCompletion(response: Task) {
+  changeCollabTaskCompletion(response: Task): void {
     this.collabTasks.changeTaskCompletion(response);
   }
 
-  moveTaskAfter(task: Task, indent: number, afterId: number) {
+  moveTaskAfter(task: Task, indent: number, afterId: number): void {
     this.tasks.moveAfter(task, indent, afterId);
   }
 
-  moveTaskAsChild(task: Task, indent: number, parentId: number) {
+  moveTaskAsChild(task: Task, indent: number, parentId: number): void {
     this.tasks.moveAsChild(task, indent, parentId);
   }
 
-  moveTaskAsFirst(task: Task, project: ProjectTreeElem | undefined) {
+  moveTaskAsFirst(task: Task, project: ProjectTreeElem | undefined): void {
     this.tasks.moveTaskAsFirst(task, project);
   }
 
-  deleteTask(taskId: number) {
+  deleteTask(taskId: number): void {
     this.tasks.deleteTask(taskId);
   }
 
-  deleteCollabTask(taskId: number) {
+  deleteCollabTask(taskId: number): void {
     this.collabTasks.deleteTask(taskId);
   }
 
-  deleteHabit(habitId: number) {
+  deleteHabit(habitId: number): void {
     this.habits.deleteHabit(habitId);
   }
 
@@ -288,63 +289,63 @@ export class TreeService {
     return this.tasks.getTasksByLabel(id);
   }
 
-  updateTaskDate(task: Task) {
+  updateTaskDate(task: Task): void {
     this.tasks.updateTaskDate(task);
   }
 
-  updateCollabTaskDate(task: Task) {
+  updateCollabTaskDate(task: Task): void {
     this.collabTasks.updateTaskDate(task);
   }
 
-  addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+  addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []): void {
     this.tasks.addNewTaskAfter(task, indent, afterId, project, this.getLabelsFromIds(labelIds));
   }
 
-  addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+  addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []): void {
     this.tasks.addNewTaskBefore(task, indent, beforeId, project, this.getLabelsFromIds(labelIds));
   }
 
-  addNewTaskAsChild(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+  addNewTaskAsChild(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []): void {
     this.tasks.addNewTaskAsChild(task, indent, afterId, project, this.getLabelsFromIds(labelIds));
   }
 
-  addNewCollabTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined) {
+  addNewCollabTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined): void {
     this.collabTasks.addNewTaskAfter(task, indent, afterId, project);
   }
 
-  addNewCollabTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined) {
+  addNewCollabTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined): void {
     this.collabTasks.addNewTaskBefore(task, indent, beforeId, project);
   }
 
-  addNewCollabTaskAsChild(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined) {
+  addNewCollabTaskAsChild(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined): void {
     this.collabTasks.addNewTaskAsChild(task, indent, afterId, project);
   }
 
-  moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
+  moveTaskToProject(task: Task, project: ProjectTreeElem | undefined): void {
     this.tasks.moveTaskToProject(task, project);
   }
 
-  updateTaskPriority(task: Task) {
+  updateTaskPriority(task: Task): void {
     this.tasks.updateTaskPriority(task);
   }
 
-  updateCollabTaskPriority(task: Task) {
+  updateCollabTaskPriority(task: Task): void {
     this.collabTasks.updateTaskPriority(task);
   }
 
-  updateTaskLabels(task: Task, labels: LabelDetails[]) {
+  updateTaskLabels(task: Task, labels: LabelDetails[]): void {
     this.tasks.updateTaskLabels(task, labels);
   }
 
-  getLabels() {
+  getLabels(): LabelDetails[] {
     return this.labels.labels;
   }
 
-  addNewLabel(request: Label) {
+  addNewLabel(request: Label): void {
     this.labels.addNewLabel(request);
   }
 
-  updateLabel(request: Label, labelId: number) {
+  updateLabel(request: Label, labelId: number): void {
     this.labels.updateLabel(request, labelId);
   }
 
@@ -356,27 +357,27 @@ export class TreeService {
     return this.labels.filterLabels(text);
   }
 
-  deleteLabel(labelId: number) {
+  deleteLabel(labelId: number): void {
     this.labels.deleteLabel(labelId);
   }
 
-  changeLabelFav(response: Label) {
+  changeLabelFav(response: Label): void {
     this.labels.changeLabelFav(response);
   }
 
-  addNewLabelBefore(label: Label, beforeId: number) {
+  addNewLabelBefore(label: Label, beforeId: number): void {
     this.labels.addNewLabelBefore(label, beforeId);
   }
 
-  addNewLabelAfter(label: Label, afterId: number) {
+  addNewLabelAfter(label: Label, afterId: number): void {
     this.labels.addNewLabelAfter(label, afterId);
   }
 
-  moveLabelAfter(label: Label, afterId: number) {
+  moveLabelAfter(label: Label, afterId: number): void {
     this.labels.moveAfter(label, afterId);
   }
 
-  moveLabelAsFirst(label: Label) {
+  moveLabelAsFirst(label: Label): void {
     this.labels.moveAsFirst(label);
   }
 
@@ -384,16 +385,16 @@ export class TreeService {
     return this.tasks.getNumOfUncompletedTasksByLabel(labelId);
   }
 
-  duplicateProject(response: TasksWithProjects, mainId: number) {
+  duplicateProject(response: TasksWithProjects, mainId: number): void {
     this.projects.addDuplicated(response.projects, mainId);
     this.duplicateTask(response.tasks);
   }
 
-  duplicateTask(response: TaskDetails[], mainId: number | undefined = undefined) {
+  duplicateTask(response: TaskDetails[], mainId: number | undefined = undefined): void {
     this.tasks.addDuplicated(response, mainId);
   }
 
-  sync(response: SyncData) {
+  sync(response: SyncData): void {
     this.projects.sync(response.projects);
     this.labels.sync(response.labels);
     this.tasks.sync(response.tasks);
@@ -404,7 +405,7 @@ export class TreeService {
     this.collabTasks.syncTasks(response.collabTasks);
   }
 
-  syncCollabTasks(list: CollabTaskDetails[]) {
+  syncCollabTasks(list: CollabTaskDetails[]): void {
     this.collabTasks.syncTasks(list);
   }
 
@@ -415,7 +416,7 @@ export class TreeService {
       .filter((a) => !existingIds.includes(a));
   }
 
-  syncProject(response: ProjectData) {
+  syncProject(response: ProjectData): void {
     let projectRestored = this.projects.syncOne(response.project);
     if(projectRestored) {
       this.tasks.sync(response.tasks);
@@ -424,15 +425,15 @@ export class TreeService {
     //this.completions.sync(response.habitCompletions);
   }
 
-  addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+  addNewHabitAfter(habit: Habit, afterId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []): void {
     this.habits.addNewHabitAfter(habit, afterId, project, this.getLabelsFromIds(labelIds));
   }
 
-  addNewHabitBefore(habit: Habit, beforeId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []) {
+  addNewHabitBefore(habit: Habit, beforeId: number, project: ProjectTreeElem | undefined, labelIds: number[] = []): void {
     this.habits.addNewHabitBefore(habit, beforeId, project, this.getLabelsFromIds(labelIds));
   }
 
-  moveHabitToProject(habit: Habit, project: ProjectTreeElem | undefined) {
+  moveHabitToProject(habit: Habit, project: ProjectTreeElem | undefined): void {
     this.habits.moveHabitToProject(habit, project);
   }
 
@@ -440,39 +441,39 @@ export class TreeService {
     return this.habits.getById(habitId);
   }
 
-  getHabits() {
+  getHabits(): HabitDetails[] {
     return this.habits.list;
   }
 
-  updateHabitPriority(habit: Habit) {
+  updateHabitPriority(habit: Habit): void {
     this.habits.updateHabitPriority(habit);
   }
 
-  completeHabit(habitId: number, completion: HabitCompletion) {
+  completeHabit(habitId: number, completion: HabitCompletion): void {
     this.completions.addCompletion(habitId, completion);
   }
 
-  getCompletions() {
+  getCompletions(): HabitCompletionDetails[] {
     return this.completions.list;
   }
 
-  getFilters() {
+  getFilters(): FilterDetails[] {
     return this.filters.list;
   }
 
-  addNewFilter(request: Filter) {
+  addNewFilter(request: Filter): void {
     this.filters.addNewFilter(request);
   }
 
-  updateFilter(request: Filter, filterId: number) {
+  updateFilter(request: Filter, filterId: number): void {
     this.filters.updateFilter(request, filterId);
   }
 
-  addNewFilterBefore(filter: Filter, beforeId: number) {
+  addNewFilterBefore(filter: Filter, beforeId: number): void {
     this.filters.addNewFilterBefore(filter, beforeId);
   }
 
-  addNewFilterAfter(filter: Filter, afterId: number) {
+  addNewFilterAfter(filter: Filter, afterId: number): void {
     this.filters.addNewFilterAfter(filter, afterId);
   }
 
@@ -480,7 +481,7 @@ export class TreeService {
     return this.filters.getById(filterId);
   }
 
-  deleteFilter(filterId: number) {
+  deleteFilter(filterId: number): void {
     this.filters.deleteFilter(filterId);
   }
 
@@ -492,19 +493,19 @@ export class TreeService {
     return this.tasks.getLastArchivization();
   }
 
-  archiveTask(response: Task) {
+  archiveTask(response: Task): void {
     this.tasks.archiveTask(response);
   }
 
-  restoreTask(response: Task, tree: TaskTreeElem[]) {
+  restoreTask(response: Task, tree: TaskTreeElem[]): void {
     this.tasks.restoreTask(response, tree);
   }
 
-  updateAssignation(response: Task, user: UserMin) {
+  updateAssignation(response: Task, user: UserMin): void {
     this.tasks.updateAssignation(response, user);
   }
 
-  deleteCompletedTasks(projectId: number) {
+  deleteCompletedTasks(projectId: number): void {
     let tasks = this.tasks.getTasksByProject(projectId)
       .filter((a) => a.completed);
     for(let task of tasks) {
