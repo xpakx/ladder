@@ -14,11 +14,11 @@ export class NotificationService {
 
   constructor(private tree: TreeService, private service: SyncService) { }
 
-  private getUserId() {
+  private getUserId(): string | null {
     return localStorage.getItem("user_id");
   }
 
-  subscribe() {
+  subscribe(): void {
     let id = this.getUserId();
     if(id) {
       let eventSource = new EventSource(`${this.url}/subscription/${id}`);
@@ -34,7 +34,7 @@ export class NotificationService {
     }
   }
 
-  onNotificationSent(event: MessageEvent<any>) {
+  onNotificationSent(event: MessageEvent<any>): void {
     console.log("Got an event" + event.data);
     let timestamp = new Date(JSON.parse(event.data).time);
     let type: string = JSON.parse(event.data).type;
@@ -58,56 +58,56 @@ export class NotificationService {
     }
   }
 
-  deleteProject(id: number) {
+  deleteProject(id: number): void {
     let proj = this.tree.getProjectById(id);
     if(proj) {
       this.tree.deleteProject(id);
     }
   }
 
-  deleteCProject(id: number) {
+  deleteCProject(id: number): void {
     let proj = this.tree.getCollabProjectById(id);
     if(proj) {
       this.tree.deleteCollabProject(id);
     }
   }
 
-  deleteLabel(id: number) {
+  deleteLabel(id: number): void {
     let label = this.tree.getLabelById(id);
     if(label) {
       this.tree.deleteLabel(id);
     }
   }
 
-  deleteTask(id: number) {
+  deleteTask(id: number): void {
     let task = this.tree.getTaskById(id);
     if(task) {
       this.tree.deleteTask(id);
     }
   }
 
-  deleteCTask(id: number) {
+  deleteCTask(id: number): void {
     let task = this.tree.getCollabTaskById(id);
     if(task) {
       this.tree.deleteCollabTask(id);
     }
   }
 
-  deleteHabit(id: number) {
+  deleteHabit(id: number): void {
     let habit = this.tree.getHabitById(id);
     if(habit) {
       this.tree.deleteHabit(id);
     }
   }
 
-  deleteFilter(id: number) {
+  deleteFilter(id: number): void {
     let filter = this.tree.getFilterById(id);
     if(filter) {
       this.tree.deleteFilter(id);
     }
   }
 
-  testSync(timestamp: Date) {
+  testSync(timestamp: Date): void {
     let maxDate: Date = new Date(0);
     let dates: Date[] = this.tree.getProjects().map((a) => a.modifiedAt);
     dates = dates.concat(
@@ -146,7 +146,7 @@ export class NotificationService {
     }  
   }
 
-  sync(time: Date) {
+  sync(time: Date): void {
     let date = new Date(time);
     let diff = (date.getTimezoneOffset() / 60) * -1; 
     date.setTime(date.getTime() + (diff * 60) * 60 * 1000);
@@ -161,7 +161,7 @@ export class NotificationService {
     );
   }
 
-  syncNewCollabs(ids: number[]) {
+  syncNewCollabs(ids: number[]): void {
     if(ids.length == 0) {return;}
     this.service.syncCollabTasks({'ids': ids}).subscribe(
       (response: CollabTaskDetails[]) => {
