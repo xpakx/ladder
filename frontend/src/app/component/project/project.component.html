@@ -35,13 +35,9 @@
         </button>
     </div>
 
-
     <app-task-list [project]='project' *ngIf="view == 0"></app-task-list>
     <app-habit-list [project]='project' *ngIf="view == 1"></app-habit-list>
-
     <app-task-list [project]='project' [initTasks]='archivedTasks' [blocked]="true" *ngIf="view == 0 && archivedTasks.length > 0"></app-task-list>
-
-
 </div>
 
 <app-context-menu *ngIf="showContextMenu" [elems]="contextMenu" [x]="contextMenuX" [y]="contextMenuY" (closeEvent)="closeContextActionMenu()" (actionEvent)="closeContextMenu($event)"></app-context-menu>

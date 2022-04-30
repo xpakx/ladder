@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, DoCheck, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -29,8 +29,8 @@ export class ProjectComponent implements OnInit, DoCheck {
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService,  private redirService: RedirectionService, 
-    private renderer: Renderer2, private projectService: ProjectService,
-    private taskService: TaskService, private exportService: ExportService) {  }
+    private projectService: ProjectService, private taskService: TaskService, 
+    private exportService: ExportService) {  }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
