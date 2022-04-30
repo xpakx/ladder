@@ -33,17 +33,4 @@
     </div>
 </div>
 
-
-<div class="ist-menu context" [class.hidden-context-menu]="!showContextMenu" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
-	<ul class="context-menu-project" #projectContext>
-	
-		<li class="context-menu-project-item" *ngIf="contextMenuProject">
-			<button >
-				<span class="menu_icon">
-					<i class="fa fa-heart-o"></i>
-				</span>
-				<div class="menu_label">???</div>
-			</button>
-		</li>
-	</ul>
-</div>
+<app-context-menu *ngIf="showContextMenu" [elems]="contextMenu" [x]="contextMenuX" [y]="contextMenuY" (closeEvent)="closeContextProjectMenu()" (actionEvent)="closeContextMenu($event)"></app-context-menu>
