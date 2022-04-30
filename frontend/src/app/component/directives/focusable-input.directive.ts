@@ -9,16 +9,16 @@ export class FocusableInputDirective {
   constructor(private service: KeyboardManagerService) { }
 
   @HostListener('focus', ['$event'])
-  onFocus() {
+  onFocus(): void {
     this.service.blockLetters();
   }
 
   @HostListener('blur', ['$event'])
-  onBlur() {
+  onBlur(): void {
     this.service.unblockLetters();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.service.unblockLetters();
   }
 }

@@ -56,6 +56,7 @@ import { CollabSubtaskListComponent } from './component/collab-subtask-list/coll
 import { AutofocusDirective } from './component/directives/autofocus.directive';
 import { FocusableInputDirective } from './component/directives/focusable-input.directive';
 import { MarkdownModule } from 'ngx-markdown';
+import { ContextMenuComponent } from './component/context-menu/context-menu.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -109,7 +110,8 @@ export function tokenGetter() {
     AssignModalComponent,
     CollabSubtaskListComponent,
     AutofocusDirective,
-    FocusableInputDirective
+    FocusableInputDirective,
+    ContextMenuComponent
   ],
   imports: [
     BrowserModule,

@@ -102,7 +102,7 @@ export class ProjectService implements MultilevelMovableService<Project>{
     return this.http.post<Task>(`${this.apiServerUrl}/${userId}/collab/projects/${projectId}/tasks`, request);
   }
 
-  private getUserId() {
+  private getUserId(): string | null {
     return localStorage.getItem("user_id");
   }
 

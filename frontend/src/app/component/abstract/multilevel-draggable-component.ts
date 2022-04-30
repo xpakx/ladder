@@ -10,11 +10,11 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     
     constructor(protected treeService : U, protected service: S) { }
   
-    onDragStart(id: number) { 
+    onDragStart(id: number): void { 
         this.draggedId = id;
     }
   
-    onDragEnd() {
+    onDragEnd(): void {
         this.draggedId = undefined;
     }
   
@@ -22,7 +22,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         return this.draggedId == id;
     }
 
-    onDrop(event: DndDropEvent, target: IndentableTreeElem<P>, asChild: boolean = false) { 
+    onDrop(event: DndDropEvent, target: IndentableTreeElem<P>, asChild: boolean = false): void { 
     let id = Number(event.data);
         if(!asChild)
         {
@@ -47,7 +47,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     }
 
     
-    onDropFirst(event: DndDropEvent) {
+    onDropFirst(event: DndDropEvent): void {
         let id = Number(event.data);
         this.service.moveAsFirst(id).subscribe(
             (response: T) => {
@@ -66,7 +66,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
     }
 
 
-    collapseElem(elemId: number) {
+    collapseElem(elemId: number): void {
         let elem = this.treeService.getById(elemId);
         if(elem) {
           elem.collapsed = !elem.collapsed;
@@ -81,7 +81,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         }
     }
 
-    collapseInTree(elem: T) {
+    collapseInTree(elem: T): void {
         
     } 
 
@@ -115,7 +115,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         return this.findFirstWithSmallerIndentAndReturnIndent(i + 1, elem.indent);
     }
 
-    protected isNextElemDragged(i: number) {
+    protected isNextElemDragged(i: number): boolean {
         return this.outOfBound(i+1) || this.isDragged(this.idForPosition(i+1))
     }
     
@@ -146,7 +146,7 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         return false;
     }
 
-    private hasNextUndetachedElemSmallerIndent(i: number, elem: R) {
+    private hasNextUndetachedElemSmallerIndent(i: number, elem: R): boolean {
         let nextUndetached = this.findFirstNonDetachedAndReturn(i + 1);
         return !nextUndetached || nextUndetached.indent < elem.indent;
     }
@@ -169,11 +169,11 @@ export class MultilevelDraggableComponent<P extends ParentWithId, R extends Inde
         return 0;
     }
     
-    private isCandidateForElemWithSmallerIndent(indent: number, elem: R) {
+    private isCandidateForElemWithSmallerIndent(indent: number, elem: R): boolean {
         return indent >= elem.indent && this.isNotDetachedFromProjectList(elem); 
     }
 
-    private isNotDetachedFromProjectList(elem: R) {
+    private isNotDetachedFromProjectList(elem: R): boolean {
         return !this.isDragged(elem.id) && !this.isParentDragged(elem.parentList)
     }
     

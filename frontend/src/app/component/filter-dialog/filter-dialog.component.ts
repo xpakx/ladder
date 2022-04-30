@@ -58,7 +58,7 @@ export class FilterDialogComponent implements OnInit {
   '#49CC56', '#BFCC49', '#9849CC', '#158FAD', '#AD3315', '#1543AD', '#15AD80'];
   showColors = false;
 
-  toggleShowColors() {
+  toggleShowColors(): void {
     this.showColors = !this.showColors;
   }
 
@@ -66,7 +66,7 @@ export class FilterDialogComponent implements OnInit {
     return this.addFilterForm.controls.color.value;
   }
 
-  chooseColor(color: string) {
+  chooseColor(color: string): void {
     this.addFilterForm.setValue({
       name: this.addFilterForm.controls.name.value,
       searchString: this.addFilterForm.controls.searchString.value,
@@ -74,15 +74,15 @@ export class FilterDialogComponent implements OnInit {
     });
   }
 
-  closeFilterModal() {
+  closeFilterModal(): void {
     this.closeEvent.emit(true);
   }
 
-  switchFav() {
+  switchFav(): void {
     this.favorite = !this.favorite;
   }
 
-  addFilterModal() {
+  addFilterModal(): void {
     let request: FilterRequest = {
       name: this.addFilterForm.controls.name.value,
       color: this.addFilterForm.controls.color.value,
@@ -103,7 +103,7 @@ export class FilterDialogComponent implements OnInit {
     }
   }
 
-  addEndFilterModal(request: FilterRequest) {
+  addEndFilterModal(request: FilterRequest): void {
     this.filterService.addFilter(request).subscribe(
       (response: Filter) => {
         this.tree.addNewFilter(response);
@@ -114,7 +114,7 @@ export class FilterDialogComponent implements OnInit {
     );
   }
 
-  addBeforeFilterModal(request: FilterRequest, filterBefore: FilterDetails) {
+  addBeforeFilterModal(request: FilterRequest, filterBefore: FilterDetails): void {
     this.filterService.addFilterBefore(request, filterBefore.id).subscribe(
       (response: Filter, beforeId: number = filterBefore.id) => {
         this.tree.addNewFilterBefore(response, beforeId);
@@ -125,7 +125,7 @@ export class FilterDialogComponent implements OnInit {
     );
   }
 
-  editFilterModal(request: FilterRequest, id: number) {
+  editFilterModal(request: FilterRequest, id: number): void {
     this.filterService.updateFilter(id, request).subscribe(
       (response: Filter) => {
         this.tree.updateFilter(response, id);
@@ -136,7 +136,7 @@ export class FilterDialogComponent implements OnInit {
     );
   }
 
-  addAfterFilterModal(request: FilterRequest, filterAfter: FilterDetails) {
+  addAfterFilterModal(request: FilterRequest, filterAfter: FilterDetails): void {
     this.filterService.addFilterAfter(request, filterAfter.id).subscribe(
       (response: Filter, afterId: number = filterAfter.id) => {
         this.tree.addNewFilterAfter(response, afterId);
@@ -148,12 +148,12 @@ export class FilterDialogComponent implements OnInit {
   }
 
   @HostListener("window:keydown.escape", ["$event"])
-  handleKeyboardEscapeEvent() {
+  handleKeyboardEscapeEvent(): void {
     this.closeFilterModal();
   }
 
   @HostListener("window:keydown.enter", ["$event"])
-  handleKeyboardEnterEvent() {
+  handleKeyboardEnterEvent(): void {
     if(this.addFilterForm?.valid) {
       this.addFilterModal();
     }

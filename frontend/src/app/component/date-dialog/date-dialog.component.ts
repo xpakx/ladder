@@ -41,20 +41,20 @@ export class DateDialogComponent implements OnInit {
     return date.toISOString().split("T")[0];
   }
 
-  closeSelectDateMenu() {
+  closeSelectDateMenu(): void {
     this.closeEvent.emit(this.taskDate);
   }
 
-  cancel() {
+  cancel(): void {
     this.cancelEvent.emit(true);
   }
 
-  chooseDate(date: Date | undefined) {
+  chooseDate(date: Date | undefined): void {
     this.taskDate = date;
     this.closeSelectDateMenu();
   } 
 
-  selectDateFromForm() {
+  selectDateFromForm(): void {
     if(this.dateSelectForm) {
       this.taskDate = new Date(this.dateSelectForm.controls.date.value);
     }
@@ -62,12 +62,12 @@ export class DateDialogComponent implements OnInit {
   } 
 
   @HostListener("window:keydown.escape", ["$event"])
-  handleKeyboardEscapeEvent() {
+  handleKeyboardEscapeEvent(): void {
     this.cancel();
   }
 
   @HostListener("window:keydown.enter", ["$event"])
-  handleKeyboardEnterEvent() {
+  handleKeyboardEnterEvent(): void {
     this.selectDateFromForm();
   }
 }

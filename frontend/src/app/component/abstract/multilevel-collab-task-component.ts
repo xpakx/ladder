@@ -16,7 +16,7 @@ extends MultilevelDraggableComponent<ParentWithId, TaskTreeElem, Task, CollabTas
       super(treeService, service) 
     }
     
-    onDropFirst(event: DndDropEvent) {
+    onDropFirst(event: DndDropEvent): void {
         let id = Number(event.data);
         this.service.moveAsFirst(id).subscribe(
           (response: Task, project: ProjectTreeElem | undefined = this.project) => {

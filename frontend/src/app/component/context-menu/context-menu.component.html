@@ -1,0 +1,13 @@
+
+<div class="context-menu context" [ngStyle]="{'left.px': contextMenuX, 'top.px': contextMenuY}">
+	<ul class="context-menu-list" #contextList>
+        <li class="context-menu-list-item" *ngFor="let elem of elems">
+			<button (click)="emit(elem.code)">
+				<span class="menu_icon">
+					<i class="fa" [class]="elem.icon"></i>
+				</span>
+				<div class="menu_label">{{ elem.name }}</div>
+			</button>
+		</li>
+	</ul>
+</div>

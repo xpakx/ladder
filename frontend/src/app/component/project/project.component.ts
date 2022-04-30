@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, DoCheck, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -10,24 +10,27 @@ import { ProjectService } from 'src/app/service/project.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
+import { ContextMenuElem } from '../context-menu/context-menu-elem';
+import { Codes, MenuElems } from './project-context-codes';
 
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.css']
 })
-export class ProjectComponent implements OnInit, AfterViewInit, DoCheck {
+export class ProjectComponent implements OnInit, DoCheck {
   public invalid: boolean = false;
   public message: string = '';
   project: ProjectTreeElem | undefined;
   id!: number;
+  contextMenu: ContextMenuElem[] = [];
 
   public view: number = 0;
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService,  private redirService: RedirectionService, 
-    private renderer: Renderer2, private projectService: ProjectService,
-    private taskService: TaskService, private exportService: ExportService) {  }
+    private projectService: ProjectService, private taskService: TaskService, 
+    private exportService: ExportService) {  }
 
   ngOnInit(): void {
     if(!this.tree.isLoaded()) {
@@ -37,7 +40,8 @@ export class ProjectComponent implements OnInit, AfterViewInit, DoCheck {
 
     this.route.params.subscribe(routeParams => {
       this.loadProject(routeParams.id);
-    });    
+    });   
+    this.prepareContextMenu(); 
   }
 
   ngDoCheck(): void {
@@ -59,33 +63,36 @@ export class ProjectComponent implements OnInit, AfterViewInit, DoCheck {
   }
 
   showContextMenu: boolean = false;
-  contextMenuJustOpened: boolean = false;
   contextMenuX: number = 0;
   contextMenuY: number = 0;
-  @ViewChild('taskContext', {read: ElementRef}) taskContextMenuElem!: ElementRef;
-
-
-  ngAfterViewInit() {
-    this.renderer.listen('window', 'click',(e:Event)=>{
-      if(this.showContextMenu && 
-        !this.taskContextMenuElem.nativeElement.contains(e.target)){
-        if(this.contextMenuJustOpened) {
-          this.contextMenuJustOpened = false
-        } else {
-          this.showContextMenu = false;
-        }
-      }
-    })
+ 
+  prepareContextMenu(): void {
+    this.contextMenu.push(MenuElems.archiveCompleted);
+    this.contextMenu.push(MenuElems.loadArchived);
+    this.contextMenu.push(MenuElems.exportToCsv);
+    this.contextMenu.push(MenuElems.exportToTxt);
+    this.contextMenu.push(MenuElems.showCollaborations);
   }
 
-  openContextMenu(event: MouseEvent) {
+  openContextMenu(event: MouseEvent): void {
     this.showContextMenu = true;
-    this.contextMenuJustOpened = true;
-    this.contextMenuX = event.clientX-250;
+    this.contextMenuX = event.clientX;
     this.contextMenuY = event.clientY;
   }
 
-  closeContextTaskMenu() {
+  closeContextMenu(code: number): void {
+    this.closeContextActionMenu();
+    
+    switch(code) {
+      case(Codes.archiveCompleted): { this.archiveCompleted(); break }
+      case(Codes.loadArchived): { this.loadArchivedTasks(); break }
+      case(Codes.exportToCsv): { this.exportToCSV(); break }
+      case(Codes.exportToTxt): { this.exportToTXT(); break }
+      case(Codes.showCollaborations): { this.openCollabModal(); break }
+    }
+  }
+
+  closeContextActionMenu() {
     this.showContextMenu = false;
   }
 
@@ -150,7 +157,6 @@ export class ProjectComponent implements OnInit, AfterViewInit, DoCheck {
   displayCollabModal: boolean = false;
 
   openCollabModal() {
-    this.closeContextTaskMenu();
     this.displayCollabModal = true;
   }
 

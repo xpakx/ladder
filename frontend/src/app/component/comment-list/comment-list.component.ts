@@ -35,7 +35,7 @@ export class CommentListComponent implements OnInit {
     }
   }
 
-  sendComment() {
+  sendComment(): void {
     if(this.task && this.commentForm) {
       this.commentService.addComment({content: this.commentForm.controls.content.value}, 
         this.task.id).subscribe(
@@ -58,7 +58,7 @@ export class CommentListComponent implements OnInit {
     }
   }
 
-  deleteComment(id: number) {
+  deleteComment(id: number): void {
     if(this.task && this.commentForm) {
       this.commentService.deleteComment(id).subscribe(
         (response: any, commentId: number = id) => {

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Filter } from 'src/app/entity/filter';
 import { FilterDetails } from 'src/app/entity/filter-details';
@@ -10,6 +10,8 @@ import { FilterService } from 'src/app/service/filter.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { DraggableComponent } from '../abstract/draggable-component';
 import { Animations } from '../common/animations';
+import { ContextMenuElem } from '../context-menu/context-menu-elem';
+import { Codes, MenuElems } from './filter-list-context-codes';
 
 @Component({
   selector: 'app-filter-list',
@@ -18,30 +20,34 @@ import { Animations } from '../common/animations';
   animations: [Animations.collapseTrigger]
 })
 export class FilterListComponent  extends DraggableComponent<FilterDetails, Filter, FilterService, FilterTreeService>
-implements OnInit, AfterViewInit {
+implements OnInit {
   @Output() addFilter = new EventEmitter<AddEvent<FilterDetails>>();
   @Output() navEvent = new EventEmitter<boolean>();
 
   displayFilterModal: boolean = false;
 
-  constructor(public tree : TreeService, private router: Router,
-  private renderer: Renderer2, private filterService: FilterService, 
+  contextMenu: ContextMenuElem[] = [];
+  favElem: ContextMenuElem = {name: MenuElems.addToFavs.name, icon: MenuElems.addToFavs.icon, code: MenuElems.addToFavs.code};
+
+  constructor(public tree : TreeService, private router: Router, private filterService: FilterService, 
   private deleteService: DeleteService, protected treeService: FilterTreeService) {
     super(treeService, filterService);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.prepareContextMenu();
+  }
 
-  openFilterModal() {
+  openFilterModal(): void {
     this.addFilter.emit(new AddEvent<FilterDetails>());
   }
 
-  toFilter(searchString: string) {
+  toFilter(searchString: string): void {
     this.router.navigate(['/search'], { queryParams: {search: searchString}});
     this.navEvent.emit(true);
   }
 
-  switchFilterCollapse() {
+  switchFilterCollapse(): void {
     this.tree.filterCollapsed = !this.tree.filterCollapsed;
   }
 
@@ -50,60 +56,68 @@ implements OnInit, AfterViewInit {
   contextMenuX: number = 0;
   contextMenuY: number = 0;
   contextMenuFilter: FilterDetails | undefined;
-  @ViewChild('labelContext', {read: ElementRef}) contextMenuElem!: ElementRef;
 
-  ngAfterViewInit() {
-    this.renderer.listen('window', 'click',(e:Event)=>{
-      if(this.showContextMenu &&
-        !this.contextMenuElem.nativeElement.contains(e.target)){
-          if(this.contextMenuJustOpened) {
-            this.contextMenuJustOpened = false
-          } else {
-            this.showContextMenu = false;
-          }
-      }
-    });
+  prepareContextMenu(): void {
+    this.contextMenu.push(MenuElems.addFilterAbove);
+    this.contextMenu.push(MenuElems.addFilterBelow);
+    this.contextMenu.push(MenuElems.editFilter);
+    this.contextMenu.push(this.favElem);
+    this.contextMenu.push(MenuElems.deleteFilter);
   }
 
-  openContextMenu(event: MouseEvent, filter: FilterDetails) {
+  closeContextMenu(code: number): void {
+    if(!this.contextMenuFilter) {return}
+    let filter = this.contextMenuFilter;
+    this.closeContextFilterMenu();
+    
+    switch(code) {
+      case(Codes.addFilterAbove): { this.openFilterModalAbove(filter); break }
+      case(Codes.addFilterBelow): { this.openFilterModalBelow(filter); break }
+      case(Codes.editFilter): { this.openFilterModalWithFilter(filter); break }
+      case(Codes.addToFavs): { this.updateFilterFav(filter); break }
+      case(Codes.deleteFilter): { this.askForDelete(filter); break }
+    }
+  }
+
+  openContextMenu(event: MouseEvent, filter: FilterDetails): void {
     this.contextMenuFilter = filter;
     this.showContextMenu = true;
+    if(this.contextMenuFilter?.favorite) {
+      this.favElem.name =  MenuElems.deleteFromFavs.name;
+      this.favElem.icon =  MenuElems.deleteFromFavs.icon;
+    } else {
+      this.favElem.name =  MenuElems.addToFavs.name;
+      this.favElem.icon =  MenuElems.addToFavs.icon;
+    }
     this.contextMenuJustOpened = true;
     this.contextMenuX = event.clientX;
     this.contextMenuY = event.clientY;
   }
 
-  closeContextMenu() {
+  closeContextFilterMenu(): void {
     this.contextMenuFilter = undefined;
     this.showContextMenu = false;
   }
 
-  askForDelete() {
-    if(this.contextMenuFilter) {
-      this.deleteService.openModalForFilter(this.contextMenuFilter);
-    }
-    this.closeContextMenu();
+  askForDelete(filter: FilterDetails): void {
+    this.deleteService.openModalForFilter(filter);
   }
 
-  openFilterModalWithLabel() {
-    this.addFilter.emit(new AddEvent<FilterDetails>(this.contextMenuFilter));
-    this.closeContextMenu();
+  openFilterModalWithFilter(filter: FilterDetails): void {
+    this.addFilter.emit(new AddEvent<FilterDetails>(filter));
   }
 
-  openFilterModalAbove() {
-    this.addFilter.emit(new AddEvent<FilterDetails>(this.contextMenuFilter, false, true));
-    this.closeContextMenu();
+  openFilterModalAbove(filter: FilterDetails): void {
+    this.addFilter.emit(new AddEvent<FilterDetails>(filter, false, true));
   }
 
-  openFilterModalBelow() {
-    this.addFilter.emit(new AddEvent<FilterDetails>(this.contextMenuFilter, true, false));
-    this.closeContextMenu();
+  openFilterModalBelow(filter: FilterDetails): void {
+    this.addFilter.emit(new AddEvent<FilterDetails>(filter, true, false));
   }
 
 
-  updateFilterFav() {
-    if(this.contextMenuFilter) {
-      this.filterService.updateFilterFav(this.contextMenuFilter.id, {flag: !this.contextMenuFilter.favorite}).subscribe(
+  updateFilterFav(filter: FilterDetails): void {
+    this.filterService.updateFilterFav(filter.id, {flag: !filter.favorite}).subscribe(
         (response: Filter) => {
         this.treeService.changeFilterFav(response);
       },
@@ -111,9 +125,6 @@ implements OnInit, AfterViewInit {
       
       }
     );
-    }
-
-    this.closeContextMenu();
   }
 
 }

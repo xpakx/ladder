@@ -8,7 +8,7 @@ export class RedirectionService {
 
   constructor() { }
 
-  setAddress(newUrl: string) {
+  setAddress(newUrl: string): void {
     this.lastUrl = newUrl;
   }
 

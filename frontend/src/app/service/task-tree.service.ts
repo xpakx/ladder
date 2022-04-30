@@ -25,7 +25,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return this.lastArchivization;
   }
   
-  load(tasks: TaskDetails[]) {
+  load(tasks: TaskDetails[]): void {
     this.id = Number(localStorage.getItem("user_id"));
     this.list = this.transformAll(tasks);
     this.sort();
@@ -164,7 +164,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     );
   }
 
-  addNewTask(response: Task, project: ProjectTreeElem | undefined, indent: number = 0, parent: ParentWithId | null = null, labels: LabelDetails[] = []) {
+  addNewTask(response: Task, project: ProjectTreeElem | undefined, indent: number = 0, parent: ParentWithId | null = null, labels: LabelDetails[] = []): void {
     this.list.push({
       id:response.id,
       title: response.title,
@@ -188,7 +188,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     this.sort();
   }
 
-  updateTask(response: Task, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
+  updateTask(response: Task, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []): void {
     let task = this.getById(response.id);
     if(task) {
       task.description = response.description;
@@ -207,7 +207,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  changeTaskCompletion(response: Task) {
+  changeTaskCompletion(response: Task): void {
     let task = this.getById(response.id);
     if(task) {
       task.completed = response.completed;
@@ -221,7 +221,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
   }
 
 
-  moveAfter(task: Task, afterId: number, indent: number = 0) {
+  moveAfter(task: Task, afterId: number, indent: number = 0): void {
     let afterTask = this.getById(afterId);
     let movedTask = this.getById(task.id);
     if(afterTask && movedTask) {
@@ -244,7 +244,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  moveAsChild(task: Task, parentId: number, indent: number = 0) {
+  moveAsChild(task: Task, parentId: number, indent: number = 0): void {
     let parentTask = this.getById(parentId);
     let movedTask = this.getById(task.id);
     if(parentTask && movedTask) {
@@ -266,11 +266,11 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  moveAsFirst(task:Task) {
+  moveAsFirst(task:Task): void {
     this.moveTaskAsFirst(task, undefined);
   }
 
-  moveTaskAsFirst(task: Task, project: ProjectTreeElem | undefined) {
+  moveTaskAsFirst(task: Task, project: ProjectTreeElem | undefined): void {
     let movedTask = this.getById(task.id);
     if(movedTask) {
       let oldParent: TaskTreeElem | undefined = movedTask.parent ? this.getById(movedTask.parent.id) : undefined;
@@ -290,12 +290,12 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  deleteTask(taskId: number) {
+  deleteTask(taskId: number): void {
     let ids = this.getAllChildren(taskId);
     this.list = this.list.filter((a) => !ids.includes(a.id));
   }
 
-  deleteAllTasksFromProject(projectId: number) {
+  deleteAllTasksFromProject(projectId: number): void {
     this.list = this.list.filter((a) => !a.project || a.project.id != projectId);
   }
 
@@ -310,7 +310,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return result;
   }
 
-  updateTaskDate(task: Task) {
+  updateTaskDate(task: Task): void {
     let taskToEdit =  this.getById(task.id);
     if(taskToEdit) {
       taskToEdit.due = task.due? new Date(task.due) : null;
@@ -319,7 +319,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
+  addNewTaskAfter(task: Task, indent: number, afterId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []): void {
     let afterTask = this.getById(afterId);
     if(afterTask) {
       let tsk : TaskTreeElem = afterTask;
@@ -329,7 +329,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
+  addNewTaskBefore(task: Task, indent: number, beforeId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []): void {
     let beforeTask = this.getById(beforeId);
     if(beforeTask) {
       let tsk : TaskTreeElem = beforeTask;
@@ -339,7 +339,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  addNewTaskAsChild(task: Task, indent: number, parentId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []) {
+  addNewTaskAsChild(task: Task, indent: number, parentId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []): void {
     let parent = this.getById(parentId);
     if(parent) {
       let tsk : TaskTreeElem = parent;
@@ -348,7 +348,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  moveTaskToProject(task: Task, project: ProjectTreeElem | undefined) {
+  moveTaskToProject(task: Task, project: ProjectTreeElem | undefined): void {
     let taskToMove = this.getById(task.id);
     if(taskToMove) {
       let tasks = project ? this.getTasksByProject(project.id) : this.getTasksFromInbox();
@@ -367,7 +367,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  private updateParentChildren(task: TaskTreeElem) {
+  private updateParentChildren(task: TaskTreeElem): void {
     if(!task.parent) {return;}
     let parent = this.getById(task.parent.id);
     task.parent = null;
@@ -376,7 +376,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  private updateChildrenProject(project: ProjectTreeElem | undefined, parent: TaskTreeElem) {
+  private updateChildrenProject(project: ProjectTreeElem | undefined, parent: TaskTreeElem): void {
     let tasksForProject = this.getTasksForProjectOrInbox(parent)
             .filter((a) => a.parent != null);
     let children = this.getImminentChildren([parent], tasksForProject);
@@ -389,7 +389,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  private updateTaskChildren(children: TaskTreeElem, parent: TaskTreeElem, project: ProjectWithNameAndId| null) {
+  private updateTaskChildren(children: TaskTreeElem, parent: TaskTreeElem, project: ProjectWithNameAndId| null): void {
     children.project = project;
     children.indent = children.indent - parent.indent;
   }
@@ -398,13 +398,13 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return {name: project.name, id: project.id};
   }
 
-  private getImminentChildren(parentList: TaskTreeElem[], tasksForProject: TaskTreeElem[]) {
+  private getImminentChildren(parentList: TaskTreeElem[], tasksForProject: TaskTreeElem[]): TaskTreeElem[] {
     let ids = parentList.map((a) => a.id);
     return tasksForProject
             .filter((a) => a.parent && ids.includes(a.parent.id));
   }
 
-  private getTasksForProjectOrInbox(task: TaskTreeElem) {
+  private getTasksForProjectOrInbox(task: TaskTreeElem): TaskTreeElem[] {
     return task.project ? this.getTasksByProject(task.project.id) :
             this.getTasksFromInbox();
   }
@@ -413,7 +413,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       return (task.project && project && task.project.id == project.id) || (!task.project && !project);
   }
 
-  updateTaskPriority(task: Task) {
+  updateTaskPriority(task: Task): void {
     let taskToUpdate = this.getById(task.id);
     if(taskToUpdate) {
       taskToUpdate.priority = task.priority;
@@ -421,7 +421,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  updateTaskLabels(task: Task, labels: LabelDetails[]) {
+  updateTaskLabels(task: Task, labels: LabelDetails[]): void {
     let taskToUpdate = this.getById(task.id);
     if(taskToUpdate) {
       taskToUpdate.labels = labels;
@@ -441,8 +441,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     );
   }
 
-
-  moveAsFirstDaily(task: Task) {
+  moveAsFirstDaily(task: Task): void {
     let movedTask = this.getById(task.id);
     if(movedTask) {
       let date = new Date(task.due);
@@ -453,14 +452,14 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  private incrementDailyOrderForDate(date: Date) {
+  private incrementDailyOrderForDate(date: Date): void {
     let tasks = this.getByDate(date);
     for (let task of tasks) {
       task.dailyOrder = task.dailyOrder + 1;
     }
   }
 
-  moveAfterDaily(task: Task, afterId: number) {
+  moveAfterDaily(task: Task, afterId: number): void {
     let afterTask = this.getById(afterId);
     let movedTask = this.getById(task.id);
     if(afterTask && movedTask) {
@@ -472,7 +471,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  private incrementDailyOrderForDateAfter(date: Date, afterTask: TaskTreeElem) {
+  private incrementDailyOrderForDateAfter(date: Date, afterTask: TaskTreeElem): void {
     let tasks = this.getByDate(date)
       .filter((a) => a.dailyOrder > afterTask.dailyOrder);
     for (let task of tasks) {
@@ -480,7 +479,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  addDuplicated(response: TaskDetails[], mainId: number | undefined = undefined) {
+  addDuplicated(response: TaskDetails[], mainId: number | undefined = undefined): void {
     let tasks = this.transformAll(response);
     let mainTask = mainId ? this.getById(mainId) : undefined;
     if(mainTask) {
@@ -493,8 +492,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     this.sort();
   }
 
-
-  private incrementOrderForFirstOrderTasks(project: ProjectTreeElem | undefined) {
+  private incrementOrderForFirstOrderTasks(project: ProjectTreeElem | undefined): void {
     let tasks = this.list
       .filter((a) => project ? a.project && a.project.id == project.id : !a.project)
       .filter((a) => !a.parent);
@@ -503,7 +501,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  incrementOrderForAllSiblings(parent: TaskTreeElem) {
+  incrementOrderForAllSiblings(parent: TaskTreeElem): void {
     let siblings = this.list
         .filter((a) => !a.parent && !parent || (a.parent && parent && a.parent.id == parent.id));
     for(let sibling of siblings) {
@@ -511,7 +509,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
   
-  incrementOrderAfter(task: TaskTreeElem) {
+  incrementOrderAfter(task: TaskTreeElem): void {
     let siblingsAfter = this.list
         .filter((a) => !a.parent && !task.parent || (a.parent && task.parent && a.parent.id == task.parent.id))
         .filter((a) => a.order > task.order);
@@ -520,7 +518,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     }
   }
 
-  incrementOrderAfterOrEqual(task: TaskTreeElem) {
+  incrementOrderAfterOrEqual(task: TaskTreeElem): void {
     let siblingsAfter = this.list
         .filter((a) => !a.parent && !task.parent || (a.parent && task.parent && a.parent.id == task.parent.id))
         .filter((a) => a.order >= task.order);
@@ -533,7 +531,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return this.list.filter((a) => a.parent && a.parent.id == parentId);
   }
 
-  sync(tasks: TaskDetails[]) {
+  sync(tasks: TaskDetails[]): void {
     for(let task of tasks) {
       let taskWithId = this.getById(task.id);
       if(taskWithId) {
@@ -597,7 +595,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return counter;
   }
 
-  updateTaskDetails(task: TaskTreeElem, response: TaskDetails, tasks: TaskDetails[]) {
+  updateTaskDetails(task: TaskTreeElem, response: TaskDetails, tasks: TaskDetails[]): void {
     task.description = response.description;
     task.title = response.title;
     let oldParent = task.parent ? this.getById(task.parent.id) : null;
@@ -623,14 +621,14 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     this.recalculateHasChildrenSync(task, tasks);
   }
 
-  private howManyChildrenSync(parentId: number, tasks: TaskDetails[]) {
+  private howManyChildrenSync(parentId: number, tasks: TaskDetails[]): number {
     let syncChildren = tasks.filter((a) => a.parent && a.parent.id == parentId);
     let ids = syncChildren.map((a) => a.id);
     let children = this.list.filter((a) => a.parent && a.parent.id == parentId && !ids.includes(a.id));
     return children.length + syncChildren.length;
   }
 
-  private recalculateHasChildrenSync(task: TaskTreeElem, tasks: TaskDetails[]) {
+  private recalculateHasChildrenSync(task: TaskTreeElem, tasks: TaskDetails[]): void {
       let children = this.howManyChildrenSync(task.id, tasks);
       task.hasChildren = children > 0 ? true : false;
       for(let parent of task.parentList) {
@@ -645,22 +643,22 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     return list;
   }
 
-  protected sortToReturn(tasks: TaskTreeElem[]) {
+  protected sortToReturn(tasks: TaskTreeElem[]): void {
     tasks.sort((a, b) => a.order - b.order);
     this.calculateRealOrderToReturn(tasks);
     tasks.sort((a, b) => a.realOrder - b.realOrder);
-}
+  }
 
-private calculateRealOrderToReturn(tasks: TaskTreeElem[]) {
+  private calculateRealOrderToReturn(tasks: TaskTreeElem[]): void {
     let tsks = tasks.filter((a) => a.indent == 0);
     var offset = 0;
     for(let task of tsks) {
         task.parentList = [];
         offset += this.countAllChildrenToReturn(task, offset, tasks) +1;
     }
-}
+  }
 
-private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: TaskTreeElem[], parent?: TaskTreeElem ): number {
+  private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: TaskTreeElem[], parent?: TaskTreeElem ): number {
     task.realOrder = offset;
     offset += 1;
     
@@ -683,7 +681,7 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
     return num;
   }
 
-  restoreTask(task: Task, tree: TaskTreeElem[]) {
+  restoreTask(task: Task, tree: TaskTreeElem[]): void {
     let newTask = tree.find((a) => a.id == task.id);
     let oldTask = this.getById(task.id);
     if(newTask && !oldTask) {
@@ -705,18 +703,18 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
     }
   }
 
-  archiveTask(task: Task) {
+  archiveTask(task: Task): void {
     this.lastArchivization = new Date(task.modifiedAt);
     this.deleteTask(task.id);
   }
 
-  updateTasksDate(tasks: Task[]) {
+  updateTasksDate(tasks: Task[]): void {
     for(let task of tasks) {
       this.updateTaskDate(task);
     }
   }
 
-  collapse(response: Task) {
+  collapse(response: Task): void {
     let task = this.getById(response.id);
     if(task){
       task.collapsed = response.collapsed;
@@ -724,7 +722,7 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
     }
   }
 
-  updateAssignation(response: Task, user: UserMin) {
+  updateAssignation(response: Task, user: UserMin): void {
     let task = this.getById(response.id);
     if(task){
       task.assigned = user;
@@ -732,7 +730,7 @@ private countAllChildrenToReturn(task: TaskTreeElem, offset: number, tasks: Task
     }
   }
 
-  deleteAssignations(projectId: number, userId: number) {
+  deleteAssignations(projectId: number, userId: number): void {
     this.list
       .filter((a) => a.project && a.project.id == projectId)
       .filter((a) => a.assigned && a.assigned.id == userId)

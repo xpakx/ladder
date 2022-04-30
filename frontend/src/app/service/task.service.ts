@@ -20,7 +20,7 @@ export class TaskService implements MultilevelMovableService<Task> {
 
   constructor(private http: HttpClient) { }
 
-  private getUserId() {
+  private getUserId(): string | null {
     return localStorage.getItem("user_id");
   }
 

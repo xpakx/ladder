@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -14,6 +14,8 @@ import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
+import { ContextMenuElem } from '../context-menu/context-menu-elem';
+import { Codes, MenuElems } from './task-list-context-codes';
 
 @Component({
   selector: 'app-task-list',
@@ -21,7 +23,7 @@ import { MultilevelTaskComponent } from '../abstract/multilevel-task-component';
   styleUrls: ['./task-list.component.css']
 })
 export class TaskListComponent extends MultilevelTaskComponent<TaskTreeService> 
-implements OnInit, AfterViewInit {
+implements OnInit {
   @Input("project") project: ProjectTreeElem | undefined;
   @Input("initTasks") initTasks: TaskTreeElem[] = [];
   @Input("blocked") blocked: boolean = false;
@@ -29,16 +31,17 @@ implements OnInit, AfterViewInit {
   todayDate: Date | undefined;
   showAddTaskForm: boolean = false;
   taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
+  contextMenu: ContextMenuElem[] = [];
 
   constructor(private router: Router, private route: ActivatedRoute, 
     private tree: TreeService, private taskService: TaskService,
-    private taskTreeService: TaskTreeService,
-    private renderer: Renderer2, private deleteService: DeleteService,
+    private taskTreeService: TaskTreeService, private deleteService: DeleteService,
     private redirService: RedirectionService) {
     super(taskTreeService, taskService);
   }
 
   ngOnInit(): void {
+    this.prepareContextMenu();
   }
 
   get tasks(): TaskTreeElem[] {
@@ -69,28 +72,14 @@ implements OnInit, AfterViewInit {
     this.taskData = new AddEvent<TaskTreeElem>();
   }
 
-  openEditTaskFromContextMenu() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
+  openEditTaskAbove(task: TaskTreeElem) {
+    this.closeAddTaskForm();
+    this.taskData = new AddEvent<TaskTreeElem>(task, false, true);
   }
 
-  openEditTaskAbove() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, false, true);
-    }
-    this.closeContextTaskMenu();
-  }
-
-  openEditTaskBelow() {
-    if(this.contextTaskMenu) {
-      this.closeAddTaskForm();
-      this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu, true, false);
-    }
-    this.closeContextTaskMenu();
+  openEditTaskBelow(task: TaskTreeElem) {
+    this.closeAddTaskForm();
+    this.taskData = new AddEvent<TaskTreeElem>(task, true, false);
   }
 
   shouldEditTaskById(taskId: number): boolean {
@@ -163,42 +152,62 @@ implements OnInit, AfterViewInit {
     return today.getFullYear() == date.getFullYear();
   }
 
+  // Context menu
+
   contextTaskMenu: TaskTreeElem | undefined;
   showContextTaskMenu: boolean = false;
-  contextTaskMenuJustOpened: boolean = false;
   taskContextMenuX: number = 0;
   taskContextMenuY: number = 0;
-  @ViewChild('taskContext', {read: ElementRef}) taskContextMenuElem!: ElementRef;
 
-
-  ngAfterViewInit() {
-    this.renderer.listen('window', 'click',(e:Event)=>{
-      if(this.showContextTaskMenu && 
-        !this.taskContextMenuElem.nativeElement.contains(e.target)){
-        if(this.contextTaskMenuJustOpened) {
-          this.contextTaskMenuJustOpened = false
-        } else {
-          this.showContextTaskMenu = false;
-        }
-      }
-    })
+  prepareContextMenu() {
+    if (!this.blocked) {
+      this.contextMenu.push(MenuElems.addTaskAbove);
+      this.contextMenu.push(MenuElems.addTaskBelow);
+      this.contextMenu.push(MenuElems.editTask);
+      this.contextMenu.push(MenuElems.moveToProject);
+      this.contextMenu.push(MenuElems.schedule);
+      this.contextMenu.push(MenuElems.priority);
+      this.contextMenu.push(MenuElems.duplicate);
+      this.contextMenu.push(MenuElems.archiveTask);
+    }
+    if (this.project && this.project.collaborative) {
+      this.contextMenu.push(MenuElems.assign);
+    }
+    if (this.blocked) {
+      this.contextMenu.push(MenuElems.restoreTask);
+    }
+    this.contextMenu.push(MenuElems.deleteTask);
   }
 
   openContextTaskMenu(event: MouseEvent, taskId: number) {
 	  this.contextTaskMenu = this.getTaskById(taskId);
     this.showContextTaskMenu = true;
-    this.contextTaskMenuJustOpened = true;
-    this.taskContextMenuX = event.clientX-250;
-    let menuHeight: number = (this.project && this.project.collaborative ? 10 : 9)*24+20;
-    if(event.clientY+menuHeight > window.innerHeight) {
-      this.taskContextMenuY = event.clientY-menuHeight;
-    } else {
-      this.taskContextMenuY = event.clientY;
-    }
+    this.taskContextMenuX = event.clientX;
+    this.taskContextMenuY = event.clientY;
   }
 
   getTaskById(taskId: number): TaskTreeElem | undefined {
     return this.initTasks.length == 0 ? this.tree.getTaskById(taskId) : this.initTasks.find((a) => a.id == taskId);
+  }
+
+  closeContextMenu(code: number) {
+    if(!this.contextTaskMenu) {return}
+    let task = this.contextTaskMenu;
+    this.closeContextTaskMenu();
+    
+    switch(code) {
+      case(Codes.addTaskAbove): { this.openEditTaskAbove(task); break }
+      case(Codes.addTaskBelow): { this.openEditTaskBelow(task); break }
+      case(Codes.editTask): { this.openEditTaskForm(task); break }
+      case(Codes.moveToProject): { this.openSelectProjectModal(task); break }
+      case(Codes.schedule): { this.openSelectDateModal(task); break }
+      case(Codes.priority): { this.openSelectPriorityModal(task); break }
+      case(Codes.duplicate): { this.duplicate(task); break }
+      case(Codes.archiveTask): { this.archiveTask(task); break }
+      case(Codes.assign): { this.openAssignModal(task); break }
+      case(Codes.restoreTask): { this.restoreTask(task); break }
+      case(Codes.deleteTask): { this.askForDelete(task); break }
+    }
   }
 
   closeContextTaskMenu() {
@@ -214,11 +223,8 @@ implements OnInit, AfterViewInit {
     return this.tree.getNumOfTasksByParent(parentId);
   }
 
-  askForDelete() {
-    if(this.contextTaskMenu) {
-      this.deleteService.openModalForTask(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
+  askForDelete(task: TaskTreeElem) {
+    this.deleteService.openModalForTask(task);
   }
 
   showSelectDateModal: boolean = false;
@@ -253,13 +259,6 @@ implements OnInit, AfterViewInit {
     this.showSelectDateModal = true;
   }
 
-  openSelectDateModalFormContextMenu() {
-    if(this.contextTaskMenu) {
-      this.openSelectDateModal(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
-  }
-
   showSelectProjectModal: boolean = false;
   projectForProjectModal: ProjectTreeElem | undefined;
   taskIdForProjectModal: number | undefined;
@@ -290,13 +289,6 @@ implements OnInit, AfterViewInit {
     this.taskIdForProjectModal = task.id;
     this.projectForProjectModal = this.project;
     this.showSelectProjectModal = true;
-  }
-
-  openSelectProjectModalFormContextMenu() {
-    if(this.contextTaskMenu) {
-      this.openSelectProjectModal(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
   }
 
   showSelectPriorityModal: boolean = false;
@@ -331,13 +323,6 @@ implements OnInit, AfterViewInit {
     this.showSelectPriorityModal = true;
   }
 
-  openSelectPriorityModalFormContextMenu() {
-    if(this.contextTaskMenu) {
-      this.openSelectPriorityModal(this.contextTaskMenu);
-    }
-    this.closeContextTaskMenu();
-  }
-
   getTaskLabels(task: TaskTreeElem): LabelDetails[] {
     let labels: LabelDetails[] = [];
     for(let label of task.labels) {
@@ -349,20 +334,16 @@ implements OnInit, AfterViewInit {
     return labels;
   }
 
-  duplicate() {
-    if(this.contextTaskMenu) {
-      let id: number = this.contextTaskMenu.id;
-      this.taskService.duplicateTask(id).subscribe(
+  duplicate(task: TaskTreeElem) {
+    let id: number = task.id;
+    this.taskService.duplicateTask(id).subscribe(
         (response: TaskDetails[], mainId: number = id) => {
         this.tree.duplicateTask(response, mainId);
       },
       (error: HttpErrorResponse) => {
-       
+        
       }
     );
-    }
-
-    this.closeContextTaskMenu();
   }
 
   openTask?: TaskTreeElem;
@@ -375,9 +356,8 @@ implements OnInit, AfterViewInit {
     this.openTask = undefined;
   }
 
-  archiveTask() {
-    if(this.contextTaskMenu) {
-      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:true}).subscribe(
+  archiveTask(task: TaskTreeElem) {
+    this.taskService.archiveTask(task.id, {flag:true}).subscribe(
         (response: Task) => {
         this.tree.archiveTask(response);
       },
@@ -385,14 +365,10 @@ implements OnInit, AfterViewInit {
        
       }
     );
-    }
-
-    this.closeContextTaskMenu();
   }
 
-  restoreTask() {
-    if(this.contextTaskMenu) {
-      this.taskService.archiveTask(this.contextTaskMenu.id, {flag:false}).subscribe(
+  restoreTask(task: TaskTreeElem) {
+    this.taskService.archiveTask(task.id, {flag:false}).subscribe(
           (response: Task, tasks: TaskTreeElem[] = this.initTasks) => {
           this.tree.restoreTask(response ,tasks);
         },
@@ -400,9 +376,6 @@ implements OnInit, AfterViewInit {
         
         }
      );
-    }
-
-    this.closeContextTaskMenu();
   }
 
   showAssignModal: boolean = false;
@@ -422,10 +395,9 @@ implements OnInit, AfterViewInit {
     this.closeAssignModal();
   }
 
-  openAssignModal() {
+  openAssignModal(task: TaskTreeElem) {
     this.showAssignModal = true;
-    this.taskIdForAssignation = this.contextTaskMenu?.id;
-    this.closeContextTaskMenu();
+    this.taskIdForAssignation = task.id;
   }
 
   closeAssignModal() {

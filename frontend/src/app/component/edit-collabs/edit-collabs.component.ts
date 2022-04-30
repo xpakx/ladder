@@ -45,7 +45,7 @@ export class EditCollabsComponent implements OnInit {
     }
   }
 
-  addCollaborator() {
+  addCollaborator(): void {
     if(this.projectId) {
       this.service.addCollaborator({
         collaborationToken: this.addCollabForm.controls.id.value, 
@@ -65,7 +65,7 @@ export class EditCollabsComponent implements OnInit {
     }
   }
 
-  deleteCollaborator(collaboratorId: number) {
+  deleteCollaborator(collaboratorId: number): void {
     if(this.projectId) {
       this.service.deleteCollaborator(collaboratorId, this.projectId).subscribe(
         (response: any, collabId: number = collaboratorId) => {
@@ -85,7 +85,7 @@ export class EditCollabsComponent implements OnInit {
     }
   }
   
-  close() {
+  close(): void {
     this.closeEvent.emit(true);
   }
 
