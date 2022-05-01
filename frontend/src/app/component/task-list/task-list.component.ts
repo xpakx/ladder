@@ -175,7 +175,7 @@ implements OnInit {
       this.contextMenu.push(MenuElems.schedule);
       this.contextMenu.push(MenuElems.priority);
       this.contextMenu.push(MenuElems.duplicate);
-      this.contextMenu.push(MenuElems.archiveTask);
+      if(!this.inbox) {this.contextMenu.push(MenuElems.archiveTask);}
     }
     if (this.project && this.project.collaborative) {
       this.contextMenu.push(MenuElems.assign);
