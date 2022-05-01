@@ -27,6 +27,7 @@ implements OnInit {
   @Input("project") project: ProjectTreeElem | undefined;
   @Input("initTasks") initTasks: TaskTreeElem[] = [];
   @Input("blocked") blocked: boolean = false;
+  @Input("inbox") inbox: boolean = false;
   
   todayDate: Date | undefined;
   showAddTaskForm: boolean = false;
@@ -45,7 +46,13 @@ implements OnInit {
   }
 
   get tasks(): TaskTreeElem[] {
-    return (this.project && this.initTasks.length == 0) ? this.tree.getTasksByProject(this.project.id) : this.initTasks;
+    if(this.project && this.initTasks.length == 0) {
+      return  this.tree.getTasksByProject(this.project.id);
+    }
+    if(this.inbox) {
+      return this.taskTreeService.getTasksFromInbox();
+    }  
+    return this.initTasks;
   }
 
   protected getElems(): TaskTreeElem[] {
