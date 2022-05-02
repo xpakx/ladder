@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
@@ -9,7 +8,6 @@ import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { UserMin } from 'src/app/entity/user-min';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
-import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
@@ -27,16 +25,15 @@ implements OnInit {
   @Input("project") project: ProjectTreeElem | undefined;
   @Input("initTasks") initTasks: TaskTreeElem[] = [];
   @Input("blocked") blocked: boolean = false;
+  @Input("inbox") inbox: boolean = false;
   
   todayDate: Date | undefined;
   showAddTaskForm: boolean = false;
   taskData: AddEvent<TaskTreeElem> = new AddEvent<TaskTreeElem>();
   contextMenu: ContextMenuElem[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, 
-    private tree: TreeService, private taskService: TaskService,
-    private taskTreeService: TaskTreeService, private deleteService: DeleteService,
-    private redirService: RedirectionService) {
+  constructor(private tree: TreeService, private taskService: TaskService,
+    private taskTreeService: TaskTreeService, private deleteService: DeleteService) {
     super(taskTreeService, taskService);
   }
 
@@ -45,7 +42,13 @@ implements OnInit {
   }
 
   get tasks(): TaskTreeElem[] {
-    return (this.project && this.initTasks.length == 0) ? this.tree.getTasksByProject(this.project.id) : this.initTasks;
+    if(this.project && this.initTasks.length == 0) {
+      return  this.tree.getTasksByProject(this.project.id);
+    }
+    if(this.inbox) {
+      return this.taskTreeService.getTasksFromInbox();
+    }  
+    return this.initTasks;
   }
 
   protected getElems(): TaskTreeElem[] {
@@ -168,7 +171,7 @@ implements OnInit {
       this.contextMenu.push(MenuElems.schedule);
       this.contextMenu.push(MenuElems.priority);
       this.contextMenu.push(MenuElems.duplicate);
-      this.contextMenu.push(MenuElems.archiveTask);
+      if(!this.inbox) {this.contextMenu.push(MenuElems.archiveTask);}
     }
     if (this.project && this.project.collaborative) {
       this.contextMenu.push(MenuElems.assign);

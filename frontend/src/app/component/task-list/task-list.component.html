@@ -1,5 +1,5 @@
 
-<div class="tasks_content" *ngIf="project">
+<div class="tasks_content" *ngIf="project || inbox">
     <ul class="task_list_items">
         <li *ngIf="draggedId" [dndDropzone]="['task']" (dndDrop)="onDropFirst($event)" class="drag-zone drag_list_item">
 
@@ -45,7 +45,7 @@
                                     <i class="fa fa-folder"></i>
                                     <span>{{getNumOfCompletedTasksByParent(task.id)}}/{{getNumOfTasksByParent(task.id)}}</span>
                                 </a>
-                                <span class="assigned_controls" *ngIf="project.collaborative && task.assigned">
+                                <span class="assigned_controls" *ngIf="project && project.collaborative && task.assigned">
                                     <i class="fa fa-user"></i>
                                     {{ task.assigned.username }}
                                 </span>
@@ -86,10 +86,18 @@
                                 </button>
                             </div>
 
-                            <span class="task_list_item__project" *ngIf="task.project">
+                            <span class="task_list_item__project" *ngIf="task.project && project">
                                 <a [href]="'/project/' + task.project.id + '#task-' + task.id">
                                     <span class="task_list_item__project__label">{{task.project.name}}</span>
                                     <svg width="12" height="12" viewBox="0 0 12 12" class="project_icon" [style]="'color: ' + project.color + ';'"><circle cx="6" cy="6" r="4" fill="currentColor"></circle></svg>
+                                </a>
+                            </span>
+                            <span class="task_list_item__project" *ngIf="inbox && !project">
+                                <a >
+                                    <span class="task_list_item__project__label">Inbox</span>
+                                    <span class="project_icon" style="color: blue">
+                                        <i class="fa text-primary mr-2 fa-inbox"></i>
+                                    </span>
                                 </a>
                             </span>
                         </div>
