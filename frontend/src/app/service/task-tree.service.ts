@@ -291,8 +291,13 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
   }
 
   deleteTask(taskId: number): void {
+    let task = this.getById(taskId);
+    let parent = task?.parent ? this.getById(task.parent.id) : undefined;
     let ids = this.getAllChildren(taskId);
     this.list = this.list.filter((a) => !ids.includes(a.id));
+    if(parent) {
+      this.recalculateHasChildren(parent);
+    }
   }
 
   deleteAllTasksFromProject(projectId: number): void {
