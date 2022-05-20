@@ -7,10 +7,10 @@ export const Codes = {
 }
 
 export const MenuElems = {
-    addFilterAbove: { name: "Add label above", code: Codes.addFilterAbove, icon: "fa-arrow-up" }, 
-    addFilterBelow: { name: "Add label below", code: Codes.addFilterBelow, icon: "fa-arrow-down" }, 
-    editFilter: { name: "Edit label", code: Codes.editFilter, icon: "fa-edit" }, 
+    addFilterAbove: { name: "Add filter above", code: Codes.addFilterAbove, icon: "fa-arrow-up" }, 
+    addFilterBelow: { name: "Add filter below", code: Codes.addFilterBelow, icon: "fa-arrow-down" }, 
+    editFilter: { name: "Edit filter", code: Codes.editFilter, icon: "fa-edit" }, 
     addToFavs: { name: "Add to favorites", code: Codes.addToFavs, icon: "fa-heart-o" },
     deleteFromFavs: { name: "Remove from favorites", code: Codes.addToFavs, icon: "fa-heart" },
-    deleteFilter: { name: "Delete label", code: Codes.deleteFilter, icon: "fa-trash-o" }
+    deleteFilter: { name: "Delete filter", code: Codes.deleteFilter, icon: "fa-trash-o" }
 }
