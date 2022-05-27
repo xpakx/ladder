@@ -166,7 +166,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
 
   addNewTask(response: Task, project: ProjectTreeElem | undefined, indent: number = 0, parent: ParentWithId | null = null, labels: LabelDetails[] = []): void {
     this.list.push({
-      id:response.id,
+      id: response.id,
       title: response.title,
       description: response.description,
       project: project ? project : null,
@@ -175,7 +175,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       completed: false,
       order: response.projectOrder,
       realOrder: response.projectOrder,
-      dailyOrder: response.dailyViewOrder, //todo
+      dailyOrder: response.dailyViewOrder,
       hasChildren: false, 
       indent: indent,
       parentList: [], 
@@ -347,9 +347,10 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
   addNewTaskAsChild(task: Task, indent: number, parentId: number, project: ProjectTreeElem | undefined, labels: LabelDetails[] = []): void {
     let parent = this.getById(parentId);
     if(parent) {
-      let tsk : TaskTreeElem = parent;
-      task.projectOrder = tsk.order;
+      let tsk : ParentWithId = { id: parent.id };
       this.addNewTask(task, project, indent, tsk, labels);
+      this.recalculateHasChildren(parent);
+      this.sort();
     }
   }
 
