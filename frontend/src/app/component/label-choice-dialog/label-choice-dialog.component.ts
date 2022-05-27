@@ -64,6 +64,9 @@ export class LabelChoiceDialogComponent implements OnInit {
 
   @HostListener("window:keydown.enter", ["$event"])
   handleKeyboardEnterEvent() {
+    if((this.labelSelectForm?.value.text && this.labelSelectForm?.value.text != "") && this.visibleLabels.length > 0) {
+      this.chooseLabel(this.visibleLabels[0]);
+    }
     this.chooseLabels();
   }
 }
