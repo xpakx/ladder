@@ -15,6 +15,7 @@ import { TaskTreeService } from 'src/app/service/task-tree.service';
 })
 export class EditCollabsComponent implements OnInit {
   @Output() closeEvent = new EventEmitter<boolean>();
+  @Output() collabChange = new EventEmitter<boolean>();
   @Input() projectId: number | undefined;
   project: ProjectTreeElem | undefined;
   collaborators: CollaborationWithOwner[] = [];
@@ -57,6 +58,7 @@ export class EditCollabsComponent implements OnInit {
           if(this.project) {
             this.project.collaborative = true;
           }
+          this.collabChange.emit(true);
         },
         (error: HttpErrorResponse) => {
         
@@ -77,6 +79,7 @@ export class EditCollabsComponent implements OnInit {
           if(this.collaborators.length == 0 && this.project) {
             this.project.collaborative = false;
           }
+          this.collabChange.emit(true);
         },
         (error: HttpErrorResponse) => {
         

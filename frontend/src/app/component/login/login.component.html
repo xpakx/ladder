@@ -11,7 +11,10 @@
         </div>
         <input class="password" formControlName="password" type="password" />
     </form>
-    <button class="btn" (click)="logIn()">Login</button>
+    <button class="btn" (click)="logIn()">
+        <span class="loading" *ngIf="loading"><i class="fa fa-spinner fa-spin"></i></span>
+        Login
+    </button>
     <div id="warning" *ngIf="invalid">
         Error: {{message}}
     </div>

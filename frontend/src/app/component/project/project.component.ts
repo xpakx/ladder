@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DoCheck, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Project } from 'src/app/entity/project';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -11,6 +11,7 @@ import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskService } from 'src/app/service/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { ContextMenuElem } from '../context-menu/context-menu-elem';
+import { TaskListComponent } from '../task-list/task-list.component';
 import { Codes, MenuElems } from './project-context-codes';
 
 @Component({
@@ -162,5 +163,12 @@ export class ProjectComponent implements OnInit, DoCheck {
 
   closeCollabModal() {
     this.displayCollabModal = false;
+  }
+
+
+  @ViewChild("taskList") tasks?: TaskListComponent;
+
+  updateContextMenu() {
+    this.tasks?.prepareContextMenu();
   }
 }

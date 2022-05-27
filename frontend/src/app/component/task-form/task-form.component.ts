@@ -56,7 +56,7 @@ export class TaskFormComponent implements OnInit {
       description: [this.task && !this.after && !this.before && !this.asChild  ? this.task.description : '', []]
     });
     
-    if(this.task && !this.after && !this.before ) {
+    if(this.task && !this.after && !this.before && !this.asChild ) {
 		  this.taskDate = this.task.due ? this.task.due : undefined;
       this.priority = this.task.priority;
       this.labels = this.task.labels;
@@ -64,6 +64,12 @@ export class TaskFormComponent implements OnInit {
         this.project = this.task.project ? (this.collab ? this.tree.getCollabProjectById(this.task.project.id) : this.tree.getProjectById(this.task.project.id)) : undefined;
       }
 	  }
+    
+    if(this.task && this.asChild) {
+      if(!this.project) {
+        this.project = this.task.project ? (this.collab ? this.tree.getCollabProjectById(this.task.project.id) : this.tree.getProjectById(this.task.project.id)) : undefined;
+      }
+    }
   }
 
   openSelectProjectMenu() {

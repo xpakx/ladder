@@ -163,6 +163,7 @@ implements OnInit {
   taskContextMenuY: number = 0;
 
   prepareContextMenu() {
+    this.contextMenu = [];
     if (!this.blocked) {
       this.contextMenu.push(MenuElems.addTaskAbove);
       this.contextMenu.push(MenuElems.addTaskBelow);

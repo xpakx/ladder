@@ -16,7 +16,10 @@
         </div>
         <input class="passwordRe" formControlName="passwordRe" type="password" />
     </form>
-    <button class="btn" (click)="signUp()">Register</button>
+    <button class="btn" (click)="signUp()">
+        <span class="loading" *ngIf="loading"><i class="fa fa-spinner fa-spin"></i></span>
+        Register
+    </button>
     <div id="warning" *ngIf="invalid">
         Error: {{message}}
     </div>
