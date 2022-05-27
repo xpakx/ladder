@@ -43,6 +43,7 @@ export class LabelChoiceDialogComponent implements OnInit {
 
   chooseLabel(label: LabelDetails) {
     this.labels.push(label);
+    this.labelSelectForm?.setValue({ text: "" });
   }
 
   cancelChoice(label: LabelDetails) {
