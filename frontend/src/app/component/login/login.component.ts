@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
   form: FormGroup;
   public invalid: boolean = false;
   public message: string = '';
+  loading: boolean = false;
 
   constructor(private fb: FormBuilder, private service: AuthenticationService, 
     private router: Router) { 
@@ -32,6 +33,7 @@ export class LoginComponent implements OnInit {
 
   logIn(): void {
     if(this.form.valid) {
+      this.loading = true;
       this.invalid = false;
       this.service.authenticate({
         username: this.form.controls.username.value,
@@ -40,6 +42,7 @@ export class LoginComponent implements OnInit {
         (response: TokenResponse) => {
           localStorage.setItem("token", response.token);
           localStorage.setItem("user_id", response.id);
+          this.loading = false;
           this.router.navigate(["load"]);
         },
         (error: HttpErrorResponse) => {
@@ -47,6 +50,7 @@ export class LoginComponent implements OnInit {
             localStorage.removeItem("token");
             this.router.navigate(['login']);
           }
+          this.loading = false;
           this.message = error.error.message;
           this.invalid = true;
         }

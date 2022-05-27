@@ -14,6 +14,7 @@ export class RegisterComponent implements OnInit {
   form: FormGroup;
   public invalid: boolean = false;
   public message: string = '';
+  loading: boolean = false;
 
   constructor(private fb: FormBuilder, private service: AuthenticationService, 
     private router: Router) { 
@@ -33,6 +34,7 @@ export class RegisterComponent implements OnInit {
 
   signUp(): void {
     if(this.form.valid) {
+      this.loading = true;
       this.invalid = false;
       this.service.register({
         username: this.form.controls.username.value,
@@ -42,12 +44,13 @@ export class RegisterComponent implements OnInit {
         (response: TokenResponse) => {
           localStorage.setItem("token", response.token);
           localStorage.setItem("user_id", response.id);
-          
+          this.loading = false;          
           this.router.navigate(["load"]);
         },
         (error: HttpErrorResponse) => {
           this.message = error.error.message;
           this.invalid = true;
+          this.loading = false;
         }
       )
     } else {
