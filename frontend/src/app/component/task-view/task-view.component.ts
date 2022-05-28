@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
@@ -224,6 +224,17 @@ export class TaskViewComponent implements OnInit {
         
         }
       );
+    }
+  }
+
+  get subModalOpened(): boolean {
+    return this.showSelectDateModal || this.showSelectLabelsMenu || this.showSelectPriorityModal || this.showSelectProjectModal;
+  }
+
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    if(!this.subModalOpened) {
+      this.closeModal();
     }
   }
 }
