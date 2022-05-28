@@ -13,7 +13,7 @@
         
 
         <div *ngIf="edit">
-            <app-task-form [data]="parentData" [collab]="true" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+            <app-task-form [data]="parentData" [collab]="collab" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
         </div>
         <div *ngIf="!edit">
           <div class="overview" [class.completed]="parent.completed">
