@@ -30,6 +30,7 @@ public class TaskUpdateDto {
         newDto.setTitle(task.getTitle());
         newDto.setDescription(task.getDescription());
         newDto.setDue(task.getDue());
+        newDto.setTimeboxed(task.isTimeboxed());
         newDto.setCompletedAt(task.getCompletedAt());
         newDto.setCompleted(task.isCompleted());
         newDto.setCollapsed(task.isCollapsed());
