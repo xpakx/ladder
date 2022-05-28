@@ -11,7 +11,7 @@
             <span *ngIf="!thisYear(date)">{{date | date: 'dd MMM yyyy'}}</span>
         </ng-container>
         <ng-container *ngIf="timeboxed">
-            {{date | date: ' hh:mm'}}
+            {{date | date: ' HH:mm'}}
         </ng-container>
     </span>
 </div>

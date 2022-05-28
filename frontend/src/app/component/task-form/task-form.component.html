@@ -22,8 +22,8 @@
                             <span class="taskFormExtraText" *ngIf="thisYear(taskDate)">{{taskDate | date: 'dd MMM'}}</span>
                             <span class="taskFormExtraText" *ngIf="!thisYear(taskDate)">{{taskDate| date: 'dd MMM yyyy'}}</span>
                         </ng-container>
-                        <ng-container *ngIf="timeboxed">
-                            {{taskDate | date: ' hh:mm'}}
+                        <ng-container *ngIf="taskTimeboxed">
+                            {{taskDate | date: ' HH:mm'}}
                         </ng-container>
                     </ng-container>
                 </button>
