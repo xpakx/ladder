@@ -14,6 +14,7 @@ public class AddTaskRequest {
     private Integer projectOrder;
     private LocalDateTime due;
     private LocalDateTime completedAt;
+    private boolean timeboxed;
     private Integer parentId;
     private Integer projectId;
     private Integer priority;

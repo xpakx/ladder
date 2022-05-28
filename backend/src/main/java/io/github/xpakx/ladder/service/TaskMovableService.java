@@ -98,6 +98,7 @@ public class TaskMovableService {
                 .project(originalTask.getProject())
                 .createdAt(LocalDateTime.now())
                 .due(originalTask.getDue())
+                .timeboxed(originalTask.isTimeboxed())
                 .priority(originalTask.getPriority())
                 .owner(originalTask.getOwner())
                 .completed(false)

@@ -11,6 +11,7 @@ export interface TaskTreeElem extends IndentableTreeElem<ParentWithId> {
     project: ProjectWithNameAndId | null;
     parent: ParentWithId | null;
     due: Date | null;
+    timeboxed: boolean;
     completed: boolean;
     order: number;
     dailyOrder: number;

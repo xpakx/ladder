@@ -88,7 +88,7 @@ implements OnInit {
   }
 
   private moveAsFirstWithDate(id: number, date: Date) {
-    this.taskService.moveAsFirstWithDate(id, { date: date }).subscribe(
+    this.taskService.moveAsFirstWithDate(id, { date: date, timeboxed: false }).subscribe(
       (response: Task) => {
         this.taskTreeService.moveAsFirstDaily(response);
       },
@@ -226,7 +226,7 @@ implements OnInit {
     this.showSelectDateModal = false;
     let service = this.collab ? this.collabTaskService : this.taskService;
     if(this.taskIdForDateModal) {
-      service.updateTaskDueDate({date: date}, this.taskIdForDateModal).subscribe(
+      service.updateTaskDueDate({date: date, timeboxed: false}, this.taskIdForDateModal).subscribe(
           (response: Task) => {
             if(this.collab) {
               this.tree.updateCollabTaskDate(response);

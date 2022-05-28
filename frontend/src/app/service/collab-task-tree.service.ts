@@ -36,6 +36,7 @@ export class CollabTaskTreeService extends TaskTreeService {
       description: task.description, 
       project: task.project, 
       due: task.due ? new Date(task.due) : null, 
+      timeboxed: task.timeboxed,
       completed: task.completed,
       labels: [],
       priority: task.priority,

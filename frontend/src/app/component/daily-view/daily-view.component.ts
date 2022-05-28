@@ -113,7 +113,7 @@ implements OnInit {
 
   closeSelectDateModal(date: Date | undefined): void {
     this.showSelectDateModal = false;
-    this.taskService.rescheduleOverdueTasks({date: date}).subscribe(
+    this.taskService.rescheduleOverdueTasks({date: date, timeboxed: false}).subscribe(
       (response: Task[]) => {
         this.taskTreeService.updateTasksDate(response);
     },

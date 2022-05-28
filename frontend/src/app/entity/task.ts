@@ -9,6 +9,7 @@ export interface Task {
     projectOrder: number;
     dailyViewOrder: number
     due: Date;
+    timeboxed: boolean;
     priority: number;
     modifiedAt: Date;
 }

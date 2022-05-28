@@ -154,6 +154,7 @@ public class ProjectMovableService {
                 .owner(originalTask.getOwner())
                 .completed(false)
                 .archived(false)
+                .timeboxed(false)
                 .id(originalTask.getId())
                 .parent(originalTask.getParent())
                 .project(originalTask.getProject())

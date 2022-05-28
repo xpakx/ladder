@@ -217,7 +217,7 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   closeSelectDateModal(date: Date | undefined): void {
     this.showSelectDateModal = false;
     if(this.taskIdForDateModal) {
-      this.taskService.updateTaskDueDate({date: date}, this.taskIdForDateModal).subscribe(
+      this.taskService.updateTaskDueDate({date: date, timeboxed: false}, this.taskIdForDateModal).subscribe(
           (response: Task) => {
           this.treeService.updateTaskDate(response);
         },

@@ -219,7 +219,7 @@ taskIdForDateModal: number | undefined;
 closeSelectDateModal(date: Date | undefined) {
   this.showSelectDateModal = false;
   if(this.taskIdForDateModal) {
-    this.taskService.updateTaskDueDate({date: date}, this.taskIdForDateModal).subscribe(
+    this.taskService.updateTaskDueDate({date: date, timeboxed: false}, this.taskIdForDateModal).subscribe(
         (response: Task) => {
         this.tree.updateTaskDate(response);
       },

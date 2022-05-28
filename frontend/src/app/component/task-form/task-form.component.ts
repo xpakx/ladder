@@ -170,6 +170,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: false,
         completedAt: null,
         labelIds: lbls
       }, this.project ? this.project.id : undefined).subscribe(
@@ -193,6 +194,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: false,
         completedAt: null,
         labelIds: []
       }, this.project.id).subscribe(
@@ -230,6 +232,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: false,
         completedAt: null,
         labelIds: lbls
       }, this.task.id).subscribe(
@@ -262,6 +265,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: false,
         completedAt: null,
         labelIds: lbls
       }, this.task.id).subscribe(
@@ -294,6 +298,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: false,
         completedAt: null,
         labelIds: lbls
       }, this.task.id).subscribe(
@@ -326,6 +331,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: false,
         completedAt: null,
         labelIds: lbls
       }, this.task.id).subscribe(

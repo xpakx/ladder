@@ -12,5 +12,6 @@ public class TaskRequest {
     private String description;
     private Integer order;
     private LocalDateTime due;
+    private boolean timeboxed;
     private Integer parentId;
 }

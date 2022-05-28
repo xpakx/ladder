@@ -94,6 +94,7 @@ public class TaskService {
             taskToUpdate.setDailyViewOrder(utils.getMaxDailyOrder(request, userId)+1);
         }
         taskToUpdate.setDue(request.getDue());
+        taskToUpdate.setTimeboxed(request.isTimeboxed());
     }
 
     /**
@@ -156,6 +157,7 @@ public class TaskService {
                 .createdAt(now)
                 .modifiedAt(now)
                 .due(request.getDue())
+                .timeboxed(request.isTimeboxed())
                 .dailyViewOrder(utils.getMaxDailyOrder(request, userId)+1)
                 .parent(getParentFromAddTaskRequest(request))
                 .priority(request.getPriority())

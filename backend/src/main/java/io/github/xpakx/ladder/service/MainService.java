@@ -54,7 +54,7 @@ public class MainService {
         return result;
     }
 
-    public SyncData sync(DateRequest time, Integer userId) {
+    public SyncData sync(NotificationDateRequest time, Integer userId) {
         SyncData result = new SyncData();
         result.setProjects(
                 projectRepository.findByOwnerIdAndModifiedAtAfter(userId, time.getDate(), ProjectDetails.class)

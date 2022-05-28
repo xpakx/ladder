@@ -48,6 +48,7 @@ public class TaskPartialUpdateService {
         }
         taskToUpdate.setDue(request.getDate());
         taskToUpdate.setModifiedAt(LocalDateTime.now());
+        taskToUpdate.setTimeboxed(request.isTimeboxed());
         return taskRepository.save(taskToUpdate);
     }
 

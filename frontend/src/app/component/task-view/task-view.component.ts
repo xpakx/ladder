@@ -107,7 +107,7 @@ export class TaskViewComponent implements OnInit {
     if(this.parent) {
       let service = this.collab ? this.collabService : this.taskService;
       let tree = this.collab ? this.collabTree : this.taskTree;
-      service.updateTaskDueDate({date: date}, this.parent.id).subscribe(
+      service.updateTaskDueDate({date: date, timeboxed: false}, this.parent.id).subscribe(
           (response: Task) => {
           tree.updateTaskDate(response);
         },
