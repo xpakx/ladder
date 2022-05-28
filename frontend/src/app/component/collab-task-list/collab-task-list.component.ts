@@ -5,6 +5,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 import { CollabTaskTreeService } from 'src/app/service/collab-task-tree.service';
 import { CollabTaskService } from 'src/app/service/collab-task.service';
 import { DeleteService } from 'src/app/service/delete.service';
@@ -214,10 +215,10 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   dateForDateModal: Date | undefined;
   taskIdForDateModal: number | undefined;
 
-  closeSelectDateModal(date: Date | undefined): void {
+  closeSelectDateModal(date: DateEvent): void {
     this.showSelectDateModal = false;
     if(this.taskIdForDateModal) {
-      this.taskService.updateTaskDueDate({date: date, timeboxed: false}, this.taskIdForDateModal).subscribe(
+      this.taskService.updateTaskDueDate({date: date.date, timeboxed: date.timeboxed}, this.taskIdForDateModal).subscribe(
           (response: Task) => {
           this.treeService.updateTaskDate(response);
         },

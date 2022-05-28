@@ -5,6 +5,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 import { CollabTaskTreeService } from 'src/app/service/collab-task-tree.service';
 import { CollabTaskService } from 'src/app/service/collab-task.service';
 import { DeleteService } from 'src/app/service/delete.service';
@@ -102,12 +103,12 @@ export class TaskViewComponent implements OnInit {
     this.showSelectDateModal = true;
   }
 
-  closeSelectDateModal(date: Date | undefined) {
+  closeSelectDateModal(date: DateEvent) {
     this.showSelectDateModal = false;
     if(this.parent) {
       let service = this.collab ? this.collabService : this.taskService;
       let tree = this.collab ? this.collabTree : this.taskTree;
-      service.updateTaskDueDate({date: date, timeboxed: false}, this.parent.id).subscribe(
+      service.updateTaskDueDate({date: date.date, timeboxed: date.timeboxed}, this.parent.id).subscribe(
           (response: Task) => {
           tree.updateTaskDate(response);
         },

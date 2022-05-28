@@ -9,6 +9,15 @@
       <div class="modal-body">
         <form *ngIf="dateSelectForm" [formGroup]="dateSelectForm">
           <input type="date" formControlName="date">
+            <div class="form-field-inline">
+                <div class="switch" [class.switch-checked]="timeboxed" (click)="switchTimeboxed()">
+                    <span class="switch-handle"></span>
+                </div>
+                <label>
+                    Select specific time
+                </label>
+            </div>
+            <input type="time" formControlName="time" *ngIf="timeboxed">
         </form>
         <ul class="context-menu-project" #projectSelectMenu class="form-field">
             <li class="context-menu-project-item">

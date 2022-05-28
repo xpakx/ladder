@@ -7,6 +7,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
@@ -216,10 +217,10 @@ showSelectDateModal: boolean = false;
 dateForDateModal: Date | undefined;
 taskIdForDateModal: number | undefined;
 
-closeSelectDateModal(date: Date | undefined) {
+closeSelectDateModal(date: DateEvent) {
   this.showSelectDateModal = false;
   if(this.taskIdForDateModal) {
-    this.taskService.updateTaskDueDate({date: date, timeboxed: false}, this.taskIdForDateModal).subscribe(
+    this.taskService.updateTaskDueDate({date: date.date, timeboxed: date.timeboxed}, this.taskIdForDateModal).subscribe(
         (response: Task) => {
         this.tree.updateTaskDate(response);
       },

@@ -60,6 +60,9 @@
                                             <span *ngIf="thisYear(task.due)">{{task.due | date: 'dd MMM'}}</span>
                                             <span *ngIf="!thisYear(task.due)">{{task.due | date: 'dd MMM yyyy'}}</span>
                                         </ng-container>
+                                        <ng-container *ngIf="task.timeboxed">
+                                            {{task.due | date: ' hh:mm'}}
+                                        </ng-container>
                                     </span>
                                 </button>
                             </div>

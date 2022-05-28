@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 import { Day } from 'src/app/entity/utils/day';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
@@ -96,9 +97,10 @@ export class UpcomingComponent implements OnInit {
 
   showSelectDateModal: boolean = false;
 
-  closeSelectDateModal(date: Date | undefined) {
+  closeSelectDateModal(event: DateEvent) {
+    let date: Date | undefined = event.date;
     this.showSelectDateModal = false;
-    this.taskService.rescheduleOverdueTasks({date: date, timeboxed: false}).subscribe(
+    this.taskService.rescheduleOverdueTasks({date: date, timeboxed: event.timeboxed}).subscribe(
       (response: Task[]) => {
         this.taskTreeService.updateTasksDate(response);
     },

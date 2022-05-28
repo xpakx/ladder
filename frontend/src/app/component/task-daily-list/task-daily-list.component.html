@@ -46,6 +46,9 @@
                                     <span *ngIf="thisYear(task.due)">{{task.due | date: 'dd MMM'}}</span>
                                     <span *ngIf="!thisYear(task.due)">{{task.due | date: 'dd MMM yyyy'}}</span>
                                 </ng-container>
+                                <ng-container *ngIf="task.timeboxed">
+                                    {{task.due | date: ' hh:mm'}}
+                                </ng-container>
                             </span>
                         </button>
                         <span *ngFor="let label of getTaskLabels(task)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">

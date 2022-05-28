@@ -7,6 +7,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 import { CollabTaskService } from 'src/app/service/collab-task.service';
 import { DeleteService } from 'src/app/service/delete.service';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
@@ -222,11 +223,11 @@ implements OnInit {
   dateForDateModal: Date | undefined;
   taskIdForDateModal: number | undefined;
 
-  closeSelectDateModal(date: Date | undefined) {
+  closeSelectDateModal(date: DateEvent) {
     this.showSelectDateModal = false;
     let service = this.collab ? this.collabTaskService : this.taskService;
     if(this.taskIdForDateModal) {
-      service.updateTaskDueDate({date: date, timeboxed: false}, this.taskIdForDateModal).subscribe(
+      service.updateTaskDueDate({date: date.date, timeboxed: date.timeboxed}, this.taskIdForDateModal).subscribe(
           (response: Task) => {
             if(this.collab) {
               this.tree.updateCollabTaskDate(response);

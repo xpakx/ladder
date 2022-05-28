@@ -7,6 +7,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { TaskTreeService } from 'src/app/service/task-tree.service';
 import { TaskService } from 'src/app/service/task.service';
@@ -111,9 +112,9 @@ implements OnInit {
 
   showSelectDateModal: boolean = false;
 
-  closeSelectDateModal(date: Date | undefined): void {
+  closeSelectDateModal(date: DateEvent): void {
     this.showSelectDateModal = false;
-    this.taskService.rescheduleOverdueTasks({date: date, timeboxed: false}).subscribe(
+    this.taskService.rescheduleOverdueTasks({date: date.date, timeboxed: date.timeboxed}).subscribe(
       (response: Task[]) => {
         this.taskTreeService.updateTasksDate(response);
     },

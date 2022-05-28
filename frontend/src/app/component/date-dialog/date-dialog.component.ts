@@ -1,5 +1,6 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 
 @Component({
   selector: 'app-date-dialog',
@@ -7,9 +8,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./date-dialog.component.css']
 })
 export class DateDialogComponent implements OnInit {
-  @Output() closeEvent = new EventEmitter<Date | undefined>();
+  @Output() closeEvent = new EventEmitter<DateEvent>();
   @Output() cancelEvent = new EventEmitter<boolean>();
   @Input() taskDate: Date | undefined;
+  @Input() timeboxed: boolean = false;
   dateSelectForm: FormGroup | undefined;
 
   today: Date;
@@ -32,7 +34,8 @@ export class DateDialogComponent implements OnInit {
   ngOnInit(): void {
     this.dateSelectForm = this.fb.group(
       {
-        date: [this.taskDate ? this.formatDate(this.taskDate) : '', Validators.required]
+        date: [this.taskDate ? this.formatDate(this.taskDate) : '', Validators.required],
+        time: [this.taskDate ? this.formatTime(this.taskDate) : '', []]
       }
     );
   }
@@ -41,8 +44,12 @@ export class DateDialogComponent implements OnInit {
     return date.toISOString().split("T")[0];
   }
 
+  formatTime(date: Date): String {
+    return date.toISOString().split("T")[1];
+  }
+
   closeSelectDateMenu(): void {
-    this.closeEvent.emit(this.taskDate);
+    this.closeEvent.emit({ date: this.taskDate, timeboxed: this.timeboxed && this.dateSelectForm?.controls.date.value != '' });
   }
 
   cancel(): void {
@@ -57,9 +64,18 @@ export class DateDialogComponent implements OnInit {
   selectDateFromForm(): void {
     if(this.dateSelectForm) {
       this.taskDate = new Date(this.dateSelectForm.controls.date.value);
+      if(this.timeboxed && this.dateSelectForm.controls.date.value != '') {
+        let date: string[] = this.dateSelectForm.controls.time.value.split(":");
+        this.taskDate.setHours(Number(date[0]));
+        this.taskDate.setMinutes(Number(date[1]));
+      }
     }
     this.closeSelectDateMenu();
   } 
+
+  switchTimeboxed(): void {
+    this.timeboxed = !this.timeboxed;
+  }
 
   @HostListener("window:keydown.escape", ["$event"])
   handleKeyboardEscapeEvent(): void {
