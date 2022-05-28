@@ -7,6 +7,7 @@ import { ProjectTreeElem } from './entity/project-tree-elem';
 import { AddEvent } from './entity/utils/add-event';
 import { DeleteService } from './service/delete.service';
 import { KeyboardManagerService } from './service/keyboard-manager.service';
+import { LoginService } from './service/login.service';
 import { TreeService } from './service/tree.service';
 
 @Component({
@@ -32,7 +33,8 @@ export class AppComponent implements OnInit {
   smallWindow: boolean = false;
 
   constructor(public tree : TreeService, public deleteService: DeleteService,
-    private router: Router, private fb: FormBuilder, private keyboard: KeyboardManagerService) {
+    private router: Router, private fb: FormBuilder, private keyboard: KeyboardManagerService,
+    private loginService: LoginService) {
     this.searchForm = this.fb.group({
       search: ['']
     });
@@ -172,5 +174,9 @@ export class AppComponent implements OnInit {
     } else if(letter == 'g') {
       this.keyboardNavActivated = true;
     }
+  }
+
+  get logged(): boolean {
+    return this.loginService.logged;
   }
 }
