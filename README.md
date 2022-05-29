@@ -3,7 +3,7 @@
 ## General info
 A clone of the [Todoist](https://todoist.com/) web-app written in Java + Spring (backend) and Typescript + Angular (frontend).
 
-![[main.gif]]
+![gif](readme_files/gifs/main.gif)
 
 ## Table of contents
 * [General info](#general-info)
