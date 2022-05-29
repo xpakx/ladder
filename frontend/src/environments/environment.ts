@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiServerUrl: "http://192.168.50.118:8080",
-  notificationServerUrl: "http://192.168.50.118:8081"
+  apiServerUrl: "http://localhost:8080",
+  notificationServerUrl: "http://localhost:8081"
 };
 
 /*

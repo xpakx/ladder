@@ -6,6 +6,7 @@ services:
     container_name: backend
     depends_on:
       - db
+      - notif
     ports:
       - "8080:8080"
     environment:
@@ -14,7 +15,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - FRONTEND_HOST=http://localhost
-      - SERVICE_NOTIFICATION_HOST=http://localhost:8081
+      - SERVICE_NOTIFICATION_HOST=http://notif:8081
   notif:
     build: ./notification-service/
     container_name: notif
