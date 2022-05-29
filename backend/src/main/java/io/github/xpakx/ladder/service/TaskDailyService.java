@@ -123,6 +123,7 @@ public class TaskDailyService {
     private void updateOverdueTasksWithoutNewDueDate(LocalDateTime now, List<Task> tasksToUpdate) {
         for (Task task : tasksToUpdate) {
             task.setDue(null);
+            task.setTimeboxed(false);
             task.setModifiedAt(now);
         }
     }
@@ -130,6 +131,7 @@ public class TaskDailyService {
     private void updateOverdueTasksWithNewDueDate(DateRequest request, LocalDateTime now, List<Task> tasksToUpdate, int order) {
         for (Task task : tasksToUpdate) {
             task.setDue(request.getDate());
+            task.setTimeboxed(false);
             task.setModifiedAt(now);
             task.setDailyViewOrder(order++);
         }

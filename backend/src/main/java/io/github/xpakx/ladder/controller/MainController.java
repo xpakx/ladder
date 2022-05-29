@@ -24,7 +24,7 @@ public class MainController {
 
     @PreAuthorize("#userId.toString() == authentication.principal.username")
     @PostMapping("/sync")
-    public ResponseEntity<SyncData> sync(@RequestBody DateRequest time, @PathVariable Integer userId) {
+    public ResponseEntity<SyncData> sync(@RequestBody NotificationDateRequest time, @PathVariable Integer userId) {
         return new ResponseEntity<>(service.sync(time, userId), HttpStatus.OK);
     }
 

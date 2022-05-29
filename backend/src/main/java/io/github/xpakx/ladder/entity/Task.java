@@ -33,6 +33,7 @@ public class Task {
     private String description;
 
     private LocalDateTime due;
+    private boolean timeboxed;
     private LocalDateTime completedAt;
     private boolean completed;
     private boolean collapsed;

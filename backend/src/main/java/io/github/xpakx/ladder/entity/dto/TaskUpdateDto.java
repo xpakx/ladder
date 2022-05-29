@@ -13,6 +13,7 @@ public class TaskUpdateDto {
     private String title;
     private String description;
     private LocalDateTime due;
+    private boolean timeboxed;
     private LocalDateTime completedAt;
     private boolean completed;
     private boolean collapsed;
@@ -29,6 +30,7 @@ public class TaskUpdateDto {
         newDto.setTitle(task.getTitle());
         newDto.setDescription(task.getDescription());
         newDto.setDue(task.getDue());
+        newDto.setTimeboxed(task.isTimeboxed());
         newDto.setCompletedAt(task.getCompletedAt());
         newDto.setCompleted(task.isCompleted());
         newDto.setCollapsed(task.isCollapsed());

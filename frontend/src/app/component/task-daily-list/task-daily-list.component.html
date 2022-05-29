@@ -34,20 +34,7 @@
                             <i class="fa fa-folder"></i>
                             <span>{{getNumOfCompletedTasksByParent(task.id)}}/{{getNumOfTasksByParent(task.id)}}</span>
                         </a>
-                        <button *ngIf="task.due && !task.completed" type="button" class="due_date_controls">
-                            <span class="date" [class.overdue]="overdue">
-                                <i class="fa fa-calendar-o"></i>
-                                <ng-container *ngIf="dateWithinWeek(task.due)">
-                                    <span *ngIf="isToday(task.due)">Today</span>
-                                    <span *ngIf="isTomorrow(task.due)">Tomorrow</span>
-                                    <span *ngIf="!isToday(task.due) && !isTomorrow(task.due)">{{task.due | date: 'EEEE'}}</span>
-                                </ng-container>
-                                <ng-container *ngIf="!dateWithinWeek(task.due)">
-                                    <span *ngIf="thisYear(task.due)">{{task.due | date: 'dd MMM'}}</span>
-                                    <span *ngIf="!thisYear(task.due)">{{task.due | date: 'dd MMM yyyy'}}</span>
-                                </ng-container>
-                            </span>
-                        </button>
+                        <app-date-label [date]="task.due" [timeboxed]="task.timeboxed" *ngIf="task.due && !task.completed"></app-date-label>
                         <span *ngFor="let label of getTaskLabels(task)" class="task_list_item__info_tags__label" [style]="'color: ' + label.color + ';'">
                             <span>{{label.name}}</span>
                         </span>

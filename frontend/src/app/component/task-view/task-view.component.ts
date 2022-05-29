@@ -1,10 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 import { CollabTaskTreeService } from 'src/app/service/collab-task-tree.service';
 import { CollabTaskService } from 'src/app/service/collab-task.service';
 import { DeleteService } from 'src/app/service/delete.service';
@@ -24,6 +25,9 @@ export class TaskViewComponent implements OnInit {
   edit: boolean = false;
   parentData!: AddEvent<TaskTreeElem>;
   menuChoice: number = 0;
+  taskListSubmodalOpened: boolean = false;
+  collabTaskListSubmodalOpened: boolean = false;
+  commentListSubmodalOpened: boolean = false;
 
   constructor(private taskTree: TaskTreeService, private taskService: TaskService, 
     private collabService: CollabTaskService, private collabTree: CollabTaskTreeService,
@@ -102,12 +106,12 @@ export class TaskViewComponent implements OnInit {
     this.showSelectDateModal = true;
   }
 
-  closeSelectDateModal(date: Date | undefined) {
+  closeSelectDateModal(date: DateEvent) {
     this.showSelectDateModal = false;
     if(this.parent) {
       let service = this.collab ? this.collabService : this.taskService;
       let tree = this.collab ? this.collabTree : this.taskTree;
-      service.updateTaskDueDate({date: date}, this.parent.id).subscribe(
+      service.updateTaskDueDate({date: date.date, timeboxed: date.timeboxed}, this.parent.id).subscribe(
           (response: Task) => {
           tree.updateTaskDate(response);
         },
@@ -223,6 +227,23 @@ export class TaskViewComponent implements OnInit {
         
         }
       );
+    }
+  }
+
+  get subModalOpened(): boolean {
+    return this.showSelectDateModal || this.showSelectLabelsMenu || 
+    this.showSelectPriorityModal || this.showSelectProjectModal ||
+    this.taskListSubmodalOpened || this.collabTaskListSubmodalOpened;
+  }
+
+  changeTaskListSubmodalState(opened: boolean) {
+    this.taskListSubmodalOpened = opened;
+  }
+
+  @HostListener("window:keydown.escape", ["$event"])
+  handleKeyboardEscapeEvent() {
+    if(!this.subModalOpened) {
+      this.closeModal();
     }
   }
 }

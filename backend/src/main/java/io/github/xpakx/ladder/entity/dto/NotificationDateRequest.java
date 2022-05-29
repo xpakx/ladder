@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class DateRequest {
+public class NotificationDateRequest {
     private LocalDateTime date;
-    private boolean timeboxed;
 }

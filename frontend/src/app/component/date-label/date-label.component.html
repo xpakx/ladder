@@ -1,0 +1,17 @@
+<div type="button" class="due_date_controls">
+    <span class="date" *ngIf="date" [class.overdue]="isOverdue(date)">
+        <i class="fa fa-calendar-o"></i>
+        <ng-container *ngIf="dateWithinWeek(date)">
+            <span *ngIf="isToday(date)">Today</span>
+            <span *ngIf="isTomorrow(date)">Tomorrow</span>
+            <span *ngIf="!isToday(date) && !isTomorrow(date)">{{date | date: 'EEEE'}}</span>
+        </ng-container>
+        <ng-container *ngIf="!dateWithinWeek(date)">
+            <span *ngIf="thisYear(date)">{{date | date: 'dd MMM'}}</span>
+            <span *ngIf="!thisYear(date)">{{date | date: 'dd MMM yyyy'}}</span>
+        </ng-container>
+        <ng-container *ngIf="timeboxed">
+            {{date | date: ' HH:mm'}}
+        </ng-container>
+    </span>
+</div>

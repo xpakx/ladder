@@ -13,7 +13,7 @@
         
 
         <div *ngIf="edit">
-            <app-task-form [data]="parentData" [collab]="true" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
+            <app-task-form [data]="parentData" [collab]="collab" (closeEvent)="closeEditTaskForm()" class="task_list_item_main"></app-task-form>
         </div>
         <div *ngIf="!edit">
           <div class="overview" [class.completed]="parent.completed">
@@ -89,8 +89,8 @@
         </div>
 
 
-        <app-subtask-list [task]="parent" *ngIf="menuChoice == 0 && !collab"></app-subtask-list>
-        <app-collab-subtask-list [task]="parent" *ngIf="menuChoice == 0 && collab"></app-collab-subtask-list>
+        <app-subtask-list [task]="parent" *ngIf="menuChoice == 0 && !collab" (submodal)="changeTaskListSubmodalState($event)"></app-subtask-list>
+        <app-collab-subtask-list [task]="parent" *ngIf="menuChoice == 0 && collab" (submodal)="changeTaskListSubmodalState($event)"></app-collab-subtask-list>
         <app-comment-list [task]="parent" *ngIf="menuChoice == 1"></app-comment-list>
         <div *ngIf="menuChoice == 2">
           <div>Last modification: {{parent.modifiedAt | date: 'dd MMM yyyy'}}</div>

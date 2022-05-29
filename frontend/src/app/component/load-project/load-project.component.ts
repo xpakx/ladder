@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserWithData } from 'src/app/entity/user-with-data';
+import { LoginService } from 'src/app/service/login.service';
 import { NotificationService } from 'src/app/service/notification.service';
 import { ProjectService } from 'src/app/service/project.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
@@ -16,7 +17,7 @@ export class LoadProjectComponent implements OnInit {
 
   constructor(private router: Router, private tree: TreeService,
     private service: ProjectService, private redirService: RedirectionService, 
-    private notifications: NotificationService) { }
+    private notifications: NotificationService, private login: LoginService) { }
 
   ngOnInit(): void {
     let id = localStorage.getItem('user_id');
@@ -27,7 +28,7 @@ export class LoadProjectComponent implements OnInit {
           this.tree.load(response);
           localStorage.setItem("username", response.username);
           this.router.navigate([this.redirService.getAddress()]);
-          
+          this.login.logged = true;
         },
         (error: HttpErrorResponse) => {
           if(error.status === 401) {
@@ -36,9 +37,11 @@ export class LoadProjectComponent implements OnInit {
             localStorage.removeItem("username");
             this.router.navigate(['login']);
           }
+          this.login.logged = false;
         }
       )
     } else {
+      this.login.logged = false;
       this.router.navigate(["/login"]);
     }
   }

@@ -57,6 +57,7 @@ import { AutofocusDirective } from './component/directives/autofocus.directive';
 import { FocusableInputDirective } from './component/directives/focusable-input.directive';
 import { MarkdownModule } from 'ngx-markdown';
 import { ContextMenuComponent } from './component/context-menu/context-menu.component';
+import { DateLabelComponent } from './component/date-label/date-label.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -111,7 +112,8 @@ export function tokenGetter() {
     CollabSubtaskListComponent,
     AutofocusDirective,
     FocusableInputDirective,
-    ContextMenuComponent
+    ContextMenuComponent,
+    DateLabelComponent
   ],
   imports: [
     BrowserModule,

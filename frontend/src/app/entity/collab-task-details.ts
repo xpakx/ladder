@@ -9,6 +9,7 @@ export interface CollabTaskDetails {
     project: ProjectWithNameAndId | null;
     parent: ParentWithId | null;
     due: Date | null;
+    timeboxed: boolean;
     completed: boolean;
     collapsed: boolean;
     archived: boolean;

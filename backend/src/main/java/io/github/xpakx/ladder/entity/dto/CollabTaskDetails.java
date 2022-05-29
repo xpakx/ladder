@@ -10,6 +10,7 @@ public interface CollabTaskDetails {
     ProjectWithNameAndId getProject();
     ParentWithId getParent();
     LocalDateTime getDue();
+    boolean getTimeboxed();
     boolean getCompleted();
     boolean getCollapsed();
     boolean getArchived();

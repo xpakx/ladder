@@ -5,6 +5,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 import { CollabTaskTreeService } from 'src/app/service/collab-task-tree.service';
 import { CollabTaskService } from 'src/app/service/collab-task.service';
 import { DeleteService } from 'src/app/service/delete.service';
@@ -119,44 +120,6 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
     }
   }
 
-  dateWithinWeek(date: Date): boolean {
-    let dateToCompare: Date = new Date();
-    dateToCompare.setDate(dateToCompare.getDate() + 9);
-    dateToCompare.setHours(0);
-    dateToCompare.setMinutes(0);
-    dateToCompare.setSeconds(0);
-    dateToCompare.setMilliseconds(0);
-    return date < dateToCompare && !this.isOverdue(date);
-  }
-
-  isOverdue(date: Date): boolean {
-    let dateToCompare: Date = new Date();
-    dateToCompare.setHours(0);
-    dateToCompare.setMinutes(0);
-    dateToCompare.setSeconds(0);
-    return date < dateToCompare;
-  }
-
-  sameDay(date1: Date, date2: Date): boolean {
-    return date1.getFullYear() == date2.getFullYear() && date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth();
-  }
-
-  isToday(date: Date): boolean {
-    let today = new Date();
-    return this.sameDay(today, date);
-  }
-
-  isTomorrow(date: Date): boolean {
-    let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return this.sameDay(tomorrow, date);
-  }
-
-  thisYear(date: Date): boolean {
-    let today = new Date();
-    return today.getFullYear() == date.getFullYear();
-  }
-
   contextTaskMenu: TaskTreeElem | undefined;
   showContextTaskMenu: boolean = false;
   contextTaskMenuJustOpened: boolean = false;
@@ -214,10 +177,10 @@ export class CollabTaskListComponent extends MultilevelCollabTaskComponent<Colla
   dateForDateModal: Date | undefined;
   taskIdForDateModal: number | undefined;
 
-  closeSelectDateModal(date: Date | undefined): void {
+  closeSelectDateModal(date: DateEvent): void {
     this.showSelectDateModal = false;
     if(this.taskIdForDateModal) {
-      this.taskService.updateTaskDueDate({date: date}, this.taskIdForDateModal).subscribe(
+      this.taskService.updateTaskDueDate({date: date.date, timeboxed: date.timeboxed}, this.taskIdForDateModal).subscribe(
           (response: Task) => {
           this.treeService.updateTaskDate(response);
         },

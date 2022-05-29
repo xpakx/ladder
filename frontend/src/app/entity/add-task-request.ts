@@ -6,6 +6,7 @@ export interface AddTaskRequest {
     projectId: number | null;
     priority: number;
     due: Date | null;
+    timeboxed: boolean;
     completedAt: Date | null;
     labelIds: number[];
 }

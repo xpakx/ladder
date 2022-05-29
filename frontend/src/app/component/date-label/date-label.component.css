@@ -1,0 +1,18 @@
+.due_date_controls {
+    font-size: 12px;
+    white-space: nowrap;
+    height: 16px;
+    line-height: 16px;
+    color: grey;
+    border-radius: 3px;
+    margin: 0 8px 0 0;
+    text-decoration: none;
+}
+
+.due_date_controls i {
+    margin-right: 3px;
+}
+
+.overdue {
+    color: #dd4b39;
+}

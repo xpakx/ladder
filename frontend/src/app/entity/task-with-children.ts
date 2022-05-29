@@ -7,4 +7,5 @@ export interface TaskWithChildren {
     project: ProjectWithNameAndId;
     children: TaskWithChildren[];
     due: Date;
+    timeboxed: boolean;
 }

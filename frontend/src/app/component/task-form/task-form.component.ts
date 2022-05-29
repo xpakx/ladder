@@ -6,6 +6,7 @@ import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
+import { DateEvent } from 'src/app/entity/utils/date-event';
 import { CollabTaskService } from 'src/app/service/collab-task.service';
 import { ProjectService } from 'src/app/service/project.service';
 import { TaskService } from 'src/app/service/task.service';
@@ -23,6 +24,7 @@ export class TaskFormComponent implements OnInit {
   projects: ProjectTreeElem[] = [];
   showSelectDateMenu: boolean = false;
   taskDate: Date | undefined;
+  taskTimeboxed: boolean = false;
 
   projectSelectForm: FormGroup | undefined;
   @Input() project: ProjectTreeElem | undefined;
@@ -35,6 +37,7 @@ export class TaskFormComponent implements OnInit {
 
   @Input() data: AddEvent<TaskTreeElem> | undefined;
   @Input("date") date: Date | undefined;
+  @Input("timeboxed") timeboxed: boolean = false;
 
   constructor(public tree: TreeService, private service: ProjectService, 
     private fb: FormBuilder, private taskService: TaskService, private collabTaskService: CollabTaskService) {  }
@@ -50,6 +53,7 @@ export class TaskFormComponent implements OnInit {
     if(this.date) {
       this.taskDate = this.date;
     }
+    this.taskTimeboxed = this.timeboxed;
 
     this.taskForm = this.fb.group({
       title: [this.task && !this.after && !this.before && !this.asChild ? this.task.title : '', Validators.required],
@@ -132,8 +136,9 @@ export class TaskFormComponent implements OnInit {
     this.showSelectDateMenu = true;
   }
 
-  closeSelectDateMenu(date: Date | undefined) {
-    this.taskDate = date;
+  closeSelectDateMenu(date: DateEvent) {
+    this.taskDate = date.date;
+    this.taskTimeboxed = date.timeboxed;
     this.showSelectDateMenu = false;
   }
 
@@ -170,6 +175,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: this.taskTimeboxed,
         completedAt: null,
         labelIds: lbls
       }, this.project ? this.project.id : undefined).subscribe(
@@ -193,6 +199,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: this.taskTimeboxed,
         completedAt: null,
         labelIds: []
       }, this.project.id).subscribe(
@@ -230,6 +237,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: this.taskTimeboxed,
         completedAt: null,
         labelIds: lbls
       }, this.task.id).subscribe(
@@ -262,6 +270,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: this.taskTimeboxed,
         completedAt: null,
         labelIds: lbls
       }, this.task.id).subscribe(
@@ -294,6 +303,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: this.taskTimeboxed,
         completedAt: null,
         labelIds: lbls
       }, this.task.id).subscribe(
@@ -326,6 +336,7 @@ export class TaskFormComponent implements OnInit {
         projectId: this.project ? this.project.id : null,
         priority: this.priority,
         due: this.taskDate ? this.taskDate : null,
+        timeboxed: this.taskTimeboxed,
         completedAt: null,
         labelIds: lbls
       }, this.task.id).subscribe(
