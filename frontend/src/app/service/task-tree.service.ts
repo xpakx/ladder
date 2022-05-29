@@ -202,9 +202,10 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       }
       task.project = project ? project : null;
       task.due = response.due ? new Date(response.due) : null;
+      task.timeboxed = response.timeboxed;
       task.dailyOrder = response.dailyViewOrder;
       task.priority = response.priority;
-      task.labels = labels
+      task.labels = labels;
       task.modifiedAt = new Date(response.modifiedAt);
     }
   }
@@ -321,6 +322,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     let taskToEdit =  this.getById(task.id);
     if(taskToEdit) {
       taskToEdit.due = task.due? new Date(task.due) : null;
+      taskToEdit.timeboxed = task.timeboxed;
       taskToEdit.dailyOrder = task.dailyViewOrder;
       taskToEdit.modifiedAt =  new Date(task.modifiedAt);
     }
@@ -613,6 +615,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
     task.priority = response.priority
     task.parent = response.parent;
     task.due = response.due ? new Date(response.due) : null;
+    task.timeboxed = response.timeboxed;
     task.completed = response.completed;
     task.collapsed = response.collapsed;
     task.dailyOrder = response.dailyViewOrder;
