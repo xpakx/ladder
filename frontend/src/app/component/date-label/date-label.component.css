@@ -12,3 +12,7 @@
 .due_date_controls i {
     margin-right: 3px;
 }
+
+.overdue {
+    color: #dd4b39;
+}
