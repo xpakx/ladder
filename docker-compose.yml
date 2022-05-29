@@ -1,0 +1,36 @@
+version: '3.3'
+
+services:
+  backend:
+    build: ./backend/
+    container_name: backend
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ladder
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - FRONTEND_HOST=http://localhost
+      - SERVICE_NOTIFICATION_HOST=http://localhost:8081
+  notif:
+    build: ./notification-service/
+    container_name: notif
+    ports:
+      - "8081:8081"
+  frontend:
+    container_name: frontend
+    build: ./frontend/
+    ports:
+      - "80:80"
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=ladder
+    expose:
+      - 5432
