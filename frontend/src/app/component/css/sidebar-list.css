@@ -110,8 +110,6 @@ button {
 
 .projects {
     height: auto;
-    transition: max-height ease .375s;
-    max-height: 1000px;
     overflow-y: hidden;
     overflow-x: visible;
 }
