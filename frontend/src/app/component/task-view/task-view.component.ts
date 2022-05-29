@@ -25,6 +25,9 @@ export class TaskViewComponent implements OnInit {
   edit: boolean = false;
   parentData!: AddEvent<TaskTreeElem>;
   menuChoice: number = 0;
+  taskListSubmodalOpened: boolean = false;
+  collabTaskListSubmodalOpened: boolean = false;
+  commentListSubmodalOpened: boolean = false;
 
   constructor(private taskTree: TaskTreeService, private taskService: TaskService, 
     private collabService: CollabTaskService, private collabTree: CollabTaskTreeService,
@@ -228,7 +231,13 @@ export class TaskViewComponent implements OnInit {
   }
 
   get subModalOpened(): boolean {
-    return this.showSelectDateModal || this.showSelectLabelsMenu || this.showSelectPriorityModal || this.showSelectProjectModal;
+    return this.showSelectDateModal || this.showSelectLabelsMenu || 
+    this.showSelectPriorityModal || this.showSelectProjectModal ||
+    this.taskListSubmodalOpened || this.collabTaskListSubmodalOpened;
+  }
+
+  changeTaskListSubmodalState(opened: boolean) {
+    this.taskListSubmodalOpened = opened;
   }
 
   @HostListener("window:keydown.escape", ["$event"])

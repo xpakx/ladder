@@ -1,8 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { LabelDetails } from 'src/app/entity/label-details';
-import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
 import { Task } from 'src/app/entity/task';
 import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
@@ -25,6 +23,7 @@ implements OnInit {
   todayDate: Date = new Date();
   @Input("task") parent?: TaskTreeElem;
   @Input("taskList") taskList: TaskTreeElem[] = [];
+  @Output("submodal") submodalEvent = new EventEmitter<boolean>();
 
   constructor(private router: Router, public tree: TreeService, 
     protected taskService: CollabTaskService, protected treeService: CollabTaskTreeService,
@@ -81,25 +80,30 @@ implements OnInit {
     this.closeEditTaskForm();
     this.showAddTaskForm = true;
     this.taskData = new AddEvent<TaskTreeElem>();
+    this.submodalEvent.emit(true);
   }
 
   closeAddTaskForm(): void {
     this.showAddTaskForm = false;
+    this.submodalEvent.emit(false);
   }
 
   openEditTaskForm(task: TaskTreeElem): void {
     this.closeAddTaskForm();
     this.taskData = new AddEvent<TaskTreeElem>(task);
+    this.submodalEvent.emit(true);
   }
 
   closeEditTaskForm(): void {
     this.taskData = new AddEvent<TaskTreeElem>();
+    this.submodalEvent.emit(false);
   }
 
   openEditTaskFromContextMenu(): void {
     if(this.contextTaskMenu) {
       this.closeAddTaskForm();
       this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu);
+      this.submodalEvent.emit(true);
     }
     this.closeContextTaskMenu();
   }
@@ -193,23 +197,27 @@ implements OnInit {
     }
     this.dateForDateModal = undefined;
     this.taskIdForDateModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   cancelDateSelection(): void {
     this.showSelectDateModal = false;
     this.dateForDateModal = undefined;
     this.taskIdForDateModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   openSelectDateModal(task: TaskTreeElem): void {
     this.taskIdForDateModal = task.id;
     this.dateForDateModal = task.due ? task.due : undefined;
     this.showSelectDateModal = true;
+    this.submodalEvent.emit(true);
   }
 
   openSelectDateModalFormContextMenu(): void {
     if(this.contextTaskMenu) {
       this.openSelectDateModal(this.contextTaskMenu);
+      this.submodalEvent.emit(true);
     }
     this.closeContextTaskMenu();
   }
@@ -232,23 +240,27 @@ implements OnInit {
     }
     this.priorityForPriorityModal = 0;
     this.taskIdForPriorityModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   cancelPrioritySelection(): void {
     this.showSelectPriorityModal = false;
     this.priorityForPriorityModal = 0;
     this.taskIdForPriorityModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   openSelectPriorityModal(task: TaskTreeElem): void {
     this.taskIdForPriorityModal = task.id;
     this.priorityForPriorityModal = task.priority;
     this.showSelectPriorityModal = true;
+    this.submodalEvent.emit(true);
   }
 
   openSelectPriorityModalFormContextMenu(): void {
     if(this.contextTaskMenu) {
       this.openSelectPriorityModal(this.contextTaskMenu);
+      this.submodalEvent.emit(true);
     }
     this.closeContextTaskMenu();
   }

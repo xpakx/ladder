@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Output, Renderer2, ViewChild, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { LabelDetails } from 'src/app/entity/label-details';
 import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
@@ -25,6 +25,7 @@ export class SubtaskListComponent extends MultilevelTaskComponent<TaskTreeServic
   public message: string = '';
   @Input("task") parent?: TaskTreeElem;
   @Input("taskList") taskList: TaskTreeElem[] = [];
+  @Output("submodal") submodalEvent = new EventEmitter<boolean>();
 
   constructor(private router: Router, public tree: TreeService, 
     private taskService: TaskService, private taskTreeService: TaskTreeService,
@@ -81,25 +82,30 @@ export class SubtaskListComponent extends MultilevelTaskComponent<TaskTreeServic
     this.closeEditTaskForm();
     this.showAddTaskForm = true;
     this.taskData = new AddEvent<TaskTreeElem>();
+    this.submodalEvent.emit(true);
   }
 
   closeAddTaskForm() {
     this.showAddTaskForm = false;
+    this.submodalEvent.emit(false);
   }
 
   openEditTaskForm(task: TaskTreeElem) {
     this.closeAddTaskForm();
     this.taskData = new AddEvent<TaskTreeElem>(task);
+    this.submodalEvent.emit(true);
   }
 
   closeEditTaskForm() {
     this.taskData = new AddEvent<TaskTreeElem>();
+    this.submodalEvent.emit(false);
   }
 
   openEditTaskFromContextMenu() {
     if(this.contextTaskMenu) {
       this.closeAddTaskForm();
       this.taskData = new AddEvent<TaskTreeElem>(this.contextTaskMenu);
+      this.submodalEvent.emit(true);
     }
     this.closeContextTaskMenu();
   }
@@ -193,23 +199,28 @@ export class SubtaskListComponent extends MultilevelTaskComponent<TaskTreeServic
     }
     this.dateForDateModal = undefined;
     this.taskIdForDateModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   cancelDateSelection() {
     this.showSelectDateModal = false;
     this.dateForDateModal = undefined;
+    this.taskIdForProjectModal = undefined;
     this.taskIdForDateModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   openSelectDateModal(task: TaskTreeElem) {
     this.taskIdForDateModal = task.id;
     this.dateForDateModal = task.due ? task.due : undefined;
     this.showSelectDateModal = true;
+    this.submodalEvent.emit(true);
   }
 
   openSelectDateModalFormContextMenu() {
     if(this.contextTaskMenu) {
       this.openSelectDateModal(this.contextTaskMenu);
+      this.submodalEvent.emit(true);
     }
     this.closeContextTaskMenu();
   }
@@ -232,12 +243,14 @@ export class SubtaskListComponent extends MultilevelTaskComponent<TaskTreeServic
     }
     this.projectForProjectModal = undefined;
     this.taskIdForProjectModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   cancelProjectSelection() {
     this.showSelectProjectModal = false;
     this.projectForProjectModal = undefined;
     this.taskIdForProjectModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   openSelectProjectModal(task: TaskTreeElem) {
@@ -245,11 +258,13 @@ export class SubtaskListComponent extends MultilevelTaskComponent<TaskTreeServic
     let project = task.project ? this.tree.getProjectById(task.project.id) : undefined;
     this.projectForProjectModal = project;
     this.showSelectProjectModal = true;
+    this.submodalEvent.emit(true);
   }
 
   openSelectProjectModalFormContextMenu() {
     if(this.contextTaskMenu) {
       this.openSelectProjectModal(this.contextTaskMenu);
+      this.submodalEvent.emit(true);
     }
     this.closeContextTaskMenu();
   }
@@ -272,23 +287,27 @@ export class SubtaskListComponent extends MultilevelTaskComponent<TaskTreeServic
     }
     this.priorityForPriorityModal = 0;
     this.taskIdForPriorityModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   cancelPrioritySelection() {
     this.showSelectPriorityModal = false;
     this.priorityForPriorityModal = 0;
     this.taskIdForPriorityModal = undefined;
+    this.submodalEvent.emit(false);
   }
 
   openSelectPriorityModal(task: TaskTreeElem) {
     this.taskIdForPriorityModal = task.id;
     this.priorityForPriorityModal = task.priority;
     this.showSelectPriorityModal = true;
+    this.submodalEvent.emit(true);
   }
 
   openSelectPriorityModalFormContextMenu() {
     if(this.contextTaskMenu) {
       this.openSelectPriorityModal(this.contextTaskMenu);
+      this.submodalEvent.emit(true);
     }
     this.closeContextTaskMenu();
   }
