@@ -6,8 +6,8 @@ import { Collaboration } from 'src/app/collaboration/dto/collaboration';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { CollabProjectTreeService } from 'src/app/project/collab-project-tree.service';
 import { CollaborationService } from 'src/app/collaboration/collaboration.service';
-import { RedirectionService } from 'src/app/service/redirection.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { RedirectionService } from 'src/app/utils/redirection.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-collab-project',

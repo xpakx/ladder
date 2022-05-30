@@ -10,7 +10,7 @@ import { DateEvent } from 'src/app/common/utils/date-event';
 import { CollabTaskService } from 'src/app/task/collab-task.service';
 import { ProjectService } from '../../project/project.service';
 import { TaskService } from 'src/app/task/task.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-task-form',

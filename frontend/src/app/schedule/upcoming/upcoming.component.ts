@@ -8,7 +8,7 @@ import { DateEvent } from 'src/app/common/utils/date-event';
 import { Day } from 'src/app/common/utils/day';
 import { TaskTreeService } from 'src/app/task/task-tree.service';
 import { TaskService } from 'src/app/task/task.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 import { TaskDailyListComponent } from 'src/app/task/task-daily-list/task-daily-list.component';
 
 @Component({

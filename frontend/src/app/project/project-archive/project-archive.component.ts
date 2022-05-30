@@ -6,9 +6,9 @@ import { ProjectData } from 'src/app/project/dto/project-data';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
 import { ProjectService } from 'src/app/project/project.service';
-import { RedirectionService } from 'src/app/service/redirection.service';
+import { RedirectionService } from 'src/app/utils/redirection.service';
 import { TaskService } from 'src/app/task/task.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-project-archive',

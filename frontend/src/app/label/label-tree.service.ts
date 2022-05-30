@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Label } from 'src/app/label/dto/label';
 import { LabelDetails } from './dto/label-details';
-import { MovableTreeService } from 'src/app/service/movable-tree-service';
+import { MovableTreeService } from 'src/app/common/movable-tree-service';
 
 @Injectable({
   providedIn: 'root'

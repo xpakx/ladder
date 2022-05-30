@@ -4,8 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectDetails } from 'src/app/project/dto/project-details';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { ProjectService } from 'src/app/project/project.service';
-import { RedirectionService } from 'src/app/service/redirection.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { RedirectionService } from 'src/app/utils/redirection.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-archive',

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LabelDetails } from 'src/app/label/dto/label-details';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-label-choice-dialog',

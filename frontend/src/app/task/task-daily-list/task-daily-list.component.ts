@@ -9,10 +9,10 @@ import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
 import { AddEvent } from 'src/app/common/utils/add-event';
 import { DateEvent } from 'src/app/common/utils/date-event';
 import { CollabTaskService } from 'src/app/task/collab-task.service';
-import { DeleteService } from 'src/app/service/delete.service';
+import { DeleteService } from 'src/app/utils/delete.service';
 import { TaskTreeService } from 'src/app/task/task-tree.service';
 import { TaskService } from 'src/app/task/task.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 import { DraggableComponent } from 'src/app/common/draggable-component';
 
 @Component({

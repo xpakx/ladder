@@ -4,7 +4,7 @@ import { FilterDetails } from 'src/app/filter/dto/filter-details';
 import { LabelDetails } from 'src/app/label/dto/label-details';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { AddEvent } from 'src/app/common/utils/add-event';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-sidebar',

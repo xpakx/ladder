@@ -6,7 +6,7 @@ import { LabelDetails } from '../dto/label-details';
 import { LabelRequest } from '../dto/label-request';
 import { AddEvent } from 'src/app/common/utils/add-event';
 import { LabelService } from '../label.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-label-dialog',

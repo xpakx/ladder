@@ -6,7 +6,7 @@ import { ProjectRequest } from '../dto/project-request';
 import { ProjectTreeElem } from '../dto/project-tree-elem';
 import { AddEvent } from 'src/app/common/utils/add-event';
 import { ProjectService } from '../project.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-project-dialog',

@@ -8,7 +8,7 @@ import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { AddEvent } from 'src/app/common/utils/add-event';
 import { HabitService } from 'src/app/habit/habit.service';
 import { ProjectService } from 'src/app/project/project.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-habit-form',

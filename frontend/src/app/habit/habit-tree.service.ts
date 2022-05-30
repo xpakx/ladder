@@ -3,7 +3,7 @@ import { Habit } from 'src/app/habit/dto/habit';
 import { HabitDetails } from 'src/app/habit/dto/habit-details';
 import { LabelDetails } from '../label/dto/label-details';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
-import { MovableTreeService } from 'src/app/service/movable-tree-service';
+import { MovableTreeService } from 'src/app/common/movable-tree-service';
 
 @Injectable({
   providedIn: 'root'

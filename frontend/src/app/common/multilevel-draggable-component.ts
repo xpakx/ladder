@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { DndDropEvent } from "ngx-drag-drop";
 import { ParentWithId } from "src/app/common/dto/parent-with-id";
-import { MultilevelMovableService } from "src/app/service/multilevel-movable-service";
-import { MultilevelMovableTreeService } from "src/app/service/multilevel-movable-tree-service";
+import { MultilevelMovableService } from "src/app/common/multilevel-movable-service";
+import { MultilevelMovableTreeService } from "src/app/common/multilevel-movable-tree-service";
 import { IndentableTreeElem } from "./dto/indentable-tree-elem";
 
 export class MultilevelDraggableComponent<P extends ParentWithId, R extends IndentableTreeElem<P>, T, S extends MultilevelMovableService<T>, U extends MultilevelMovableTreeService<T, R>>  {

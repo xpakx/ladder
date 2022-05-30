@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { Project } from 'src/app/project/dto/project';
 import { ProjectData } from 'src/app/project/dto/project-data';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
-import { DeleteService } from 'src/app/service/delete.service';
+import { DeleteService } from 'src/app/utils/delete.service';
 import { ProjectService } from 'src/app/project/project.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-project-search-list',

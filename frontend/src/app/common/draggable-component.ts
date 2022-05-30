@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { DndDropEvent } from "ngx-drag-drop";
 import { EntityWithId } from "src/app/common/dto/entity-with-id";
-import { MovableService } from "src/app/service/movable-service";
-import { MovableTreeService } from "src/app/service/movable-tree-service";
+import { MovableService } from "src/app/common/movable-service";
+import { MovableTreeService } from "src/app/common/movable-tree-service";
 
 export class DraggableComponent<R extends EntityWithId, T, S extends MovableService<T>, U extends MovableTreeService<T>>  {
     draggedId: number | undefined;

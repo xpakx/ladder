@@ -8,7 +8,7 @@ import { DateRequest } from '../common/dto/date-request';
 import { IdRequest } from '../common/dto/id-request';
 import { PriorityRequest } from '../common/dto/priority-request';
 import { Task } from './dto/task';
-import { MultilevelMovableService } from '../service/multilevel-movable-service';
+import { MultilevelMovableService } from '../common/multilevel-movable-service';
 
 @Injectable({
   providedIn: 'root'

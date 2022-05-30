@@ -4,7 +4,7 @@ import { HabitDetails } from 'src/app/habit/dto/habit-details';
 import { LabelDetails } from 'src/app/label/dto/label-details';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-search-result',

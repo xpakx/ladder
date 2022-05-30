@@ -14,7 +14,7 @@ import { Task } from '../task/dto/task';
 import { TasksWithProjects } from './dto/tasks-with-projects';
 import { CollaborationRequest } from 'src/app/collaboration/dto/collaboration-request';
 import { UserWithData } from 'src/app/sync/dto/user-with-data';
-import { MultilevelMovableService } from 'src/app/service/multilevel-movable-service';
+import { MultilevelMovableService } from 'src/app/common/multilevel-movable-service';
 import { CollaborationWithOwner } from 'src/app/collaboration/dto/collaboration-with-owner';
 import { Collaboration } from 'src/app/collaboration/dto/collaboration';
 

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
 import { AddEvent } from 'src/app/common/utils/add-event';
-import { RedirectionService } from 'src/app/service/redirection.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { RedirectionService } from 'src/app/utils/redirection.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-inbox',

@@ -6,7 +6,7 @@ import { BooleanRequest } from '../common/dto/boolean-request';
 import { Filter } from 'src/app/filter/dto/filter';
 import { FilterRequest } from 'src/app/filter/dto/filter-request';
 import { IdRequest } from '../common/dto/id-request';
-import { MovableService } from 'src/app/service/movable-service';
+import { MovableService } from 'src/app/common/movable-service';
 
 @Injectable({
   providedIn: 'root'

@@ -8,7 +8,7 @@ import { HabitCompletion } from 'src/app/habit/dto/habit-completion';
 import { HabitRequest } from 'src/app/habit/dto/habit-request';
 import { IdRequest } from '../common/dto/id-request';
 import { PriorityRequest } from '../common/dto/priority-request';
-import { MovableService } from 'src/app/service/movable-service';
+import { MovableService } from 'src/app/common/movable-service';
 
 @Injectable({
   providedIn: 'root'

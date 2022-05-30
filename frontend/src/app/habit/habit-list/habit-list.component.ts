@@ -7,11 +7,11 @@ import { HabitDetails } from '../dto/habit-details';
 import { LabelDetails } from '../../label/dto/label-details';
 import { ProjectTreeElem } from '../../project/dto/project-tree-elem';
 import { AddEvent } from 'src/app/common/utils/add-event';
-import { DeleteService } from 'src/app/service/delete.service';
+import { DeleteService } from 'src/app/utils/delete.service';
 import { HabitCompletionTreeService } from 'src/app/habit/habit-completion-tree.service';
 import { HabitTreeService } from 'src/app/habit/habit-tree.service';
 import { HabitService } from 'src/app/habit/habit.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 import { DraggableComponent } from 'src/app/common/draggable-component';
 
 @Component({

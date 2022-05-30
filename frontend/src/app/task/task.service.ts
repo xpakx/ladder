@@ -10,7 +10,7 @@ import { IdRequest } from '../common/dto/id-request';
 import { PriorityRequest } from '../common/dto/priority-request';
 import { Task } from './dto/task';
 import { TaskDetails } from './dto/task-details';
-import { MultilevelMovableService } from '../service/multilevel-movable-service';
+import { MultilevelMovableService } from '../common/multilevel-movable-service';
 
 @Injectable({
   providedIn: 'root'

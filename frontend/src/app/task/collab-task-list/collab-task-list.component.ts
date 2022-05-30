@@ -8,8 +8,8 @@ import { AddEvent } from 'src/app/common/utils/add-event';
 import { DateEvent } from 'src/app/common/utils/date-event';
 import { CollabTaskTreeService } from 'src/app/task/collab-task-tree.service';
 import { CollabTaskService } from 'src/app/task/collab-task.service';
-import { DeleteService } from 'src/app/service/delete.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { DeleteService } from 'src/app/utils/delete.service';
+import { TreeService } from 'src/app/utils/tree.service';
 import { MultilevelCollabTaskComponent } from 'src/app/task/multilevel-collab-task-component';
 
 @Component({

@@ -5,8 +5,8 @@ import { UserWithData } from 'src/app/sync/dto/user-with-data';
 import { LoginService } from '../../user/login.service';
 import { NotificationService } from 'src/app/sync/notification.service';
 import { ProjectService } from '../../project/project.service';
-import { RedirectionService } from 'src/app/service/redirection.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { RedirectionService } from 'src/app/utils/redirection.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Component({
   selector: 'app-load-project',

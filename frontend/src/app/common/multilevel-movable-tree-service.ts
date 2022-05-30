@@ -1,4 +1,4 @@
-import { MovableTreeService } from "./movable-tree-service";
+import { MovableTreeService } from "../common/movable-tree-service";
 
 export interface MultilevelMovableTreeService<T, R> extends MovableTreeService<T> {
     moveAfter(request: T, afterId: number, indent?: number): void

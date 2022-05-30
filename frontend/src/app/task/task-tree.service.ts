@@ -7,7 +7,7 @@ import { Task } from './dto/task';
 import { TaskDetails } from './dto/task-details';
 import { TaskTreeElem } from './dto/task-tree-elem';
 import { UserMin } from '../user/dto/user-min';
-import { IndentableService } from '../service/indentable-service';
+import { IndentableService } from 'src/app/common/indentable-service';
 import { MovableTaskTreeService } from './movable-task-tree-service';
 
 @Injectable({

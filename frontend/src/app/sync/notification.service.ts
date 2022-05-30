@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import { CollabTaskDetails } from '../task/dto/collab-task-details';
 import { SyncData } from 'src/app/sync/dto/sync-data';
 import { SyncService } from './sync.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 
 @Injectable({
   providedIn: 'root'

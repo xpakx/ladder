@@ -3,8 +3,8 @@ import { Project } from 'src/app/project/dto/project';
 import { ProjectDetails } from 'src/app/project/dto/project-details';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { ProjectWithNameAndId } from 'src/app/project/dto/project-with-name-and-id';
-import { IndentableService } from 'src/app/service/indentable-service';
-import { MultilevelMovableTreeService } from 'src/app/service/multilevel-movable-tree-service';
+import { IndentableService } from 'src/app/common/indentable-service';
+import { MultilevelMovableTreeService } from 'src/app/common/multilevel-movable-tree-service';
 
 @Injectable({
   providedIn: 'root'

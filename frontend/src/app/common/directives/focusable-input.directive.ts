@@ -1,5 +1,5 @@
 import { Directive, HostListener } from '@angular/core';
-import { KeyboardManagerService } from 'src/app/service/keyboard-manager.service';
+import { KeyboardManagerService } from 'src/app/utils/keyboard-manager.service';
 
 @Directive({
   selector: 'input, textarea'

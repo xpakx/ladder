@@ -4,7 +4,7 @@ import { CollabProjectDetails } from 'src/app/project/dto/collab-project-details
 import { AddEvent } from 'src/app/common/utils/add-event';
 import { CollabProjectTreeService } from 'src/app/project/collab-project-tree.service';
 import { LabelService } from 'src/app/label/label.service';
-import { TreeService } from 'src/app/service/tree.service';
+import { TreeService } from 'src/app/utils/tree.service';
 import { Animations } from 'src/app/common/animations';
 import { ContextMenuElem } from 'src/app/context-menu/context-menu/context-menu-elem';
 import { MenuElems, Codes } from './collab-project-list-context-codes';

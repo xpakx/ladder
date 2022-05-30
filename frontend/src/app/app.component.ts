@@ -5,10 +5,10 @@ import { FilterDetails } from './filter/dto/filter-details';
 import { LabelDetails } from './label/dto/label-details';
 import { ProjectTreeElem } from './project/dto/project-tree-elem';
 import { AddEvent } from './common/utils/add-event';
-import { DeleteService } from './service/delete.service';
-import { KeyboardManagerService } from './service/keyboard-manager.service';
+import { DeleteService } from './utils/delete.service';
+import { KeyboardManagerService } from './utils/keyboard-manager.service';
 import { LoginService } from './user/login.service';
-import { TreeService } from './service/tree.service';
+import { TreeService } from './utils/tree.service';
 
 @Component({
   selector: 'app-root',

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Filter } from 'src/app/filter/dto/filter';
 import { FilterDetails } from './dto/filter-details';
-import { MovableTreeService } from 'src/app/service/movable-tree-service';
+import { MovableTreeService } from 'src/app/common/movable-tree-service';
 
 @Injectable({
   providedIn: 'root'
