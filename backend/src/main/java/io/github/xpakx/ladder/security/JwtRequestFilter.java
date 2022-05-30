@@ -1,6 +1,6 @@
 package io.github.xpakx.ladder.security;
 
-import io.github.xpakx.ladder.service.UserService;
+import io.github.xpakx.ladder.user.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
