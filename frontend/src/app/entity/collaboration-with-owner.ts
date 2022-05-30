@@ -1,5 +1,4 @@
-import { ProjectWithNameAndId } from "./project-with-name-and-id";
-import { UserMin } from "./user-min";
+import { UserMin } from "../user/user-min";
 
 export interface CollaborationWithOwner {
     id: number;

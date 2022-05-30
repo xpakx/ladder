@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
+import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { RedirectionService } from 'src/app/service/redirection.service';
 import { TreeService } from 'src/app/service/tree.service';

@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CollaborationWithOwner } from 'src/app/entity/collaboration-with-owner';
-import { UserMin } from 'src/app/entity/user-min';
-import { ProjectService } from 'src/app/service/project.service';
+import { UserMin } from 'src/app/user/user-min';
+import { ProjectService } from 'src/app/project/project.service';
 
 @Component({
   selector: 'app-assign-modal',

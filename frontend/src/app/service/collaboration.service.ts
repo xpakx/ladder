@@ -6,9 +6,7 @@ import { BooleanRequest } from '../entity/boolean-request';
 import { CollabToken } from '../entity/collab-token';
 import { Collaboration } from '../entity/collaboration';
 import { CollaborationDetails } from '../entity/collaboration-details';
-import { CollaborationRequest } from '../entity/collaboration-request';
 import { User } from '../entity/user';
-import { UserMin } from '../entity/user-min';
 
 @Injectable({
   providedIn: 'root'

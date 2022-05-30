@@ -1,18 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ProjectArchiveComponent } from '../component/project-archive/project-archive.component';
-import { ProjectSearchListComponent } from '../component/project-search-list/project-search-list.component';
-import { FilterDetails } from '../entity/filter-details';
-import { HabitDetails } from '../entity/habit-details';
-import { LabelDetails } from '../entity/label-details';
-import { ProjectTreeElem } from '../entity/project-tree-elem';
-import { TaskTreeElem } from '../entity/task-tree-elem';
-import { CollabTaskService } from './collab-task.service';
-import { FilterService } from './filter.service';
-import { HabitService } from './habit.service';
-import { LabelService } from './label.service';
-import { ProjectService } from './project.service';
-import { TaskService } from './task.service';
+import { ProjectSearchListComponent } from 'src/app/project/project-search-list/project-search-list.component';
+import { FilterDetails } from '../filter/dto/filter-details';
+import { HabitDetails } from 'src/app/habit/dto/habit-details';
+import { LabelDetails } from '../label/dto/label-details';
+import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
+import { TaskTreeElem } from '../task/dto/task-tree-elem';
+import { CollabTaskService } from '../task/collab-task.service';
+import { FilterService } from 'src/app/filter/filter.service';
+import { HabitService } from 'src/app/habit/habit.service';
+import { LabelService } from 'src/app/label/label.service';
+import { ProjectService } from 'src/app/project/project.service';
+import { TaskService } from 'src/app/task/task.service';
 import { TreeService } from './tree.service';
 
 @Injectable({

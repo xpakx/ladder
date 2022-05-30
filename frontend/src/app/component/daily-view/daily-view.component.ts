@@ -1,19 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, OnInit, Renderer2, ViewChild, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
-import { DndDropEvent } from 'ngx-drag-drop';
-import { LabelDetails } from 'src/app/entity/label-details';
-import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
-import { Task } from 'src/app/entity/task';
-import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
+import { Task } from 'src/app/task/dto/task';
+import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
 import { AddEvent } from 'src/app/entity/utils/add-event';
 import { DateEvent } from 'src/app/entity/utils/date-event';
 import { DeleteService } from 'src/app/service/delete.service';
-import { TaskTreeService } from 'src/app/service/task-tree.service';
-import { TaskService } from 'src/app/service/task.service';
+import { TaskTreeService } from 'src/app/task/task-tree.service';
+import { TaskService } from 'src/app/task/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { DraggableComponent } from '../abstract/draggable-component';
-import { TaskDailyListComponent } from '../task-daily-list/task-daily-list.component';
+import { TaskDailyListComponent } from 'src/app/task/task-daily-list/task-daily-list.component';
 
 @Component({
   selector: 'app-daily-view',

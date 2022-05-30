@@ -2,14 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
-import { Task } from 'src/app/entity/task';
-import { TaskTreeElem } from 'src/app/entity/task-tree-elem';
+import { Task } from 'src/app/task/dto/task';
+import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
 import { DateEvent } from 'src/app/entity/utils/date-event';
 import { Day } from 'src/app/entity/utils/day';
-import { TaskTreeService } from 'src/app/service/task-tree.service';
-import { TaskService } from 'src/app/service/task.service';
+import { TaskTreeService } from 'src/app/task/task-tree.service';
+import { TaskService } from 'src/app/task/task.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { TaskDailyListComponent } from '../task-daily-list/task-daily-list.component';
+import { TaskDailyListComponent } from 'src/app/task/task-daily-list/task-daily-list.component';
 
 @Component({
   selector: 'app-upcoming',

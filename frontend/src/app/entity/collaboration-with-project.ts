@@ -1,4 +1,4 @@
-import { UserMin } from "./user-min";
+import { UserMin } from "../user/user-min";
 
 export interface ProjectWithCollaboration {
     id: number;

@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { CollabTaskDetails } from '../entity/collab-task-details';
+import { CollabTaskDetails } from '../task/dto/collab-task-details';
 import { SyncData } from '../entity/sync-data';
 import { SyncService } from './sync.service';
 import { TreeService } from './tree.service';

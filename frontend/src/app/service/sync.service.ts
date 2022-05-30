@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { CollabTaskDetails } from '../entity/collab-task-details';
+import { CollabTaskDetails } from '../task/dto/collab-task-details';
 import { DateRequest } from '../entity/notification-date-request';
 import { IdCollectionRequest } from '../entity/id-collection-request';
 import { SyncData } from '../entity/sync-data';

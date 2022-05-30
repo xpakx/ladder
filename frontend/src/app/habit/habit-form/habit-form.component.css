@@ -1,0 +1,9 @@
+@import "../../task/task-form/task-form.component.css";
+
+.allowPositive.selected i {
+    color: green;
+}
+
+.allowNegative.selected i {
+    color: red;
+}

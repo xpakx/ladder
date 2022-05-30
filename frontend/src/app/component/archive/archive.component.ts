@@ -1,9 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProjectDetails } from 'src/app/entity/project-details';
-import { ProjectTreeElem } from 'src/app/entity/project-tree-elem';
-import { ProjectService } from 'src/app/service/project.service';
+import { ProjectDetails } from 'src/app/project/dto/project-details';
+import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
+import { ProjectService } from 'src/app/project/project.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
 import { TreeService } from 'src/app/service/tree.service';
 
