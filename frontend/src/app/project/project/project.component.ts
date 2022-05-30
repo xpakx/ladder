@@ -10,7 +10,7 @@ import { ProjectService } from '../project.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
 import { TaskService } from 'src/app/task/task.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { ContextMenuElem } from '../../component/context-menu/context-menu-elem';
+import { ContextMenuElem } from '../../context-menu/context-menu/context-menu-elem';
 import { TaskListComponent } from 'src/app/task/task-list/task-list.component';
 import { Codes, MenuElems } from './project-context-codes';
 

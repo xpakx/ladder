@@ -3,8 +3,8 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, 
 import { Router } from '@angular/router';
 import { Task } from 'src/app/task/dto/task';
 import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
-import { AddEvent } from 'src/app/entity/utils/add-event';
-import { DateEvent } from 'src/app/entity/utils/date-event';
+import { AddEvent } from 'src/app/common/utils/add-event';
+import { DateEvent } from 'src/app/common/utils/date-event';
 import { CollabTaskTreeService } from 'src/app/task/collab-task-tree.service';
 import { CollabTaskService } from 'src/app/task/collab-task.service';
 import { DeleteService } from 'src/app/service/delete.service';

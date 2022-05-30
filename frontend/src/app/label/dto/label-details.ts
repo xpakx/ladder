@@ -1,4 +1,4 @@
-import { EntityWithId } from "../../entity/entity-with-id";
+import { EntityWithId } from "../../common/dto/entity-with-id";
 
 export interface LabelDetails extends EntityWithId {
     name: string;

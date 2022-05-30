@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { CollabToken } from 'src/app/entity/collab-token';
-import { Collaboration } from 'src/app/entity/collaboration';
-import { CollaborationDetails } from 'src/app/entity/collaboration-details';
-import { User } from 'src/app/entity/user';
-import { CollaborationService } from 'src/app/service/collaboration.service';
+import { CollabToken } from 'src/app/collaboration/dto/collab-token';
+import { Collaboration } from 'src/app/collaboration/dto/collaboration';
+import { CollaborationDetails } from 'src/app/collaboration/dto/collaboration-details';
+import { User } from 'src/app/user/dto/user';
+import { CollaborationService } from 'src/app/collaboration/collaboration.service';
 
 @Component({
   selector: 'app-settings-invitation',

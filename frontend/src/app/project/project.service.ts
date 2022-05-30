@@ -3,20 +3,20 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AddTaskRequest } from '../task/dto/add-task-request';
-import { BooleanRequest } from '../entity/boolean-request';
-import { IdRequest } from '../entity/id-request';
-import { NameRequest } from '../entity/name-request';
+import { BooleanRequest } from '../common/dto/boolean-request';
+import { IdRequest } from '../common/dto/id-request';
+import { NameRequest } from '../common/dto/name-request';
 import { Project } from 'src/app/project/dto/project';
 import { ProjectData } from 'src/app/project/dto/project-data';
 import { ProjectDetails } from 'src/app/project/dto/project-details';
 import { ProjectRequest } from 'src/app/project/dto/project-request';
 import { Task } from '../task/dto/task';
-import { TasksWithProjects } from '../entity/tasks-with-projects';
-import { CollaborationRequest } from '../entity/collaboration-request';
-import { UserWithData } from '../entity/user-with-data';
+import { TasksWithProjects } from './dto/tasks-with-projects';
+import { CollaborationRequest } from 'src/app/collaboration/dto/collaboration-request';
+import { UserWithData } from 'src/app/sync/dto/user-with-data';
 import { MultilevelMovableService } from 'src/app/service/multilevel-movable-service';
-import { CollaborationWithOwner } from '../entity/collaboration-with-owner';
-import { Collaboration } from '../entity/collaboration';
+import { CollaborationWithOwner } from 'src/app/collaboration/dto/collaboration-with-owner';
+import { Collaboration } from 'src/app/collaboration/dto/collaboration';
 
 @Injectable({
   providedIn: 'root'

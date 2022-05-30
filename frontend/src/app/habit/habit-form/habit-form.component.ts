@@ -5,7 +5,7 @@ import { Habit } from '../dto/habit';
 import { HabitDetails } from '../dto/habit-details';
 import { LabelDetails } from '../../label/dto/label-details';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
-import { AddEvent } from 'src/app/entity/utils/add-event';
+import { AddEvent } from 'src/app/common/utils/add-event';
 import { HabitService } from 'src/app/habit/habit.service';
 import { ProjectService } from 'src/app/project/project.service';
 import { TreeService } from 'src/app/service/tree.service';

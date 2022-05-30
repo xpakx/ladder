@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Collaboration } from 'src/app/entity/collaboration';
-import { CollaborationWithOwner } from 'src/app/entity/collaboration-with-owner';
+import { Collaboration } from 'src/app/collaboration/dto/collaboration';
+import { CollaborationWithOwner } from 'src/app/collaboration/dto/collaboration-with-owner';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { ProjectTreeService } from 'src/app/project/project-tree.service';
 import { ProjectService } from 'src/app/project/project.service';

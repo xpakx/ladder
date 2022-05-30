@@ -1,12 +1,12 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { DndDropEvent } from "ngx-drag-drop";
-import { ParentWithId } from "src/app/entity/parent-with-id";
+import { ParentWithId } from "src/app/common/dto/parent-with-id";
 import { ProjectTreeElem } from "src/app/project/dto/project-tree-elem";
 import { Task } from "src/app/task/dto/task";
 import { TaskTreeElem } from "src/app/task/dto/task-tree-elem";
 import { CollabTaskService } from "src/app/task/collab-task.service";
 import { MovableTaskTreeService } from "src/app/task/movable-task-tree-service";
-import { MultilevelDraggableComponent } from "../component/abstract/multilevel-draggable-component";
+import { MultilevelDraggableComponent } from "../common/multilevel-draggable-component";
 
 export class MultilevelCollabTaskComponent<U extends MovableTaskTreeService<Task, TaskTreeElem>>
 extends MultilevelDraggableComponent<ParentWithId, TaskTreeElem, Task, CollabTaskService, U>  {

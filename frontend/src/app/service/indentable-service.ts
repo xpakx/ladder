@@ -1,5 +1,5 @@
-import { IndentableTreeElem } from "../entity/indentable-tree-elem";
-import { ParentWithId } from "../entity/parent-with-id";
+import { IndentableTreeElem } from "../common/dto/indentable-tree-elem";
+import { ParentWithId } from "../common/dto/parent-with-id";
 
 export abstract class IndentableService<T extends ParentWithId> {
     public list: IndentableTreeElem<T>[] = [];

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Project } from '../dto/project';
 import { ProjectRequest } from '../dto/project-request';
 import { ProjectTreeElem } from '../dto/project-tree-elem';
-import { AddEvent } from 'src/app/entity/utils/add-event';
+import { AddEvent } from 'src/app/common/utils/add-event';
 import { ProjectService } from '../project.service';
 import { TreeService } from 'src/app/service/tree.service';
 

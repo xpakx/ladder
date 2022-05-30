@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TaskCommentDetails } from 'src/app/comment/dto/task-comment-details';
 import { TaskComment } from 'src/app/comment/dto/task-comment';
-import { Page } from '../entity/page';
+import { Page } from '../common/dto/page';
 import { AddCommentRequest } from '../comment/dto/add-comment-request';
 
 @Injectable({

@@ -6,13 +6,13 @@ import { HabitCompletion } from '../dto/habit-completion';
 import { HabitDetails } from '../dto/habit-details';
 import { LabelDetails } from '../../label/dto/label-details';
 import { ProjectTreeElem } from '../../project/dto/project-tree-elem';
-import { AddEvent } from 'src/app/entity/utils/add-event';
+import { AddEvent } from 'src/app/common/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { HabitCompletionTreeService } from 'src/app/habit/habit-completion-tree.service';
 import { HabitTreeService } from 'src/app/habit/habit-tree.service';
 import { HabitService } from 'src/app/habit/habit.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { DraggableComponent } from 'src/app/component/abstract/draggable-component';
+import { DraggableComponent } from 'src/app/common/draggable-component';
 
 @Component({
   selector: 'app-habit-list',

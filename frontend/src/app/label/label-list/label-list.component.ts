@@ -3,14 +3,14 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Label } from '../dto/label';
 import { LabelDetails } from '../dto/label-details';
-import { AddEvent } from 'src/app/entity/utils/add-event';
+import { AddEvent } from 'src/app/common/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { LabelTreeService } from '../label-tree.service';
 import { LabelService } from '../label.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { DraggableComponent } from '../../component/abstract/draggable-component';
-import { Animations } from '../../component/common/animations';
-import { ContextMenuElem } from '../../component/context-menu/context-menu-elem';
+import { DraggableComponent } from '../../common/draggable-component';
+import { Animations } from '../../common/animations';
+import { ContextMenuElem } from '../../context-menu/context-menu/context-menu-elem';
 import { Codes, MenuElems } from './label-list-context-codes';
 
 @Component({

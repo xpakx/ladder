@@ -1,4 +1,4 @@
-import { UserMin } from "src/app/user/user-min";
+import { UserMin } from "src/app/user/dto/user-min";
 
 export interface TaskCommentDetails {
     id: number;

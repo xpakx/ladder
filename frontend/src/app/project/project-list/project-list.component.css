@@ -1,4 +1,4 @@
-@import "../../component/css/sidebar-list.css";
+@import "../../common/css/sidebar-list.css";
 
 .dndDraggingSource {
     display: none !important;

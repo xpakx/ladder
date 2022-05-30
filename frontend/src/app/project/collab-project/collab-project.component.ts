@@ -2,10 +2,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, DoCheck, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollabProjectData } from 'src/app/project/dto/collab-project-data';
-import { Collaboration } from 'src/app/entity/collaboration';
+import { Collaboration } from 'src/app/collaboration/dto/collaboration';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { CollabProjectTreeService } from 'src/app/project/collab-project-tree.service';
-import { CollaborationService } from 'src/app/service/collaboration.service';
+import { CollaborationService } from 'src/app/collaboration/collaboration.service';
 import { RedirectionService } from 'src/app/service/redirection.service';
 import { TreeService } from 'src/app/service/tree.service';
 

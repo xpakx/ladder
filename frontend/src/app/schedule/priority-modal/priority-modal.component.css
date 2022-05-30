@@ -1,0 +1,17 @@
+@import '../../common/css/modal.css';
+
+.priority_0 {
+    color: grey;
+}
+
+.priority_1 {
+    color: #246fe0;
+}
+
+.priority_2 {
+    color: #eb8909;
+}
+
+.priority_3 {
+    color: #d1453b;
+}

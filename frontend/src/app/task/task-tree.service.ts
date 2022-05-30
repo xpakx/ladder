@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { LabelDetails } from '../label/dto/label-details';
-import { ParentWithId } from '../entity/parent-with-id';
+import { ParentWithId } from '../common/dto/parent-with-id';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { ProjectWithNameAndId } from 'src/app/project/dto/project-with-name-and-id';
 import { Task } from './dto/task';
 import { TaskDetails } from './dto/task-details';
 import { TaskTreeElem } from './dto/task-tree-elem';
-import { UserMin } from '../user/user-min';
+import { UserMin } from '../user/dto/user-min';
 import { IndentableService } from '../service/indentable-service';
 import { MovableTaskTreeService } from './movable-task-tree-service';
 

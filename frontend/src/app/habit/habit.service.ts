@@ -2,12 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { BooleanRequest } from '../entity/boolean-request';
+import { BooleanRequest } from '../common/dto/boolean-request';
 import { Habit } from 'src/app/habit/dto/habit';
 import { HabitCompletion } from 'src/app/habit/dto/habit-completion';
 import { HabitRequest } from 'src/app/habit/dto/habit-request';
-import { IdRequest } from '../entity/id-request';
-import { PriorityRequest } from '../entity/priority-request';
+import { IdRequest } from '../common/dto/id-request';
+import { PriorityRequest } from '../common/dto/priority-request';
 import { MovableService } from 'src/app/service/movable-service';
 
 @Injectable({

@@ -1,6 +1,6 @@
-import { ParentWithId } from "../../entity/parent-with-id";
+import { ParentWithId } from "../../common/dto/parent-with-id";
 import { ProjectWithNameAndId } from "src/app/project/dto/project-with-name-and-id";
-import { UserMin } from "../../user/user-min";
+import { UserMin } from "../../user/dto/user-min";
 
 export interface CollabTaskDetails {
     id: number;

@@ -6,16 +6,16 @@ import { Project } from '../dto/project';
 import { ProjectTreeElem } from '../dto/project-tree-elem';
 import { ProjectWithNameAndId } from '../dto/project-with-name-and-id';
 import { Task } from 'src/app/task/dto/task';
-import { TasksWithProjects } from 'src/app/entity/tasks-with-projects';
-import { AddEvent } from 'src/app/entity/utils/add-event';
+import { TasksWithProjects } from 'src/app/project/dto/tasks-with-projects';
+import { AddEvent } from 'src/app/common/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { ProjectTreeService } from '../project-tree.service';
 import { ProjectService } from '../project.service';
 import { TaskService } from 'src/app/task/task.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { MultilevelDraggableComponent } from '../../component/abstract/multilevel-draggable-component';
-import { Animations } from '../../component/common/animations';
-import { ContextMenuElem } from '../../component/context-menu/context-menu-elem';
+import { MultilevelDraggableComponent } from '../../common/multilevel-draggable-component';
+import { Animations } from '../../common/animations';
+import { ContextMenuElem } from '../../context-menu/context-menu/context-menu-elem';
 import { Codes, MenuElems } from './project-list-context-codes';
 
 @Component({

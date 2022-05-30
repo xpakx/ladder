@@ -1,4 +1,4 @@
-@import '../../component/css/modal.css';
+@import '../../common/css/modal.css';
 
 .tablist {
     display: flex;

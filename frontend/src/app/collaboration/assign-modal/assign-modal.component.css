@@ -1,0 +1,28 @@
+@import '../../common/css/modal.css';
+
+.collab-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.collab-list ul li {
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.collab-list h5 {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.collab-list {
+    padding: 0 20px;
+    margin: 10px 0;
+}
+
+.assign-btn:hover {
+    text-decoration: underline;
+    color: gray;
+}

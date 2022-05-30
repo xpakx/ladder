@@ -5,15 +5,15 @@ import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { Task } from 'src/app/task/dto/task';
 import { TaskDetails } from 'src/app/task/dto/task-details';
 import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
-import { UserMin } from 'src/app/user/user-min';
-import { AddEvent } from 'src/app/entity/utils/add-event';
-import { DateEvent } from 'src/app/entity/utils/date-event';
+import { UserMin } from 'src/app/user/dto/user-min';
+import { AddEvent } from 'src/app/common/utils/add-event';
+import { DateEvent } from 'src/app/common/utils/date-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { TaskTreeService } from 'src/app/task/task-tree.service';
 import { TaskService } from 'src/app/task/task.service';
 import { TreeService } from 'src/app/service/tree.service';
 import { MultilevelTaskComponent } from 'src/app/task/multilevel-task-component';
-import { ContextMenuElem } from 'src/app/component/context-menu/context-menu-elem';
+import { ContextMenuElem } from 'src/app/context-menu/context-menu/context-menu-elem';
 import { Codes, MenuElems } from './task-list-context-codes';
 
 @Component({

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Label } from '../dto/label';
 import { LabelDetails } from '../dto/label-details';
 import { LabelRequest } from '../dto/label-request';
-import { AddEvent } from 'src/app/entity/utils/add-event';
+import { AddEvent } from 'src/app/common/utils/add-event';
 import { LabelService } from '../label.service';
 import { TreeService } from 'src/app/service/tree.service';
 

@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
-import { Page } from 'src/app/entity/page';
+import { Page } from 'src/app/common/dto/page';
 import { CommentService } from '../comment.service';
 import { TaskCommentDetails } from '../dto/task-comment-details';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';

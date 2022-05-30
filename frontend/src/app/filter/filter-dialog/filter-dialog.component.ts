@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Filter } from 'src/app/filter/dto/filter';
 import { FilterDetails } from 'src/app/filter/dto/filter-details';
 import { FilterRequest } from 'src/app/filter/dto/filter-request';
-import { AddEvent } from 'src/app/entity/utils/add-event';
+import { AddEvent } from 'src/app/common/utils/add-event';
 import { FilterService } from 'src/app/filter/filter.service';
 import { TreeService } from 'src/app/service/tree.service';
 

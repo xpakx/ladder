@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { BooleanRequest } from '../entity/boolean-request';
+import { BooleanRequest } from '../common/dto/boolean-request';
 import { Filter } from 'src/app/filter/dto/filter';
 import { FilterRequest } from 'src/app/filter/dto/filter-request';
-import { IdRequest } from '../entity/id-request';
+import { IdRequest } from '../common/dto/id-request';
 import { MovableService } from 'src/app/service/movable-service';
 
 @Injectable({

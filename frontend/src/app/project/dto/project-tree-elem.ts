@@ -1,4 +1,4 @@
-import { IndentableTreeElem } from "../../entity/indentable-tree-elem";
+import { IndentableTreeElem } from "src/app/common/dto/indentable-tree-elem";
 import { ProjectWithNameAndId } from "./project-with-name-and-id";
 
 export interface ProjectTreeElem extends IndentableTreeElem<ProjectWithNameAndId> {

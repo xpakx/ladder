@@ -3,14 +3,14 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Filter } from 'src/app/filter/dto/filter';
 import { FilterDetails } from 'src/app/filter/dto/filter-details';
-import { AddEvent } from 'src/app/entity/utils/add-event';
+import { AddEvent } from 'src/app/common/utils/add-event';
 import { DeleteService } from 'src/app/service/delete.service';
 import { FilterTreeService } from 'src/app/filter/filter-tree.service';
 import { FilterService } from 'src/app/filter/filter.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { DraggableComponent } from 'src/app/component/abstract/draggable-component';
-import { Animations } from 'src/app/component/common/animations';
-import { ContextMenuElem } from 'src/app/component/context-menu/context-menu-elem';
+import { DraggableComponent } from 'src/app/common/draggable-component';
+import { Animations } from 'src/app/common/animations';
+import { ContextMenuElem } from 'src/app/context-menu/context-menu/context-menu-elem';
 import { Codes, MenuElems } from './filter-list-context-codes';
 
 @Component({

@@ -1,12 +1,12 @@
 import { Component, EventEmitter, OnInit, Output, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CollabProjectDetails } from 'src/app/project/dto/collab-project-details';
-import { AddEvent } from 'src/app/entity/utils/add-event';
+import { AddEvent } from 'src/app/common/utils/add-event';
 import { CollabProjectTreeService } from 'src/app/project/collab-project-tree.service';
 import { LabelService } from 'src/app/label/label.service';
 import { TreeService } from 'src/app/service/tree.service';
-import { Animations } from 'src/app/component/common/animations';
-import { ContextMenuElem } from 'src/app/component/context-menu/context-menu-elem';
+import { Animations } from 'src/app/common/animations';
+import { ContextMenuElem } from 'src/app/context-menu/context-menu/context-menu-elem';
 import { MenuElems, Codes } from './collab-project-list-context-codes';
 
 @Component({
