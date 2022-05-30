@@ -1,14 +1,14 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FilterDetails } from './entity/filter-details';
-import { LabelDetails } from './entity/label-details';
-import { ProjectTreeElem } from './entity/project-tree-elem';
-import { AddEvent } from './entity/utils/add-event';
-import { DeleteService } from './service/delete.service';
-import { KeyboardManagerService } from './service/keyboard-manager.service';
-import { LoginService } from './service/login.service';
-import { TreeService } from './service/tree.service';
+import { FilterDetails } from './filter/dto/filter-details';
+import { LabelDetails } from './label/dto/label-details';
+import { ProjectTreeElem } from './project/dto/project-tree-elem';
+import { AddEvent } from './common/utils/add-event';
+import { DeleteService } from './utils/delete.service';
+import { KeyboardManagerService } from './utils/keyboard-manager.service';
+import { LoginService } from './user/login.service';
+import { TreeService } from './utils/tree.service';
 
 @Component({
   selector: 'app-root',

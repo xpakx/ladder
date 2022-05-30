@@ -1,0 +1,33 @@
+@import "../../common/css/project-view.css";
+
+.tablist {
+    display: flex;
+    border-bottom: 0;
+    flex-shrink: 0;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.elem {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: center;
+    flex: 1;
+    font-size: 13px;
+    line-height: 1em;
+    padding: 9px 0;
+    margin: 0;
+    color: grey;
+    border-bottom: 1px solid #e0e0e0;
+    transition-property: box-shadow,border;
+    transition-duration: .3s;
+    transition-timing-function: ease;
+}
+
+.elem.selected {
+    line-height: 1em;
+    font-size: 13px;
+    font-weight: 700;
+    color: #202020;
+    border-bottom: 1px solid #202020;
+}

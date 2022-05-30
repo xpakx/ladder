@@ -1,0 +1,9 @@
+@import "../../common/css/project-view.css";
+
+.disabled-checkbox .icon_check {
+    display: none;
+}
+
+.task_list_item.completed .disabled-checkbox .icon_check {
+    display: inline-flex;
+}

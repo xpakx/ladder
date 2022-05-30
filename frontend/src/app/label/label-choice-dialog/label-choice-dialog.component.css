@@ -1,0 +1,11 @@
+@import '../../common/css/modal.css';
+
+.taskFormExtraColor {
+	content: "";
+	display: flex;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+    margin-right: 8px;
+    margin-left: 4px;
+}

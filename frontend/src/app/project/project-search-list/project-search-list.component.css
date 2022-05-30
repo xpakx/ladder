@@ -1,0 +1,12 @@
+@import "../../common/css/project-view.css";
+
+.project-color {
+	content: "";
+    height: 18px;
+    width: 18px;
+    padding: 0;
+    margin-right: 5px;
+    margin-bottom: 5px;
+	background-color: currentColor;
+	border-radius: 50%;
+}

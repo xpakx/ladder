@@ -1,0 +1,55 @@
+@import "../../common/css/project-view.css";
+
+.section_header.empty h2 {
+    color: grey;
+}
+
+.week-nav {
+    display: flex;
+    align-content: space-between;
+}
+
+
+.nav_button {
+    display: flex;
+    text-decoration: none;
+    text-align: left;
+    width: 100%;
+    margin-left: -2px;
+    padding: 0 0 8px;
+    font-size: 14px;
+    white-space: nowrap;
+    color: grey;
+    align-items: center;
+}
+
+.right_nav_button {
+    text-align: right;
+    justify-content: flex-end;
+}
+
+.nav_button .icon {
+    align-items: center;
+    border-radius: 50%;
+    color: #8f5149;
+    display: inline-flex;
+    height: 17px;
+    justify-content: center;
+    margin-right: 11px;
+    vertical-align: 7px;
+    width: 17px;
+}
+
+.right_nav_button .icon {
+    margin-right: 0;
+    margin-left: 11px;
+}
+
+.nav_button:hover .icon {
+    color: #fff;
+    background-color: #8f5149;
+}
+
+.nav_button:hover {
+    color: #8f5149;
+}

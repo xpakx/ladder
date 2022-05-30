@@ -1,0 +1,83 @@
+@import "../../common/css/project-view.css";
+
+.habit_button {
+    height: 18px;
+    width: 18px;
+    border: 1px solid #dcdcdc;
+    border-radius: 50%;
+    transition: .15s cubic-bezier(.4,0,1,1);
+    padding: 0;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.habit_button.positive {
+    background-color:#49cc56;
+    border-color: #49cc56;
+    color: #fff;
+}
+
+.habit_button.positive:hover {
+    color: #49cc56;
+}
+
+.habit_button.negative {
+    background-color: #d1453b;
+    border-color: #d1453b;
+    color: #fff;
+}
+
+.habit_button.negative:hover {
+    color: #d1453b;
+}
+
+.habit_button:hover {
+    background-color: #fff;
+}
+
+.task_list_item.completed .habit_button:hover {
+    background-color: grey;
+}
+
+
+.task_list_item.completed  .habit_button .habit_circle {
+    opacity: 1;
+    color: #fff;
+}
+
+.habit_button:hover .habit_circle {
+    opacity: 1;
+}
+
+.icon_habit {
+    display: inline-flex;
+    justify-content: center;
+    vertical-align: 5px;
+}
+
+.icon_habit i {
+    font-size: 12px;
+}
+
+.habit_buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.habit_buttons.habit_priority_1 .habit_button {
+    color: #6d9be0;
+}
+
+.habit_buttons.habit_priority_2 .habit_button {
+    color: #e6b06a;
+}
+
+.habit_buttons.habit_priority_3 .habit_button {
+    color: #c41104;
+}
+
+.completions {
+    font-size: 12px;
+    color: grey;
+    margin-right: 5px;
+}

@@ -1,0 +1,90 @@
+@import "../../common/css/sidebar-list.css";
+
+.dndDraggingSource {
+    display: none !important;
+}
+
+.drag-zone.dndDragover {
+    background: #ececec;
+}
+
+.project_list_item.dndDragover {
+    background: #ececec;
+}
+
+.drag-zone.dndDragover ~ .drag-zone {
+    background: #ececec;
+}
+
+.last-drag-zone {
+    width: 100%;
+}
+
+.drag_list_item {
+    position: relative;
+    transition: height .3s cubic-bezier(.4,0,.2,1) 0ms;
+}
+
+.drag_list_item .drag-zone {
+    height: 0;
+    transition: height .3s cubic-bezier(.4,0,.2,1) 0ms;
+    z-index: 10;
+}
+
+.drag_list_item.dndDragover .drag-zone {
+    height: 35px;
+}
+
+.drag_list_item.drag-zone {
+    height: 0;
+    transition: height .3s cubic-bezier(.4,0,.2,1) 0ms;
+    z-index: 10;
+}
+
+.drag_list_item.dndDragover.drag-zone {
+    height: 35px;
+}
+
+.drag_list_item .drag-zone.dndDragover {
+    height: 35px;
+}
+
+.drag_list_item .drag-zone.dndDragover ~ .drag-zone {
+    height: 35px;
+}
+
+.drag_list_item::before {
+    content: '';
+    height: 18px;
+    width: 100%;
+    margin-top: 0;
+    position: absolute;
+}
+
+.drag_list_item.dndDragover::before {
+    height: 35px;
+    margin-top: 16px;
+}
+
+.drag_list_item::after {
+    content: '';
+    height: 18px;
+    width: 100%;
+    margin-top: -18px;
+    position: absolute;
+}
+
+.drag_list_item.dndDragover::after {
+    height: 35px;
+    margin-top: -18px;
+}
+
+/*
+.drag_list_item::after {
+    background-color: #dd4b39;
+}
+
+.drag_list_item::before {
+    background-color: #39dd47;
+}
+*/
