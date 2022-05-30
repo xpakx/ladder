@@ -2,9 +2,9 @@ package io.github.xpakx.ladder.sync;
 
 import io.github.xpakx.ladder.collaboration.dto.CollabTaskDetails;
 import io.github.xpakx.ladder.common.dto.IdCollectionRequest;
-import io.github.xpakx.ladder.common.dto.NotificationDateRequest;
-import io.github.xpakx.ladder.common.dto.SyncData;
-import io.github.xpakx.ladder.user.dto.UserWithData;
+import io.github.xpakx.ladder.sync.dto.NotificationDateRequest;
+import io.github.xpakx.ladder.sync.dto.SyncData;
+import io.github.xpakx.ladder.sync.dto.UserWithData;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

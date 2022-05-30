@@ -2,8 +2,8 @@ package io.github.xpakx.ladder.stats;
 
 import io.github.xpakx.ladder.habit.HabitCompletion;
 import io.github.xpakx.ladder.task.Task;
-import io.github.xpakx.ladder.common.dto.HeatMap;
-import io.github.xpakx.ladder.common.dto.HeatMapElem;
+import io.github.xpakx.ladder.stats.dto.HeatMap;
+import io.github.xpakx.ladder.stats.dto.HeatMapElem;
 import io.github.xpakx.ladder.habit.HabitCompletionRepository;
 import io.github.xpakx.ladder.task.TaskRepository;
 import lombok.AllArgsConstructor;

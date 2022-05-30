@@ -4,7 +4,7 @@ import io.github.xpakx.ladder.notification.NotifyOnProjectChange;
 import io.github.xpakx.ladder.task.Task;
 import io.github.xpakx.ladder.common.dto.IdRequest;
 import io.github.xpakx.ladder.project.dto.ProjectRequest;
-import io.github.xpakx.ladder.common.dto.TasksAndProjects;
+import io.github.xpakx.ladder.project.dto.TasksAndProjects;
 import io.github.xpakx.ladder.common.error.NotFoundException;
 import io.github.xpakx.ladder.common.error.WrongOwnerException;
 import io.github.xpakx.ladder.task.TaskRepository;

@@ -2,7 +2,7 @@ package io.github.xpakx.ladder.user;
 
 import io.github.xpakx.ladder.user.dto.AuthenticationRequest;
 import io.github.xpakx.ladder.user.dto.AuthenticationResponse;
-import io.github.xpakx.ladder.common.dto.RegistrationRequest;
+import io.github.xpakx.ladder.user.dto.RegistrationRequest;
 import io.github.xpakx.ladder.common.error.JwtBadCredentialsException;
 import io.github.xpakx.ladder.common.error.UserDisabledException;
 import io.github.xpakx.ladder.security.JwtTokenUtil;

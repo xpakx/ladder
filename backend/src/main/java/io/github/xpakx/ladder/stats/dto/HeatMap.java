@@ -1,4 +1,4 @@
-package io.github.xpakx.ladder.common.dto;
+package io.github.xpakx.ladder.stats.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

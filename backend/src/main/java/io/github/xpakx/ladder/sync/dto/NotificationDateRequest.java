@@ -1,4 +1,4 @@
-package io.github.xpakx.ladder.common.dto;
+package io.github.xpakx.ladder.sync.dto;
 
 import lombok.Getter;
 import lombok.Setter;

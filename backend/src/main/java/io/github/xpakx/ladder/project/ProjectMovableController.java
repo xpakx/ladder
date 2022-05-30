@@ -3,7 +3,7 @@ package io.github.xpakx.ladder.project;
 import io.github.xpakx.ladder.common.dto.IdRequest;
 import io.github.xpakx.ladder.project.dto.ProjectRequest;
 import io.github.xpakx.ladder.project.dto.ProjectUpdateDto;
-import io.github.xpakx.ladder.common.dto.TasksAndProjects;
+import io.github.xpakx.ladder.project.dto.TasksAndProjects;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

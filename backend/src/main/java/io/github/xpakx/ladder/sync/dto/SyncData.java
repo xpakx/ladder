@@ -1,4 +1,4 @@
-package io.github.xpakx.ladder.common.dto;
+package io.github.xpakx.ladder.sync.dto;
 
 import io.github.xpakx.ladder.collaboration.dto.CollabTaskDetails;
 import io.github.xpakx.ladder.collaboration.dto.CollaborationWithProject;

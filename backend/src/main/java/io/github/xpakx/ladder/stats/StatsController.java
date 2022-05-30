@@ -1,6 +1,6 @@
 package io.github.xpakx.ladder.stats;
 
-import io.github.xpakx.ladder.common.dto.HeatMap;
+import io.github.xpakx.ladder.stats.dto.HeatMap;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

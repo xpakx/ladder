@@ -1,7 +1,7 @@
 package io.github.xpakx.ladder.notification;
 
-import io.github.xpakx.ladder.common.dto.CollabNotificationRequest;
-import io.github.xpakx.ladder.common.dto.NotificationRequest;
+import io.github.xpakx.ladder.notification.dto.CollabNotificationRequest;
+import io.github.xpakx.ladder.notification.dto.NotificationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

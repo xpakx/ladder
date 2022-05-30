@@ -2,8 +2,8 @@ package io.github.xpakx.ladder.notification;
 
 import io.github.xpakx.ladder.collaboration.Collaboration;
 import io.github.xpakx.ladder.common.dto.BooleanRequest;
-import io.github.xpakx.ladder.common.dto.CollabNotificationRequest;
-import io.github.xpakx.ladder.common.dto.NotificationRequest;
+import io.github.xpakx.ladder.notification.dto.CollabNotificationRequest;
+import io.github.xpakx.ladder.notification.dto.NotificationRequest;
 import io.github.xpakx.ladder.filter.Filter;
 import io.github.xpakx.ladder.habit.Habit;
 import io.github.xpakx.ladder.habit.HabitCompletion;

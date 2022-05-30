@@ -1,4 +1,4 @@
-package io.github.xpakx.ladder.common.dto;
+package io.github.xpakx.ladder.project.dto;
 
 import io.github.xpakx.ladder.project.dto.ProjectDetails;
 import io.github.xpakx.ladder.task.dto.TaskDetails;
