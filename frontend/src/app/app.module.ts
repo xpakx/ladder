@@ -4,7 +4,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { JwtModule } from '@auth0/angular-jwt';
 import { LoginComponent } from './user/login/login.component';
 import { RegisterComponent } from './user/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -118,12 +117,6 @@ export function tokenGetter() {
   imports: [
     BrowserModule,
     AppRoutingModule,
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:8080', '192.168.50.118:8080'],
-      }
-    }),
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

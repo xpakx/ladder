@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -26,146 +26,151 @@ export class ProjectService implements MultilevelMovableService<Project>{
 
   constructor(private http: HttpClient) { }
 
+  private getUserId(): string | null {
+    return localStorage.getItem("user_id");
+  }
+
+  private getHeaders(): HttpHeaders {
+    let token = localStorage.getItem("token");
+    return new HttpHeaders({'Authorization':`Bearer ${token}`});
+  }
+
   public getProjectById(projectId: number):  Observable<ProjectDetails> {
     let userId  = this.getUserId();
-    return this.http.get<ProjectDetails>(`${this.apiServerUrl}/${userId}/projects/${projectId}`);
+    return this.http.get<ProjectDetails>(`${this.apiServerUrl}/${userId}/projects/${projectId}`, { headers: this.getHeaders() });
   }
 
   public getFullInfo():  Observable<UserWithData> {
     let userId  = this.getUserId();
-    return this.http.get<UserWithData>(`${this.apiServerUrl}/${userId}/all`);
+    return this.http.get<UserWithData>(`${this.apiServerUrl}/${userId}/all`, { headers: this.getHeaders() });
   }
 
   public addProject(request: ProjectRequest):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects`, request);
+    return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects`, request, { headers: this.getHeaders() });
   }
 
   public addProjectAfter(request: ProjectRequest, projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/after`, request);
+    return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/after`, request, { headers: this.getHeaders() });
   }
 
   public addProjectBefore(request: ProjectRequest, projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/before`, request);
+    return this.http.post<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/before`, request, { headers: this.getHeaders() });
   }
 
   public updateProject(projectId: number, request: ProjectRequest):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}`, request);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}`, request, { headers: this.getHeaders() });
   }
 
   public updateProjectName(projectId: number, request: NameRequest):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/name`, request);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/name`, request, { headers: this.getHeaders() });
   }
 
   public updateProjectParent(projectId: number, request: IdRequest):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/parent`, request);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/parent`, request, { headers: this.getHeaders() });
   }
 
   public updateProjectFav(projectId: number, request: BooleanRequest):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/favorite`, request);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/favorite`, request, { headers: this.getHeaders() });
   }
 
   public updateCollapse(projectId: number, request: BooleanRequest):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collapse`, request);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collapse`, request, { headers: this.getHeaders() });
   }
 
   public deleteProject(projectId: number):  Observable<any> {
     let userId  = this.getUserId();
-    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/projects/${projectId}`);
+    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/projects/${projectId}`, { headers: this.getHeaders() });
   }
 
   public duplicateProject(projectId: number):  Observable<TasksWithProjects> {
     let userId  = this.getUserId();
-    return this.http.post<TasksWithProjects>(`${this.apiServerUrl}/${userId}/projects/${projectId}/duplicate`, null);
+    return this.http.post<TasksWithProjects>(`${this.apiServerUrl}/${userId}/projects/${projectId}/duplicate`, null, { headers: this.getHeaders() });
   }
 
   public addTask(request: AddTaskRequest, projectId: number | undefined):  Observable<Task> {
     let userId  = this.getUserId();
     if(projectId) {
-      return this.http.post<Task>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks`, request);
+      return this.http.post<Task>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks`, request, { headers: this.getHeaders() });
     } else {
-      return this.http.post<Task>(`${this.apiServerUrl}/${userId}/projects/inbox/tasks`, request);
+      return this.http.post<Task>(`${this.apiServerUrl}/${userId}/projects/inbox/tasks`, request, { headers: this.getHeaders() });
     }
   }
 
   public addCollabTask(request: AddTaskRequest, projectId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/collab/projects/${projectId}/tasks`, request);
-  }
-
-  private getUserId(): string | null {
-    return localStorage.getItem("user_id");
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/collab/projects/${projectId}/tasks`, request, { headers: this.getHeaders() });
   }
 
   public moveAfter(request: IdRequest, projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/after`, request);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/after`, request, { headers: this.getHeaders() });
   }
 
   public moveAsChild(request: IdRequest, projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/asChild`, request);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/asChild`, request, { headers: this.getHeaders() });
   }
 
   public moveAsFirst(projectId: number):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/asFirst`, null);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/move/asFirst`, null, { headers: this.getHeaders() });
   }
 
   public archiveProject(projectId: number, request: BooleanRequest):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/archive`, request);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/archive`, request, { headers: this.getHeaders() });
   }
 
   public archiveProjectCompletedTasks(projectId: number, request: BooleanRequest):  Observable<Project> {
     let userId  = this.getUserId();
-    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks/completed/archive`, request);
+    return this.http.put<Project>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks/completed/archive`, request, { headers: this.getHeaders() });
   }
 
   public getArchivedProjects():  Observable<ProjectDetails[]> {
     let userId  = this.getUserId();
-    return this.http.get<ProjectDetails[]>(`${this.apiServerUrl}/${userId}/projects/archived`);
+    return this.http.get<ProjectDetails[]>(`${this.apiServerUrl}/${userId}/projects/archived`, { headers: this.getHeaders() });
   }
 
   public getArchivedProject(projectId: number):  Observable<ProjectData> {
     let userId  = this.getUserId();
-    return this.http.get<ProjectData>(`${this.apiServerUrl}/${userId}/projects/${projectId}/data/archived`);
+    return this.http.get<ProjectData>(`${this.apiServerUrl}/${userId}/projects/${projectId}/data/archived`, { headers: this.getHeaders() });
   }
 
   public getProjectData(projectId: number):  Observable<ProjectData> {
     let userId  = this.getUserId();
-    return this.http.get<ProjectData>(`${this.apiServerUrl}/${userId}/projects/${projectId}/data`);
+    return this.http.get<ProjectData>(`${this.apiServerUrl}/${userId}/projects/${projectId}/data`, { headers: this.getHeaders() });
   }
 
   public addCollaborator(request: CollaborationRequest, projectId: number):  Observable<CollaborationWithOwner> {
     let userId  = this.getUserId();
-    return this.http.post<CollaborationWithOwner>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`, request);
+    return this.http.post<CollaborationWithOwner>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`, request, { headers: this.getHeaders() });
   }
 
   public deleteCollaborator(collaboratorId: number, projectId: number):  Observable<any> {
     let userId  = this.getUserId();
-    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators/${collaboratorId}`);
+    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators/${collaboratorId}`, { headers: this.getHeaders() });
   }
 
   public getCollaborators(projectId: number): Observable<CollaborationWithOwner[]> {
     let userId  = this.getUserId();
-    return this.http.get<CollaborationWithOwner[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`);
+    return this.http.get<CollaborationWithOwner[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/collaborators`, { headers: this.getHeaders() });
   }
 
   public switchEdit(request: BooleanRequest, collabId: number): Observable<Collaboration> {
     let userId  = this.getUserId();
-    return this.http.put<Collaboration>(`${this.apiServerUrl}/${userId}/collab/${collabId}/edit`, request);
+    return this.http.put<Collaboration>(`${this.apiServerUrl}/${userId}/collab/${collabId}/edit`, request, { headers: this.getHeaders() });
   }
 
   public switchComplete(request: BooleanRequest, collabId: number): Observable<Collaboration> {
     let userId  = this.getUserId();
-    return this.http.put<Collaboration>(`${this.apiServerUrl}/${userId}/collab/${collabId}/complete`, request);
+    return this.http.put<Collaboration>(`${this.apiServerUrl}/${userId}/collab/${collabId}/complete`, request, { headers: this.getHeaders() });
   }
 }

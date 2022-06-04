@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -24,119 +24,124 @@ export class TaskService implements MultilevelMovableService<Task> {
     return localStorage.getItem("user_id");
   }
 
+  private getHeaders(): HttpHeaders {
+    let token = localStorage.getItem("token");
+    return new HttpHeaders({'Authorization':`Bearer ${token}`});
+  }
+
   public completeTask(taskId: number, request: BooleanRequest):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/completed`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/completed`, request, { headers: this.getHeaders() });
   }
 
   updateTask(request: AddTaskRequest, taskId: number): Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}`, request, { headers: this.getHeaders() });
   }
 
   public moveAfter(request: IdRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/after`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/after`, request, { headers: this.getHeaders() });
   }
 
   public moveAsChild(request: IdRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asChild`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asChild`, request, { headers: this.getHeaders() });
   }
 
   public moveAsFirst(taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asFirst`, null);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/move/asFirst`, null, { headers: this.getHeaders() });
   }
 
   public updateCollapse(taskId: number, request: BooleanRequest):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/collapse`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/collapse`, request, { headers: this.getHeaders() });
   }
 
   public deleteTask(taskId: number):  Observable<any> {
     let userId  = this.getUserId();
-    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/tasks/${taskId}`);
+    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/tasks/${taskId}`, { headers: this.getHeaders() });
   }
 
   public updateTaskDueDate(request: DateRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/due`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/due`, request, { headers: this.getHeaders() });
   }
 
   public addTaskAfter(request: AddTaskRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/after`, request);
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/after`, request, { headers: this.getHeaders() });
   }
 
   public addTaskBefore(request: AddTaskRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/before`, request);
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/before`, request, { headers: this.getHeaders() });
   }
 
   public addTaskAsChild(request: AddTaskRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/children`, request);
+    return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/children`, request, { headers: this.getHeaders() });
   }
 
   updateTaskProject(request: IdRequest, taskId: number): Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/project`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/project`, request, { headers: this.getHeaders() });
   }
 
   updateTaskPriority(request: PriorityRequest, taskId: number): Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/priority`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/priority`, request, { headers: this.getHeaders() });
   }
 
   public moveAfterDaily(request: IdRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/after`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/after`, request, { headers: this.getHeaders() });
   }
 
   public moveAsFirstDaily(taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/asFirst`, null);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/asFirst`, null, { headers: this.getHeaders() });
   }
 
   public moveAsFirstWithDate(taskId: number, request: DateRequest):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/asFirstWithDate`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/asFirstWithDate`, request, { headers: this.getHeaders() });
   }
 
 
   public duplicateTask(taskId: number):  Observable<TaskDetails[]> {
     let userId  = this.getUserId();
-    return this.http.post<TaskDetails[]>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/duplicate`, null);
+    return this.http.post<TaskDetails[]>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/duplicate`, null, { headers: this.getHeaders() });
   }
 
   updateTaskLabels(request: IdCollectionRequest, taskId: number): Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/labels`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/labels`, request, { headers: this.getHeaders() });
   }
 
   public getTaskForProject(projectId: number):  Observable<TaskDetails[]> {
     let userId  = this.getUserId();
-    return this.http.get<TaskDetails[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks`);
+    return this.http.get<TaskDetails[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks`, { headers: this.getHeaders() });
   }
 
   archiveTask(taskId: number, request: BooleanRequest):  Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/archive`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/archive`, request, { headers: this.getHeaders() });
   }
 
   public getArchivedTasks(projectId: number):  Observable<TaskDetails[]> {
     let userId  = this.getUserId();
-    return this.http.get<TaskDetails[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks/archived`);
+    return this.http.get<TaskDetails[]>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks/archived`, { headers: this.getHeaders() });
   }
 
   public rescheduleOverdueTasks(request: DateRequest):  Observable<Task[]> {
     let userId  = this.getUserId();
-    return this.http.put<Task[]>(`${this.apiServerUrl}/${userId}/tasks/overdue/due`, request);
+    return this.http.put<Task[]>(`${this.apiServerUrl}/${userId}/tasks/overdue/due`, request, { headers: this.getHeaders() });
   }
 
   updateAssigned(request: IdRequest, taskId: number): Observable<Task> {
     let userId  = this.getUserId();
-    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/assigned`, request);
+    return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/assigned`, request, { headers: this.getHeaders() });
   }
 }

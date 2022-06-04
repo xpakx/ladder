@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -20,43 +20,48 @@ export class FilterService  implements MovableService<Filter> {
     return localStorage.getItem("user_id");
   }
 
+  private getHeaders(): HttpHeaders {
+    let token = localStorage.getItem("token");
+    return new HttpHeaders({'Authorization':`Bearer ${token}`});
+  }
+
   public addFilter(request: FilterRequest):  Observable<Filter> {
     let userId  = this.getUserId();
-    return this.http.post<Filter>(`${this.apiServerUrl}/${userId}/filters`, request);
+    return this.http.post<Filter>(`${this.apiServerUrl}/${userId}/filters`, request, { headers: this.getHeaders() });
   }
 
   public updateFilter(filterId: number, request: FilterRequest):  Observable<Filter> {
     let userId  = this.getUserId();
-    return this.http.put<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}`, request);
+    return this.http.put<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}`, request, { headers: this.getHeaders() });
   }
 
   public deleteFilter(filterId: number):  Observable<any> {
     let userId  = this.getUserId();
-    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/filters/${filterId}`);
+    return this.http.delete<any>(`${this.apiServerUrl}/${userId}/filters/${filterId}`, { headers: this.getHeaders() });
   }
 
   public updateFilterFav(filterId: number, request: BooleanRequest):  Observable<Filter> {
     let userId  = this.getUserId();
-    return this.http.put<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/favorite`, request);
+    return this.http.put<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/favorite`, request, { headers: this.getHeaders() });
   }
 
   public addFilterAfter(request: FilterRequest, filterId: number):  Observable<Filter> {
     let userId  = this.getUserId();
-    return this.http.post<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/after`, request);
+    return this.http.post<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/after`, request, { headers: this.getHeaders() });
   }
 
   public addFilterBefore(request: FilterRequest, filterId: number):  Observable<Filter> {
     let userId  = this.getUserId();
-    return this.http.post<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/before`, request);
+    return this.http.post<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/before`, request, { headers: this.getHeaders() });
   }
 
   public moveAfter(request: IdRequest, filterId: number):  Observable<Filter> {
     let userId  = this.getUserId();
-    return this.http.put<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/move/after`, request);
+    return this.http.put<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/move/after`, request, { headers: this.getHeaders() });
   }
 
   public moveAsFirst(filterId: number):  Observable<Filter> {
     let userId  = this.getUserId();
-    return this.http.put<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/move/asFirst`, null);
+    return this.http.put<Filter>(`${this.apiServerUrl}/${userId}/filters/${filterId}/move/asFirst`, null, { headers: this.getHeaders() });
   }
 }
