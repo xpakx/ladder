@@ -24,6 +24,11 @@ export class TaskService implements MultilevelMovableService<Task> {
     return localStorage.getItem("user_id");
   }
 
+  transformDate(time: Date): Date {
+    time.setTime(time.getTime() + time.getTimezoneOffset()*60*1000*(-1));
+    return time;
+  }
+
   private getHeaders(): HttpHeaders {
     let token = localStorage.getItem("token");
     return new HttpHeaders({'Authorization':`Bearer ${token}`});
@@ -36,6 +41,7 @@ export class TaskService implements MultilevelMovableService<Task> {
 
   updateTask(request: AddTaskRequest, taskId: number): Observable<Task> {
     let userId  = this.getUserId();
+    request.due = request.due ? this.transformDate(request.due) : null;
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}`, request, { headers: this.getHeaders() });
   }
 
@@ -66,21 +72,25 @@ export class TaskService implements MultilevelMovableService<Task> {
 
   public updateTaskDueDate(request: DateRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
+    request.date = request.date ? this.transformDate(request.date) : undefined;
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/due`, request, { headers: this.getHeaders() });
   }
 
   public addTaskAfter(request: AddTaskRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
+    request.due = request.due ? this.transformDate(request.due) : null;
     return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/after`, request, { headers: this.getHeaders() });
   }
 
   public addTaskBefore(request: AddTaskRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
+    request.due = request.due ? this.transformDate(request.due) : null;
     return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/before`, request, { headers: this.getHeaders() });
   }
 
   public addTaskAsChild(request: AddTaskRequest, taskId: number):  Observable<Task> {
     let userId  = this.getUserId();
+    request.due = request.due ? this.transformDate(request.due) : null;
     return this.http.post<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/children`, request, { headers: this.getHeaders() });
   }
 
@@ -106,6 +116,7 @@ export class TaskService implements MultilevelMovableService<Task> {
 
   public moveAsFirstWithDate(taskId: number, request: DateRequest):  Observable<Task> {
     let userId  = this.getUserId();
+    request.date = request.date ? this.transformDate(request.date) : undefined;
     return this.http.put<Task>(`${this.apiServerUrl}/${userId}/tasks/${taskId}/daily/move/asFirstWithDate`, request, { headers: this.getHeaders() });
   }
 
@@ -137,6 +148,7 @@ export class TaskService implements MultilevelMovableService<Task> {
 
   public rescheduleOverdueTasks(request: DateRequest):  Observable<Task[]> {
     let userId  = this.getUserId();
+    request.date = request.date ? this.transformDate(request.date) : undefined;
     return this.http.put<Task[]>(`${this.apiServerUrl}/${userId}/tasks/overdue/due`, request, { headers: this.getHeaders() });
   }
 

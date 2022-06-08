@@ -30,6 +30,11 @@ export class ProjectService implements MultilevelMovableService<Project>{
     return localStorage.getItem("user_id");
   }
 
+  transformDate(time: Date): Date {
+    time.setTime(time.getTime() + time.getTimezoneOffset()*60*1000*(-1));
+    return time;
+  }
+
   private getHeaders(): HttpHeaders {
     let token = localStorage.getItem("token");
     return new HttpHeaders({'Authorization':`Bearer ${token}`});
@@ -97,6 +102,7 @@ export class ProjectService implements MultilevelMovableService<Project>{
 
   public addTask(request: AddTaskRequest, projectId: number | undefined):  Observable<Task> {
     let userId  = this.getUserId();
+    request.due = request.due ? this.transformDate(request.due) : null;
     if(projectId) {
       return this.http.post<Task>(`${this.apiServerUrl}/${userId}/projects/${projectId}/tasks`, request, { headers: this.getHeaders() });
     } else {
