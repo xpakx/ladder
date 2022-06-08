@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DateEvent } from 'src/app/common/utils/date-event';
 
 @Component({
@@ -12,14 +12,14 @@ export class DateDialogComponent implements OnInit {
   @Output() cancelEvent = new EventEmitter<boolean>();
   @Input() taskDate: Date | undefined;
   @Input() timeboxed: boolean = false;
-  dateSelectForm: FormGroup | undefined;
+  dateSelectForm: UntypedFormGroup | undefined;
 
   today: Date;
   tomorrow: Date;
   weekend: Date;
   nextWeek: Date;
 
-  constructor(private fb: FormBuilder) { 
+  constructor(private fb: UntypedFormBuilder) { 
     this.today = new Date();
     let dayOfTheMonth = this.today.getDate();
     let dayOfTheWeek = this.today.getDay();

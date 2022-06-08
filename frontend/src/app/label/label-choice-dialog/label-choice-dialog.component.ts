@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { LabelDetails } from 'src/app/label/dto/label-details';
 import { TreeService } from 'src/app/utils/tree.service';
 
@@ -12,10 +12,10 @@ export class LabelChoiceDialogComponent implements OnInit {
   @Input() labels: LabelDetails[] = [];
   @Output() closeEvent = new EventEmitter<LabelDetails[]>();
   @Output() cancelEvent = new EventEmitter<boolean>();
-  labelSelectForm: FormGroup | undefined;
+  labelSelectForm: UntypedFormGroup | undefined;
   visibleLabels: LabelDetails[] = [];
 
-  constructor(private fb: FormBuilder, public tree: TreeService) { }
+  constructor(private fb: UntypedFormBuilder, public tree: TreeService) { }
 
   ngOnInit(): void {
     this.labelSelectForm = this.fb.group({text: ''});

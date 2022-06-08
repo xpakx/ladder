@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Output, Input, EventEmitter, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Label } from '../dto/label';
 import { LabelDetails } from '../dto/label-details';
 import { LabelRequest } from '../dto/label-request';
@@ -14,7 +14,7 @@ import { TreeService } from 'src/app/utils/tree.service';
   styleUrls: ['./label-dialog.component.css']
 })
 export class LabelDialogComponent implements OnInit {
-  addLabelForm: FormGroup;
+  addLabelForm: UntypedFormGroup;
 
   @Output() closeEvent = new EventEmitter<boolean>();
   @Input() data: AddEvent<LabelDetails> | undefined;
@@ -25,7 +25,7 @@ export class LabelDialogComponent implements OnInit {
 
   favorite: boolean = false;
 
-  constructor(private fb: FormBuilder, public tree : TreeService, 
+  constructor(private fb: UntypedFormBuilder, public tree : TreeService, 
     private labelService: LabelService) { 
     this.addLabelForm = this.fb.group({
       name: ['', Validators.required],

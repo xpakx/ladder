@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TokenResponse } from '../dto/token-response';
 import { AuthenticationService } from '../authentication.service';
@@ -11,12 +11,12 @@ import { AuthenticationService } from '../authentication.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   public invalid: boolean = false;
   public message: string = '';
   loading: boolean = false;
 
-  constructor(private fb: FormBuilder, private service: AuthenticationService, 
+  constructor(private fb: UntypedFormBuilder, private service: AuthenticationService, 
     private router: Router) { 
       this.form = this.fb.group({
         username: ['', Validators.required],

@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { LabelDetails } from '../../label/dto/label-details';
 import { ProjectTreeElem } from '../../project/dto/project-tree-elem';
 import { Task } from 'src/app/task/dto/task';
@@ -19,14 +19,14 @@ import { TreeService } from 'src/app/utils/tree.service';
 })
 export class TaskFormComponent implements OnInit {
   @Output() closeEvent = new EventEmitter<boolean>();
-  taskForm: FormGroup | undefined;
+  taskForm: UntypedFormGroup | undefined;
   showSelectProjectMenu: boolean = false;
   projects: ProjectTreeElem[] = [];
   showSelectDateMenu: boolean = false;
   taskDate: Date | undefined;
   taskTimeboxed: boolean = false;
 
-  projectSelectForm: FormGroup | undefined;
+  projectSelectForm: UntypedFormGroup | undefined;
   @Input() project: ProjectTreeElem | undefined;
   @Input() collab: boolean = false;
 
@@ -40,7 +40,7 @@ export class TaskFormComponent implements OnInit {
   @Input("timeboxed") timeboxed: boolean = false;
 
   constructor(public tree: TreeService, private service: ProjectService, 
-    private fb: FormBuilder, private taskService: TaskService, private collabTaskService: CollabTaskService) {  }
+    private fb: UntypedFormBuilder, private taskService: TaskService, private collabTaskService: CollabTaskService) {  }
 
   ngOnInit(): void {
     if(this.data) {

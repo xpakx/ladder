@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Habit } from '../dto/habit';
 import { HabitDetails } from '../dto/habit-details';
 import { LabelDetails } from '../../label/dto/label-details';
@@ -17,11 +17,11 @@ import { TreeService } from 'src/app/utils/tree.service';
 })
 export class HabitFormComponent implements OnInit {
   @Output() closeEvent = new EventEmitter<boolean>();
-  habitForm: FormGroup | undefined;
+  habitForm: UntypedFormGroup | undefined;
   showSelectProjectMenu: boolean = false;
   projects: ProjectTreeElem[] = [];
 
-  projectSelectForm: FormGroup | undefined;
+  projectSelectForm: UntypedFormGroup | undefined;
   @Input() project: ProjectTreeElem | undefined;
 
   habit: HabitDetails | undefined;
@@ -34,7 +34,7 @@ export class HabitFormComponent implements OnInit {
   @Input() data: AddEvent<HabitDetails> | undefined;
 
   constructor(public tree: TreeService, private service: ProjectService, 
-    private fb: FormBuilder, private habitService: HabitService) {  }
+    private fb: UntypedFormBuilder, private habitService: HabitService) {  }
 
   get valid() {
     return this.habitForm && this.habitForm.valid && (this.allowNegative || this.allowPositive);

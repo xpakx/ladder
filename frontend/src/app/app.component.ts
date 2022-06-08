@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FilterDetails } from './filter/dto/filter-details';
 import { LabelDetails } from './label/dto/label-details';
@@ -29,11 +29,11 @@ export class AppComponent implements OnInit {
 
   displayAddTask: boolean = false;
 
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   smallWindow: boolean = false;
 
   constructor(public tree : TreeService, public deleteService: DeleteService,
-    private router: Router, private fb: FormBuilder, private keyboard: KeyboardManagerService,
+    private router: Router, private fb: UntypedFormBuilder, private keyboard: KeyboardManagerService,
     private loginService: LoginService) {
     this.searchForm = this.fb.group({
       search: ['']

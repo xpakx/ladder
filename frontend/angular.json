@@ -131,5 +131,7 @@
       }
     }
   },
-  "defaultProject": "ladder"
+  "cli": {
+    "analytics": false
+  }
 }

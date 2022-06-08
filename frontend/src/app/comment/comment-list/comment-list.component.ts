@@ -4,7 +4,7 @@ import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
 import { Page } from 'src/app/common/dto/page';
 import { CommentService } from '../comment.service';
 import { TaskCommentDetails } from '../dto/task-comment-details';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { TaskComment } from 'src/app/comment/dto/task-comment';
 
 @Component({
@@ -15,9 +15,9 @@ import { TaskComment } from 'src/app/comment/dto/task-comment';
 export class CommentListComponent implements OnInit {
   @Input('task') task?: TaskTreeElem;
   comments:TaskCommentDetails[] = [];
-  commentForm: FormGroup | undefined;
+  commentForm: UntypedFormGroup | undefined;
 
-  constructor(private commentService: CommentService, private fb: FormBuilder) {}
+  constructor(private commentService: CommentService, private fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.commentForm = this.fb.group({

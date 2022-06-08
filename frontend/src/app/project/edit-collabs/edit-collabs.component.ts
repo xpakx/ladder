@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Collaboration } from 'src/app/collaboration/dto/collaboration';
 import { CollaborationWithOwner } from 'src/app/collaboration/dto/collaboration-with-owner';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
@@ -19,9 +19,9 @@ export class EditCollabsComponent implements OnInit {
   @Input() projectId: number | undefined;
   project: ProjectTreeElem | undefined;
   collaborators: CollaborationWithOwner[] = [];
-  addCollabForm: FormGroup;
+  addCollabForm: UntypedFormGroup;
 
-  constructor(private fb: FormBuilder, private service: ProjectService, 
+  constructor(private fb: UntypedFormBuilder, private service: ProjectService, 
     private projectTree: ProjectTreeService,
     private taskTree: TaskTreeService) {
     this.addCollabForm = this.fb.group({

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { TreeService } from 'src/app/utils/tree.service';
 
@@ -12,10 +12,10 @@ export class ProjectChoiceDialogComponent implements OnInit {
   @Input() project: ProjectTreeElem | undefined;
   @Output() closeEvent = new EventEmitter<ProjectTreeElem | undefined>();
   @Output() cancelEvent = new EventEmitter<boolean>();
-  projectSelectForm: FormGroup | undefined;
+  projectSelectForm: UntypedFormGroup | undefined;
   projects: ProjectTreeElem[] = [];
 
-  constructor(private fb: FormBuilder, public tree: TreeService) { }
+  constructor(private fb: UntypedFormBuilder, public tree: TreeService) { }
 
   ngOnInit(): void {
     this.projectSelectForm = this.fb.group({text: ''});
