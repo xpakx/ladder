@@ -233,7 +233,7 @@ export class TaskViewComponent implements OnInit {
   get subModalOpened(): boolean {
     return this.showSelectDateModal || this.showSelectLabelsMenu || 
     this.showSelectPriorityModal || this.showSelectProjectModal ||
-    this.taskListSubmodalOpened || this.collabTaskListSubmodalOpened;
+    this.taskListSubmodalOpened || this.collabTaskListSubmodalOpened || this.deleteService.isOpened();
   }
 
   changeTaskListSubmodalState(opened: boolean) {

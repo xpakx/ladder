@@ -183,4 +183,8 @@ export class DeleteService {
     this.name = "";
     this.id = -1;
   }
+
+  isOpened(): boolean {
+    return this.showDeleteMonit;
+  }
 }
