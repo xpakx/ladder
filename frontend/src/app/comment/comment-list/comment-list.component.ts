@@ -4,8 +4,12 @@ import { TaskTreeElem } from 'src/app/task/dto/task-tree-elem';
 import { Page } from 'src/app/common/dto/page';
 import { CommentService } from '../comment.service';
 import { TaskCommentDetails } from '../dto/task-comment-details';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { TaskComment } from 'src/app/comment/dto/task-comment';
+
+export interface CommentForm {
+  content: FormControl<string>;
+}
 
 @Component({
   selector: 'app-comment-list',
@@ -15,12 +19,12 @@ import { TaskComment } from 'src/app/comment/dto/task-comment';
 export class CommentListComponent implements OnInit {
   @Input('task') task?: TaskTreeElem;
   comments:TaskCommentDetails[] = [];
-  commentForm: UntypedFormGroup | undefined;
+  commentForm: FormGroup<CommentForm> | undefined;
 
-  constructor(private commentService: CommentService, private fb: UntypedFormBuilder) {}
+  constructor(private commentService: CommentService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.commentForm = this.fb.group({
+    this.commentForm = this.fb.nonNullable.group({
       content: ['', Validators.required]
     });
 

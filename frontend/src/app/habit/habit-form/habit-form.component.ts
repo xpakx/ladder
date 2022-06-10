@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Habit } from '../dto/habit';
 import { HabitDetails } from '../dto/habit-details';
 import { LabelDetails } from '../../label/dto/label-details';
@@ -10,6 +10,11 @@ import { HabitService } from 'src/app/habit/habit.service';
 import { ProjectService } from 'src/app/project/project.service';
 import { TreeService } from 'src/app/utils/tree.service';
 
+export interface HabitForm {
+  title: FormControl<string>;
+  description: FormControl<string>;
+}
+
 @Component({
   selector: 'app-habit-form',
   templateUrl: './habit-form.component.html',
@@ -17,11 +22,10 @@ import { TreeService } from 'src/app/utils/tree.service';
 })
 export class HabitFormComponent implements OnInit {
   @Output() closeEvent = new EventEmitter<boolean>();
-  habitForm: UntypedFormGroup | undefined;
+  habitForm: FormGroup<HabitForm> | undefined;
   showSelectProjectMenu: boolean = false;
   projects: ProjectTreeElem[] = [];
 
-  projectSelectForm: UntypedFormGroup | undefined;
   @Input() project: ProjectTreeElem | undefined;
 
   habit: HabitDetails | undefined;
@@ -34,7 +38,7 @@ export class HabitFormComponent implements OnInit {
   @Input() data: AddEvent<HabitDetails> | undefined;
 
   constructor(public tree: TreeService, private service: ProjectService, 
-    private fb: UntypedFormBuilder, private habitService: HabitService) {  }
+    private fb: FormBuilder, private habitService: HabitService) {  }
 
   get valid() {
     return this.habitForm && this.habitForm.valid && (this.allowNegative || this.allowPositive);
@@ -48,7 +52,7 @@ export class HabitFormComponent implements OnInit {
       this.asChild =  this.data.asChild;
     }
 
-    this.habitForm = this.fb.group({
+    this.habitForm = this.fb.nonNullable.group({
       title: [this.habit && !this.after && !this.before && !this.asChild ? this.habit.title : '', Validators.required],
       description: [this.habit && !this.after && !this.before && !this.asChild  ? this.habit.description : '', []]
     });

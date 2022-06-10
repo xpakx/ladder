@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Project } from '../dto/project';
 import { ProjectRequest } from '../dto/project-request';
 import { ProjectTreeElem } from '../dto/project-tree-elem';
@@ -8,13 +8,18 @@ import { AddEvent } from 'src/app/common/utils/add-event';
 import { ProjectService } from '../project.service';
 import { TreeService } from 'src/app/utils/tree.service';
 
+export interface ProjectForm {
+  name: FormControl<string>;
+  color: FormControl<string>;
+}
+
 @Component({
   selector: 'app-project-dialog',
   templateUrl: './project-dialog.component.html',
   styleUrls: ['./project-dialog.component.css']
 })
 export class ProjectDialogComponent implements OnInit {
-  form: UntypedFormGroup;
+  form: FormGroup<ProjectForm>;
   favorite: boolean = false;
 
   @Output() closeEvent = new EventEmitter<boolean>();
@@ -37,9 +42,9 @@ export class ProjectDialogComponent implements OnInit {
     return this.form.controls.color.value;
   }
 
-  constructor(private fb: UntypedFormBuilder, public tree : TreeService, 
+  constructor(private fb: FormBuilder, public tree : TreeService, 
     private projectService: ProjectService) { 
-    this.form = this.fb.group({
+    this.form = this.fb.nonNullable.group({
       name: ['', Validators.required],
       color: ['#888', Validators.required]
     });

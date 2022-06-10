@@ -1,6 +1,11 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DateEvent } from 'src/app/common/utils/date-event';
+
+export interface DateForm {
+  date: FormControl<string>;
+  time: FormControl<string>;
+}
 
 @Component({
   selector: 'app-date-dialog',
@@ -12,14 +17,14 @@ export class DateDialogComponent implements OnInit {
   @Output() cancelEvent = new EventEmitter<boolean>();
   @Input() taskDate: Date | undefined;
   @Input() timeboxed: boolean = false;
-  dateSelectForm: UntypedFormGroup | undefined;
+  dateSelectForm: FormGroup<DateForm> | undefined;
 
   today: Date;
   tomorrow: Date;
   weekend: Date;
   nextWeek: Date;
 
-  constructor(private fb: UntypedFormBuilder) { 
+  constructor(private fb: FormBuilder) { 
     this.today = new Date();
     let dayOfTheMonth = this.today.getDate();
     let dayOfTheWeek = this.today.getDay();
@@ -32,7 +37,7 @@ export class DateDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dateSelectForm = this.fb.group(
+    this.dateSelectForm = this.fb.nonNullable.group(
       {
         date: [this.taskDate ? this.formatDate(this.taskDate) : '', Validators.required],
         time: [this.taskDate ? this.formatTime(this.taskDate) : '', []]
@@ -40,11 +45,11 @@ export class DateDialogComponent implements OnInit {
     );
   }
 
-  formatDate(date: Date): String {
+  formatDate(date: Date): string {
     return date.toISOString().split("T")[0];
   }
 
-  formatTime(date: Date): String {
+  formatTime(date: Date): string {
     return date.toISOString().split("T")[1];
   }
 

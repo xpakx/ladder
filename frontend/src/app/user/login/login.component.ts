@@ -1,9 +1,14 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, HostListener, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TokenResponse } from '../dto/token-response';
 import { AuthenticationService } from '../authentication.service';
+
+export interface LoginForm {
+  username: FormControl<string>;
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'app-login',
@@ -11,14 +16,14 @@ import { AuthenticationService } from '../authentication.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  form: UntypedFormGroup;
+  form: FormGroup<LoginForm>;
   public invalid: boolean = false;
   public message: string = '';
   loading: boolean = false;
 
-  constructor(private fb: UntypedFormBuilder, private service: AuthenticationService, 
+  constructor(private fb: FormBuilder, private service: AuthenticationService, 
     private router: Router) { 
-    this.form = this.fb.group({
+    this.form = this.fb.nonNullable.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
     });

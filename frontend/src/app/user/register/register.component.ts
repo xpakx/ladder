@@ -1,9 +1,15 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, HostListener, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TokenResponse } from '../dto/token-response';
 import { AuthenticationService } from '../authentication.service';
+
+export interface RegisterForm {
+  username: FormControl<string>;
+  password: FormControl<string>;
+  passwordRe: FormControl<string>;
+}
 
 @Component({
   selector: 'app-register',
@@ -11,14 +17,14 @@ import { AuthenticationService } from '../authentication.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  form: UntypedFormGroup;
+  form: FormGroup<RegisterForm>;
   public invalid: boolean = false;
   public message: string = '';
   loading: boolean = false;
 
-  constructor(private fb: UntypedFormBuilder, private service: AuthenticationService, 
+  constructor(private fb: FormBuilder, private service: AuthenticationService, 
     private router: Router) { 
-      this.form = this.fb.group({
+      this.form = this.fb.nonNullable.group({
         username: ['', Validators.required],
         password: ['', Validators.required],
         passwordRe: ['', Validators.required]

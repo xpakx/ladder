@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Filter } from 'src/app/filter/dto/filter';
 import { FilterDetails } from 'src/app/filter/dto/filter-details';
 import { FilterRequest } from 'src/app/filter/dto/filter-request';
@@ -8,13 +8,19 @@ import { AddEvent } from 'src/app/common/utils/add-event';
 import { FilterService } from 'src/app/filter/filter.service';
 import { TreeService } from 'src/app/utils/tree.service';
 
+export interface FilterForm {
+  name: FormControl<string>;
+  searchString: FormControl<string>;
+  color: FormControl<string>;
+}
+
 @Component({
   selector: 'app-filter-dialog',
   templateUrl: './filter-dialog.component.html',
   styleUrls: ['./filter-dialog.component.css']
 })
 export class FilterDialogComponent implements OnInit {
-  addFilterForm: UntypedFormGroup;
+  addFilterForm: FormGroup<FilterForm>;
 
   @Output() closeEvent = new EventEmitter<boolean>();
   @Input() data: AddEvent<FilterDetails> | undefined;
@@ -25,9 +31,9 @@ export class FilterDialogComponent implements OnInit {
 
   favorite: boolean = false;
 
-  constructor(private fb: UntypedFormBuilder, public tree : TreeService, 
+  constructor(private fb: FormBuilder, public tree : TreeService, 
     private filterService: FilterService) { 
-    this.addFilterForm = this.fb.group({
+    this.addFilterForm = this.fb.nonNullable.group({
       name: ['', Validators.required],
       searchString: ['', Validators.required],
       color: ['#888', Validators.required]

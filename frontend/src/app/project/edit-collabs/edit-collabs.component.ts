@@ -1,12 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Collaboration } from 'src/app/collaboration/dto/collaboration';
 import { CollaborationWithOwner } from 'src/app/collaboration/dto/collaboration-with-owner';
 import { ProjectTreeElem } from 'src/app/project/dto/project-tree-elem';
 import { ProjectTreeService } from 'src/app/project/project-tree.service';
 import { ProjectService } from 'src/app/project/project.service';
 import { TaskTreeService } from 'src/app/task/task-tree.service';
+
+export interface AddForm {
+  token: FormControl<string>;
+}
 
 @Component({
   selector: 'app-edit-collabs',
@@ -19,13 +23,13 @@ export class EditCollabsComponent implements OnInit {
   @Input() projectId: number | undefined;
   project: ProjectTreeElem | undefined;
   collaborators: CollaborationWithOwner[] = [];
-  addCollabForm: UntypedFormGroup;
+  addCollabForm: FormGroup<AddForm>;
 
-  constructor(private fb: UntypedFormBuilder, private service: ProjectService, 
+  constructor(private fb: FormBuilder, private service: ProjectService, 
     private projectTree: ProjectTreeService,
     private taskTree: TaskTreeService) {
-    this.addCollabForm = this.fb.group({
-      id: ['', Validators.required]
+    this.addCollabForm = this.fb.nonNullable.group({
+      token: ['', Validators.required]
     });
    }
 
@@ -49,7 +53,7 @@ export class EditCollabsComponent implements OnInit {
   addCollaborator(): void {
     if(this.projectId) {
       this.service.addCollaborator({
-        collaborationToken: this.addCollabForm.controls.id.value, 
+        collaborationToken: this.addCollabForm.controls.token.value, 
         completionAllowed: this.complete, 
         editionAllowed: this.edit 
       }, this.projectId).subscribe(

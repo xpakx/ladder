@@ -1,7 +1,11 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { LabelDetails } from 'src/app/label/dto/label-details';
 import { TreeService } from 'src/app/utils/tree.service';
+
+export interface LabelForm {
+  text: FormControl<string>;
+}
 
 @Component({
   selector: 'app-label-choice-dialog',
@@ -12,13 +16,13 @@ export class LabelChoiceDialogComponent implements OnInit {
   @Input() labels: LabelDetails[] = [];
   @Output() closeEvent = new EventEmitter<LabelDetails[]>();
   @Output() cancelEvent = new EventEmitter<boolean>();
-  labelSelectForm: UntypedFormGroup | undefined;
+  labelSelectForm: FormGroup<LabelForm> | undefined;
   visibleLabels: LabelDetails[] = [];
 
-  constructor(private fb: UntypedFormBuilder, public tree: TreeService) { }
+  constructor(private fb: FormBuilder, public tree: TreeService) { }
 
   ngOnInit(): void {
-    this.labelSelectForm = this.fb.group({text: ''});
+    this.labelSelectForm = this.fb.nonNullable.group({text: ''});
     this.labelSelectForm.valueChanges.subscribe(data => {
       this.getLabels(data.text);
     });
