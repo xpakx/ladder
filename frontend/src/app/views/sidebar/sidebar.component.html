@@ -34,7 +34,7 @@
 </ul>
 
 
-<app-project-list (addProject)="openProjectModal($event)" (navEvent)="mobileNav()" (hideScroll)="switchScroll($event)"></app-project-list>
-<app-label-list (addLabel)="openLabelModal($event)" (navEvent)="mobileNav()" (hideScroll)="switchScroll($event)"></app-label-list>
-<app-filter-list (addFilter)="openFilterModal($event)" (navEvent)="mobileNav()" (hideScroll)="switchScroll($event)"></app-filter-list>
-<app-collab-project-list *ngIf="tree.hasCollabs()" (navEvent)="mobileNav()" (hideScroll)="switchScroll($event)"></app-collab-project-list>
+<app-project-list (addProject)="openProjectModal($event)" (navEvent)="mobileNav()" (hideScroll)="switchScroll($event, 0)"></app-project-list>
+<app-label-list (addLabel)="openLabelModal($event)" (navEvent)="mobileNav()" (hideScroll)="switchScroll($event, 1)"></app-label-list>
+<app-filter-list (addFilter)="openFilterModal($event)" (navEvent)="mobileNav()" (hideScroll)="switchScroll($event, 2)"></app-filter-list>
+<app-collab-project-list *ngIf="tree.hasCollabs()" (navEvent)="mobileNav()" (hideScroll)="switchScroll($event, 3)"></app-collab-project-list>

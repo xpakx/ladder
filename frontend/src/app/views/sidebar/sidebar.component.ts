@@ -68,7 +68,10 @@ export class SidebarComponent implements OnInit {
     this.filterEvent.emit(event);
   }
 
-  switchScroll(event: boolean) {
-    this.hideScrollEvent.emit(event);
+  contextMenuOpened: boolean[] = [false, false, false, false];
+
+  switchScroll(event: boolean, menu: number) {
+    this.contextMenuOpened[menu] = event;
+    this.hideScrollEvent.emit(this.contextMenuOpened.includes(true));
   }
 }
