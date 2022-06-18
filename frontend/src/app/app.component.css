@@ -71,13 +71,8 @@
 .left-nav {
     height: calc(100vh - 44px);
     padding-top: 30px;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    background-color: #fafafa;
-}
-
-.left-nav:hover {
     overflow: auto;
+    background-color: #fafafa;
 }
 
 button {
