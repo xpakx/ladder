@@ -22,5 +22,28 @@ export const Animations = {
             ])
             ])
         ])
+    ]),
+
+    menuTrigger: trigger('menu', [
+        transition(':enter', [
+            style({ width: '0' }),
+            group([
+            animate('.25s', style({ width: '*' })),
+            query('.left-nav',[
+                style({ transform: 'translateX(-110%)' }),
+                animate('.25s', style({ transform: 'translateX(0)' }))
+            ])
+            ])
+        ]),
+        transition(':leave', [
+            style({ overflow: 'hidden' }),
+            group([
+            animate('.25s', style({ width: '0' })),
+            query('.left-nav',[
+                style({ transform: 'translateX(0)' }),
+                animate('.25s', style({ transform: 'translateX(-110%)' }))
+            ])
+            ])
+        ])
     ])
 }

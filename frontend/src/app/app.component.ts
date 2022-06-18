@@ -9,6 +9,7 @@ import { DeleteService } from './utils/delete.service';
 import { KeyboardManagerService } from './utils/keyboard-manager.service';
 import { LoginService } from './user/login.service';
 import { TreeService } from './utils/tree.service';
+import { Animations } from './common/animations';
 
 export interface SearchForm {
   search: FormControl<string>;
@@ -17,7 +18,8 @@ export interface SearchForm {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  animations: [Animations.menuTrigger]
 })
 export class AppComponent implements OnInit {
   title = 'ladder';

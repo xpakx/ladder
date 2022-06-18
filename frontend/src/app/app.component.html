@@ -47,7 +47,7 @@
 	<!-- Left navigation -->
 	<div class="container-fluid">
 		<div class="row-container">
-			<div class="left-nav-container" [class.visibleLeftNav]="!hideMenu" [class.hiddenLeftNav]="hideMenu" *ngIf="logged">
+			<div class="left-nav-container" *ngIf="!hideMenu && logged" @menu>
 				<div class="left-nav">
 						<app-sidebar (projectEvent)="openProjectModal($event)" (labelEvent)="openLabelModal($event)" (filterEvent)="openFilterModal($event)" (closeEvent)="switchHideMenu()" [mobile]="smallWindow"></app-sidebar>
 				</div>
