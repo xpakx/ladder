@@ -160,7 +160,7 @@ implements MultilevelMovableTreeService<Project, ProjectTreeElem> {
       movedProject.order = 1;
       movedProject.parent = null;
 
-      this.recalculateChildrenIndent(movedProject.id, 2);
+      this.recalculateChildrenIndent(movedProject.id, 1);
       if(oldParent) {
         this.recalculateHasChildren(oldParent);
       }

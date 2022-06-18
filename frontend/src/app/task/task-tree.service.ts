@@ -284,7 +284,7 @@ implements MovableTaskTreeService<Task, TaskTreeElem> {
       movedTask.parent = null;
       movedTask.modifiedAt =  new Date(task.modifiedAt);
 
-      this.recalculateChildrenIndent(movedTask.id, 2);
+      this.recalculateChildrenIndent(movedTask.id, 1);
       if(oldParent) {
         this.recalculateHasChildren(oldParent);
       }

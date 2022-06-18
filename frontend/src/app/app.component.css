@@ -71,7 +71,7 @@
 .left-nav {
     height: calc(100vh - 44px);
     padding-top: 30px;
-    overflow: auto;
+    overflow-y: auto;
     background-color: #fafafa;
 }
 
