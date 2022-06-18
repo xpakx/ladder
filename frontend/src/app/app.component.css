@@ -204,40 +204,6 @@ button {
     overflow: auto;
 }
 
-.visibleLeftNav {
-    animation: slide-in .25s cubic-bezier(.4,0,.2,1) forwards;
-    -webkit-animation: slide-in .25s cubic-bezier(.4,0,.2,1) forwards;
-}
-
-.hiddenLeftNav {
-    animation: slide-out .25s cubic-bezier(.4,0,.2,1) forwards;
-    -webkit-animation: slide-out .25s cubic-bezier(.4,0,.2,1) forwards;
-    padding-left: 0;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    background-color: #fafafa;
-}
-    
-@keyframes slide-in {
-    0% { transform: translateX(-100%); max-width: 0px;}
-    100% { transform: translateX(0%); max-width: 309px;}
-}
-
-@-webkit-keyframes slide-in {
-    0% { -webkit-transform: translateX(-100%);  max-width: 0px;}
-    100% { -webkit-transform: translateX(0%); max-width: 309px;}
-}
-    
-@keyframes slide-out {
-    0% { transform: translateX(0%); max-width: 309px;}
-    100% { transform: translateX(-100%);  max-width: 0px;}
-}
-
-@-webkit-keyframes slide-out {
-    0% { -webkit-transform: translateX(0%); max-width: 309px;}
-    100% { -webkit-transform: translateX(-100%); max-width: 0px;}
-}
-
 @media (max-width: 767px) { 
     .left-nav-container   {
       position: fixed;
