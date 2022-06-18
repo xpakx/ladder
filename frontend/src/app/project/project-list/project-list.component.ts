@@ -34,6 +34,7 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
 
   @Output() addProject = new EventEmitter<AddEvent<ProjectTreeElem>>();
   @Output() navEvent = new EventEmitter<boolean>();
+  @Output("hideScroll") hideScrollEvent = new EventEmitter<boolean>();
 
   contextMenu: ContextMenuElem[] = [];
   favElem: ContextMenuElem = {name: MenuElems.addToFavs.name, icon: MenuElems.addToFavs.icon, code: MenuElems.addToFavs.code};
@@ -98,6 +99,7 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
   openContextProjectMenu(event: MouseEvent, projectId: number): void {
 	  this.contextProjectMenu = this.tree.getProjectById(projectId);
     this.showContextProjectMenu = true;
+    this.hideScrollEvent.emit(true);
     this.updateFavElem();
     this.projectContextMenuX = event.clientX;
     this.projectContextMenuY = event.clientY;
@@ -132,6 +134,7 @@ export class ProjectListComponent extends MultilevelDraggableComponent<ProjectWi
   closeContextProjectMenu(): void {
     this.contextProjectMenu = undefined;
     this.showContextProjectMenu = false;
+    this.hideScrollEvent.emit(false);
   }
 
   askForDelete(project: ProjectTreeElem): void {

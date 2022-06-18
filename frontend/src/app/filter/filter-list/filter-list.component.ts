@@ -23,6 +23,7 @@ export class FilterListComponent  extends DraggableComponent<FilterDetails, Filt
 implements OnInit {
   @Output() addFilter = new EventEmitter<AddEvent<FilterDetails>>();
   @Output() navEvent = new EventEmitter<boolean>();
+  @Output("hideScroll") hideScrollEvent = new EventEmitter<boolean>();
 
   displayFilterModal: boolean = false;
 
@@ -82,6 +83,7 @@ implements OnInit {
   openContextMenu(event: MouseEvent, filter: FilterDetails): void {
     this.contextMenuFilter = filter;
     this.showContextMenu = true;
+    this.hideScrollEvent.emit(true);
     if(this.contextMenuFilter?.favorite) {
       this.favElem.name =  MenuElems.deleteFromFavs.name;
       this.favElem.icon =  MenuElems.deleteFromFavs.icon;
@@ -97,6 +99,7 @@ implements OnInit {
   closeContextFilterMenu(): void {
     this.contextMenuFilter = undefined;
     this.showContextMenu = false;
+    this.hideScrollEvent.emit(false);
   }
 
   askForDelete(filter: FilterDetails): void {

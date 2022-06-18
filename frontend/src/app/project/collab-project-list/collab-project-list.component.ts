@@ -20,6 +20,7 @@ export class CollabProjectListComponent implements OnInit  {
   @Output() navEvent = new EventEmitter<boolean>();
   displayProjectModal: boolean = false;
   contextMenu: ContextMenuElem[] = [];
+  @Output("hideScroll") hideScrollEvent = new EventEmitter<boolean>();
 
   constructor(private router: Router,
     private renderer: Renderer2, private labelService: LabelService, 
@@ -41,6 +42,7 @@ export class CollabProjectListComponent implements OnInit  {
   openContextMenu(event: MouseEvent, project: CollabProjectDetails): void {
 	  this.contextMenuProject = project;
     this.showContextMenu = true;
+    this.hideScrollEvent.emit(true);
     this.contextMenuX = event.clientX;
     this.contextMenuY = event.clientY;
   }
@@ -58,6 +60,7 @@ export class CollabProjectListComponent implements OnInit  {
   closeContextProjectMenu(): void {
     this.contextMenuProject = undefined;
     this.showContextMenu = false;
+    this.hideScrollEvent.emit(false);
   }
 
   switchCollapse(): void {

@@ -19,6 +19,7 @@ export class SidebarComponent implements OnInit {
   @Output() labelEvent = new EventEmitter<AddEvent<LabelDetails>>();
   @Output() filterEvent = new EventEmitter<AddEvent<FilterDetails>>();
   @Output() closeEvent = new EventEmitter<boolean>();
+  @Output("hideScroll") hideScrollEvent = new EventEmitter<boolean>();
 
   @Input() mobile: boolean = false;
 
@@ -65,5 +66,9 @@ export class SidebarComponent implements OnInit {
 
   openFilterModal(event: AddEvent<FilterDetails>) {
     this.filterEvent.emit(event);
+  }
+
+  switchScroll(event: boolean) {
+    this.hideScrollEvent.emit(event);
   }
 }

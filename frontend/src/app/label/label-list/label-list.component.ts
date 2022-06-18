@@ -23,6 +23,7 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
     implements OnInit {
   @Output() addLabel = new EventEmitter<AddEvent<LabelDetails>>();
   @Output() navEvent = new EventEmitter<boolean>();
+  @Output("hideScroll") hideScrollEvent = new EventEmitter<boolean>();
 
   displayLabelModal: boolean = false;
 
@@ -83,6 +84,7 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
   openContextMenu(event: MouseEvent, label: LabelDetails) {
     this.contextMenuLabel = label;
     this.showContextMenu = true;
+    this.hideScrollEvent.emit(true);
     if(this.contextMenuLabel?.favorite) {
       this.favElem.name =  MenuElems.deleteFromFavs.name;
       this.favElem.icon =  MenuElems.deleteFromFavs.icon;
@@ -98,6 +100,7 @@ export class LabelListComponent extends DraggableComponent<LabelDetails, Label, 
   closeContextLabelMenu() {
     this.contextMenuLabel = undefined;
     this.showContextMenu = false;
+    this.hideScrollEvent.emit(false);
   }
 
   askForDelete(label: LabelDetails) {

@@ -75,6 +75,10 @@
     background-color: #fafafa;
 }
 
+.left-nav.no-scroll {
+    overflow: hidden;
+}
+
 button {
     cursor: pointer;
     background-color: transparent;

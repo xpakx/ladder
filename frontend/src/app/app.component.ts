@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
 
   searchForm: FormGroup<SearchForm>;
   smallWindow: boolean = false;
+  hideScroll: boolean = false;
 
   constructor(public tree : TreeService, public deleteService: DeleteService,
     private router: Router, private fb: FormBuilder, private keyboard: KeyboardManagerService,
@@ -184,5 +185,10 @@ export class AppComponent implements OnInit {
 
   get logged(): boolean {
     return this.loginService.logged;
+  }
+
+
+  switchScroll(event: boolean) {
+    this.hideScroll = event;
   }
 }
